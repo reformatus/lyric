@@ -5,6 +5,6 @@ class SetsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("Sets page"));
+    return const Center(child: Text("Sets page"));
   }
 }
