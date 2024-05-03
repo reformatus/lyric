@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lyric/base/home/page.dart';
-import 'package:lyric/base/scaffold.dart';
+import 'package:lyric/views/base/home/page.dart';
+import 'package:lyric/views/base/scaffold.dart';
 
-import 'base/bank/page.dart';
-import 'base/sets/page.dart';
+import 'views/base/bank/page.dart';
+import 'views/base/sets/page.dart';
 
 void main() {
   runApp(const LyricApp());

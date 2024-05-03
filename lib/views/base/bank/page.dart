@@ -132,124 +132,127 @@ class _BankPageState extends State<BankPage> {
                               icon: Icons.translate,
                               title: 'Nyelv',
                               filterChildren: [
-                                LFilterChip(
-                                    label: 'magyar',
+                                'magyar',
+                                'angol',
+                                'német',
+                                'francia',
+                                'héber',
+                                'ír',
+                                'cigány',
+                                'egyéb',
+                              ].map((e) {
+                                return LFilterChip(
+                                    label: e,
                                     onSelected: (_) {},
-                                    selected: false),
-                                LFilterChip(
-                                    label: 'angol',
-                                    onSelected: (_) {},
-                                    selected: false),
-                                LFilterChip(
-                                    label: 'német',
-                                    onSelected: (_) {},
-                                    selected: false),
-                                LFilterChip(
-                                    label: 'francia',
-                                    onSelected: (_) {},
-                                    selected: false),
-                                LFilterChip(
-                                    label: 'héber',
-                                    onSelected: (_) {},
-                                    selected: false),
-                                LFilterChip(
-                                    label: 'ír',
-                                    onSelected: (_) {},
-                                    selected: false),
-                                LFilterChip(
-                                    label: 'cigány',
-                                    onSelected: (_) {},
-                                    selected: false),
-                                LFilterChip(
-                                    label: 'egyéb',
-                                    onSelected: (_) {},
-                                    selected: false),
-                              ],
+                                    selected: false);
+                              }).toList(),
                             ),
                             LFilterCategoryTile(
                               icon: Icons.speed,
                               title: 'Tempó',
                               filterChildren: [
-                                LFilterChip(
-                                    label: 'lassú',
+                                'lassú',
+                                'közepes',
+                                'gyors',
+                                'változó',
+                              ].map((e) {
+                                return LFilterChip(
+                                    label: e,
                                     onSelected: (_) {},
-                                    selected: false),
-                                LFilterChip(
-                                    label: 'közepes',
-                                    onSelected: (_) {},
-                                    selected: false),
-                                LFilterChip(
-                                    label: 'gyors',
-                                    onSelected: (_) {},
-                                    selected: false),
-                                LFilterChip(
-                                    label: 'változó',
-                                    onSelected: (_) {},
-                                    selected: false),
-                              ],
+                                    selected: false);
+                              }).toList(),
                             ),
                             LFilterCategoryTile(
                                 icon: Icons.height,
                                 title: 'Hangterjedelem',
                                 filterChildren: [
-                                  LFilterChip(
-                                      label: 'egy oktáv',
+                                  'egy oktáv',
+                                  'másfél oktáv',
+                                  'két oktáv',
+                                ].map((e) {
+                                  return LFilterChip(
+                                      label: e,
                                       onSelected: (_) {},
-                                      selected: false),
-                                  LFilterChip(
-                                      label: 'másfél oktáv',
-                                      onSelected: (_) {},
-                                      selected: false),
-                                  LFilterChip(
-                                      label: 'két oktáv',
-                                      onSelected: (_) {},
-                                      selected: false),
-                                ]),
-                            const LFilterCategoryTile(
-                                icon: Icons.music_note,
-                                title: 'Hangnem',
-                                filterChildren: [Text('TBD')]),
+                                      selected: false);
+                                }).toList()),
+                            ListTile(
+                              contentPadding: const EdgeInsets.only(left: 15),
+                              leading: Icon(Icons.music_note),
+                              title: Text('Hangnem'),
+                              subtitle: Column(
+                                children: [
+                                  FadingEdgeScrollView
+                                      .fromSingleChildScrollView(
+                                    child: SingleChildScrollView(
+                                      controller: ScrollController(),
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        children: [
+                                          'C',
+                                          'Cisz/Desz',
+                                          'D',
+                                          'Disz/Esz',
+                                          'E',
+                                          'F',
+                                          'Fisz/Gesz',
+                                          'G',
+                                          'Gisz/Asz',
+                                          'A',
+                                          'B',
+                                        ].map((e) {
+                                          return LFilterChip(
+                                              label: e,
+                                              onSelected: (_) {},
+                                              selected: false);
+                                        }).toList(),
+                                      ),
+                                    ),
+                                  ),
+                                  FadingEdgeScrollView
+                                      .fromSingleChildScrollView(
+                                    child: SingleChildScrollView(
+                                      controller: ScrollController(),
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        children: [
+                                          'dúr',
+                                          'moll',
+                                          'dór',
+                                          'fríg',
+                                          'líd',
+                                          'mixolíd',
+                                          'lokriszi',
+                                        ].map((e) {
+                                          return LFilterChip(
+                                              label: e,
+                                              onSelected: (_) {},
+                                              selected: false);
+                                        }).toList(),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                             LFilterCategoryTile(
                               icon: Icons.style,
                               title: 'Stílus / műfaj',
                               filterChildren: [
-                                LFilterChip(
-                                    label: 'angolszász',
+                                'angolszász',
+                                'himnusz',
+                                'folk - magyar',
+                                'folk - ír',
+                                'folk - cigány',
+                                'spirituálé/gospel',
+                                'meditatív',
+                                'gyerekdal',
+                                'egyéb',
+                              ].map((e) {
+                                return LFilterChip(
+                                    label: e,
                                     onSelected: (_) {},
-                                    selected: false),
-                                LFilterChip(
-                                    label: 'himnusz',
-                                    onSelected: (_) {},
-                                    selected: false),
-                                LFilterChip(
-                                    label: 'folk - magyar',
-                                    onSelected: (_) {},
-                                    selected: false),
-                                LFilterChip(
-                                    label: 'folk - ír',
-                                    onSelected: (_) {},
-                                    selected: false),
-                                LFilterChip(
-                                    label: 'folk - cigány',
-                                    onSelected: (_) {},
-                                    selected: false),
-                                LFilterChip(
-                                    label: 'spirituálé/gospel',
-                                    onSelected: (_) {},
-                                    selected: false),
-                                LFilterChip(
-                                    label: 'meditatív',
-                                    onSelected: (_) {},
-                                    selected: false),
-                                LFilterChip(
-                                    label: 'gyerekdal',
-                                    onSelected: (_) {},
-                                    selected: false),
-                                LFilterChip(
-                                    label: 'egyéb',
-                                    onSelected: (_) {},
-                                    selected: false),
-                              ],
+                                    selected: false);
+                              }).toList(),
                             ),
                             const LFilterCategoryTile(
                                 icon: Icons.label,
@@ -259,35 +262,19 @@ class _BankPageState extends State<BankPage> {
                               icon: Icons.celebration,
                               title: 'Ünnep',
                               filterChildren: [
-                                LFilterChip(
-                                    label: 'böjt',
+                                'böjt',
+                                'húsvét',
+                                'pünkösd',
+                                'reformáció',
+                                'advent',
+                                'karácsony',
+                                'egyéb',
+                              ].map((e) {
+                                return LFilterChip(
+                                    label: e,
                                     onSelected: (_) {},
-                                    selected: false),
-                                LFilterChip(
-                                    label: 'húsvét',
-                                    onSelected: (_) {},
-                                    selected: false),
-                                LFilterChip(
-                                    label: 'pünkösd',
-                                    onSelected: (_) {},
-                                    selected: false),
-                                LFilterChip(
-                                    label: 'reformáció',
-                                    onSelected: (_) {},
-                                    selected: false),
-                                LFilterChip(
-                                    label: 'advent',
-                                    onSelected: (_) {},
-                                    selected: false),
-                                LFilterChip(
-                                    label: 'karácsony',
-                                    onSelected: (_) {},
-                                    selected: false),
-                                LFilterChip(
-                                    label: 'egyéb',
-                                    onSelected: (_) {},
-                                    selected: false),
-                              ],
+                                    selected: false);
+                              }).toList(),
                             ),
                             const LFilterCategoryTile(
                                 icon: Icons.calendar_month,
@@ -360,6 +347,7 @@ class LFilterChip extends StatelessWidget {
         label: Text(label),
         selected: selected,
         onSelected: onSelected,
+        materialTapTargetSize: MaterialTapTargetSize.padded,
       ),
     );
   }
