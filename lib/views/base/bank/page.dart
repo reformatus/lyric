@@ -1,7 +1,5 @@
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class BankPage extends StatefulWidget {
   const BankPage({super.key});
@@ -177,8 +175,8 @@ class _BankPageState extends State<BankPage> {
                                 }).toList()),
                             ListTile(
                               contentPadding: const EdgeInsets.only(left: 15),
-                              leading: Icon(Icons.music_note),
-                              title: Text('Hangnem'),
+                              leading: const Icon(Icons.music_note),
+                              title: const Text('Hangnem'),
                               subtitle: Column(
                                 children: [
                                   FadingEdgeScrollView
