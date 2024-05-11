@@ -1,11 +1,11 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-part 'api_song.freezed.dart';
-part 'api_song.g.dart';
+part 'song.freezed.dart';
+part 'song.g.dart';
 
 @freezed
-class ApiSong with _$ApiSong {
+class Song with _$Song {
   @JsonSerializable(fieldRename: FieldRename.snake)
-  const factory ApiSong({
+  const factory Song({
     required String uuid,
     required String title,
     required String titleOriginal,
@@ -28,9 +28,9 @@ class ApiSong with _$ApiSong {
     required String contentTags,
     required String tempo,
     required String holiday,
-  }) = _ApiSong;
+  }) = _Song;
 
-  factory ApiSong.fromJson(Map<String, dynamic> json) => _$ApiSongFromJson(json);
+  factory Song.fromJson(Map<String, dynamic> json) => _$SongFromJson(json);
 }
 
 
