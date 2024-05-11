@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lyric/views/base/home/page.dart';
 import 'package:lyric/views/base/scaffold.dart';
@@ -7,7 +8,7 @@ import 'views/base/bank/page.dart';
 import 'views/base/sets/page.dart';
 
 void main() {
-  runApp(const LyricApp());
+  runApp(ProviderScope(child: const LyricApp()));
 }
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
