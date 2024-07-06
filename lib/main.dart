@@ -1,14 +1,23 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lyric/views/base/home/page.dart';
 import 'package:lyric/views/base/scaffold.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'views/base/bank/page.dart';
 import 'views/base/sets/page.dart';
+import 'views/loading/page.dart';
 
-void main() {
-  runApp(ProviderScope(child: const LyricApp()));
+late final Directory dataDir;
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  dataDir = await getApplicationDocumentsDirectory();
+
+  runApp(const ProviderScope(child: LyricApp()));
 }
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
@@ -32,8 +41,14 @@ class LyricApp extends StatelessWidget {
 
 final _router = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/home',
+  initialLocation: '/loading',
   routes: [
+    GoRoute(
+      path: '/loading',
+      pageBuilder: (context, state) => const MaterialPage(
+        child: LoadingPage(),
+      ),
+    ),
     ShellRoute(
       navigatorKey: _baseNavigatorKey,
       builder: (BuildContext context, GoRouterState state, Widget child) {

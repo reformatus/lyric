@@ -1,23 +1,25 @@
 import 'package:dio/dio.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:queue/queue.dart';
 
 import '../song/song.dart';
 
-part 'api.freezed.dart';
-part 'api.g.dart';
+part 'bank.freezed.dart';
+part 'bank.g.dart';
 
-final BankApi testApi =
-    BankApi(Uri.parse('https://kiskutyafule.csecsy.hu/api/'));
-final BankApi prodApi =
-    BankApi(Uri.parse('https://kiskutyafule.csecsy.hu/api/'));
+final Bank testBank = Bank(
+    'TESZT Sófár Kottatár', Uri.parse('https://kiskutyafule.csecsy.hu/api/'));
+final Bank prodBank =
+    Bank('Sófár Kottatár', Uri.parse('https://sofarkotta.csecsy.hu/api/'));
 
+final List<Bank> defaultBanks = [testBank, prodBank];
 
-
-class BankApi {
+class Bank {
   final Uri baseUrl;
+  final String name;
   final Dio dio = Dio();
 
-  BankApi(this.baseUrl);
+  Bank(this.name, this.baseUrl);
 
   Future<List<ProtoSong>> getProtoSongs() async {
     final resp = await dio.get('$baseUrl/songs');
@@ -29,6 +31,14 @@ class BankApi {
   Future<Song> getSongDetails(String uuid) async {
     final resp = await dio.get('$baseUrl/song/$uuid');
     return Song.fromJson(resp.data[0] as Map<String, dynamic>);
+  }
+
+  Queue getProtoSongsQueue(List<ProtoSong> protoSongs) {
+    final Queue queue = Queue(parallel: 10);
+    for (var protoSong in protoSongs) {
+      queue.add(() async => await getSongDetails(protoSong.uuid));
+    }
+    return queue;
   }
 }
 
