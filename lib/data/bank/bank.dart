@@ -14,6 +14,8 @@ final Bank prodBank =
 
 final List<Bank> defaultBanks = [testBank, prodBank];
 
+List<Song> testSongList = []; // TODO removeme
+
 class Bank {
   final Uri baseUrl;
   final String name;
@@ -23,6 +25,7 @@ class Bank {
 
   Future<List<ProtoSong>> getProtoSongs() async {
     final resp = await dio.get('$baseUrl/songs');
+    //await Future.delayed(const Duration(seconds: 2)); // TODO removeme
     return (resp.data as List)
         .map((e) => ProtoSong.fromJson(e as Map<String, dynamic>))
         .toList();
@@ -30,14 +33,19 @@ class Bank {
 
   Future<Song> getSongDetails(String uuid) async {
     final resp = await dio.get('$baseUrl/song/$uuid');
-    return Song.fromJson(resp.data[0] as Map<String, dynamic>);
+    var song = Song.fromJson(resp.data[0] as Map<String, dynamic>);
+    testSongList.add(song);
+    return song;
   }
 
   Queue getProtoSongsQueue(List<ProtoSong> protoSongs) {
-    final Queue queue = Queue(parallel: 10);
+    final Queue queue = Queue(parallel: 5);
     for (var protoSong in protoSongs) {
       queue.add(() async => await getSongDetails(protoSong.uuid));
     }
+    queue.onComplete.then((_) {
+      print('Queue completed');
+    });
     return queue;
   }
 }

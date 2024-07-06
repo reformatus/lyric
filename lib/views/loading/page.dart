@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/data/bank/bank.dart';
+import 'package:queue/queue.dart';
 
 import '../../data/bank/provider.dart';
 
@@ -9,7 +10,14 @@ class LoadingPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final protoSongs = ref.watch(protoSongListProvider(defaultBanks.first));
+    final protoSongs = ref.watch(protoSongListProvider(defaultBanks[1]));
+    Queue? protoSongsQueue;
+    if (protoSongs.hasValue) {
+      protoSongsQueue = ref.watch(
+          protoSongQueueProvider(protoSongs.asData!.value, defaultBanks[1]));
+    }
+    final remainingSongCount =
+        ref.watch(remainingSongsCountProvider(protoSongsQueue));
 
     return Scaffold(
       appBar: AppBar(
@@ -18,7 +26,10 @@ class LoadingPage extends ConsumerWidget {
             preferredSize: const Size.fromHeight(4),
             child: LinearProgressIndicator(
               value: protoSongs.when(
-                data: (_) => 0.5,
+                data: (_) =>
+                    ((protoSongs.asData?.value.length ?? 0) -
+                        (remainingSongCount.asData?.value ?? 0).toDouble()) /
+                    (protoSongs.asData?.value.length ?? 0),
                 error: (_, __) => 1,
                 loading: () => null as double?,
               ),
@@ -31,13 +42,14 @@ class LoadingPage extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Énektár letöltése folyamatban...',
+              '${defaultBanks[1].name}\nletöltése folyamatban...',
               style: Theme.of(context).textTheme.headlineSmall,
               textAlign: TextAlign.center,
             ),
+            const SizedBox(height: 20),
             if (protoSongs.hasValue) ...[
               Text(
-                '0 / ${protoSongs.asData?.value.length ?? '!!!'}',
+                '${(protoSongs.asData?.value.length ?? 0) - (remainingSongCount.asData?.value ?? 0)} / ${protoSongs.asData?.value.length ?? '!!!'}',
                 textAlign: TextAlign.center,
               ),
             ],
