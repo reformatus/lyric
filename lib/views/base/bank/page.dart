@@ -1,5 +1,7 @@
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
+import 'package:lyric/data/bank/bank.dart';
+import 'package:lyric/views/base/bank/songTile.dart';
 
 class BankPage extends StatefulWidget {
   const BankPage({super.key});
@@ -286,7 +288,13 @@ class _BankPageState extends State<BankPage> {
                 ),
               ),
             ),
-            const Expanded(flex: 2, child: Placeholder())
+            Expanded(
+                child: ListView.separated(
+                    itemBuilder: (BuildContext context, int i) {
+                      return LSongTile(allSongs.elementAt(i));
+                    },
+                    separatorBuilder: (_, __) => const SizedBox(height: 0),
+                    itemCount: allSongs.length))
           ],
         );
       }),

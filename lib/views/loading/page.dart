@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lyric/data/bank/bank.dart';
 import 'package:queue/queue.dart';
 
@@ -19,6 +20,10 @@ class LoadingPage extends ConsumerWidget {
     final remainingSongCount =
         ref.watch(remainingSongsCountProvider(protoSongsQueue));
 
+    protoSongsQueue?.onComplete.then((_) {
+      context.go('/bank');
+    });
+
     return Scaffold(
       appBar: AppBar(
           title: const Text('Sófár Lyric'),
@@ -29,7 +34,8 @@ class LoadingPage extends ConsumerWidget {
                 data: (_) =>
                     ((protoSongs.asData?.value.length ?? 0) -
                         (remainingSongCount.asData?.value ?? 0).toDouble()) /
-                    (protoSongs.asData?.value.length ?? 0),
+                    (protoSongs.asData?.value.length ??
+                        0), // TODO put inside variable
                 error: (_, __) => 1,
                 loading: () => null as double?,
               ),

@@ -13,13 +13,14 @@ final Bank prodBank =
     Bank('Sófár Kottatár', Uri.parse('https://sofarkotta.csecsy.hu/api/'));
 
 final List<Bank> defaultBanks = [testBank, prodBank];
-
-List<Song> testSongList = []; // TODO removeme
+Iterable<Song> get allSongs => defaultBanks.expand((bank) => bank.songs);
 
 class Bank {
   final Uri baseUrl;
   final String name;
   final Dio dio = Dio();
+
+  List<Song> songs = [];
 
   Bank(this.name, this.baseUrl);
 
@@ -34,18 +35,17 @@ class Bank {
   Future<Song> getSongDetails(String uuid) async {
     final resp = await dio.get('$baseUrl/song/$uuid');
     var song = Song.fromJson(resp.data[0] as Map<String, dynamic>);
-    testSongList.add(song);
     return song;
   }
 
   Queue getProtoSongsQueue(List<ProtoSong> protoSongs) {
-    final Queue queue = Queue(parallel: 5);
+    final Queue queue = Queue(parallel: 10);
     for (var protoSong in protoSongs) {
-      queue.add(() async => await getSongDetails(protoSong.uuid));
+      queue.add(() async {
+        Song song = await getSongDetails(protoSong.uuid);
+        songs.add(song);
+      });
     }
-    queue.onComplete.then((_) {
-      print('Queue completed');
-    });
     return queue;
   }
 }
