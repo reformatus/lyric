@@ -1,16 +1,16 @@
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:lyric/data/bank/bank.dart';
-import 'package:lyric/views/base/bank/songTile.dart';
+import 'package:lyric/views/base/songs/songTile.dart';
 
-class BankPage extends StatefulWidget {
-  const BankPage({super.key});
+class SongsPage extends StatefulWidget {
+  const SongsPage({super.key});
 
   @override
-  State<BankPage> createState() => _BankPageState();
+  State<SongsPage> createState() => _SongsPageState();
 }
 
-class _BankPageState extends State<BankPage> {
+class _SongsPageState extends State<SongsPage> {
   @override
   void initState() {
     super.initState();

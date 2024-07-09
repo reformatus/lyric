@@ -7,7 +7,7 @@ import 'package:lyric/views/base/home/page.dart';
 import 'package:lyric/views/base/scaffold.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'views/base/bank/page.dart';
+import 'views/base/songs/page.dart';
 import 'views/base/sets/page.dart';
 import 'views/loading/page.dart';
 import 'views/song/page.dart';
@@ -65,7 +65,7 @@ final _router = GoRouter(
         GoRoute(
           path: '/bank',
           pageBuilder: (context, state) => const MaterialPage(
-            child: BankPage(),
+            child: SongsPage(),
           ),
         ),
         GoRoute(
