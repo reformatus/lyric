@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import 'views/base/bank/page.dart';
 import 'views/base/sets/page.dart';
 import 'views/loading/page.dart';
+import 'views/song/page.dart';
 
 late final Directory dataDir;
 
@@ -73,6 +74,14 @@ final _router = GoRouter(
             child: SetsPage(),
           ),
         ),
+        GoRoute(
+            path: '/song/:uuid',
+            pageBuilder: (context, state) {
+              final songUuid = state.pathParameters['uuid']!;
+              return MaterialPage(
+                child: SongPage(songUuid),
+              );
+            }),
       ],
     )
   ],

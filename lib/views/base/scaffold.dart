@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart';
 
 class BaseScaffold extends StatelessWidget {
   const BaseScaffold({required this.child, super.key});
@@ -12,19 +13,24 @@ class BaseScaffold extends StatelessWidget {
       body: child,
       bottomNavigationBar: NavigationBar(
         labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-        destinations: const [
-          NavigationDestination(
+        destinations: [
+          const NavigationDestination(
             icon: Icon(Icons.home),
             label: 'Főoldal',
           ),
-          NavigationDestination(
+          const NavigationDestination(
             icon: Icon(Icons.library_music),
             label: 'Daltár',
           ),
-          NavigationDestination(
+          const NavigationDestination(
             icon: Icon(Icons.view_list),
             label: 'Listáim',
           ),
+          if (GoRouterState.of(context).uri.path.startsWith('/song'))
+            const NavigationDestination(
+              icon: Icon(Icons.music_note),
+              label: 'Dal',
+            )
         ],
         selectedIndex: _calculateSelectedIndex(context),
         onDestinationSelected: (int index) =>
@@ -46,6 +52,9 @@ class BaseScaffold extends StatelessWidget {
     if (location.startsWith('/sets')) {
       return 2;
     }
+    if (location.startsWith('/song')) {
+      return 3;
+    }
     return 0;
   }
 
@@ -57,6 +66,8 @@ class BaseScaffold extends StatelessWidget {
         GoRouter.of(context).go('/bank');
       case 2:
         GoRouter.of(context).go('/sets');
+      default:
+        return;
     }
   }
 }

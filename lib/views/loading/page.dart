@@ -17,12 +17,15 @@ class LoadingPage extends ConsumerWidget {
       protoSongsQueue = ref.watch(
           protoSongQueueProvider(protoSongs.asData!.value, defaultBanks[1]));
     }
-    final remainingSongCount =
-        ref.watch(remainingSongsCountProvider(protoSongsQueue));
+
+    ref.watch(remainingSongsCountProvider(
+        protoSongsQueue)); // update page every time the queue changes
 
     protoSongsQueue?.onComplete.then((_) {
       context.go('/bank');
     });
+
+    int protoSongsLengthValue() => protoSongs.asData?.value.length ?? 0;
 
     return Scaffold(
       appBar: AppBar(
@@ -32,12 +35,9 @@ class LoadingPage extends ConsumerWidget {
             child: LinearProgressIndicator(
               value: protoSongs.when(
                 data: (_) =>
-                    ((protoSongs.asData?.value.length ?? 0) -
-                        (remainingSongCount.asData?.value ?? 0).toDouble()) /
-                    (protoSongs.asData?.value.length ??
-                        0), // TODO put inside variable
-                error: (_, __) => 1,
-                loading: () => null as double?,
+                    (defaultBanks[1].songs.length) / protoSongsLengthValue(),
+                error: (_, __) => 0,
+                loading: () => 0,
               ),
             ),
           )),
@@ -47,18 +47,26 @@ class LoadingPage extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              '${defaultBanks[1].name}\nletöltése folyamatban...',
-              style: Theme.of(context).textTheme.headlineSmall,
-              textAlign: TextAlign.center,
+            ListTile(
+              leading: CircularProgressIndicator(
+                value: protoSongs.when(
+                  data: (_) =>
+                      (defaultBanks[1].songs.length) / protoSongsLengthValue(),
+                  error: (_, __) => 0,
+                  loading: () => null,
+                ),
+              ),
+              title: Text(
+                '${defaultBanks[1].name}\nletöltése folyamatban...',
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              subtitle: protoSongs.hasValue
+                  ? Text(
+                      '${defaultBanks[1].songs.length} / ${protoSongs.asData!.value.length}',
+                    )
+                  : null,
             ),
             const SizedBox(height: 20),
-            if (protoSongs.hasValue) ...[
-              Text(
-                '${(protoSongs.asData?.value.length ?? 0) - (remainingSongCount.asData?.value ?? 0)} / ${protoSongs.asData?.value.length ?? '!!!'}',
-                textAlign: TextAlign.center,
-              ),
-            ],
           ],
         ),
       ),
