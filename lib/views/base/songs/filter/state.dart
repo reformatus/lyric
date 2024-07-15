@@ -152,7 +152,7 @@ const List<Map<String, dynamic>> filterFields = [
   },
   {
     'id': 'sofar',
-    'name': 'Először szerepelt Sófárban',
+    'name': 'Először szerepelt Sófáron',
     'type': 'muliselect_search',
     'values': 'self_discover',
   }
