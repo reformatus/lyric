@@ -8,8 +8,6 @@ version: 0.0.1+1
 environment:
   sdk: '>=3.3.0 <4.0.0'
 
-isar_version: &isar_version 3.1.0+1
-
 dependencies:
   flutter:
     sdk: flutter
@@ -23,25 +21,23 @@ dependencies:
   json_annotation: ^4.9.0
   flutter_riverpod: ^2.5.1
   riverpod_annotation: ^2.3.5
-  flutter_adaptive_scaffold: ^0.1.11+1
+  flutter_adaptive_scaffold: ^0.3.1
   dio: ^5.4.3+1
   path_provider: ^2.1.3
   path: ^1.9.0
   queue: ^3.1.0+2
-  isar: *isar_version
-  isar_flutter_libs: *isar_version  
+  drift: ^2.20.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
   build_runner: ^2.4.9
   freezed: ^2.5.2
   json_serializable: ^6.8.0
   riverpod_generator: ^2.3.0
-  custom_lint: ^0.5.11
+  custom_lint: ^0.6.7
   riverpod_lint: ^2.1.1
-  isar_generator: *isar_version
 
 flutter:
   uses-material-design: true
