@@ -10,14 +10,7 @@ class SongView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(children: [
-      ListTile(
-        subtitle: song.title != song.firstLine
-            ? Text(song.firstLine, softWrap: false, overflow: TextOverflow.fade)
-            : null,
-        trailing: Text(song.genre),
-      ),
-      const Divider(),
-      Text(song.lyrics),
+      Text(song.content['lyrics'] ?? ''),
     ]);
   }
 }

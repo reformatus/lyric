@@ -1,40 +1,28 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+const List<String> mandatoryFields = ['title', 'lyrics'];
 
-part 'song.freezed.dart';
-part 'song.g.dart';
+class Song {
+  final String uuid;
+  Map<String, String> content;
+  String? userNote;
 
-@freezed
-class Song with _$Song {
-  const Song._();
+  factory Song.fromJson(Map<String, dynamic> json) {
+    try {
+      if (!mandatoryFields.every((field) => json.containsKey(field))) {
+        throw Exception(
+            'Missing mandatory fields in: ${json['title']} (${json['uuid']})');
+      }
 
-  @JsonSerializable(fieldRename: FieldRename.snake)
-  const factory Song({
-    required final String uuid,
-    required String title,
-    required String titleOriginal,
-    required String year,
-    required String composer,
-    required String lyrics,
-    required String translator,
-    required String pitch,
-    required String ambitus,
-    required String bibleRef,
-    required String firstLine,
-    required String language,
-    required String opensong,
-    required String pdf,
-    required String refSongbook,
-    required String genre,
-    required String svg,
-    required String poet,
-    required String sofar,
-    required String contentTags,
-    required String tempo,
-    required String holiday,
-  }) = _Song;
+      return Song(
+        json['uuid'],
+        json.map((key, value) => MapEntry(key, value.toString())),
+      );
+    } catch (e) {
+      throw Exception(
+          'Invalid song data in: ${json['title']} (${json['uuid']})\nError: $e');
+    }
+  }
 
-  factory Song.fromJson(Map<String, dynamic> json) => _$SongFromJson(json);
-
-  Uri get pdfUri => Uri.parse(pdf);
-  Uri get svgUri => Uri.parse(svg);
+  Song(this.uuid, this.content);
 }
+
+class PitchField {}

@@ -12,11 +12,7 @@ class LSongTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () => context.go('/song/${song.uuid}'),
-      title: Text(song.title),
-      subtitle: song.title != song.firstLine
-          ? Text(song.firstLine, softWrap: false, overflow: TextOverflow.fade)
-          : null,
-      trailing: Text(song.genre),
+      title: Text(song.content['title']!),
     );
   }
 }

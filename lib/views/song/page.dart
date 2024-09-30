@@ -14,7 +14,7 @@ class SongPage extends StatelessWidget {
     Song song = allSongs.firstWhere((song) => song.uuid == songUuid);
     return Scaffold(
       appBar: AppBar(
-        title: Text(song.title),
+        title: Text(song.content['title']!),
       ),
       body: SongView(song),
     );
