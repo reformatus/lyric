@@ -12,7 +12,7 @@ part 'execute.g.dart';
 Map<String, ({FieldType type, int count})> existingSearchableFields() {
   Map<String, ({FieldType type, int count})> fields = {};
 
-  for (var song in allSongs) {
+  for (var song in allSongs()) {
     for (var field in song.content.keys) {
       if (FieldType.fromString(songFieldsMap[field]?['type'] ?? "")?.isSearchable ?? false) {
         if (!fields.keys.any((k) => k == field)) {
@@ -35,7 +35,7 @@ Map<String, ({FieldType type, int count})> existingSearchableFields() {
 Map<String, ({FieldType type, int count})> existingFilterableFields() {
   Map<String, ({FieldType type, int count})> fields = {};
 
-  for (var song in allSongs) {
+  for (var song in allSongs()) {
     for (var field in song.content.keys) {
       if (FieldType.fromString(songFieldsMap[field]?['type'] ?? "")?.isFilterable ?? false) {
         if (!fields.keys.any((k) => k == field)) {
@@ -61,5 +61,5 @@ Future<List<Song>> filteredSongList(FilteredSongListRef ref) async {
   //await Future.delayed(const Duration(seconds: 1));
   //throw UnimplementedError();
 
-  return allSongs.toList();
+  return allSongs().toList();
 }

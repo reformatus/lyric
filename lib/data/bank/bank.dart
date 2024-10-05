@@ -14,8 +14,8 @@ final Bank prodBank = Bank('Sófár Kottatár', Uri.parse('https://sofarkotta.cs
 // todo make provider
 final List<Bank> defaultBanks = [testBank, prodBank];
 
-// todo make provider, depend on banks
-Iterable<Song> get allSongs => defaultBanks.expand((bank) => bank.songs);
+// todo depend on banks
+Iterable<Song> allSongs() => defaultBanks.expand((bank) => bank.songs);
 
 class Bank {
   final Uri baseUrl;

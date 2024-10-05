@@ -11,7 +11,7 @@ class SongPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Song song = allSongs.firstWhere((song) => song.uuid == songUuid);
+    Song song = allSongs().firstWhere((song) => song.uuid == songUuid);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
