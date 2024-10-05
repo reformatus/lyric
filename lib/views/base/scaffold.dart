@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:path/path.dart';
 
 class BaseScaffold extends StatelessWidget {
   const BaseScaffold({required this.child, super.key});
