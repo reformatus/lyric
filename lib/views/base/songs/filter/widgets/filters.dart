@@ -10,7 +10,7 @@ class FiltersColumn extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var filterableFieldsList = existingFilterableFields().entries.toList();
+        var filterableFieldsList = ref.watch(existingFilterableFieldsProvider).entries.toList();
 
     return Column(
         children: filterableFieldsList

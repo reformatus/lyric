@@ -14,14 +14,13 @@ class LoadingPage extends ConsumerWidget {
     final protoSongs = ref.watch(protoSongListProvider(defaultBanks[1]));
     Queue? protoSongsQueue;
     if (protoSongs.hasValue) {
-      protoSongsQueue = ref.watch(
-          protoSongQueueProvider(protoSongs.asData!.value, defaultBanks[1]));
+      protoSongsQueue = ref.watch(protoSongQueueProvider(protoSongs.asData!.value, defaultBanks[1]));
     }
 
-    ref.watch(remainingSongsCountProvider(
-        protoSongsQueue)); // update page every time the queue changes
+    ref.watch(remainingSongsCountProvider(protoSongsQueue)); // update page every time the queue changes
 
     protoSongsQueue?.onComplete.then((_) {
+      // ignore: use_build_context_synchronously
       context.go('/bank');
     });
 
@@ -34,8 +33,7 @@ class LoadingPage extends ConsumerWidget {
             preferredSize: const Size.fromHeight(4),
             child: LinearProgressIndicator(
               value: protoSongs.when(
-                data: (_) =>
-                    (defaultBanks[1].songs.length) / protoSongsLengthValue(),
+                data: (_) => (defaultBanks[1].songs.length) / protoSongsLengthValue(),
                 error: (_, __) => 0,
                 loading: () => 0,
               ),
@@ -50,8 +48,7 @@ class LoadingPage extends ConsumerWidget {
             ListTile(
               leading: CircularProgressIndicator(
                 value: protoSongs.when(
-                  data: (_) =>
-                      (defaultBanks[1].songs.length) / protoSongsLengthValue(),
+                  data: (_) => (defaultBanks[1].songs.length) / protoSongsLengthValue(),
                   error: (_, __) => 0,
                   loading: () => null,
                 ),

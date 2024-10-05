@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:queue/queue.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../song/song.dart';
 
@@ -15,7 +16,10 @@ final Bank prodBank = Bank('Sófár Kottatár', Uri.parse('https://sofarkotta.cs
 final List<Bank> defaultBanks = [testBank, prodBank];
 
 // todo depend on banks
-Iterable<Song> allSongs() => defaultBanks.expand((bank) => bank.songs);
+@riverpod
+Iterable<Song> allSongs(AllSongsRef ref) {
+  return defaultBanks.expand((bank) => bank.songs);
+}
 
 class Bank {
   final Uri baseUrl;

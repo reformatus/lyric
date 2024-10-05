@@ -6,13 +6,15 @@ import 'state.dart';
 
 part 'execute.g.dart';
 
-// todo make provider depend on all songs
 // todo make part of bank
 // todo write test
-Map<String, ({FieldType type, int count})> existingSearchableFields() {
+@riverpod
+Map<String, ({FieldType type, int count})> existingSearchableFields(ExistingSearchableFieldsRef ref) {
   Map<String, ({FieldType type, int count})> fields = {};
 
-  for (var song in allSongs()) {
+  final allSongs = ref.watch(allSongsProvider);
+
+  for (var song in allSongs) {
     for (var field in song.content.keys) {
       if (FieldType.fromString(songFieldsMap[field]?['type'] ?? "")?.isSearchable ?? false) {
         if (!fields.keys.any((k) => k == field)) {
@@ -29,13 +31,15 @@ Map<String, ({FieldType type, int count})> existingSearchableFields() {
   return fields;
 }
 
-// todo make provider depend on all songs
 // todo make part of bank
 // todo write test
-Map<String, ({FieldType type, int count})> existingFilterableFields() {
+@riverpod
+Map<String, ({FieldType type, int count})> existingFilterableFields(ExistingFilterableFieldsRef ref) {
   Map<String, ({FieldType type, int count})> fields = {};
 
-  for (var song in allSongs()) {
+  final allSongs = ref.watch(allSongsProvider);
+
+  for (var song in allSongs) {
     for (var field in song.content.keys) {
       if (FieldType.fromString(songFieldsMap[field]?['type'] ?? "")?.isFilterable ?? false) {
         if (!fields.keys.any((k) => k == field)) {
@@ -55,11 +59,12 @@ Map<String, ({FieldType type, int count})> existingFilterableFields() {
 @riverpod
 Future<List<Song>> filteredSongList(FilteredSongListRef ref) async {
   final state = ref.watch(filterStateProvider);
+  final allSongs = ref.watch(allSongsProvider);
 
   // todo actually apply filters
 
   //await Future.delayed(const Duration(seconds: 1));
   //throw UnimplementedError();
 
-  return allSongs().toList();
+  return allSongs.toList();
 }
