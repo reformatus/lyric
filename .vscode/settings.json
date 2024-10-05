@@ -1,3 +1,10 @@
 {
-  "dotnet.defaultSolution": "disable"
+  "dotnet.defaultSolution": "disable",
+  "[dart]": {
+        "editor.formatOnSave": true,
+        "editor.rulers": [
+            110,
+        ],
+        "editor.defaultFormatter": "Dart-Code.dart-code"
+    },
 }
