@@ -13,7 +13,10 @@ final Bank testBank = Bank(
 final Bank prodBank =
     Bank('Sófár Kottatár', Uri.parse('https://sofarkotta.csecsy.hu/api/'));
 
+// todo make provider
 final List<Bank> defaultBanks = [testBank, prodBank];
+
+// todo make provider, depend on banks
 Iterable<Song> get allSongs => defaultBanks.expand((bank) => bank.songs);
 
 class Bank {
