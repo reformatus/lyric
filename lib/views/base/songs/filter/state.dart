@@ -7,82 +7,82 @@ part 'state.g.dart';
 // let plugins provide filter ui and logic
 const Map<String, Map<String, dynamic>> songFieldsMap = {
   'title': {
-    'name': 'Cím',
+    'title_hu': 'Cím',
     'type': 'searchable',
     'icon': Icons.text_fields,
   },
   'titleOriginal': {
-    'name': 'Cím (eredeti)',
+    'title_hu': 'Cím (eredeti)',
     'type': 'searchable',
     'icon': Icons.wrap_text,
   },
   'firstLine': {
-    'name': 'Kezdősor',
+    'title_hu': 'Kezdősor',
     'type': 'searchable',
     'icon': Icons.short_text,
   },
   'composer': {
-    'name': 'Dalszerző',
+    'title_hu': 'Dalszerző',
     'type': 'searchable',
     'icon': Icons.music_note,
   },
   'poet': {
-    'name': 'Szövegíró',
+    'title_hu': 'Szövegíró',
     'type': 'searchable',
     'icon': Icons.edit,
   },
   'translator': {
-    'name': 'Fordította',
+    'title_hu': 'Fordította',
     'type': 'searchable',
     'icon': Icons.translate,
   },
   'bibleRef': {
-    'name': 'Igeszakasz',
+    'title_hu': 'Igeszakasz',
     'type': 'searchable',
     'icon': Icons.book,
   },
   'refSongbook': {
-    'name': 'Református Énekeskönyv',
+    'title_hu': 'Református Énekeskönyv',
     'type': 'searchable',
     'icon': Icons.menu_book,
   },
   'language': {
-    'name': 'Nyelv',
+    'title_hu': 'Nyelv',
     'type': 'filterable_multiselect_chips',
     'icon': Icons.language,
   },
   'tempo': {
-    'name': 'Tempó',
+    'title_hu': 'Tempó',
     'type': 'filterable_multiselect_chips',
     'icon': Icons.speed,
   },
   'ambitus': {
-    'name': 'Hangterjedelem',
+    'title_hu': 'Hangterjedelem',
     'type': 'filterable_multiselect_chips',
     'icon': Icons.height,
   },
   'pitch': {
-    'name': 'Hangnem',
+    'title_hu': 'Hangnem',
     'type': 'filterable_pitch',
     'icon': Icons.music_note,
   },
   'genre': {
-    'name': 'Stílus / műfaj',
+    'title_hu': 'Stílus / műfaj',
     'type': 'filterable_multiselect_chips',
     'icon': Icons.style,
   },
   'contentTags': {
-    'name': 'Tartalomcímkék',
+    'title_hu': 'Tartalomcímkék',
     'type': 'filterable_multiselect_search',
     'icon': Icons.label_sharp,
   },
   'holiday': {
-    'name': 'Ünnep',
+    'title_hu': 'Ünnep',
     'type': 'filterable_multiselect_chips',
     'icon': Icons.celebration,
   },
   'sofar': {
-    'name': 'Először szerepelt Sófáron',
+    'title_hu': 'Először szerepelt Sófáron',
     'type': 'filterable_multiselect_search',
     'icon': Icons.calendar_month,
   },
@@ -165,13 +165,13 @@ enum FieldType {
   pitch("filterable_pitch", isFilterable: true),
   searchable("searchable", isSearchable: true);
 
-  const FieldType(this.type, {this.isSearchable = false, this.isFilterable = false});
-  final String type;
+  const FieldType(this.name, {this.isSearchable = false, this.isFilterable = false});
+  final String name;
   final bool isSearchable;
   final bool isFilterable;
 
   // Static map for fast lookup
-  static final Map<String, FieldType> _typeMap = {for (var field in FieldType.values) field.type: field};
+  static final Map<String, FieldType> _typeMap = {for (var field in FieldType.values) field.name: field};
 
   static FieldType? fromString(String value) => _typeMap[value];
 }
