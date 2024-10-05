@@ -15,11 +15,7 @@ class FiltersColumn extends ConsumerWidget {
     return Column(
         children: filterableFieldsList
             .map((e) => switch (e.value.type) {
-                  FieldType.multiselectChips => LFilterChips(
-                      icon: songFieldsMap[e.key]!['icon'],
-                      title: songFieldsMap[e.key]!['title_hu'],
-                      filterChildren: []),
-                  FieldType.multiselectSearch => LFilterSearch(
+                  FieldType.multiselect => LFilterChips(
                       icon: songFieldsMap[e.key]!['icon'],
                       title: songFieldsMap[e.key]!['title_hu'],
                       filterChildren: []),

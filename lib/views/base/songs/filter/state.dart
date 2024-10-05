@@ -48,17 +48,17 @@ const Map<String, Map<String, dynamic>> songFieldsMap = {
   },
   'language': {
     'title_hu': 'Nyelv',
-    'type': 'filterable_multiselect_chips',
+    'type': 'filterable_multiselect',
     'icon': Icons.language,
   },
   'tempo': {
     'title_hu': 'Tempó',
-    'type': 'filterable_multiselect_chips',
+    'type': 'filterable_multiselect',
     'icon': Icons.speed,
   },
   'ambitus': {
     'title_hu': 'Hangterjedelem',
-    'type': 'filterable_multiselect_chips',
+    'type': 'filterable_multiselect',
     'icon': Icons.height,
   },
   'pitch': {
@@ -68,22 +68,22 @@ const Map<String, Map<String, dynamic>> songFieldsMap = {
   },
   'genre': {
     'title_hu': 'Stílus / műfaj',
-    'type': 'filterable_multiselect_chips',
+    'type': 'filterable_multiselect',
     'icon': Icons.style,
   },
   'contentTags': {
     'title_hu': 'Tartalomcímkék',
-    'type': 'filterable_multiselect_search',
+    'type': 'filterable_multiselect',
     'icon': Icons.label_sharp,
   },
   'holiday': {
     'title_hu': 'Ünnep',
-    'type': 'filterable_multiselect_chips',
+    'type': 'filterable_multiselect',
     'icon': Icons.celebration,
   },
   'sofar': {
     'title_hu': 'Először szerepelt Sófáron',
-    'type': 'filterable_multiselect_search',
+    'type': 'filterable_multiselect',
     'icon': Icons.calendar_month,
   },
 };
@@ -160,8 +160,7 @@ class FilterState extends _$FilterState {
 
 // @project2
 enum FieldType {
-  multiselectChips("filterable_multiselect_chips", isFilterable: true),
-  multiselectSearch("filterable_multiselect_search", isFilterable: true),
+  multiselect("filterable_multiselect", isFilterable: true),
   pitch("filterable_pitch", isFilterable: true),
   searchable("searchable", isSearchable: true);
 
