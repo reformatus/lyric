@@ -88,6 +88,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                       // todo make stack. if scrolled, show a close button at top right
                       child: SingleChildScrollView(
                         controller: ScrollController(),
+                        // todo remove horizontal lines when expanded
                         child: ExpansionTile(
                           title: const ListTile(
                               contentPadding: EdgeInsets.zero,
