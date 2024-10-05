@@ -8,10 +8,8 @@ import '../song/song.dart';
 part 'bank.freezed.dart';
 part 'bank.g.dart';
 
-final Bank testBank = Bank(
-    'TESZT Sófár Kottatár', Uri.parse('https://kiskutyafule.csecsy.hu/api/'));
-final Bank prodBank =
-    Bank('Sófár Kottatár', Uri.parse('https://sofarkotta.csecsy.hu/api/'));
+final Bank testBank = Bank('TESZT Sófár Kottatár', Uri.parse('https://kiskutyafule.csecsy.hu/api/'));
+final Bank prodBank = Bank('Sófár Kottatár', Uri.parse('https://sofarkotta.csecsy.hu/api/'));
 
 // todo make provider
 final List<Bank> defaultBanks = [testBank, prodBank];
@@ -31,9 +29,7 @@ class Bank {
   Future<List<ProtoSong>> getProtoSongs() async {
     final resp = await dio.get('$baseUrl/songs');
     //await Future.delayed(const Duration(seconds: 2)); // TODO removeme
-    return (resp.data as List)
-        .map((e) => ProtoSong.fromJson(e as Map<String, dynamic>))
-        .toList();
+    return (resp.data as List).map((e) => ProtoSong.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   Future<Song> getSongDetails(String uuid) async {
@@ -54,8 +50,13 @@ class Bank {
           Song song = await getSongDetails(protoSong.uuid);
           songs.add(song);
         } catch (e) {
-          print(
-              'Error while fetching song details for ${protoSong.uuid}\n$e'); // todo ui
+          // retry
+          try {
+            Song song = await getSongDetails(protoSong.uuid);
+            songs.add(song);
+          } catch (f) {
+            print('Error while fetching song details for ${protoSong.uuid}\n$e'); // todo ui
+          }
         }
       });
     }
@@ -73,6 +74,5 @@ class ProtoSong with _$ProtoSong {
     final String title,
   ) = _ProtoSong;
 
-  factory ProtoSong.fromJson(Map<String, dynamic> json) =>
-      _$ProtoSongFromJson(json);
+  factory ProtoSong.fromJson(Map<String, dynamic> json) => _$ProtoSongFromJson(json);
 }
