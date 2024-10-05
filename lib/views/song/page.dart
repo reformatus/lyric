@@ -14,6 +14,10 @@ class SongPage extends StatelessWidget {
     Song song = allSongs.firstWhere((song) => song.uuid == songUuid);
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         title: Text(song.content['title']!),
       ),
       body: SongView(song),

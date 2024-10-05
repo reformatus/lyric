@@ -11,7 +11,7 @@ class LSongTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      onTap: () => context.go('/song/${song.uuid}'),
+      onTap: () => context.push('/song/${song.uuid}'),
       title: Text(song.content['title']!),
     );
   }
