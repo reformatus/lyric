@@ -11,7 +11,7 @@ class LoadingPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final protoSongs = ref.watch(protoSongListProvider(defaultBanks[1]));
+    final protoSongs = ref.watch(protoSongListProvider(defaultBanks[1])); // todo all banks
     Queue? protoSongsQueue;
     if (protoSongs.hasValue) {
       protoSongsQueue = ref.watch(protoSongQueueProvider(protoSongs.asData!.value, defaultBanks[1]));

@@ -2,6 +2,7 @@ import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/views/base/songs/filter/execute.dart';
+import 'package:lyric/views/base/songs/filter/state.dart';
 import 'package:lyric/views/base/songs/filter/widgets/filters.dart';
 import 'package:lyric/views/base/songs/song_tile.dart';
 
@@ -17,14 +18,36 @@ class _SongsPageState extends ConsumerState<SongsPage> {
   void initState() {
     super.initState();
     _overlayPortalController = OverlayPortalController();
+    _filterScrollController = ScrollController();
+    _filterExpansionTileController = ExpansionTileController();
+    _filterScrollController.addListener(() {
+      if (_filterScrollController.offset > 0) {
+        if (!filtersScrolled) {
+          setState(() {
+            filtersScrolled = true;
+          });
+        }
+      } else {
+        if (filtersScrolled) {
+          setState(() {
+            filtersScrolled = false;
+          });
+        }
+      }
+    });
   }
 
+  bool filtersScrolled = false;
+
   late OverlayPortalController _overlayPortalController;
+  late ScrollController _filterScrollController;
+  late ExpansionTileController _filterExpansionTileController;
   final _link = LayerLink();
 
   @override
   Widget build(BuildContext context) {
     final songs = ref.watch(filteredSongListProvider);
+    final filterState = ref.watch(filterStateProvider);
 
     return Stack(
       children: [
@@ -39,8 +62,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                   link: _link,
                   child: OverlayPortal(
                     controller: _overlayPortalController,
-                    overlayChildBuilder: (context) =>
-                        CompositedTransformFollower(
+                    overlayChildBuilder: (context) => CompositedTransformFollower(
                       link: _link,
                       followerAnchor: Alignment.topRight,
                       targetAnchor: Alignment.bottomRight,
@@ -79,30 +101,44 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                 Card(
                   clipBehavior: Clip.antiAlias,
                   child: ConstrainedBox(
-                    constraints:
-                        BoxConstraints(maxHeight: constraints.maxHeight / 2),
-                    child: FadingEdgeScrollView.fromSingleChildScrollView(
-                      // todo make stack. if scrolled, show a close button at top right
-                      child: SingleChildScrollView(
-                        controller: ScrollController(),
-                        // todo remove horizontal lines when expanded
-                        child: ExpansionTile(
-                          title: const ListTile(
-                              contentPadding: EdgeInsets.zero,
-                              leading: Icon(Icons.filter_list),
-                              title: Text('Szűrők')),
-                          children: [
-                            FiltersColumn(),
-                          ],
+                    constraints: BoxConstraints(maxHeight: constraints.maxHeight / 2),
+                    child: Stack(
+                      children: [
+                        FadingEdgeScrollView.fromSingleChildScrollView(
+                          child: SingleChildScrollView(
+                            controller: _filterScrollController,
+                            child: Theme(
+                              data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                              child: ExpansionTile(
+                                controller: _filterExpansionTileController,
+                                leading: const Icon(Icons.filter_list),
+                                title: Text('Szűrők'),
+                                children: [
+                                  FiltersColumn(),
+                                ],
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                        if (filtersScrolled)
+                          Positioned(
+                            right: 12,
+                            top: 6,
+                            child: IconButton.filledTonal(
+                              icon: Icon(Icons.expand_less),
+                              onPressed: () {
+                                _filterScrollController.jumpTo(0);
+                                _filterExpansionTileController.collapse();
+                              },
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                 ),
                 Expanded(
                   child: switch (songs) {
-                    AsyncLoading() =>
-                      const Center(child: CircularProgressIndicator()),
+                    AsyncLoading() => const Center(child: CircularProgressIndicator()),
                     AsyncError(:final error) => Center(
                         child: Card(
                           // todo factor out to general error widget
@@ -135,9 +171,8 @@ class _SongsPageState extends ConsumerState<SongsPage> {
               setState(() {});
             }
           },
-          behavior: _overlayPortalController.isShowing
-              ? HitTestBehavior.opaque
-              : HitTestBehavior.deferToChild,
+          behavior:
+              _overlayPortalController.isShowing ? HitTestBehavior.opaque : HitTestBehavior.deferToChild,
         )
       ],
     );

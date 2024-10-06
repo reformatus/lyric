@@ -11,12 +11,12 @@ const Map<String, Map<String, dynamic>> songFieldsMap = {
     'type': 'searchable',
     'icon': Icons.text_fields,
   },
-  'titleOriginal': {
+  'title_original': {
     'title_hu': 'Cím (eredeti)',
     'type': 'searchable',
     'icon': Icons.wrap_text,
   },
-  'firstLine': {
+  'first_line': {
     'title_hu': 'Kezdősor',
     'type': 'searchable',
     'icon': Icons.short_text,
@@ -36,19 +36,19 @@ const Map<String, Map<String, dynamic>> songFieldsMap = {
     'type': 'searchable',
     'icon': Icons.translate,
   },
-  'bibleRef': {
+  'bible_ref': {
     'title_hu': 'Igeszakasz',
     'type': 'searchable',
     'icon': Icons.book,
   },
-  'refSongbook': {
+  'ref_songbook': {
     'title_hu': 'Református Énekeskönyv',
     'type': 'searchable',
     'icon': Icons.menu_book,
   },
   'language': {
     'title_hu': 'Nyelv',
-    'type': 'filterable_multiselect',
+    'type': 'filterable_multiselect_tags',
     'icon': Icons.language,
   },
   'tempo': {
@@ -68,22 +68,22 @@ const Map<String, Map<String, dynamic>> songFieldsMap = {
   },
   'genre': {
     'title_hu': 'Stílus / műfaj',
-    'type': 'filterable_multiselect',
+    'type': 'filterable_multiselect_tags',
     'icon': Icons.style,
   },
-  'contentTags': {
+  'content_tags': {
     'title_hu': 'Tartalomcímkék',
-    'type': 'filterable_multiselect',
+    'type': 'filterable_multiselect_tags',
     'icon': Icons.label_sharp,
   },
   'holiday': {
     'title_hu': 'Ünnep',
-    'type': 'filterable_multiselect',
+    'type': 'filterable_multiselect_tags',
     'icon': Icons.celebration,
   },
   'sofar': {
     'title_hu': 'Először szerepelt Sófáron',
-    'type': 'filterable_multiselect',
+    'type': 'filterable_multiselect_tags',
     'icon': Icons.calendar_month,
   },
 };
@@ -125,7 +125,7 @@ class SearchStringState extends _$SearchStringState {
   }
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class FilterState extends _$FilterState {
   @override
   Map<String, List<String>> build() {
@@ -138,6 +138,7 @@ class FilterState extends _$FilterState {
     } else {
       state[field] = [value];
     }
+    ref.notifyListeners();
   }
 
   void removeFilter(String field, String value) {
@@ -146,28 +147,42 @@ class FilterState extends _$FilterState {
       if (state[field]!.isEmpty) {
         state.remove(field);
       }
+      ref.notifyListeners();
     }
+  }
+
+  void toggleFilter(String field, String value) {
+    if (state.containsKey(field) && state[field]!.contains(value)) {
+      removeFilter(field, value);
+    } else {
+      addFilter(field, value);
+    }
+    ref.notifyListeners();
   }
 
   void resetFilterField(String field) {
     state.remove(field);
+    state = Map.fromEntries(state.entries.skipWhile((e) => e.key == field));
   }
 
   void resetAllFilters() {
-    state.clear();
+    state = {};
   }
 }
 
 // @project2
 enum FieldType {
   multiselect("filterable_multiselect", isFilterable: true),
+  multiselectTags("filterable_multiselect_tags", isFilterable: true, commaDividedValues: true),
   pitch("filterable_pitch", isFilterable: true),
   searchable("searchable", isSearchable: true);
 
-  const FieldType(this.name, {this.isSearchable = false, this.isFilterable = false});
+  const FieldType(this.name,
+      {this.isSearchable = false, this.isFilterable = false, this.commaDividedValues = false});
   final String name;
   final bool isSearchable;
   final bool isFilterable;
+  final bool commaDividedValues;
 
   // Static map for fast lookup
   static final Map<String, FieldType> _typeMap = {for (var field in FieldType.values) field.name: field};

@@ -16,7 +16,7 @@ final Bank prodBank = Bank('Sófár Kottatár', Uri.parse('https://sofarkotta.cs
 final List<Bank> defaultBanks = [testBank, prodBank];
 
 // todo depend on banks
-@riverpod
+@Riverpod(keepAlive: true)
 Iterable<Song> allSongs(AllSongsRef ref) {
   return defaultBanks.expand((bank) => bank.songs);
 }
