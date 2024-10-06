@@ -21,10 +21,8 @@ void main() async {
   runApp(const ProviderScope(child: LyricApp()));
 }
 
-final GlobalKey<NavigatorState> _rootNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'root');
-final GlobalKey<NavigatorState> _baseNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'base');
+final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+final GlobalKey<NavigatorState> _baseNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'base');
 
 class LyricApp extends StatelessWidget {
   const LyricApp({super.key});
@@ -33,8 +31,8 @@ class LyricApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
         theme: ThemeData.from(
-            colorScheme: ColorScheme.fromSwatch(
-                primarySwatch: Colors.orange, brightness: Brightness.dark),
+            colorScheme: ColorScheme.fromSeed(
+                seedColor: Color(0xff025462), primary: Color(0xffc3a140), brightness: Brightness.dark),
             useMaterial3: true),
         routerConfig: _router);
   }
