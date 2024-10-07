@@ -4,5 +4,6 @@ include: package:flutter_lints/flutter.yaml
 analyzer:
   errors:
     invalid_annotation_target: ignore
+    provide_deprecation_message: ignore
   plugins:
     - custom_lint

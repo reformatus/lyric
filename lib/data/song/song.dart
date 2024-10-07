@@ -1,17 +1,20 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:lyric/data/database.dart';
 
-class Song {
+import '../bank/bank.dart';
+
+class Song extends Insertable<Song> {
   final String uuid;
-  final Uri source;
+  final int? sourceBankId;
   final String title;
   final String lyrics;
   final PitchField pitchField;
   Map<String, String> content;
   String? userNote;
 
-  factory Song.fromJson(Map<String, dynamic> json, {required Uri source}) {
+  factory Song.fromJson(Map<String, dynamic> json, {Bank? sourceBank}) {
     try {
       if (!mandatoryFields.every((field) => json.containsKey(field))) {
         throw Exception('Missing mandatory fields in: ${json['title']} (${json['uuid']})');
@@ -19,18 +22,31 @@ class Song {
 
       return Song(
         json['uuid'],
-        source,
         json['title'],
         json['lyrics'],
         PitchField.fromString(json['pitchField']),
         json.map((key, value) => MapEntry(key, value.toString())),
+        sourceBankId: sourceBank?.id,
       );
     } catch (e) {
       throw Exception('Invalid song data in: ${json['title']} (${json['uuid']})\nError: $e');
     }
   }
 
-  Song(this.uuid, this.source, this.title, this.lyrics, this.pitchField, this.content);
+  Song(this.uuid, this.title, this.lyrics, this.pitchField, this.content, {this.sourceBankId});
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    return SongsCompanion(
+      uuid: Value(uuid),
+      sourceBankId: Value(sourceBankId),
+      title: Value(title),
+      lyrics: Value(lyrics),
+      pitchField: Value(pitchField),
+      content: Value(content),
+      userNote: Value.absent(),
+    ).toColumns(nullToAbsent);
+  }
 }
 
 const List<String> mandatoryFields = ['title', 'lyrics'];
@@ -38,7 +54,7 @@ const List<String> mandatoryFields = ['title', 'lyrics'];
 @UseRowClass(Song)
 class Songs extends Table {
   TextColumn get uuid => text()();
-  TextColumn get source => text().map(const UriConverter())();
+  IntColumn get sourceBankId => integer().nullable().references(Banks, #id)();
   TextColumn get title => text()();
   TextColumn get lyrics => text()();
   TextColumn get pitchField => text().map(const PitchFieldConverter())();
@@ -60,20 +76,6 @@ class ContentConverter extends TypeConverter<Map<String, String>, String> {
   @override
   String toSql(Map<String, String> value) {
     return jsonEncode(value);
-  }
-}
-
-class UriConverter extends TypeConverter<Uri, String> {
-  const UriConverter();
-
-  @override
-  Uri fromSql(String fromDb) {
-    return Uri.parse(fromDb);
-  }
-
-  @override
-  String toSql(Uri value) {
-    return value.toString();
   }
 }
 

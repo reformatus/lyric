@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lyric/data/database.dart';
 import 'package:lyric/ui/base/home/page.dart';
 import 'package:lyric/ui/base/scaffold.dart';
 import 'package:path_provider/path_provider.dart';
@@ -12,11 +13,11 @@ import 'ui/base/sets/page.dart';
 import 'ui/loading/page.dart';
 import 'ui/song/page.dart';
 
-late final Directory dataDir;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   dataDir = await getApplicationDocumentsDirectory();
+  db = LyricDatabase();
 
   runApp(const ProviderScope(child: LyricApp()));
 }
