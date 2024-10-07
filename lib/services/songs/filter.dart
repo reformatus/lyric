@@ -1,11 +1,11 @@
 import 'package:lyric/views/base/songs/filter/widgets/filters.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../../data/bank/bank.dart';
-import '../../../../data/song/song.dart';
-import 'state.dart';
+import '../../data/bank/bank.dart';
+import '../../data/song/song.dart';
+import '../../views/base/songs/filter/state.dart';
 
-part 'execute.g.dart';
+part 'filter.g.dart';
 
 /* // todo remove
 @riverpod
@@ -21,9 +21,9 @@ Future<Iterable<({String value, bool selected})>> valueStatesForFilterableField(
 List<String> selectableValuesForFilterableField(
     SelectableValuesForFilterableFieldRef ref, String field, FieldType fieldType) {
   final allSongs = ref.watch(allSongsProvider);
-  var time = DateTime.now();
   Set<String> values = {};
 
+  // todo make async and compute()
   for (Song song in allSongs) {
     if (fieldType.commaDividedValues) {
       values.addAll(song.content[field]?.split(',') ?? []);
@@ -33,7 +33,6 @@ List<String> selectableValuesForFilterableField(
   }
 
   values.remove("");
-  print('Selectable values for $field took ${DateTime.now().difference(time).inMicroseconds} us');
   return values.toList();
 }
 
@@ -54,8 +53,7 @@ Map<String, ({FieldType type, int count})> existingSearchableFields(ExistingSear
           fields[field] = (type: FieldType.fromString(songFieldsMap[field]!['type'])!, count: 1);
         } else {
           // increment count by reassigning the record for the entry
-          fields[field] =
-              (type: fields[field]!.type, count: fields[field]!.count + 1);
+          fields[field] = (type: fields[field]!.type, count: fields[field]!.count + 1);
         }
       }
     }
@@ -81,8 +79,7 @@ Map<String, ({FieldType type, int count})> existingFilterableFields(ExistingFilt
           fields[field] = (type: FieldType.fromString(songFieldsMap[field]!['type'])!, count: 1);
         } else {
           // increment count by reassigning the record for the entry
-          fields[field] =
-              (type: fields[field]!.type, count: fields[field]!.count + 1);
+          fields[field] = (type: fields[field]!.type, count: fields[field]!.count + 1);
         }
       }
     }
