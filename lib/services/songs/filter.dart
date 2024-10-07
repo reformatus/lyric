@@ -1,9 +1,9 @@
-import 'package:lyric/views/base/songs/filter/widgets/filters.dart';
+import 'package:lyric/ui/base/songs/filter/widgets/filters.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/bank/bank.dart';
 import '../../data/song/song.dart';
-import '../../views/base/songs/filter/state.dart';
+import '../../ui/base/songs/filter/state.dart';
 
 part 'filter.g.dart';
 

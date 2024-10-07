@@ -2,9 +2,9 @@ import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/services/songs/filter.dart';
-import 'package:lyric/views/base/songs/filter/state.dart';
-import 'package:lyric/views/base/songs/filter/widgets/filters.dart';
-import 'package:lyric/views/base/songs/song_tile.dart';
+import 'package:lyric/ui/base/songs/filter/state.dart';
+import 'package:lyric/ui/base/songs/filter/widgets/filters.dart';
+import 'package:lyric/ui/base/songs/song_tile.dart';
 
 class SongsPage extends ConsumerStatefulWidget {
   const SongsPage({super.key});

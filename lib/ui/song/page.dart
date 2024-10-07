@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/data/bank/bank.dart';
-import 'package:lyric/views/song/view.dart';
+import 'package:lyric/ui/song/view.dart';
 
 import '../../data/song/song.dart';
 
