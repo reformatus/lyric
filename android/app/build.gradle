@@ -49,6 +49,11 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+
+        // For Drift; see https://github.com/simolus3/sqlite3.dart/tree/main/sqlite3_flutter_libs#included-platforms
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'
+        }
     }
 
     buildTypes {

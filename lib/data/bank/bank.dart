@@ -36,9 +36,10 @@ class Bank {
   }
 
   Future<Song> getSongDetails(String uuid) async {
-    final resp = await dio.get('$baseUrl/song/$uuid');
+    Uri source = Uri.parse('$baseUrl/song/$uuid');
+    final resp = await dio.getUri(source);
     try {
-      var song = Song.fromJson(resp.data[0] as Map<String, dynamic>);
+      var song = Song.fromJson(resp.data[0] as Map<String, dynamic>, source: source);
       return song;
     } catch (e) {
       throw Exception('Error while parsing song details for $uuid\n$e');

@@ -26,7 +26,8 @@ dependencies:
   path_provider: ^2.1.3
   path: ^1.9.0
   queue: ^3.1.0+2
-  drift: ^2.20.2
+  drift: ^2.20.3
+  drift_flutter: ^0.1.0
 
 dev_dependencies:
   flutter_lints: ^5.0.0
@@ -36,6 +37,7 @@ dev_dependencies:
   riverpod_generator: ^2.3.0
   custom_lint: ^0.6.7
   riverpod_lint: ^2.1.0
+  drift_dev: ^2.20.3
 
 flutter:
   uses-material-design: true
