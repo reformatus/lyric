@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/bank/bank.dart';
+import '../../data/database.dart';
 import '../../data/song/song.dart';
 import '../../ui/base/songs/filter/state.dart';
 
@@ -79,13 +80,7 @@ Map<String, ({FieldType type, int count})> existingFilterableFields(ExistingFilt
 
 @riverpod
 Future<List<Song>> filteredSongList(FilteredSongListRef ref) async {
-  final state = ref.watch(filterStateProvider);
-  final allSongs = ref.watch(allSongsProvider);
-
   // todo actually apply filters
 
-  //await Future.delayed(const Duration(seconds: 1));
-  //throw UnimplementedError();
-
-  return allSongs.toList();
+  return await db.select(db.songs).get(); // todo implement watch
 }

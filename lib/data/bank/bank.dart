@@ -8,14 +8,13 @@ import '../database.dart';
 import '../song/song.dart';
 
 part 'bank.g.dart';
-/*
-final Bank testBank = Bank('TESZT Sófár Kottatár', Uri.parse('https://kiskutyafule.csecsy.hu/api/'));
-final Bank prodBank = Bank('Sófár Kottatár', Uri.parse('https://sofarkotta.csecsy.hu/api/'));
-*/
 
-// todo make provider
-@deprecated
-final List<Bank> defaultBanks = []; //[testBank, prodBank];
+// these get added to the database on first run
+// todo add a way to add banks
+final List<Bank> defaultBanks = [
+  Bank(1, 'TESZT Sófár Kottatár', Uri.parse('https://kiskutyafule.csecsy.hu/api/')),
+  Bank(2, 'Sófár Kottatár', Uri.parse('https://sofarkotta.csecsy.hu/api/')),
+]; //[testBank, prodBank];
 
 // todo depend on banks
 @deprecated
@@ -31,7 +30,7 @@ Iterable<Song> allSongs(AllSongsRef ref) {
 */
 
 // todo row class
-class Bank {
+class Bank extends Insertable<Bank> {
   final int id;
   final Uri baseUrl;
   final String name;
@@ -43,12 +42,14 @@ class Bank {
   Bank(this.id, this.name, this.baseUrl);
 
   Future<List<ProtoSong>> getProtoSongs() async {
+    await Future.delayed(Duration(seconds: 1)); // todo remove
     final resp = await dio.get('$baseUrl/songs');
     return (resp.data as List).map((e) => ProtoSong.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   Future<Song> getSongDetails(String uuid) async {
     // todo handle unresponsive server/network and retries
+    await Future.delayed(Duration(milliseconds: 200)); // todo remove
     Uri source = Uri.parse('$baseUrl/song/$uuid');
     final resp = await dio.getUri(source);
     try {
@@ -59,26 +60,13 @@ class Bank {
     }
   }
 
-  @deprecated
-  Queue getProtoSongsQueue(List<ProtoSong> protoSongs) {
-    final Queue queue = Queue(parallel: 10);
-    for (var protoSong in protoSongs) {
-      queue.add(() async {
-        try {
-          Song song = await getSongDetails(protoSong.uuid);
-          songs.add(song);
-        } catch (e) {
-          // retry
-          try {
-            Song song = await getSongDetails(protoSong.uuid);
-            songs.add(song);
-          } catch (f) {
-            print('Error while fetching song details for ${protoSong.uuid}\n$e'); // todo ui
-          }
-        }
-      });
-    }
-    return queue;
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    return BanksCompanion(
+      id: Value.absent(),
+      name: Value(name),
+      baseUrl: Value(baseUrl),
+    ).toColumns(nullToAbsent);
   }
 }
 

@@ -2,70 +2,106 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lyric/data/bank/bank.dart';
+import 'package:lyric/services/songs/update.dart';
 import 'package:queue/queue.dart';
 
-import '../../data/bank/provider.dart';
+import '../common/error.dart';
 
 class LoadingPage extends ConsumerWidget {
   const LoadingPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final protoSongs = ref.watch(protoSongListProvider(defaultBanks[1])); // todo all banks
-    Queue? protoSongsQueue;
-    if (protoSongs.hasValue) {
-      protoSongsQueue = ref.watch(protoSongQueueProvider(protoSongs.asData!.value, defaultBanks[1]));
+    final bankStates = ref.watch(updateAllBanksProvider);
+
+    if (bankStates.hasValue && bankStates.value!.values.every(isDone)) {
+      // todo does isLoading stay true until all banks are updated?
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.go('/bank');
+      });
     }
-
-    ref.watch(remainingSongsCountProvider(protoSongsQueue)); // update page every time the queue changes
-
-    protoSongsQueue?.onComplete.then((_) {
-      // ignore: use_build_context_synchronously
-      context.go('/bank');
-    });
-
-    int protoSongsLengthValue() => protoSongs.asData?.value.length ?? 0;
 
     return Scaffold(
       appBar: AppBar(
-          title: const Text('Sófár Lyric'),
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(4),
-            child: LinearProgressIndicator(
-              value: protoSongs.when(
-                data: (_) => (defaultBanks[1].songs.length) / protoSongsLengthValue(),
-                error: (_, __) => 0,
-                loading: () => 0,
-              ),
+        title: const Text('Sófár Lyric'),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(4),
+          child: LinearProgressIndicator(),
+        ),
+      ),
+      body: Center(
+        child: switch (bankStates) {
+          AsyncError(:final error, :final stackTrace) => LErrorCard(
+              type: LErrorType.error,
+              title: 'Hiba a bankok letöltése közben',
+              message: error.toString(),
+              stack: stackTrace.toString(),
+              icon: Icons.error,
             ),
-          )),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ListTile(
-              leading: CircularProgressIndicator(
-                value: protoSongs.when(
-                  data: (_) => (defaultBanks[1].songs.length) / protoSongsLengthValue(),
-                  error: (_, __) => 0,
-                  loading: () => null,
+          AsyncLoading() || AsyncValue() => ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: 600,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Card(
+                      margin: EdgeInsets.only(bottom: 15),
+                      clipBehavior: Clip.antiAlias,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(top: 16, left: 16, bottom: 13),
+                            child: Text('Online tárak frissítése...',
+                                style: Theme.of(context).textTheme.titleLarge),
+                          ),
+                          LinearProgressIndicator(
+                            value: () {
+                              if (!bankStates.hasValue) {
+                                return null;
+                              }
+                              int stateCount = bankStates.value!.length;
+                              if (stateCount == 0) return null;
+
+                              int doneCount = bankStates.value!.values
+                                  .where((e) => e != null && (e.toUpdateCount == e.updatedCount))
+                                  .length;
+
+                              return doneCount / stateCount;
+                            }(),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (bankStates.hasValue)
+                      ...bankStates.value!.entries.map(
+                        (e) => Padding(
+                          padding: EdgeInsets.only(left: 20),
+                          child: ListTile(
+                            leading: isDone(e.value)
+                                ? Icon(Icons.check)
+                                : SizedBox.square(
+                                    dimension: 25,
+                                    child: CircularProgressIndicator(value: getProgress(e.value))),
+                            title: Text(
+                              e.key.name,
+                              style: TextStyle(fontWeight: FontWeight.w500),
+                            ),
+                            subtitle: e.value != null
+                                ? Text("${e.value!.updatedCount} / ${e.value!.toUpdateCount}")
+                                : null,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
-              title: Text(
-                '${defaultBanks[1].name}\nletöltése folyamatban...',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-              subtitle: protoSongs.hasValue
-                  ? Text(
-                      '${defaultBanks[1].songs.length} / ${protoSongs.asData!.value.length}',
-                    )
-                  : null,
             ),
-            const SizedBox(height: 20),
-          ],
-        ),
+        },
       ),
     );
   }

@@ -10,7 +10,7 @@ class Song extends Insertable<Song> {
   final int? sourceBankId;
   final String title;
   final String lyrics;
-  final PitchField pitchField;
+  final PitchField pitchField; // todo make nullable everywhere
   Map<String, String> content;
   String? userNote;
 
@@ -24,12 +24,12 @@ class Song extends Insertable<Song> {
         json['uuid'],
         json['title'],
         json['lyrics'],
-        PitchField.fromString(json['pitchField']),
+        PitchField.fromString(json['pitch']),
         json.map((key, value) => MapEntry(key, value.toString())),
         sourceBankId: sourceBank?.id,
       );
-    } catch (e) {
-      throw Exception('Invalid song data in: ${json['title']} (${json['uuid']})\nError: $e');
+    } catch (e, s) {
+      throw Exception('Invalid song data in: ${json['title']} (${json['uuid']})\nError: $e\n$s\n');
     }
   }
 
@@ -49,7 +49,7 @@ class Song extends Insertable<Song> {
   }
 }
 
-const List<String> mandatoryFields = ['title', 'lyrics'];
+const List<String> mandatoryFields = ['uuid', 'title', 'lyrics', 'pitch'];
 
 @UseRowClass(Song)
 class Songs extends Table {
@@ -70,7 +70,7 @@ class ContentConverter extends TypeConverter<Map<String, String>, String> {
 
   @override
   Map<String, String> fromSql(String fromDb) {
-    return jsonDecode(fromDb) as Map<String, String>;
+    return (jsonDecode(fromDb) as Map).cast<String, String>();
   }
 
   @override
@@ -100,11 +100,15 @@ class PitchField {
   PitchField(this.key, this.scale);
 
   factory PitchField.fromString(String value) {
-    throw UnimplementedError(); // todo
+    var parts = value.split('-');
+    if (parts.length != 2) {
+      throw Exception('Invalid pitch field: $value');
+    }
+    return PitchField(parts[0], parts[1]);
   }
 
   @override
   String toString() {
-    throw UnimplementedError(); // todo
+    return '$key-$scale';
   }
 }

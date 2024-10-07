@@ -5,6 +5,7 @@ import 'package:lyric/services/songs/filter.dart';
 import 'package:lyric/ui/base/songs/filter/state.dart';
 import 'package:lyric/ui/base/songs/filter/widgets/filters.dart';
 import 'package:lyric/ui/base/songs/song_tile.dart';
+import 'package:lyric/ui/common/error.dart';
 
 class SongsPage extends ConsumerStatefulWidget {
   const SongsPage({super.key});
@@ -139,18 +140,14 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                 Expanded(
                   child: switch (songs) {
                     AsyncLoading() => const Center(child: CircularProgressIndicator()),
-                    AsyncError(:final error) => Center(
-                        child: Card(
-                          // todo factor out to general error widget
-                          margin: const EdgeInsets.all(8),
-                          color: Colors.red,
-                          child: ListTile(
-                            title: const Text('Hiba történt!'),
-                            subtitle: Text(error.toString()),
-                            leading: const Icon(Icons.error),
-                          ),
+                    AsyncError(:final error, :final stackTrace) => Center(
+                        child: LErrorCard(
+                            type: LErrorType.error,
+                            title: 'Hová lettek a dalok? :(',
+                            message: error.toString(),
+                            icon: Icons.error,
+                            stack: stackTrace.toString())
                         ),
-                      ),
                     AsyncValue(:final value) => ListView.separated(
                         itemBuilder: (BuildContext context, int i) {
                           return LSongTile(value!.elementAt(i));

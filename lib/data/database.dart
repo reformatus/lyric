@@ -21,6 +21,16 @@ class LyricDatabase extends _$LyricDatabase {
   static QueryExecutor _openConnection() {
     return driftDatabase(name: 'lyric');
   }
+
+  @override
+  MigrationStrategy get migration {
+    return MigrationStrategy(onCreate: (Migrator m) async {
+      await m.createAll();
+      for (var bank in defaultBanks) {
+        await into(banks).insert(bank);
+      }
+    });
+  }
 }
 
 class UriConverter extends TypeConverter<Uri, String> {
