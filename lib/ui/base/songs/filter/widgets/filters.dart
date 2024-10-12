@@ -181,6 +181,13 @@ class LFilterChip extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(right: 5),
       child: FilterChip.elevated(
+        color: WidgetStateProperty.resolveWith((states) {
+          if (!states.contains(WidgetState.selected)) {
+            return Theme.of(context).cardColor;
+          } else {
+            return Theme.of(context).focusColor;
+          }
+        }),
         label: Text(label),
         selected: selected,
         onSelected: onSelected,
