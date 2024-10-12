@@ -111,9 +111,27 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                             child: Theme(
                               data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
                               child: ExpansionTile(
+                                collapsedBackgroundColor: filterState.isEmpty
+                                    ? null
+                                    : Theme.of(context).colorScheme.secondaryContainer,
+                                collapsedIconColor: filterState.isEmpty
+                                    ? null
+                                    : Theme.of(context).colorScheme.onSecondaryContainer,
                                 controller: _filterExpansionTileController,
                                 leading: const Icon(Icons.filter_list),
-                                title: Text('Szűrők'),
+                                title: Text(
+                                  filterState.isEmpty
+                                      ? 'Szűrők'
+                                      : filterState.values.map((e) => e.join(', ')).join('; '),
+                                  style: TextStyle(
+                                    color: filterState.isEmpty
+                                        ? null
+                                        : Theme.of(context).colorScheme.onSecondaryContainer,
+                                    fontSize: filterState.isEmpty
+                                        ? null
+                                        : Theme.of(context).textTheme.bodyMedium!.fontSize,
+                                  ),
+                                ),
                                 children: [
                                   FiltersColumn(),
                                 ],
@@ -146,8 +164,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                             title: 'Hová lettek a dalok? :(',
                             message: error.toString(),
                             icon: Icons.error,
-                            stack: stackTrace.toString())
-                        ),
+                            stack: stackTrace.toString())),
                     AsyncValue(:final value) => ListView.separated(
                         itemBuilder: (BuildContext context, int i) {
                           return LSongTile(value!.elementAt(i));
