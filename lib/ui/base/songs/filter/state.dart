@@ -88,7 +88,7 @@ const Map<String, Map<String, dynamic>> songFieldsMap = {
   },
 };
 
-@riverpod
+@Riverpod(keepAlive: true)
 class SearchFieldsState extends _$SearchFieldsState {
   @override
   List<String> build() {
@@ -109,7 +109,7 @@ class SearchFieldsState extends _$SearchFieldsState {
   }
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class SearchStringState extends _$SearchStringState {
   @override
   String build() {

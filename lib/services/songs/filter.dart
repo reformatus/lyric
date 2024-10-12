@@ -84,7 +84,7 @@ Stream<List<Song>> allSongs(AllSongsRef ref) {
   return db.select(db.songs).watch();
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 Stream<List<Song>> filteredSongList(FilteredSongListRef ref) {
   // todo actually apply filters
 
