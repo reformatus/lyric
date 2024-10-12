@@ -1,6 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../data/bank/bank.dart';
 import '../../data/database.dart';
 import '../../data/song/song.dart';
 import '../../ui/base/songs/filter/state.dart';
@@ -8,12 +7,11 @@ import '../../ui/base/songs/filter/state.dart';
 part 'filter.g.dart';
 
 @Riverpod(keepAlive: true)
-List<String> selectableValuesForFilterableField(
-    SelectableValuesForFilterableFieldRef ref, String field, FieldType fieldType) {
-  final allSongs = ref.watch(allSongsProvider);
+Future<List<String>> selectableValuesForFilterableField(
+    SelectableValuesForFilterableFieldRef ref, String field, FieldType fieldType) async {
+  final allSongs = await ref.watch(allSongsProvider.future);
   Set<String> values = {};
 
-  // todo make async and compute()
   for (Song song in allSongs) {
     if (fieldType.commaDividedValues) {
       values.addAll(song.content[field]?.split(',') ?? []);
@@ -26,15 +24,15 @@ List<String> selectableValuesForFilterableField(
   return values.toList();
 }
 
-// todo make part of bank
 // todo write test
 @riverpod
-Map<String, ({FieldType type, int count})> existingSearchableFields(ExistingSearchableFieldsRef ref) {
+Future<Map<String, ({FieldType type, int count})>> existingSearchableFields(
+    ExistingSearchableFieldsRef ref) async {
   Map<String, ({FieldType type, int count})> fields = {};
 
-  final allSongs = ref.watch(allSongsProvider);
+  final allSongs = Stream.fromIterable(await ref.watch(allSongsProvider.future));
 
-  for (var song in allSongs) {
+  await for (var song in allSongs) {
     for (var field in song.content.keys) {
       if ((FieldType.fromString(songFieldsMap[field]?['type'] ?? "")?.isSearchable ?? false) &&
           song.content[field]! != "") {
@@ -52,15 +50,15 @@ Map<String, ({FieldType type, int count})> existingSearchableFields(ExistingSear
   return fields;
 }
 
-// todo make part of bank
 // todo write test
 @riverpod
-Map<String, ({FieldType type, int count})> existingFilterableFields(ExistingFilterableFieldsRef ref) {
+Future<Map<String, ({FieldType type, int count})>> existingFilterableFields(
+    ExistingFilterableFieldsRef ref) async {
   Map<String, ({FieldType type, int count})> fields = {};
 
-  final allSongs = ref.watch(allSongsProvider);
+  final allSongs = Stream.fromIterable(await ref.watch(allSongsProvider.future));
 
-  for (var song in allSongs) {
+  await for (var song in allSongs) {
     for (var field in song.content.keys) {
       if ((FieldType.fromString(songFieldsMap[field]?['type'] ?? "")?.isFilterable ?? false) &&
           song.content[field]! != "") {
@@ -78,9 +76,14 @@ Map<String, ({FieldType type, int count})> existingFilterableFields(ExistingFilt
   return fields;
 }
 
+@Riverpod(keepAlive: true)
+Stream<List<Song>> allSongs(AllSongsRef ref) {
+  return db.select(db.songs).watch();
+}
+
 @riverpod
-Future<List<Song>> filteredSongList(FilteredSongListRef ref) async {
+Stream<List<Song>> filteredSongList(FilteredSongListRef ref) {
   // todo actually apply filters
 
-  return await db.select(db.songs).get(); // todo implement watch
+  return db.select(db.songs).watch();
 }

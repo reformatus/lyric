@@ -1,6 +1,7 @@
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/ui/common/error.dart';
 
 import '../../../../../services/songs/filter.dart';
 import '../state.dart';
@@ -10,12 +11,22 @@ class FiltersColumn extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var filterableFieldsList = ref.watch(existingFilterableFieldsProvider).entries.toList();
+    var filterableFieldsList = ref.watch(existingFilterableFieldsProvider);
 
-    return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: filterableFieldsList
-            .map((e) => switch (e.value.type) {
+    return switch (filterableFieldsList) {
+      AsyncError(:final error, :final stackTrace) => LErrorCard(
+          type: LErrorType.error,
+          title: 'Hiba a szűrők betöltése közben',
+          message: error.toString(),
+          stack: stackTrace.toString(),
+          icon: Icons.error,
+        ),
+      AsyncLoading() => Center(child: CircularProgressIndicator()),
+      AsyncValue(:final value) => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: value!.entries
+              .map(
+                (e) => switch (e.value.type) {
                   FieldType.multiselect || FieldType.multiselectTags => LFilterChips(
                       field: e.key,
                       fieldType: e.value.type,
@@ -27,8 +38,11 @@ class FiltersColumn extends ConsumerWidget {
                       title: Text(e.key),
                       subtitle: Text('Unsupported filter type ${e.value}'),
                     ),
-                })
-            .toList());
+                },
+              )
+              .toList(),
+        )
+    };
   }
 }
 
@@ -86,7 +100,10 @@ class _LFilterChipsState extends ConsumerState<LFilterChips> {
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(songFieldsMap[widget.field]!['title_hu'] ?? "[Szűrő neve hiányzik]"),
+            Text(
+              // far future todo: i18n
+              songFieldsMap[widget.field]!['title_hu'] ?? "[Szűrő neve hiányzik]",
+            ),
             Expanded(
               child: Text(
                 "  ${widget.fieldPopulatedCount} kitöltve",
@@ -103,37 +120,41 @@ class _LFilterChipsState extends ConsumerState<LFilterChips> {
             )
           ],
         ),
-        subtitle: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Expanded(
-              child: SizedBox(
-                height: 38,
-                child: FadingEdgeScrollView.fromScrollView(
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    controller: _filterChipsRowController,
-                    scrollDirection: Axis.horizontal,
-                    itemCount: selectableValues.length,
-                    itemBuilder: (context, i) {
-                      String value = selectableValues[i];
-                      bool selected = filterState[widget.field]?.contains(value) ?? false;
-                      onSelected(bool newValue) {
-                        if (newValue) {
-                          filterStateNotifier.addFilter(widget.field, value);
-                        } else {
-                          filterStateNotifier.removeFilter(widget.field, value);
-                        }
-                      }
+        subtitle: switch (selectableValues) {
+          AsyncLoading() => LinearProgressIndicator(),
+          AsyncError(:final error) => Text('Hiba a szűrőértékek lekérdezése közben: $error'),
+          AsyncValue(:final value) => Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    height: 38,
+                    child: FadingEdgeScrollView.fromScrollView(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        controller: _filterChipsRowController,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: value!.length,
+                        itemBuilder: (context, i) {
+                          String item = value[i];
+                          bool selected = filterState[widget.field]?.contains(item) ?? false;
+                          onSelected(bool newValue) {
+                            if (newValue) {
+                              filterStateNotifier.addFilter(widget.field, item);
+                            } else {
+                              filterStateNotifier.removeFilter(widget.field, item);
+                            }
+                          }
 
-                      return LFilterChip(label: value, onSelected: onSelected, selected: selected);
-                    },
+                          return LFilterChip(label: item, onSelected: onSelected, selected: selected);
+                        },
+                      ),
+                    ),
                   ),
-                ),
-              ),
+                )
+              ],
             )
-          ],
-        ),
+        },
         trailing: active()
             ? IconButton(
                 onPressed: () => filterStateNotifier.resetFilterField(widget.field), icon: Icon(Icons.clear))

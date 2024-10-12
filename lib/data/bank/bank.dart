@@ -1,13 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:drift/drift.dart';
 //import 'package:path_provider/path_provider.dart';
-import 'package:queue/queue.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../database.dart';
 import '../song/song.dart';
-
-part 'bank.g.dart';
 
 // these get added to the database on first run
 // todo add a way to add banks
@@ -16,20 +12,6 @@ final List<Bank> defaultBanks = [
   Bank(2, 'Sófár Kottatár', Uri.parse('https://sofarkotta.csecsy.hu/api/')),
 ]; //[testBank, prodBank];
 
-// todo depend on banks
-@deprecated
-@Riverpod(keepAlive: true)
-Iterable<Song> allSongs(AllSongsRef ref) {
-  throw UnimplementedError();
-  // todo return defaultBanks.expand((bank) => bank.songs);
-}
-
-/* todo
-  banks extends table
-  populate default banks
-*/
-
-// todo row class
 class Bank extends Insertable<Bank> {
   final int id;
   final Uri baseUrl;
