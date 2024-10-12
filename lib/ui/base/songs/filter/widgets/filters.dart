@@ -21,7 +21,7 @@ class FiltersColumn extends ConsumerWidget {
           stack: stackTrace.toString(),
           icon: Icons.error,
         ),
-      AsyncLoading() => Center(child: CircularProgressIndicator()),
+      AsyncLoading() => Center(child: LinearProgressIndicator()),
       AsyncValue(:final value) => Column(
           mainAxisSize: MainAxisSize.min,
           children: value!.entries

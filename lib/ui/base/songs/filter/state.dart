@@ -132,6 +132,11 @@ class FilterState extends _$FilterState {
     return {};
   }
 
+  @override
+  String toString() {
+    return state.values.map((e) => e.join(' ')).join(' | ');
+  }
+
   void addFilter(String field, String value) {
     if (state.containsKey(field)) {
       state[field]!.add(value);

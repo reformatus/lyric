@@ -9,10 +9,10 @@ part 'filter.g.dart';
 @Riverpod(keepAlive: true)
 Future<List<String>> selectableValuesForFilterableField(
     SelectableValuesForFilterableFieldRef ref, String field, FieldType fieldType) async {
-  final allSongs = await ref.watch(allSongsProvider.future);
+  final allSongs = Stream.fromIterable(await ref.watch(allSongsProvider.future));
   Set<String> values = {};
 
-  for (Song song in allSongs) {
+  await for (Song song in allSongs) {
     if (fieldType.commaDividedValues) {
       values.addAll(song.content[field]?.split(',') ?? []);
     } else {
@@ -25,7 +25,8 @@ Future<List<String>> selectableValuesForFilterableField(
 }
 
 // todo write test
-@riverpod
+// todo merge with existingFilterableFields
+@Riverpod(keepAlive: true)
 Future<Map<String, ({FieldType type, int count})>> existingSearchableFields(
     ExistingSearchableFieldsRef ref) async {
   Map<String, ({FieldType type, int count})> fields = {};
@@ -51,12 +52,14 @@ Future<Map<String, ({FieldType type, int count})>> existingSearchableFields(
 }
 
 // todo write test
-@riverpod
+@Riverpod(keepAlive: true)
 Future<Map<String, ({FieldType type, int count})>> existingFilterableFields(
     ExistingFilterableFieldsRef ref) async {
   Map<String, ({FieldType type, int count})> fields = {};
 
   final allSongs = Stream.fromIterable(await ref.watch(allSongsProvider.future));
+
+  await Future.delayed(Duration(seconds: 1)); // todo remove
 
   await for (var song in allSongs) {
     for (var field in song.content.keys) {
