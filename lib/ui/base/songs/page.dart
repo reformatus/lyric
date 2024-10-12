@@ -21,6 +21,11 @@ class _SongsPageState extends ConsumerState<SongsPage> {
     _overlayPortalController = OverlayPortalController();
     _filterScrollController = ScrollController();
     _filterExpansionTileController = ExpansionTileController();
+    _searchFieldController = TextEditingController(text: ref.read(searchStringStateProvider));
+    _searchFieldController.addListener(() {
+      ref.read(searchStringStateProvider.notifier).set(_searchFieldController.text);
+    });
+
     _filterScrollController.addListener(() {
       if (_filterScrollController.offset > 0) {
         if (!filtersScrolled) {
@@ -43,6 +48,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
   late OverlayPortalController _overlayPortalController;
   late ScrollController _filterScrollController;
   late ExpansionTileController _filterExpansionTileController;
+  late TextEditingController _searchFieldController;
   final _link = LayerLink();
 
   @override
@@ -55,6 +61,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
         Scaffold(
           appBar: AppBar(
             title: TextField(
+              controller: _searchFieldController,
               autocorrect: false,
               decoration: InputDecoration(
                 hintText: 'Keresés',
@@ -95,6 +102,8 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                 ),
               ),
             ),
+            bottom: PreferredSize(
+                preferredSize: Size(0, 5), child: songs.isLoading ? LinearProgressIndicator() : Container()),
           ),
           body: LayoutBuilder(builder: (context, constraints) {
             return Column(
@@ -157,20 +166,28 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                 ),
                 Expanded(
                   child: switch (songs) {
-                    AsyncLoading() => const Center(child: CircularProgressIndicator()),
                     AsyncError(:final error, :final stackTrace) => Center(
                         child: LErrorCard(
-                            type: LErrorType.error,
-                            title: 'Hová lettek a dalok? :(',
-                            message: error.toString(),
-                            icon: Icons.error,
-                            stack: stackTrace.toString())),
-                    AsyncValue(:final value) => ListView.separated(
-                        itemBuilder: (BuildContext context, int i) {
-                          return LSongTile(value!.elementAt(i));
-                        },
-                        separatorBuilder: (_, __) => const SizedBox(height: 0),
-                        itemCount: value?.length ?? 0),
+                          type: LErrorType.error,
+                          title: 'Hová lettek a dalok? :(',
+                          message: error.toString(),
+                          icon: Icons.error,
+                          stack: stackTrace.toString(),
+                        ),
+                      ),
+                    AsyncLoading(:final value) || AsyncValue(:final value) => value == null
+                        ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : Opacity(
+                            opacity: songs.isLoading ? 0.5 : 1,
+                            child: ListView.separated(
+                                itemBuilder: (BuildContext context, int i) {
+                                  return LSongTile(value.elementAt(i));
+                                },
+                                separatorBuilder: (_, __) => const SizedBox(height: 0),
+                                itemCount: value.length),
+                          ),
                   },
                 )
               ],

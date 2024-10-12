@@ -116,11 +116,11 @@ class SearchStringState extends _$SearchStringState {
     return "";
   }
 
-  void setSearchString(String value) {
+  void set(String value) {
     state = value;
   }
 
-  void clearSearchString() {
+  void clear() {
     state = "";
   }
 }
