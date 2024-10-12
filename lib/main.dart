@@ -11,7 +11,6 @@ import 'ui/base/sets/page.dart';
 import 'ui/loading/page.dart';
 import 'ui/song/page.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   dataDir = await getApplicationDocumentsDirectory();

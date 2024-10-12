@@ -46,3 +46,5 @@ class UriConverter extends TypeConverter<Uri, String> {
     return value.toString();
   }
 }
+
+String sanitize(String s) => s.replaceAll(RegExp(r'[^\p{Letter}\p{Number} ]', unicode: true), '');

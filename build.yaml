@@ -6,3 +6,9 @@ targets:
           # todo when out of beta, add skip_verification_code: true
           store_date_time_values_as_text: true
           data_class_to_companions: true
+          sql:
+            dialect: sqlite
+            options:
+              modules:
+                - json1
+                - fts5

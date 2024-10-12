@@ -24,14 +24,12 @@ class Bank extends Insertable<Bank> {
   Bank(this.id, this.name, this.baseUrl);
 
   Future<List<ProtoSong>> getProtoSongs() async {
-    await Future.delayed(Duration(seconds: 1)); // todo remove
     final resp = await dio.get('$baseUrl/songs');
     return (resp.data as List).map((e) => ProtoSong.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   Future<Song> getSongDetails(String uuid) async {
     // todo handle unresponsive server/network and retries
-    await Future.delayed(Duration(milliseconds: 200)); // todo remove
     Uri source = Uri.parse('$baseUrl/song/$uuid');
     final resp = await dio.getUri(source);
     try {

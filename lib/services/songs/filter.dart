@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/database.dart';
@@ -59,8 +60,6 @@ Future<Map<String, ({FieldType type, int count})>> existingFilterableFields(
 
   final allSongs = Stream.fromIterable(await ref.watch(allSongsProvider.future));
 
-  await Future.delayed(Duration(seconds: 1)); // todo remove
-
   await for (var song in allSongs) {
     for (var field in song.content.keys) {
       if ((FieldType.fromString(songFieldsMap[field]?['type'] ?? "")?.isFilterable ?? false) &&
@@ -85,8 +84,15 @@ Stream<List<Song>> allSongs(AllSongsRef ref) {
 }
 
 @Riverpod(keepAlive: true)
-Stream<List<Song>> filteredSongList(FilteredSongListRef ref) {
-  // todo actually apply filters
+Stream<List<Song>> filteredSongs(FilteredSongsRef ref) {
+  final String searchString = sanitize(ref.watch(searchStringStateProvider));
+  final List<String> searchFields = ref.watch(searchFieldsStateProvider);
+  final Map<String, List<String>> filters = ref.watch(filterStateProvider);
 
-  return db.select(db.songs).watch();
+  final songs = db.customSelect("""
+SELECT * FROM songs WHERE
+title LIKE '%$searchString%';
+""", readsFrom: {db.songs}).watch().map((rows) => rows.map((row) => db.songs.map(row.data)).toList());
+
+  return songs;
 }
