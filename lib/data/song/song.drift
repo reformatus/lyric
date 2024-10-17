@@ -3,17 +3,17 @@ import 'song.dart';
 -- Full Text Search (FTS) table for songs
 
 CREATE VIRTUAL TABLE songs_fts USING fts5(
-  uuid UNINDEXED,
-  source_bank_id UNINDEXED,
-  title,
-  lyrics,
-  composer,
-  poet,
-  translator,
-  pitch_field UNINDEXED,
-  content='songs',
-  content_rowid='id',
-  tokenize='trigram remove_diacritics 1'
+  uuid UNINDEXED
+  ,source_bank_id UNINDEXED
+  ,title
+  ,lyrics
+  ,composer
+  ,poet
+  ,translator
+  ,pitch_field UNINDEXED
+  ,content='songs'
+  ,content_rowid='id'
+  ,tokenize='trigram remove_diacritics 1'
 );
 
 -- Triggers for keeping fts table in sync with the main table
