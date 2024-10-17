@@ -12,8 +12,14 @@ late LyricDatabase db;
 late final Directory dataDir;
 
 @DriftDatabase(
-  tables: [Songs, Banks],
-  include: {'song/song.drift'},
+  tables: [
+    Songs,
+    Banks,
+  ],
+  include: {
+    'song/song.drift',
+    '../services/songs/filter.drift',
+  },
 )
 class LyricDatabase extends _$LyricDatabase {
   LyricDatabase() : super(_openConnection());

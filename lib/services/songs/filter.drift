@@ -1,0 +1,17 @@
+import '../../data/song/song.drift';
+import '../../data/song/song.dart';
+
+song_fulltext_search(:match_string AS TEXT):
+  SELECT
+      CAST(BM25(songs_fts, 0.0, 0.0, 10.0, 0.5, 5.0, 5.0, 2.0, 0.0) AS REAL) AS rank
+      ,uuid
+      ,source_bank_id
+      ,pitch_field
+      ,CAST(SNIPPET(songs_fts, 2, '<?', '?>', '...', 30) AS TEXT) AS match_title
+      ,CAST(SNIPPET(songs_fts, 3, '<?', '?>', '...', 30) AS TEXT) AS match_lyrics
+      ,CAST(SNIPPET(songs_fts, 4, '<?', '?>', '...', 30) AS TEXT) AS match_composer
+      ,CAST(SNIPPET(songs_fts, 5, '<?', '?>', '...', 30) AS TEXT) AS match_poet
+      ,CAST(SNIPPET(songs_fts, 6, '<?', '?>', '...', 30) AS TEXT) AS match_translator
+    FROM songs_fts
+    WHERE songs_fts MATCH :match_string
+    ORDER BY rank;
