@@ -1,4 +1,3 @@
-import 'package:drift/drift.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/database.dart';
@@ -91,7 +90,7 @@ Stream<List<Song>> filteredSongs(FilteredSongsRef ref) {
 
   final songs = db.customSelect("""
 SELECT * FROM songs WHERE
-title LIKE '%$searchString%';
+title COLLATE UTF16CI LIKE '%$searchString%' COLLATE UTF16CI;
 """, readsFrom: {db.songs}).watch().map((rows) => rows.map((row) => db.songs.map(row.data)).toList());
 
   return songs;
