@@ -5,6 +5,7 @@ analyzer:
   errors:
     avoid_print: ignore
     invalid_annotation_target: ignore
+    invalid_use_of_internal_member: ignore
     provide_deprecation_message: ignore
   plugins:
     - custom_lint
