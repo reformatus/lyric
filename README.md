@@ -2,6 +2,8 @@
 
 ## Your Open Worship Superapp
 
+[![Dart](https://github.com/reformatus/lyric/actions/workflows/dart.yml/badge.svg?branch=main)](https://github.com/reformatus/lyric/actions/workflows/dart.yml)
+
 **Sófár Lyric** will be your one-stop-shop for making the best setlists, performing from sheet music with your band, and projecting lyrics with sheet music.\
 It will have an open and growing ecosystem of song libraries.
 
