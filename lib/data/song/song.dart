@@ -10,7 +10,11 @@ class Song extends Insertable<Song> {
   final int? sourceBankId;
   final String title;
   final String lyrics;
-  final PitchField pitchField; // todo make nullable everywhere
+  final PitchField? pitchField; // todo make nullable everywhere
+  final String? composer;
+  final String? poet;
+  final String? translator;
+
   Map<String, String> content;
   String? userNote;
 
@@ -21,48 +25,68 @@ class Song extends Insertable<Song> {
       }
 
       return Song(
-        json['uuid'],
-        json['title'],
-        json['lyrics'],
-        PitchField.fromString(json['pitch']),
-        json.map((key, value) => MapEntry(key, value.toString())),
+        uuid: json['uuid'],
+        title: json['title'],
+        lyrics: json['lyrics'],
+        pitchField: PitchField.fromString(json['pitch']),
+        content: json.map((key, value) => MapEntry(key, value.toString())),
         sourceBankId: sourceBank?.id,
+        composer: json['composer'],
+        poet: json['poet'],
+        translator: json['translator'],
+        userNote: json['user_note'], // todo will this be here? for example, when reading from file?
       );
     } catch (e, s) {
       throw Exception('Invalid song data in: ${json['title']} (${json['uuid']})\nError: $e\n$s\n');
     }
   }
 
-  Song(this.uuid, this.title, this.lyrics, this.pitchField, this.content, {this.sourceBankId});
+  //Song(this.uuid, this.title, this.lyrics, this.pitchField, this.content, {this.sourceBankId});
+  Song({
+    required this.uuid,
+    required this.title,
+    required this.lyrics,
+    required this.pitchField,
+    required this.content,
+    this.sourceBankId,
+    this.composer,
+    this.poet,
+    this.translator,
+    this.userNote,
+  });
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     return SongsCompanion(
       uuid: Value(uuid),
       sourceBankId: Value(sourceBankId),
+      content: Value(content),
       title: Value(title),
       lyrics: Value(lyrics),
+      composer: Value(composer),
+      poet: Value(poet),
+      translator: Value(translator),
       pitchField: Value(pitchField),
-      content: Value(content),
-      userNote: Value.absent(),
+      userNote: Value(userNote),
     ).toColumns(nullToAbsent);
   }
 }
 
-const List<String> mandatoryFields = ['uuid', 'title', 'lyrics', 'pitch'];
+const List<String> mandatoryFields = ['uuid', 'title', 'lyrics'];
 
 @UseRowClass(Song)
 class Songs extends Table {
+  IntColumn get id => integer().autoIncrement()();
   TextColumn get uuid => text()();
   IntColumn get sourceBankId => integer().nullable().references(Banks, #id)();
+  TextColumn get content => text().map(const ContentConverter())();
   TextColumn get title => text()();
   TextColumn get lyrics => text()();
+  TextColumn get composer => text().nullable()();
+  TextColumn get poet => text().nullable()();
+  TextColumn get translator => text().nullable()();
   TextColumn get pitchField => text().map(const PitchFieldConverter())();
-  TextColumn get content => text().map(const ContentConverter())();
   TextColumn get userNote => text().nullable()();
-
-  @override
-  Set<Column> get primaryKey => {uuid};
 }
 
 class ContentConverter extends TypeConverter<Map<String, String>, String> {
@@ -79,16 +103,17 @@ class ContentConverter extends TypeConverter<Map<String, String>, String> {
   }
 }
 
-class PitchFieldConverter extends TypeConverter<PitchField, String> {
+class PitchFieldConverter extends TypeConverter<PitchField?, String> {
   const PitchFieldConverter();
 
   @override
-  PitchField fromSql(String fromDb) {
+  PitchField? fromSql(String fromDb) {
     return PitchField.fromString(fromDb);
   }
 
   @override
-  String toSql(PitchField value) {
+  String toSql(PitchField? value) {
+    if (value == null) return "";
     return value.toString();
   }
 }
@@ -99,7 +124,9 @@ class PitchField {
 
   PitchField(this.key, this.scale);
 
-  factory PitchField.fromString(String value) {
+  static PitchField? fromString(String? value) {
+    if (value == null || value.isEmpty) return null;
+
     var parts = value.split('-');
     if (parts.length != 2) {
       throw Exception('Invalid pitch field: $value');

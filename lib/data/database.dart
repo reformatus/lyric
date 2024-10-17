@@ -11,7 +11,10 @@ part 'database.g.dart';
 late LyricDatabase db;
 late final Directory dataDir;
 
-@DriftDatabase(tables: [Songs, Banks])
+@DriftDatabase(
+  tables: [Songs, Banks],
+  include: {'song/song.drift'},
+)
 class LyricDatabase extends _$LyricDatabase {
   LyricDatabase() : super(_openConnection());
 
