@@ -12,10 +12,10 @@ Currently our only song library is the one of **Sófár**, which is an associati
 
 #### How to build
 
-1. Install the latest Flutter SDK
+1. Install the latest [Flutter SDK](https://docs.flutter.dev/get-started/install)
 2. Clone this repository
 3. Run `flutter pub get` to install dependencies
-4. Run `dart run build_runner build` for generated code (freezed, json_serializable, riverpod)
+4. Run `dart run build_runner build` for generated code (drift, riverpod)
 5. Run `flutter run` to build and run the app
 
 #### Contributing
