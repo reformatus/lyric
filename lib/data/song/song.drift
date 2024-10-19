@@ -11,9 +11,9 @@ CREATE VIRTUAL TABLE songs_fts USING fts5(
   ,poet
   ,translator
   ,pitch_field UNINDEXED
-  ,content='songs'
+  ,content='songs' -- only use the fts table for indexing, get the actual data from the main table (avoid duplication)
   ,content_rowid='id'
-  ,tokenize='trigram remove_diacritics 1'
+  ,tokenize='trigram remove_diacritics 1' -- search by min. 3 letters, ignore diacritics
 );
 
 -- Triggers for keeping fts table in sync with the main table
