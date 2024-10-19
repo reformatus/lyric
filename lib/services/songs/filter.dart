@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../../data/database.dart';
 import '../../data/song/song.dart';
@@ -83,15 +84,40 @@ Stream<List<Song>> allSongs(AllSongsRef ref) {
 }
 
 @Riverpod(keepAlive: true)
-Stream<List<Song>> filteredSongs(FilteredSongsRef ref) {
+Stream<List<SongResult>> filteredSongs(FilteredSongsRef ref) {
   final String searchString = sanitize(ref.watch(searchStringStateProvider));
+  // ignore: unused_local_variable // todo remove
   final List<String> searchFields = ref.watch(searchFieldsStateProvider);
+  // ignore: unused_local_variable // todo remove
   final Map<String, List<String>> filters = ref.watch(filterStateProvider);
 
-  final songs = db.customSelect("""
-SELECT * FROM songs WHERE
-title COLLATE UTF16CI LIKE '%$searchString%' COLLATE UTF16CI;
-""", readsFrom: {db.songs}).watch().map((rows) => rows.map((row) => db.songs.map(row.data)).toList());
+  if (searchString.isEmpty) {
+    return db.select(db.songs).watch().map((songs) {
+      return songs.map((song) {
+        return SongResult(song: song);
+      }).toList();
+    });
+  } else if (searchString.length < 3) {
+    return Stream.value([]);
+  } else {
+    final matchStream = db.song_fulltext_search(searchString).watch();
+    final songStream = db.select(db.songs).watch();
 
-  return songs;
+    return CombineLatestStream.combine2(matchStream, songStream, (matches, songs) {
+      return matches.map((match) {
+        final song = songs.firstWhere((song) => match.uuid == song.uuid);
+        return SongResult(song: song, match: match);
+      }).toList();
+    });
+  }
+}
+
+class SongResult {
+  final Song song;
+  final SongFulltextSearchResult? match;
+
+  SongResult({
+    required this.song,
+    this.match,
+  });
 }

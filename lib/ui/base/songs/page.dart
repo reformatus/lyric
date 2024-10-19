@@ -53,7 +53,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final songs = ref.watch(filteredSongsProvider);
+    final songResults = ref.watch(filteredSongsProvider);
     final filterState = ref.watch(filterStateProvider);
 
     return Stack(
@@ -103,7 +103,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
               ),
             ),
             bottom: PreferredSize(
-                preferredSize: Size(0, 5), child: songs.isLoading ? LinearProgressIndicator() : Container()),
+                preferredSize: Size(0, 5), child: songResults.isLoading ? LinearProgressIndicator() : Container()),
           ),
           body: LayoutBuilder(builder: (context, constraints) {
             return Column(
@@ -165,7 +165,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                   ),
                 ),
                 Expanded(
-                  child: switch (songs) {
+                  child: switch (songResults) {
                     AsyncError(:final error, :final stackTrace) => Center(
                         child: LErrorCard(
                           type: LErrorType.error,
@@ -180,7 +180,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                             child: CircularProgressIndicator(),
                           )
                         : Opacity(
-                            opacity: songs.isLoading ? 0.5 : 1,
+                            opacity: songResults.isLoading ? 0.5 : 1,
                             child: ListView.separated(
                                 itemBuilder: (BuildContext context, int i) {
                                   return LSongTile(value.elementAt(i));

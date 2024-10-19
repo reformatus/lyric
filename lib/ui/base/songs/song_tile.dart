@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lyric/services/songs/filter.dart';
 
-import '../../../data/song/song.dart';
 
 class LSongTile extends StatelessWidget {
-  const LSongTile(this.song, {super.key});
+  const LSongTile(this.songResult, {super.key});
 
-  final Song song;
+  final SongResult songResult;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      onTap: () => context.push('/song/${song.uuid}'),
-      title: Text(song.content['title']!),
+      onTap: () => context.push('/song/${songResult.song.uuid}'),
+      title: Text(songResult.song.content['title']!),
     );
   }
 }
