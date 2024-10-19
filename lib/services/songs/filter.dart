@@ -83,6 +83,8 @@ Stream<List<Song>> allSongs(AllSongsRef ref) {
   return db.select(db.songs).watch();
 }
 
+const snippetTags = (start: '<?', end: '?>');
+
 @Riverpod(keepAlive: true)
 Stream<List<SongResult>> filteredSongs(FilteredSongsRef ref) {
   final String searchString = sanitize(ref.watch(searchStringStateProvider));
@@ -103,9 +105,10 @@ Stream<List<SongResult>> filteredSongs(FilteredSongsRef ref) {
     final matchStream = db.song_fulltext_search(searchString).watch();
     final songStream = db.select(db.songs).watch();
 
+    // if both streams have returned at least one list, combine and return an always updating result
     return CombineLatestStream.combine2(matchStream, songStream, (matches, songs) {
       return matches.map((match) {
-        final song = songs.firstWhere((song) => match.uuid == song.uuid);
+        final song = songs.firstWhere((song) => match.uuid == song.uuid); // todo optimize maybe?
         return SongResult(song: song, match: match);
       }).toList();
     });

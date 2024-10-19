@@ -103,7 +103,8 @@ class _SongsPageState extends ConsumerState<SongsPage> {
               ),
             ),
             bottom: PreferredSize(
-                preferredSize: Size(0, 5), child: songResults.isLoading ? LinearProgressIndicator() : Container()),
+                preferredSize: Size(0, 5),
+                child: songResults.isLoading ? LinearProgressIndicator() : Container()),
           ),
           body: LayoutBuilder(builder: (context, constraints) {
             return Column(
@@ -179,15 +180,12 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                         ? const Center(
                             child: CircularProgressIndicator(),
                           )
-                        : Opacity(
-                            opacity: songResults.isLoading ? 0.5 : 1,
-                            child: ListView.separated(
-                                itemBuilder: (BuildContext context, int i) {
-                                  return LSongTile(value.elementAt(i));
-                                },
-                                separatorBuilder: (_, __) => const SizedBox(height: 0),
-                                itemCount: value.length),
-                          ),
+                        : ListView.separated(
+                            itemBuilder: (BuildContext context, int i) {
+                              return LSongResultTile(value.elementAt(i));
+                            },
+                            separatorBuilder: (_, __) => const SizedBox(height: 0),
+                            itemCount: value.length),
                   },
                 )
               ],
