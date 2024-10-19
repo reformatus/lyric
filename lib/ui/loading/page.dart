@@ -15,7 +15,7 @@ class LoadingPage extends ConsumerWidget {
     if (bankStates.hasValue && bankStates.value!.values.every(isDone)) {
       // todo does isLoading stay true until all banks are updated?
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.go('/bank');
+        context.pushReplacement('/bank');
       });
     }
 
@@ -80,19 +80,18 @@ class LoadingPage extends ConsumerWidget {
                         (e) => Padding(
                           padding: EdgeInsets.only(left: 20),
                           child: ListTile(
-                            leading: isDone(e.value)
-                                ? Icon(Icons.check)
-                                : SizedBox.square(
-                                    dimension: 25,
-                                    child: CircularProgressIndicator(value: getProgress(e.value))),
-                            title: Text(
-                              e.key.name,
-                              style: TextStyle(fontWeight: FontWeight.w500),
-                            ),
-                            subtitle: e.value != null
-                                ? Text("${e.value!.updatedCount} / ${e.value!.toUpdateCount}")
-                                : null,
-                          ),
+                              leading: isDone(e.value)
+                                  ? Icon(Icons.check)
+                                  : SizedBox.square(
+                                      dimension: 25,
+                                      child: CircularProgressIndicator(value: getProgress(e.value))),
+                              title: Text(
+                                e.key.name,
+                                style: TextStyle(fontWeight: FontWeight.w500),
+                              ),
+                              subtitle: Text(e.value != null
+                                  ? "${e.value!.updatedCount} / ${e.value!.toUpdateCount} frissítve"
+                                  : "")),
                         ),
                       ),
                   ],
