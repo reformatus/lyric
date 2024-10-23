@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:drift/drift.dart';
 //import 'package:path_provider/path_provider.dart';
@@ -10,7 +12,11 @@ import '../song/song.dart';
 final List<Bank> defaultBanks = [
   Bank(1, 'TESZT Sófár Kottatár', Uri.parse('https://kiskutyafule.csecsy.hu/api/')),
   Bank(2, 'Sófár Kottatár', Uri.parse('https://sofarkotta.csecsy.hu/api/')),
-]; //[testBank, prodBank];
+  Bank(
+      3, 'Református Énekeskönyv (1948)', Uri.parse('https://banks.lyricapp.org/reformatus-enekeskonyv/48/')),
+  Bank(
+      4, 'Református Énekeskönyv (2021)', Uri.parse('https://banks.lyricapp.org/reformatus-enekeskonyv/21/')),
+];
 
 class Bank extends Insertable<Bank> {
   final int id;
@@ -24,16 +30,20 @@ class Bank extends Insertable<Bank> {
   Bank(this.id, this.name, this.baseUrl);
 
   Future<List<ProtoSong>> getProtoSongs() async {
-    final resp = await dio.get('$baseUrl/songs');
-    return (resp.data as List).map((e) => ProtoSong.fromJson(e as Map<String, dynamic>)).toList();
+    final resp = await dio.get<String>('$baseUrl/songs');
+    final jsonList = jsonDecode(resp.data ?? "[]") as List;
+
+    return jsonList.map((e) => ProtoSong.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   Future<Song> getSongDetails(String uuid) async {
     // todo handle unresponsive server/network and retries
     Uri source = Uri.parse('$baseUrl/song/$uuid');
-    final resp = await dio.getUri(source);
+    final resp = await dio.getUri<String>(source);
     try {
-      var song = Song.fromJson(resp.data[0] as Map<String, dynamic>, sourceBank: this);
+      var songJson = jsonDecode(resp.data!);
+      if (songJson is List) songJson = songJson.first; //make compatible with sófár kottatár quirk
+      var song = Song.fromJson(songJson as Map<String, dynamic>, sourceBank: this);
       return song;
     } catch (e) {
       throw Exception('Error while parsing song details for $uuid\n$e');

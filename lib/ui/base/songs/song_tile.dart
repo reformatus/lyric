@@ -16,8 +16,14 @@ class LSongResultTile extends StatelessWidget {
     final SongFulltextSearchResult? match = songResult.match;
 
     if (match == null) {
-      final firstLine = song.content['first_line'] ?? song.lyrics.substring(song.lyrics.indexOf('\n'));
+      String firstLine = "";
+      try {
+        firstLine = song.content['first_line'] ?? song.lyrics.substring(song.lyrics.indexOf('\n'));
+      } catch (_) {
+        firstLine = song.lyrics;
+      }
       return ListTile(
+        // far future todo dense on desktop (maybe even table?)
         onTap: () => context.push('/song/${song.uuid}'),
         title: Text(song.title),
         trailing: Text(song.pitchField?.toString() ?? ''),

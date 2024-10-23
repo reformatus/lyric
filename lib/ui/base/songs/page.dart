@@ -64,7 +64,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
               controller: _searchFieldController,
               autocorrect: false,
               decoration: InputDecoration(
-                hintText: 'Keresés',
+                hintText: 'Keresés (min. 3 betű)',
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: CompositedTransformTarget(
                   link: _link,
