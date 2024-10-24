@@ -3,7 +3,7 @@ import '../../data/song/song.dart';
 
 song_fulltext_search(:match_string AS TEXT):
   SELECT
-      bm25(songs_fts, 0.0, 0.0, 10.0, 0.5, 5.0, 5.0, 2.0, 0.0) AS rank
+      bm25(songs_fts, 0.0, 0.0, 10.0, 0.5, 5.0, 5.0, 2.0, 0.0, 0.0) AS rank
       ,uuid
       ,source_bank_id
       ,pitch_field
@@ -14,4 +14,7 @@ song_fulltext_search(:match_string AS TEXT):
       ,snippet(songs_fts, 6, '<?', '?>', '...', 15) AS match_translator
     FROM songs_fts
     WHERE songs_fts MATCH :match_string
+    AND (
+      $filter
+    )
     ORDER BY rank;

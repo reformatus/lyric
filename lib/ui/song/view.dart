@@ -10,7 +10,7 @@ class SongView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(children: [
-      Text(song.content['lyrics'] ?? ''),
+      Text(song.contentMap['lyrics'] ?? ''),
     ]);
   }
 }

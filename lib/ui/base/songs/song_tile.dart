@@ -18,7 +18,7 @@ class LSongResultTile extends StatelessWidget {
     if (match == null) {
       String firstLine = "";
       try {
-        firstLine = song.content['first_line'] ?? song.lyrics.substring(song.lyrics.indexOf('\n'));
+        firstLine = song.contentMap['first_line'] ?? song.lyrics.substring(song.lyrics.indexOf('\n'));
       } catch (_) {
         firstLine = song.lyrics;
       }

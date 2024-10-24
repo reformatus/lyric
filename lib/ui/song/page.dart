@@ -23,7 +23,7 @@ class SongPage extends ConsumerWidget {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Text(song?.content['title'] ?? ""),
+        title: Text(song?.contentMap['title'] ?? ""),
       ),
       body: switch (allSongs) {
         AsyncError(:final error, :final stackTrace) => Center(

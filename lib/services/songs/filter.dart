@@ -1,3 +1,5 @@
+import 'package:drift/drift.dart';
+import 'package:drift/extensions/json1.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -15,9 +17,9 @@ Future<List<String>> selectableValuesForFilterableField(
 
   await for (Song song in allSongs) {
     if (fieldType.commaDividedValues) {
-      values.addAll(song.content[field]?.split(',') ?? []);
+      values.addAll(song.contentMap[field]?.split(',') ?? []);
     } else {
-      values.add(song.content[field] ?? "");
+      values.add(song.contentMap[field] ?? "");
     }
   }
 
@@ -35,9 +37,9 @@ Future<Map<String, ({FieldType type, int count})>> existingSearchableFields(
   final allSongs = Stream.fromIterable(await ref.watch(allSongsProvider.future));
 
   await for (var song in allSongs) {
-    for (var field in song.content.keys) {
+    for (var field in song.contentMap.keys) {
       if ((FieldType.fromString(songFieldsMap[field]?['type'] ?? "")?.isSearchable ?? false) &&
-          song.content[field]! != "") {
+          song.contentMap[field]! != "") {
         if (!fields.keys.any((k) => k == field)) {
           // first time we see this field
           fields[field] = (type: FieldType.fromString(songFieldsMap[field]!['type'])!, count: 1);
@@ -61,9 +63,9 @@ Future<Map<String, ({FieldType type, int count})>> existingFilterableFields(
   final allSongs = Stream.fromIterable(await ref.watch(allSongsProvider.future));
 
   await for (var song in allSongs) {
-    for (var field in song.content.keys) {
+    for (var field in song.contentMap.keys) {
       if ((FieldType.fromString(songFieldsMap[field]?['type'] ?? "")?.isFilterable ?? false) &&
-          song.content[field]! != "") {
+          song.contentMap[field]! != "") {
         if (!fields.keys.any((k) => k == field)) {
           // first time we see this field
           fields[field] = (type: FieldType.fromString(songFieldsMap[field]!['type'])!, count: 1);
@@ -88,21 +90,67 @@ const snippetTags = (start: '<?', end: '?>');
 @Riverpod(keepAlive: true)
 Stream<List<SongResult>> filteredSongs(FilteredSongsRef ref) {
   final String searchString = sanitize(ref.watch(searchStringStateProvider));
-  // ignore: unused_local_variable // todo remove
+  // ignore: unused_local_variable // todo implement
   final List<String> searchFields = ref.watch(searchFieldsStateProvider);
-  // ignore: unused_local_variable // todo remove
   final Map<String, List<String>> filters = ref.watch(filterStateProvider);
 
+  /*
+  Example filter state content:
+    filters = {
+      "content_tags": ["tag1", "tag2"],
+      "genre": ["genre1", "genre2"]
+    }
+  Should generate:
+    ...AND (
+      AND-ALL (
+        ([
+          OR-ALL (
+            var contentTags = jsonExtract...
+            [
+              contentTags.like(%tag1%),
+              contentTags.like(%tag2%)
+            ]
+          )
+        ),
+        (
+          OR-ALL (
+            var genre = jsonExtract...
+            [
+              genre.like(%genre1%)
+              genre.like(%genre2%)
+            ]
+          )
+        )
+      ])
+    )
+  */
+  Expression<bool> filterExpression(SongsFts songsFts) => Expression.and(
+        filters.entries.map(
+          (entry) {
+            final fieldData = songsFts.contentMap.jsonExtract<String>('\$.${entry.key}');
+            return Expression.or(
+              entry.value.map((value) => fieldData.like('%$value%')),
+            );
+          },
+        ),
+      );
+
   if (searchString.isEmpty) {
+    // reimplement with songs_fts table to avoid repeating filterExpression
     return db.select(db.songs).watch().map((songs) {
       return songs.map((song) {
         return SongResult(song: song);
       }).toList();
     });
   } else if (searchString.length < 3) {
-    return Stream.value([]);
+    return Stream.value([]); // todo ui message
   } else {
-    final matchStream = db.song_fulltext_search(searchString).watch();
+    final matchStream = db
+        .song_fulltext_search(
+          searchString,
+          (songsFts) => filterExpression(songsFts),
+        )
+        .watch();
     final songStream = db.select(db.songs).watch();
 
     // if both streams have returned at least one list, combine and return an always updating result

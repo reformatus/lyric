@@ -15,7 +15,7 @@ class Song extends Insertable<Song> {
   final String? poet;
   final String? translator;
 
-  Map<String, String> content;
+  Map<String, String> contentMap;
   String? userNote;
 
   factory Song.fromJson(Map<String, dynamic> json, {Bank? sourceBank}) {
@@ -29,7 +29,7 @@ class Song extends Insertable<Song> {
         title: json['title'],
         lyrics: json['lyrics'],
         pitchField: PitchField.fromString(json['pitch']),
-        content: json.map((key, value) => MapEntry(key, value.toString())),
+        contentMap: json.map((key, value) => MapEntry(key, value.toString())),
         sourceBankId: sourceBank?.id,
         composer: json['composer'],
         poet: json['poet'],
@@ -47,7 +47,7 @@ class Song extends Insertable<Song> {
     required this.title,
     required this.lyrics,
     required this.pitchField,
-    required this.content,
+    required this.contentMap,
     this.sourceBankId,
     this.composer,
     this.poet,
@@ -60,7 +60,7 @@ class Song extends Insertable<Song> {
     return SongsCompanion(
       uuid: Value(uuid),
       sourceBankId: Value(sourceBankId),
-      content: Value(content),
+      contentMap: Value(contentMap),
       title: Value(title),
       lyrics: Value(lyrics),
       composer: Value(composer),
@@ -79,7 +79,7 @@ class Songs extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get uuid => text()();
   IntColumn get sourceBankId => integer().nullable().references(Banks, #id)();
-  TextColumn get content => text().map(const ContentConverter())();
+  TextColumn get contentMap => text().map(const ContentConverter())();
   TextColumn get title => text()();
   TextColumn get lyrics => text()();
   TextColumn get composer => text().nullable()();
