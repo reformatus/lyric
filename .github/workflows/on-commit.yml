@@ -1,4 +1,4 @@
-name: On Commit / PR
+name: On Commit or PR
 
 on:
   push:
