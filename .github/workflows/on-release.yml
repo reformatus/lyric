@@ -2,7 +2,7 @@ name: On Release
 
 on:
   release: 
-    types: [released, prereleased]
+    types: [edited, published]
 
 jobs:
   analyze:
@@ -37,3 +37,4 @@ jobs:
           file: build/app/outputs/flutter-apk/app-profile.apk
           asset_name: lyric_test_${{ github.event.release.tag_name }}.apk
           tag: ${{ github.ref }}
+          overwrite: true
