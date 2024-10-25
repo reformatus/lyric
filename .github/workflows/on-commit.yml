@@ -1,4 +1,4 @@
-name: Dart
+name: On Commit / PR
 
 on:
   push:
@@ -8,4 +8,5 @@ on:
 
 jobs:
   analyze:
+    name: Analyze
     uses: ./.github/workflows/part_analyze.yml

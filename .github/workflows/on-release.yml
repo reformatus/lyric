@@ -1,4 +1,4 @@
-name: Dart
+name: On Release
 
 on:
   release: 
@@ -6,8 +6,10 @@ on:
 
 jobs:
   analyze:
+    name: Analyze
     uses: ./.github/workflows/part_analyze.yml
   build-and-upload:
+    name: Build and Upload
     uses: ./.github/workflows/part_build-and-upload.yml
 #      with:
 #        release-string: ${{ github.event.release.tag_name }}
