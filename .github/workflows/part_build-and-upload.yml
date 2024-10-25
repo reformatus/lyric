@@ -33,7 +33,7 @@ jobs:
       - name: Upload apk to release
         uses: svenstaro/upload-release-action@v2
           with:
-              repo_token: ${{ secrets.GITHUB_TOKEN }}
-              file: 
-              asset_name: lyric_test_${{ github.event.release.tag_name }}.apk
-              tag: ${{ github.ref }}
+            repo_token: ${{ secrets.GITHUB_TOKEN }}
+            file: 
+            asset_name: lyric_test_${{ github.event.release.tag_name }}.apk
+            tag: ${{ github.ref }}

@@ -6,8 +6,8 @@ on:
 
 jobs:
   analyze:
-    uses: ./.github/workflows/parts/analyze.yml
+    uses: ./.github/workflows/part_analyze.yml
   build-and-upload:
-    uses: ./.github/workflows/parts/build-and-upload.yml
+    uses: ./.github/workflows/part_build-and-upload.yml
 #      with:
 #        release-string: ${{ github.event.release.tag_name }}
