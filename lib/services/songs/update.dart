@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/data/database.dart';
 import 'package:queue/queue.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -20,7 +21,7 @@ double? getProgress(({int toUpdateCount, int updatedCount})? record) {
 }
 
 @riverpod
-Stream<Map<Bank, ({int toUpdateCount, int updatedCount})?>> updateAllBanks(UpdateAllBanksRef ref) async* {
+Stream<Map<Bank, ({int toUpdateCount, int updatedCount})?>> updateAllBanks(Ref ref) async* {
   Map<Bank, ({int toUpdateCount, int updatedCount})?> bankStates = Map.fromEntries(
     (await db.banks.select().get()).map(
       (e) => MapEntry(e, null),

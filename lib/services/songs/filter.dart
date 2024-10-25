@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:drift/extensions/json1.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/database.dart';
@@ -10,7 +11,7 @@ part 'filter.g.dart';
 
 @Riverpod(keepAlive: true)
 Future<List<String>> selectableValuesForFilterableField(
-    SelectableValuesForFilterableFieldRef ref, String field, FieldType fieldType) async {
+    Ref ref, String field, FieldType fieldType) async {
   final allSongs = Stream.fromIterable(await ref.watch(allSongsProvider.future));
   Set<String> values = {};
 
@@ -30,7 +31,7 @@ Future<List<String>> selectableValuesForFilterableField(
 // todo merge with existingFilterableFields
 @Riverpod(keepAlive: true)
 Future<Map<String, ({FieldType type, int count})>> existingSearchableFields(
-    ExistingSearchableFieldsRef ref) async {
+    Ref ref) async {
   Map<String, ({FieldType type, int count})> fields = {};
 
   final allSongs = Stream.fromIterable(await ref.watch(allSongsProvider.future));
@@ -56,7 +57,7 @@ Future<Map<String, ({FieldType type, int count})>> existingSearchableFields(
 // todo write test
 @Riverpod(keepAlive: true)
 Future<Map<String, ({FieldType type, int count})>> existingFilterableFields(
-    ExistingFilterableFieldsRef ref) async {
+    Ref ref) async {
   Map<String, ({FieldType type, int count})> fields = {};
 
   final allSongs = Stream.fromIterable(await ref.watch(allSongsProvider.future));
@@ -80,14 +81,14 @@ Future<Map<String, ({FieldType type, int count})>> existingFilterableFields(
 }
 
 @Riverpod(keepAlive: true)
-Stream<List<Song>> allSongs(AllSongsRef ref) {
+Stream<List<Song>> allSongs(Ref ref) {
   return db.select(db.songs).watch();
 }
 
 const snippetTags = (start: '<?', end: '?>');
 
 @Riverpod(keepAlive: true)
-Stream<List<SongResult>> filteredSongs(FilteredSongsRef ref) {
+Stream<List<SongResult>> filteredSongs(Ref ref) {
   final String searchString = sanitize(ref.watch(searchStringStateProvider));
   // ignore: unused_local_variable // todo implement
   final List<String> searchFields = ref.watch(searchFieldsStateProvider);

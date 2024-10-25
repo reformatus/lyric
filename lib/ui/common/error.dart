@@ -41,7 +41,7 @@ class LErrorCard extends StatelessWidget {
                   LErrorType.warning => Colors.orange,
                   LErrorType.info => Colors.blue,
                 }
-                    .withOpacity(0.8),
+                    .withAlpha(200),
               ),
               title: Text(
                 title,

@@ -6,7 +6,6 @@ import 'package:lyric/services/songs/filter.dart';
 import 'package:lyric/ui/common/error.dart';
 
 import '../../../data/database.dart';
-import '../../../data/song/song.dart';
 
 class LSongResultTile extends StatelessWidget {
   const LSongResultTile(this.songResult, {super.key});
@@ -30,7 +29,7 @@ class LSongResultTile extends StatelessWidget {
         // far future todo dense on desktop (maybe even table?)
         onTap: () => context.push('/song/${songsFt.uuid}'),
         title: Text(songsFt.title),
-        trailing: Text(songsFt.pitchField?.toString() ?? ''),
+        trailing: Text(songsFt.pitchField.toString()),
         subtitle: !firstLine.startsWith(songsFt.title)
             ? Text(
                 firstLine,
