@@ -27,12 +27,12 @@ class FiltersColumn extends ConsumerWidget {
           children: value!.entries
               .map(
                 (e) => switch (e.value.type) {
-                  FieldType.multiselect || FieldType.multiselectTags => LFilterChips(
+                  FieldType.multiselect || FieldType.multiselectTags => FilterChips(
                       field: e.key,
                       fieldType: e.value.type,
                       fieldPopulatedCount: e.value.count,
                     ),
-                  FieldType.pitch => LFilterPitch(),
+                  FieldType.pitch => FilterPitch(),
                   _ => ListTile(
                       // todo nice error card
                       title: Text(e.key),
@@ -46,8 +46,8 @@ class FiltersColumn extends ConsumerWidget {
   }
 }
 
-class LFilterPitch extends StatelessWidget {
-  const LFilterPitch({super.key});
+class FilterPitch extends StatelessWidget {
+  const FilterPitch({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -55,8 +55,8 @@ class LFilterPitch extends StatelessWidget {
   }
 }
 
-class LFilterChips extends ConsumerStatefulWidget {
-  const LFilterChips({
+class FilterChips extends ConsumerStatefulWidget {
+  const FilterChips({
     required this.field,
     required this.fieldType,
     required this.fieldPopulatedCount,
@@ -68,10 +68,10 @@ class LFilterChips extends ConsumerStatefulWidget {
   final int fieldPopulatedCount;
 
   @override
-  ConsumerState<LFilterChips> createState() => _LFilterChipsState();
+  ConsumerState<FilterChips> createState() => LFilterChipsState();
 }
 
-class _LFilterChipsState extends ConsumerState<LFilterChips> {
+class LFilterChipsState extends ConsumerState<FilterChips> {
   @override
   void initState() {
     super.initState();
@@ -197,8 +197,8 @@ class LFilterChip extends StatelessWidget {
   }
 }
 
-class LCheckboxTile extends StatelessWidget {
-  const LCheckboxTile({
+class CheckboxTile extends StatelessWidget {
+  const CheckboxTile({
     required this.label,
     required this.onTap,
     required this.value,
