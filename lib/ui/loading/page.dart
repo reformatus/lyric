@@ -31,7 +31,7 @@ class LoadingPage extends ConsumerWidget {
         child: switch (bankStates) {
           AsyncError(:final error, :final stackTrace) => LErrorCard(
               type: LErrorType.error,
-              title: 'Hiba a bankok letöltése közben',
+              title: 'Hiba a tárak frissítése közben',
               message: error.toString(),
               stack: stackTrace.toString(),
               icon: Icons.error,

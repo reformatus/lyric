@@ -5,14 +5,14 @@ class LErrorCard extends StatelessWidget {
     super.key,
     required this.type,
     required this.title,
-    required this.message,
+    this.message,
     this.stack,
     required this.icon,
   });
 
   final LErrorType type;
   final String title;
-  final String message;
+  final String? message;
   final String? stack;
   final IconData icon;
 
@@ -48,25 +48,26 @@ class LErrorCard extends StatelessWidget {
                 style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
-            if (stack != null)
+            if (message != null || stack != null)
               Padding(
                 padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text(message),
-                    ConstrainedBox(
-                      constraints: BoxConstraints(maxHeight: 100),
-                      child: SingleChildScrollView(
+                    if (message != null) Text(message!),
+                    if (stack != null)
+                      ConstrainedBox(
+                        constraints: BoxConstraints(maxHeight: 100),
                         child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Text(
-                            stack!,
-                            style: TextStyle(fontFamily: 'Courier New'), // todo is available on android?
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Text(
+                              stack!,
+                              style: TextStyle(fontFamily: 'Courier New'), // todo is available on android?
+                            ),
                           ),
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),

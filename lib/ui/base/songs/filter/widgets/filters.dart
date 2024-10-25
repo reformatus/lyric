@@ -33,10 +33,11 @@ class FiltersColumn extends ConsumerWidget {
                       fieldPopulatedCount: e.value.count,
                     ),
                   FieldType.pitch => FilterPitch(),
-                  _ => ListTile(
-                      // todo nice error card
-                      title: Text(e.key),
-                      subtitle: Text('Unsupported filter type ${e.value}'),
+                  _ => LErrorCard(
+                      type: LErrorType.warning,
+                      title: 'Nem támogatott szűrőtípus!',
+                      message: e.value.toString(),
+                      icon: Icons.filter_alt,
                     ),
                 },
               )
