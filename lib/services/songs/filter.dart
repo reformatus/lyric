@@ -1,7 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:drift/extensions/json1.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:rxdart/rxdart.dart';
 
 import '../../data/database.dart';
 import '../../data/song/song.dart';
@@ -136,39 +135,25 @@ Stream<List<SongResult>> filteredSongs(FilteredSongsRef ref) {
       );
 
   if (searchString.isEmpty) {
-    // reimplement with songs_fts table to avoid repeating filterExpression
-    return db.select(db.songs).watch().map((songs) {
-      return songs.map((song) {
-        return SongResult(song: song);
-      }).toList();
-    });
-  } else if (searchString.length < 3) {
-    return Stream.value([]); // todo ui message
+    return ((db.select(db.songsFts)..where((songsFts) => filterExpression(songsFts))).watch()).map(
+      (songsFtList) => songsFtList.map((songsFt) => SongResult(songsFt: songsFt)).toList(),
+    );
   } else {
-    final matchStream = db
-        .song_fulltext_search(
-          searchString,
-          (songsFts) => filterExpression(songsFts),
-        )
-        .watch();
-    final songStream = db.select(db.songs).watch();
-
-    // if both streams have returned at least one list, combine and return an always updating result
-    return CombineLatestStream.combine2(matchStream, songStream, (matches, songs) {
-      return matches.map((match) {
-        final song = songs.firstWhere((song) => match.uuid == song.uuid); // todo optimize maybe?
-        return SongResult(song: song, match: match);
-      }).toList();
-    });
+    return (db.song_fulltext_search(searchString, (songsFts) => filterExpression(songsFts)).watch()).map(
+      (matchList) => matchList.map((match) => SongResult(match: match)).toList(),
+    );
   }
 }
 
 class SongResult {
-  final Song song;
+  final SongsFt? songsFt;
   final SongFulltextSearchResult? match;
 
   SongResult({
-    required this.song,
+    this.songsFt,
     this.match,
-  });
+  }) {
+    assert(songsFt != null || match != null,
+        'Either SongFt (normally) or SongFulltextSearchResult (when using FTS search) should be returned!');
+  }
 }

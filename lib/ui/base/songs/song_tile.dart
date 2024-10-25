@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lyric/services/songs/filter.dart';
+import 'package:lyric/ui/common/error.dart';
 
 import '../../../data/database.dart';
 import '../../../data/song/song.dart';
@@ -12,22 +15,23 @@ class LSongResultTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Song song = songResult.song;
+    final SongsFt? songsFt = songResult.songsFt;
     final SongFulltextSearchResult? match = songResult.match;
 
-    if (match == null) {
+    if (songsFt != null) {
       String firstLine = "";
       try {
-        firstLine = song.contentMap['first_line'] ?? song.lyrics.substring(song.lyrics.indexOf('\n'));
+        firstLine = jsonDecode(songsFt.contentMap)['first_line'] ??
+            songsFt.lyrics.substring(songsFt.lyrics.indexOf('\n'));
       } catch (_) {
-        firstLine = song.lyrics;
+        firstLine = songsFt.lyrics;
       }
       return ListTile(
         // far future todo dense on desktop (maybe even table?)
-        onTap: () => context.push('/song/${song.uuid}'),
-        title: Text(song.title),
-        trailing: Text(song.pitchField?.toString() ?? ''),
-        subtitle: !firstLine.startsWith(song.title)
+        onTap: () => context.push('/song/${songsFt.uuid}'),
+        title: Text(songsFt.title),
+        trailing: Text(songsFt.pitchField?.toString() ?? ''),
+        subtitle: !firstLine.startsWith(songsFt.title)
             ? Text(
                 firstLine,
                 maxLines: 1,
@@ -36,9 +40,9 @@ class LSongResultTile extends StatelessWidget {
               )
             : null,
       );
-    } else {
+    } else if (match != null) {
       return ListTile(
-        onTap: () => context.push('/song/${song.uuid}'),
+        onTap: () => context.push('/song/${match.uuid}'),
         title: RichText(
           text: TextSpan(
             children: spansFromSnippet(
@@ -61,6 +65,14 @@ class LSongResultTile extends StatelessWidget {
             if (hasMatch(match.matchTranslator)) trailingPart(match.matchTranslator, context),
           ],
         ),
+      );
+    } else {
+      return LErrorCard(
+        type: LErrorType.warning,
+        title: 'Itt egy dalnak kéne lennie',
+        message: "Se a 'match', se a 'songsFt' nem volt kitöltve",
+        stack: 'ui/base/songs/song_tile:70',
+        icon: Icons.music_note,
       );
     }
   }
