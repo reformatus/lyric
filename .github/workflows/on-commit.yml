@@ -1,0 +1,11 @@
+name: Dart
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  analyze:
+    uses: ./.github/workflows/parts/analyze.yml

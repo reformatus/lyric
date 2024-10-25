@@ -1,0 +1,13 @@
+name: Dart
+
+on:
+  release: 
+    types: [released, prereleased]
+
+jobs:
+  analyze:
+    uses: ./.github/workflows/parts/analyze.yml
+  build-and-upload:
+    uses: ./.github/workflows/parts/build-and-upload.yml
+#      with:
+#        release-string: ${{ github.event.release.tag_name }}

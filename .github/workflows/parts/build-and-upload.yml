@@ -1,0 +1,39 @@
+name: Build and Upload apk
+
+on:
+  wokflow-call:
+#    inputs:
+#      version-string:
+#        required: true
+#        type: string
+
+jobs:
+  build-and-upload:
+    name: "Build and Upload apk"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: main
+
+      - run: flutter --version
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run Build Runner
+        run: dart run build_runner build
+
+      - name: Build profile apk
+        run: flutter build apk --profile
+
+      - name: Upload apk to release
+        uses: svenstaro/upload-release-action@v2
+          with:
+              repo_token: ${{ secrets.GITHUB_TOKEN }}
+              file: 
+              asset_name: lyric_test_${{ github.event.release.tag_name }}.apk
+              tag: ${{ github.ref }}
