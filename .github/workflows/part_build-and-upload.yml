@@ -1,7 +1,7 @@
 name: Build and Upload apk
 
 on:
-  wokflow-call:
+  workflow_call:
 #    inputs:
 #      version-string:
 #        required: true

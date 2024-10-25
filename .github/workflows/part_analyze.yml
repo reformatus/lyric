@@ -1,7 +1,7 @@
 name: Analyze
 
 on:
-  wokflow-call:
+  workflow_call:
 
 jobs:
   analyze:
