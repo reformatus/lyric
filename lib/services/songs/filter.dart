@@ -94,36 +94,6 @@ Stream<List<SongResult>> filteredSongs(Ref ref) {
   final List<String> searchFields = ref.watch(searchFieldsStateProvider);
   final Map<String, List<String>> filters = ref.watch(filterStateProvider);
 
-  /*
-  Example filter state content:
-    filters = {
-      "content_tags": ["tag1", "tag2"],
-      "genre": ["genre1", "genre2"]
-    }
-  Should generate:
-    ...AND (
-      AND-ALL (
-        ([
-          OR-ALL (
-            var contentTags = jsonExtract...
-            [
-              contentTags.like(%tag1%),
-              contentTags.like(%tag2%)
-            ]
-          )
-        ),
-        (
-          OR-ALL (
-            var genre = jsonExtract...
-            [
-              genre.like(%genre1%)
-              genre.like(%genre2%)
-            ]
-          )
-        )
-      ])
-    )
-  */
   Expression<bool> filterExpression(SongsFts songsFts) => Expression.and(
         filters.entries.map(
           (entry) {
