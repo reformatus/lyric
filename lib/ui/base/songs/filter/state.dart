@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lyric/services/songs/filter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'state.g.dart';
@@ -97,10 +98,7 @@ const Map<String, Map<String, dynamic>> songFieldsMap = {
 class SearchFieldsState extends _$SearchFieldsState {
   @override
   List<String> build() {
-    return songFieldsMap.entries
-        .where((e) => FieldType.fromString(e.value['type'])?.isSearchable ?? false)
-        .map((e) => e.key)
-        .toList();
+    return [...fullTextSearchFields];
   }
 
   void addSearchField(String field) {
@@ -111,6 +109,7 @@ class SearchFieldsState extends _$SearchFieldsState {
   }
 
   void removeSearchField(String field) {
+    if (state.length < 2) return;
     state.remove(field);
     ref.notifyListeners();
   }

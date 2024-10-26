@@ -70,27 +70,29 @@ const snippetTags = (start: '<?', end: '?>');
 @Riverpod(keepAlive: true)
 Stream<List<SongResult>> filteredSongs(Ref ref) {
   final String searchString = sanitize(ref.watch(searchStringStateProvider));
-  // ignore: unused_local_variable // todo implement
   final List<String> searchFields = ref.watch(searchFieldsStateProvider);
   final Map<String, List<String>> filters = ref.watch(filterStateProvider);
 
-  Expression<bool> filterExpression(SongsFts songsFts) => Expression.and(
-        filters.entries.map(
-          (entry) {
-            final fieldData = songsFts.contentMap.jsonExtract<String>('\$.${entry.key}');
-            return Expression.or(
-              entry.value.map((value) => fieldData.like('%$value%')),
-            );
-          },
-        ),
-      );
+  String ftsMatchString = '{${searchFields.join(' ')}} : $searchString';
+  print(ftsMatchString);
+
+  Expression<bool> filterExpression(SongsFts songsFts) {
+    return Expression.and(filters.entries.map(
+      (entry) {
+        final fieldData = songsFts.contentMap.jsonExtract<String>('\$.${entry.key}');
+        return Expression.or(
+          entry.value.map((value) => fieldData.like('%$value%')),
+        );
+      },
+    ));
+  }
 
   if (searchString.isEmpty) {
     return ((db.select(db.songsFts)..where((songsFts) => filterExpression(songsFts))).watch()).map(
       (songsFtList) => songsFtList.map((songsFt) => SongResult(songsFt: songsFt)).toList(),
     );
   } else {
-    return (db.song_fulltext_search(searchString, (songsFts) => filterExpression(songsFts)).watch()).map(
+    return (db.song_fulltext_search(ftsMatchString, (songsFts) => filterExpression(songsFts)).watch()).map(
       (matchList) => matchList.map((match) => SongResult(match: match)).toList(),
     );
   }

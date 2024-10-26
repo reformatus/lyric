@@ -30,14 +30,16 @@ class SearchFieldSelectorColumn extends ConsumerWidget {
               title: Text(field['title_hu']),
               secondary: Icon(field['icon']),
               value: searchFieldsState.contains(e),
-              onChanged: (value) {
-                if (value == null) return;
-                if (value) {
-                  ref.read(searchFieldsStateProvider.notifier).addSearchField(e);
-                } else {
-                  ref.read(searchFieldsStateProvider.notifier).removeSearchField(e);
-                }
-              },
+              onChanged: (searchFieldsState.length < 2 && searchFieldsState.contains(e))
+                  ? null
+                  : (value) {
+                      if (value == null) return;
+                      if (value) {
+                        ref.read(searchFieldsStateProvider.notifier).addSearchField(e);
+                      } else {
+                        ref.read(searchFieldsStateProvider.notifier).removeSearchField(e);
+                      }
+                    },
             );
           },
         ),
