@@ -6,7 +6,7 @@ song_fulltext_search(:match_string AS TEXT):
       bm25(songs_fts, 0.0, 0.0, 10.0, 0.5, 5.0, 5.0, 2.0, 0.0, 0.0) AS rank
       ,uuid
       ,source_bank_id
-      ,pitch_field
+      ,key_field
       ,snippet(songs_fts, 2, '<?', '?>', '...', 30) AS match_title
       ,snippet(songs_fts, 3, '<?', '?>', '...', 40) AS match_lyrics
       ,snippet(songs_fts, 4, '<?', '?>', '...', 15) AS match_composer

@@ -10,7 +10,7 @@ class Song extends Insertable<Song> {
   final int? sourceBankId;
   final String title;
   final String lyrics;
-  final PitchField? pitchField; // todo make nullable everywhere
+  final KeyField? keyField; // todo make nullable everywhere
   final String? composer;
   final String? poet;
   final String? translator;
@@ -28,7 +28,7 @@ class Song extends Insertable<Song> {
         uuid: json['uuid'],
         title: json['title'],
         lyrics: json['lyrics'],
-        pitchField: PitchField.fromString(json['pitch']),
+        keyField: KeyField.fromString(json['key']),
         contentMap: json.map((key, value) => MapEntry(key, value.toString())),
         sourceBankId: sourceBank?.id,
         composer: json['composer'],
@@ -41,12 +41,11 @@ class Song extends Insertable<Song> {
     }
   }
 
-  //Song(this.uuid, this.title, this.lyrics, this.pitchField, this.content, {this.sourceBankId});
   Song({
     required this.uuid,
     required this.title,
     required this.lyrics,
-    required this.pitchField,
+    required this.keyField,
     required this.contentMap,
     this.sourceBankId,
     this.composer,
@@ -66,7 +65,7 @@ class Song extends Insertable<Song> {
       composer: Value(composer),
       poet: Value(poet),
       translator: Value(translator),
-      pitchField: Value(pitchField),
+      keyField: Value(keyField),
       userNote: Value(userNote),
     ).toColumns(nullToAbsent);
   }
@@ -85,7 +84,7 @@ class Songs extends Table {
   TextColumn get composer => text().nullable()();
   TextColumn get poet => text().nullable()();
   TextColumn get translator => text().nullable()();
-  TextColumn get pitchField => text().map(const PitchFieldConverter())();
+  TextColumn get keyField => text().map(const KeyFieldConverter())();
   TextColumn get userNote => text().nullable()();
 }
 
@@ -103,35 +102,35 @@ class ContentConverter extends TypeConverter<Map<String, String>, String> {
   }
 }
 
-class PitchFieldConverter extends TypeConverter<PitchField?, String> {
-  const PitchFieldConverter();
+class KeyFieldConverter extends TypeConverter<KeyField?, String> {
+  const KeyFieldConverter();
 
   @override
-  PitchField? fromSql(String fromDb) {
-    return PitchField.fromString(fromDb);
+  KeyField? fromSql(String fromDb) {
+    return KeyField.fromString(fromDb);
   }
 
   @override
-  String toSql(PitchField? value) {
+  String toSql(KeyField? value) {
     if (value == null) return "";
     return value.toString();
   }
 }
 
-class PitchField {
+class KeyField {
   final String key;
   final String scale;
 
-  PitchField(this.key, this.scale);
+  KeyField(this.key, this.scale);
 
-  static PitchField? fromString(String? value) {
+  static KeyField? fromString(String? value) {
     if (value == null || value.isEmpty) return null;
 
     var parts = value.split('-');
     if (parts.length != 2) {
-      throw Exception('Invalid pitch field: $value');
+      throw Exception('Invalid key field: $value');
     }
-    return PitchField(parts[0], parts[1]);
+    return KeyField(parts[0], parts[1]);
   }
 
   @override

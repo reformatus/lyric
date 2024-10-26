@@ -29,7 +29,7 @@ class LSongResultTile extends StatelessWidget {
         // far future todo dense on desktop (maybe even table?)
         onTap: () => context.push('/song/${songsFt.uuid}'),
         title: Text(songsFt.title),
-        trailing: Text(songsFt.pitchField.toString()),
+        trailing: Text(songsFt.keyField.toString()),
         subtitle: !firstLine.startsWith(songsFt.title)
             ? Text(
                 firstLine,

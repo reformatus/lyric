@@ -32,7 +32,7 @@ class FiltersColumn extends ConsumerWidget {
                       fieldType: e.value.type,
                       fieldPopulatedCount: e.value.count,
                     ),
-                  FieldType.pitch => FilterPitch(),
+                  FieldType.key => KeyFilterCard(),
                   _ => LErrorCard(
                       type: LErrorType.warning,
                       title: 'Nem támogatott szűrőtípus!',
@@ -47,12 +47,12 @@ class FiltersColumn extends ConsumerWidget {
   }
 }
 
-class FilterPitch extends StatelessWidget {
-  const FilterPitch({super.key});
+class KeyFilterCard extends StatelessWidget {
+  const KeyFilterCard({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Placeholder(child: Text('Pitch Filter'));
+    return Placeholder(child: Text('Key Filter'));
   }
 }
 

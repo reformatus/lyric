@@ -67,9 +67,9 @@ const Map<String, Map<String, dynamic>> songFieldsMap = {
     'type': 'filterable_multiselect',
     'icon': Icons.height,
   },
-  'pitch': {
+  'key': {
     'title_hu': 'Hangnem',
-    'type': 'filterable_pitch',
+    'type': 'filterable_key',
     'icon': Icons.music_note,
   },
   'genre': {
@@ -185,7 +185,7 @@ class FilterState extends _$FilterState {
 enum FieldType {
   multiselect("filterable_multiselect", isFilterable: true),
   multiselectTags("filterable_multiselect_tags", isFilterable: true, commaDividedValues: true),
-  pitch("filterable_pitch", isFilterable: true),
+  key("filterable_key", isFilterable: true),
   searchable("searchable", isSearchable: true);
 
   const FieldType(this.name,
