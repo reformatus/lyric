@@ -109,7 +109,7 @@ class SearchFieldsState extends _$SearchFieldsState {
   }
 
   void removeSearchField(String field) {
-    if (state.length < 2) return;
+    if (state.length < 2) return; // Make sure at least one column stays selected
     state.remove(field);
     ref.notifyListeners();
   }

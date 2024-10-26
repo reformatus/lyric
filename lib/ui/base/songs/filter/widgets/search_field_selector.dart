@@ -31,6 +31,7 @@ class SearchFieldSelectorColumn extends ConsumerWidget {
               secondary: Icon(field['icon']),
               value: searchFieldsState.contains(e),
               onChanged: (searchFieldsState.length < 2 && searchFieldsState.contains(e))
+                  // Make sure at least one column stays selected
                   ? null
                   : (value) {
                       if (value == null) return;
