@@ -28,7 +28,7 @@ class Song extends Insertable<Song> {
         uuid: json['uuid'],
         title: json['title'],
         lyrics: json['lyrics'],
-        keyField: KeyField.fromString(json['key']),
+        keyField: KeyField.fromString(json['pitch']), // todo change to key once song bank gets updated
         contentMap: json.map((key, value) => MapEntry(key, value.toString())),
         sourceBankId: sourceBank?.id,
         composer: json['composer'],
