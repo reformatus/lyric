@@ -28,33 +28,6 @@ Future<List<String>> selectableValuesForFilterableField(
 }
 
 // todo write test
-// todo merge with existingFilterableFields
-@Riverpod(keepAlive: true)
-Future<Map<String, ({FieldType type, int count})>> existingSearchableFields(
-    Ref ref) async {
-  Map<String, ({FieldType type, int count})> fields = {};
-
-  final allSongs = Stream.fromIterable(await ref.watch(allSongsProvider.future));
-
-  await for (var song in allSongs) {
-    for (var field in song.contentMap.keys) {
-      if ((FieldType.fromString(songFieldsMap[field]?['type'] ?? "")?.isSearchable ?? false) &&
-          song.contentMap[field]! != "") {
-        if (!fields.keys.any((k) => k == field)) {
-          // first time we see this field
-          fields[field] = (type: FieldType.fromString(songFieldsMap[field]!['type'])!, count: 1);
-        } else {
-          // increment count by reassigning the record for the entry
-          fields[field] = (type: fields[field]!.type, count: fields[field]!.count + 1);
-        }
-      }
-    }
-  }
-
-  return fields;
-}
-
-// todo write test
 @Riverpod(keepAlive: true)
 Future<Map<String, ({FieldType type, int count})>> existingFilterableFields(
     Ref ref) async {
