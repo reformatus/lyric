@@ -9,28 +9,9 @@ import '../../ui/base/songs/filter/state.dart';
 
 part 'filter.g.dart';
 
-@Riverpod(keepAlive: true)
-Future<List<String>> selectableValuesForFilterableField(
-    Ref ref, String field, FieldType fieldType) async {
-  final allSongs = Stream.fromIterable(await ref.watch(allSongsProvider.future));
-  Set<String> values = {};
-
-  await for (Song song in allSongs) {
-    if (fieldType.commaDividedValues) {
-      values.addAll(song.contentMap[field]?.split(',') ?? []);
-    } else {
-      values.add(song.contentMap[field] ?? "");
-    }
-  }
-
-  values.remove("");
-  return values.toList();
-}
-
 // todo write test
 @Riverpod(keepAlive: true)
-Future<Map<String, ({FieldType type, int count})>> existingFilterableFields(
-    Ref ref) async {
+Future<Map<String, ({FieldType type, int count})>> existingFilterableFields(Ref ref) async {
   Map<String, ({FieldType type, int count})> fields = {};
 
   final allSongs = Stream.fromIterable(await ref.watch(allSongsProvider.future));
@@ -51,6 +32,23 @@ Future<Map<String, ({FieldType type, int count})>> existingFilterableFields(
   }
 
   return fields;
+}
+
+@Riverpod(keepAlive: true)
+Future<List<String>> selectableValuesForFilterableField(Ref ref, String field, FieldType fieldType) async {
+  final allSongs = Stream.fromIterable(await ref.watch(allSongsProvider.future));
+  Set<String> values = {};
+
+  await for (Song song in allSongs) {
+    if (fieldType.commaDividedValues) {
+      values.addAll(song.contentMap[field]?.split(',') ?? []);
+    } else {
+      values.add(song.contentMap[field] ?? "");
+    }
+  }
+
+  values.remove("");
+  return values.toList();
 }
 
 @Riverpod(keepAlive: true)
