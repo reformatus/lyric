@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/ui/common/error.dart';
 
-import '../../../../../services/songs/filter.dart';
+import '../../../../../../services/songs/filter.dart';
+import '../../key/widget.dart';
 import '../state.dart';
 
 class FiltersColumn extends ConsumerWidget {
@@ -44,15 +45,6 @@ class FiltersColumn extends ConsumerWidget {
               .toList(),
         )
     };
-  }
-}
-
-class KeyFilterCard extends StatelessWidget {
-  const KeyFilterCard({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Placeholder(child: Text('Key Filter'));
   }
 }
 
