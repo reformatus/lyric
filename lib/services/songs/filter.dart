@@ -9,6 +9,15 @@ import '../../ui/base/songs/filter/state.dart';
 
 part 'filter.g.dart';
 
+// far future todo: implement dynamic fts table generation based on bank data and dynamic selectable fts columns
+const List<String> fullTextSearchFields = [
+  'title',
+  'lyrics',
+  'composer',
+  'poet',
+  'translator',
+];
+
 // todo write test
 @Riverpod(keepAlive: true)
 Future<Map<String, ({FieldType type, int count})>> existingFilterableFields(Ref ref) async {

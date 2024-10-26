@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/services/songs/filter.dart';
 import 'package:lyric/ui/base/songs/filter/state.dart';
 import 'package:lyric/ui/base/songs/filter/widgets/filters.dart';
+import 'package:lyric/ui/base/songs/filter/widgets/search_field_selector.dart';
 import 'package:lyric/ui/base/songs/song_tile.dart';
 import 'package:lyric/ui/common/error.dart';
 
@@ -82,7 +83,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                             elevation: 10,
                             clipBehavior: Clip.antiAlias,
                             child: SingleChildScrollView(
-                              child: Text("TBD"),
+                              child: SearchFieldSelectorColumn(),
                             ),
                           ),
                         ),

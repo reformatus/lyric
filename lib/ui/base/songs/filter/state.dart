@@ -21,6 +21,11 @@ const Map<String, Map<String, dynamic>> songFieldsMap = {
     'type': 'searchable',
     'icon': Icons.short_text,
   },
+  'lyrics': {
+    'title_hu': 'Dalszöveg',
+    'type': 'searchable',
+    'icon': Icons.text_snippet,
+  },
   'composer': {
     'title_hu': 'Dalszerző',
     'type': 'searchable',
@@ -101,11 +106,13 @@ class SearchFieldsState extends _$SearchFieldsState {
   void addSearchField(String field) {
     if (!state.contains(field)) {
       state.add(field);
+      ref.notifyListeners();
     }
   }
 
   void removeSearchField(String field) {
     state.remove(field);
+    ref.notifyListeners();
   }
 }
 
