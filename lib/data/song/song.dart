@@ -10,7 +10,7 @@ class Song extends Insertable<Song> {
   final int? sourceBankId;
   final String title;
   final String lyrics;
-  final KeyField? keyField; // todo make nullable everywhere
+  final KeyField? keyField;
   final String? composer;
   final String? poet;
   final String? translator;
