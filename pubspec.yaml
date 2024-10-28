@@ -28,6 +28,7 @@ dependencies:
   drift: ^2.20.3
   drift_flutter: ^0.2.1
   sqlite3_flutter_libs: ^0.5.26
+  sqlite3: ^2.4.7
 
 dev_dependencies:
   flutter_lints: ^5.0.0
