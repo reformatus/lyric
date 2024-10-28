@@ -118,10 +118,10 @@ class KeyFieldConverter extends TypeConverter<KeyField?, String> {
 }
 
 class KeyField {
-  final String key;
-  final String scale;
+  final String pitch;
+  final String mode;
 
-  KeyField(this.key, this.scale);
+  KeyField(this.pitch, this.mode);
 
   static KeyField? fromString(String? value) {
     if (value == null || value.isEmpty) return null;
@@ -135,6 +135,16 @@ class KeyField {
 
   @override
   String toString() {
-    return '$key-$scale';
+    return '$pitch-$mode';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (other is! KeyField) return false;
+    if (pitch == other.pitch && mode == other.mode) return true;
+    return false;
+  }
+
+  @override
+  int get hashCode => Object.hash(pitch, mode);
 }

@@ -33,7 +33,9 @@ class FiltersColumn extends ConsumerWidget {
                       fieldType: e.value.type,
                       fieldPopulatedCount: e.value.count,
                     ),
-                  FieldType.key => KeyFilterCard(),
+                  FieldType.key => KeyFilterCard(
+                      fieldPopulatedCount: e.value.count,
+                    ),
                   _ => LErrorCard(
                       type: LErrorType.warning,
                       title: 'Nem támogatott szűrőtípus!',
@@ -75,11 +77,13 @@ class LFilterChipsState extends ConsumerState<FilterChips> {
 
   @override
   Widget build(BuildContext context) {
+    // todo final
     var selectableValues =
         ref.watch(selectableValuesForFilterableFieldProvider(widget.field, widget.fieldType));
     var filterState = ref.watch(filterStateProvider);
     var filterStateNotifier = ref.read(filterStateProvider.notifier);
 
+    // todo final
     bool active() => filterState.containsKey(widget.field);
 
     return Card(
@@ -116,36 +120,30 @@ class LFilterChipsState extends ConsumerState<FilterChips> {
         subtitle: switch (selectableValues) {
           AsyncLoading() => LinearProgressIndicator(),
           AsyncError(:final error) => Text('Hiba a szűrőértékek lekérdezése közben: $error'),
-          AsyncValue(:final value) => Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Expanded(
-                  child: SizedBox(
-                    height: 38,
-                    child: FadingEdgeScrollView.fromScrollView(
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        controller: _filterChipsRowController,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: value!.length,
-                        itemBuilder: (context, i) {
-                          String item = value[i];
-                          bool selected = filterState[widget.field]?.contains(item) ?? false;
-                          onSelected(bool newValue) {
-                            if (newValue) {
-                              filterStateNotifier.addFilter(widget.field, item);
-                            } else {
-                              filterStateNotifier.removeFilter(widget.field, item);
-                            }
-                          }
+          AsyncValue(:final value) => SizedBox(
+              height: 38,
+              child: FadingEdgeScrollView.fromScrollView(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  controller: _filterChipsRowController,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: value!.length,
+                  itemBuilder: (context, i) {
+                    // todo move all logic to service (like in filter/key/widget.dart)
+                    String item = value[i];
+                    bool selected = filterState[widget.field]?.contains(item) ?? false;
+                    onSelected(bool newValue) {
+                      if (newValue) {
+                        filterStateNotifier.addFilter(widget.field, item);
+                      } else {
+                        filterStateNotifier.removeFilter(widget.field, item);
+                      }
+                    }
 
-                          return LFilterChip(label: item, onSelected: onSelected, selected: selected);
-                        },
-                      ),
-                    ),
-                  ),
-                )
-              ],
+                    return LFilterChip(label: item, onSelected: onSelected, selected: selected);
+                  },
+                ),
+              ),
             )
         },
         trailing: active()
@@ -162,12 +160,16 @@ class LFilterChip extends StatelessWidget {
     required this.label,
     required this.onSelected,
     required this.selected,
+    this.leading,
+    this.special = false,
     super.key,
   });
 
   final String label;
   final Function(bool) onSelected;
   final bool selected;
+  final bool special;
+  final Widget? leading;
 
   @override
   Widget build(BuildContext context) {
@@ -176,12 +178,19 @@ class LFilterChip extends StatelessWidget {
       child: FilterChip.elevated(
         color: WidgetStateProperty.resolveWith((states) {
           if (!states.contains(WidgetState.selected)) {
+            if (special) return Theme.of(context).colorScheme.surfaceContainer;
             return Theme.of(context).cardColor;
           } else {
-            return Theme.of(context).focusColor;
+            return Theme.of(context).colorScheme.surfaceContainerHighest;
           }
         }),
-        label: Text(label),
+        labelPadding: EdgeInsets.only(left: leading != null ? 0 : 5, right: 5),
+        label: Row(
+          children: [
+            if (leading != null) Padding(padding: EdgeInsets.only(right: 5), child: leading!),
+            Text(label),
+          ],
+        ),
         selected: selected,
         onSelected: onSelected,
         materialTapTargetSize: MaterialTapTargetSize.padded,

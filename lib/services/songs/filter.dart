@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:drift/extensions/json1.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/ui/base/songs/filter/key/state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/database.dart';
@@ -72,6 +73,7 @@ Stream<List<SongResult>> filteredSongs(Ref ref) {
   final String searchString = sanitize(ref.watch(searchStringStateProvider));
   final List<String> searchFields = ref.watch(searchFieldsStateProvider);
   final Map<String, List<String>> filters = ref.watch(filterStateProvider);
+  final KeyFilters keyFilters = ref.watch(keyFilterStateProvider);
 
   String ftsMatchString = '{${searchFields.join(' ')}} : $searchString';
   print(ftsMatchString);
@@ -84,7 +86,19 @@ Stream<List<SongResult>> filteredSongs(Ref ref) {
           entry.value.map((value) => fieldData.like('%$value%')),
         );
       },
-    ));
+    ).followedBy([
+      Expression.or([
+        if (keyFilters.pitches.isNotEmpty || keyFilters.modes.isNotEmpty)
+          Expression.and([
+            if (keyFilters.pitches.isNotEmpty)
+              Expression.or(keyFilters.pitches.map((e) => songsFts.keyField.like('$e-%'))),
+            if (keyFilters.modes.isNotEmpty)
+              Expression.or(keyFilters.modes.map((e) => songsFts.keyField.like('%-$e'))),
+          ]),
+        if (keyFilters.keys.isNotEmpty)
+          Expression.or(keyFilters.keys.map((e) => songsFts.keyField.equals(e.toString()))),
+      ], ifEmpty: Constant(true))
+    ]));
   }
 
   if (searchString.isEmpty) {
@@ -92,7 +106,7 @@ Stream<List<SongResult>> filteredSongs(Ref ref) {
       (songsFtList) => songsFtList.map((songsFt) => SongResult(songsFt: songsFt)).toList(),
     );
   } else {
-    return (db.song_fulltext_search(ftsMatchString, (songsFts) => filterExpression(songsFts)).watch()).map(
+    return (db.songFulltextSearch(ftsMatchString, (songsFts) => filterExpression(songsFts)).watch()).map(
       (matchList) => matchList.map((match) => SongResult(match: match)).toList(),
     );
   }

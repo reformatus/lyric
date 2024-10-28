@@ -45,3 +45,4 @@ app.*.map.json
 # Ignore generated files (good practice to keep them out of version control)
 *.freezed.dart
 *.g.dart
+CONTINUE.txt

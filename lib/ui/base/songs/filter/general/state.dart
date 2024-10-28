@@ -67,7 +67,8 @@ const Map<String, Map<String, dynamic>> songFieldsMap = {
     'type': 'filterable_multiselect',
     'icon': Icons.height,
   },
-  'key': {
+  'pitch': {
+    // todo change back to key
     'title_hu': 'Hangnem',
     'type': 'filterable_key',
     'icon': Icons.music_note,

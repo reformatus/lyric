@@ -1,0 +1,26 @@
+import '../../data/song/song.drift';
+import '../../data/song/song.dart';
+
+selectDistinctKeys:
+  SELECT DISTINCT
+    key_field
+  FROM songs;
+
+selectDistinctPitches(:for_mode AS TEXT):
+  SELECT DISTINCT
+    substr(
+      key_field
+      ,1
+      ,instr(key_field, '-') - 1
+    )
+  FROM songs
+  WHERE key_field != '' AND key_field LIKE concat('%-', :for_mode);
+
+selectDistinctModes(:for_pitch AS TEXT):
+  SELECT DISTINCT
+    substr(
+      key_field
+      ,instr(key_field, '-') + 1
+    )
+  FROM songs
+  WHERE key_field != '' AND key_field LIKE concat(:for_pitch, '-%');

@@ -5,6 +5,7 @@ import 'package:lyric/services/songs/filter.dart';
 import 'package:lyric/ui/base/songs/filter/general/state.dart';
 import 'package:lyric/ui/base/songs/filter/general/widgets/filters.dart';
 import 'package:lyric/ui/base/songs/filter/general/widgets/search_field_selector.dart';
+import 'package:lyric/ui/base/songs/filter/key/state.dart';
 import 'package:lyric/ui/base/songs/song_tile.dart';
 import 'package:lyric/ui/common/error.dart';
 
@@ -56,6 +57,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
   Widget build(BuildContext context) {
     final songResults = ref.watch(filteredSongsProvider);
     final filterState = ref.watch(filterStateProvider);
+    final keyFilterState = ref.watch(keyFilterStateProvider);
 
     return Stack(
       children: [
@@ -122,23 +124,43 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                             child: Theme(
                               data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
                               child: ExpansionTile(
-                                collapsedBackgroundColor: filterState.isEmpty
-                                    ? null
-                                    : Theme.of(context).colorScheme.secondaryContainer,
-                                collapsedIconColor: filterState.isEmpty
-                                    ? null
-                                    : Theme.of(context).colorScheme.onSecondaryContainer,
+                                collapsedBackgroundColor:
+                                    (filterState.isEmpty && ref.read(keyFilterStateProvider.notifier).isEmpty)
+                                        ? null
+                                        : Theme.of(context).colorScheme.secondaryContainer,
+                                collapsedIconColor:
+                                    (filterState.isEmpty && ref.read(keyFilterStateProvider.notifier).isEmpty)
+                                        ? null
+                                        : Theme.of(context).colorScheme.onSecondaryContainer,
                                 controller: _filterExpansionTileController,
                                 leading: const Icon(Icons.filter_list),
                                 title: Text(
-                                  filterState.isEmpty
+                                  (filterState.isEmpty && ref.read(keyFilterStateProvider.notifier).isEmpty)
                                       ? 'Szűrők'
-                                      : filterState.values.map((e) => e.join(', ')).join('; '),
+                                      : ([
+                                          if (!ref.read(keyFilterStateProvider.notifier).isEmpty)
+                                            [
+                                              if (keyFilterState.keys.isNotEmpty)
+                                                keyFilterState.keys.map((e) => e.toString()).join(' vagy '),
+                                              if (keyFilterState.pitches.isNotEmpty ||
+                                                  keyFilterState.modes.isNotEmpty)
+                                                [
+                                                  if (keyFilterState.pitches.isNotEmpty)
+                                                    'alaphangja ${keyFilterState.pitches.join(' vagy ')}',
+                                                  if (keyFilterState.modes.isNotEmpty)
+                                                    'hangsora ${keyFilterState.modes.join(' vagy ')}'
+                                                ].join(' és ')
+                                            ].join(', vagy '),
+                                          if (filterState.isNotEmpty)
+                                            filterState.values.map((e) => e.join(' vagy ')).join(', és '),
+                                        ].join(', valamint ')),
                                   style: TextStyle(
-                                    color: filterState.isEmpty
+                                    color: (filterState.isEmpty &&
+                                            ref.read(keyFilterStateProvider.notifier).isEmpty)
                                         ? null
                                         : Theme.of(context).colorScheme.onSecondaryContainer,
-                                    fontSize: filterState.isEmpty
+                                    fontSize: (filterState.isEmpty &&
+                                            ref.read(keyFilterStateProvider.notifier).isEmpty)
                                         ? null
                                         : Theme.of(context).textTheme.bodyMedium!.fontSize,
                                   ),
@@ -177,7 +199,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                           stack: stackTrace.toString(),
                         ),
                       ),
-                    AsyncLoading(:final value) || AsyncValue(:final value) => value == null
+                    AsyncValue(:final value) => value == null
                         ? const Center(
                             child: CircularProgressIndicator(),
                           )

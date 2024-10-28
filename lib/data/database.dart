@@ -1,7 +1,11 @@
 import 'dart:io';
 
 import 'package:drift/drift.dart';
-import 'package:drift_flutter/drift_flutter.dart';
+import 'package:drift/native.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:sqlite3/sqlite3.dart';
+import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
+import 'package:path/path.dart' as p;
 
 import 'bank/bank.dart';
 import 'song/song.dart';
@@ -19,6 +23,7 @@ late final Directory dataDir;
   include: {
     'song/song.drift',
     '../services/songs/filter.drift',
+    '../services/key/select_distinct.drift',
   },
 )
 class LyricDatabase extends _$LyricDatabase {
@@ -26,10 +31,6 @@ class LyricDatabase extends _$LyricDatabase {
 
   @override
   int get schemaVersion => 1;
-
-  static QueryExecutor _openConnection() {
-    return driftDatabase(name: 'lyric');
-  }
 
   @override
   MigrationStrategy get migration {
@@ -40,6 +41,24 @@ class LyricDatabase extends _$LyricDatabase {
       }
     });
   }
+}
+
+// see https://drift.simonbinder.eu/setup/#database-class
+// implemented for logStatemets capability
+LazyDatabase _openConnection() {
+  return LazyDatabase(() async {
+    final dbFolder = await getApplicationDocumentsDirectory();
+    final file = File(p.join(dbFolder.path, 'lyric.sqlite'));
+
+    if (Platform.isAndroid) {
+      await applyWorkaroundToOpenSqlite3OnOldAndroidVersions();
+    }
+
+    final cachebase = (await getTemporaryDirectory()).path;
+    sqlite3.tempDirectory = cachebase;
+
+    return NativeDatabase.createInBackground(file, logStatements: true);
+  });
 }
 
 class UriConverter extends TypeConverter<Uri, String> {

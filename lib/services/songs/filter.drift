@@ -1,7 +1,7 @@
 import '../../data/song/song.drift';
 import '../../data/song/song.dart';
 
-song_fulltext_search(:match_string AS TEXT):
+songFulltextSearch(:match_string AS TEXT):
   SELECT
       bm25(songs_fts, 0.0, 0.0, 10.0, 0.5, 5.0, 5.0, 2.0, 0.0, 0.0) AS rank
       ,uuid
