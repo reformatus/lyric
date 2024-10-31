@@ -124,21 +124,19 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                             child: Theme(
                               data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
                               child: ExpansionTile(
-                                collapsedBackgroundColor:
-                                    (filterState.isEmpty && ref.read(keyFilterStateProvider.notifier).isEmpty)
-                                        ? null
-                                        : Theme.of(context).colorScheme.secondaryContainer,
-                                collapsedIconColor:
-                                    (filterState.isEmpty && ref.read(keyFilterStateProvider.notifier).isEmpty)
-                                        ? null
-                                        : Theme.of(context).colorScheme.onSecondaryContainer,
+                                collapsedBackgroundColor: (filterState.isEmpty && keyFilterState.isEmpty)
+                                    ? null
+                                    : Theme.of(context).colorScheme.secondaryContainer,
+                                collapsedIconColor: (filterState.isEmpty && keyFilterState.isEmpty)
+                                    ? null
+                                    : Theme.of(context).colorScheme.onSecondaryContainer,
                                 controller: _filterExpansionTileController,
                                 leading: const Icon(Icons.filter_list),
                                 title: Text(
-                                  (filterState.isEmpty && ref.read(keyFilterStateProvider.notifier).isEmpty)
+                                  (filterState.isEmpty && keyFilterState.isEmpty)
                                       ? 'Szűrők'
                                       : ([
-                                          if (!ref.read(keyFilterStateProvider.notifier).isEmpty)
+                                          if (!keyFilterState.isEmpty)
                                             [
                                               if (keyFilterState.keys.isNotEmpty)
                                                 keyFilterState.keys.map((e) => e.toString()).join(' vagy '),
@@ -155,12 +153,10 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                                             filterState.values.map((e) => e.join(' vagy ')).join(', és '),
                                         ].join(', valamint ')),
                                   style: TextStyle(
-                                    color: (filterState.isEmpty &&
-                                            ref.read(keyFilterStateProvider.notifier).isEmpty)
+                                    color: (filterState.isEmpty && keyFilterState.isEmpty)
                                         ? null
                                         : Theme.of(context).colorScheme.onSecondaryContainer,
-                                    fontSize: (filterState.isEmpty &&
-                                            ref.read(keyFilterStateProvider.notifier).isEmpty)
+                                    fontSize: (filterState.isEmpty && keyFilterState.isEmpty)
                                         ? null
                                         : Theme.of(context).textTheme.bodyMedium!.fontSize,
                                   ),

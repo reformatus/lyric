@@ -6,6 +6,12 @@ part 'state.g.dart';
 
 typedef KeyFilters = ({Set<String> pitches, Set<String> modes, Set<KeyField> keys});
 
+extension KeyFiltersExtension on KeyFilters {
+  bool get isEmpty {
+    return pitches.isEmpty && modes.isEmpty && keys.isEmpty;
+  }
+}
+
 @Riverpod(keepAlive: true)
 class KeyFilterState extends _$KeyFilterState {
   @override
@@ -15,10 +21,6 @@ class KeyFilterState extends _$KeyFilterState {
 
   void reset() {
     state = build();
-  }
-
-  bool get isEmpty {
-    return state.pitches.isEmpty && state.modes.isEmpty && state.keys.isEmpty;
   }
 
   void setPitchTo(String pitch, bool value) {
