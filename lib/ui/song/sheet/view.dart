@@ -1,12 +1,9 @@
-import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:lyric/data/database.dart';
 import 'package:lyric/services/bank/bank_of_song.dart';
 import 'package:lyric/ui/common/error.dart';
 
-import '../../../data/bank/bank.dart';
 import '../../../data/song/song.dart';
 
 class SheetView extends ConsumerWidget {
