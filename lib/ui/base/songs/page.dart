@@ -56,7 +56,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
   @override
   Widget build(BuildContext context) {
     final songResults = ref.watch(filteredSongsProvider);
-    final filterState = ref.watch(filterStateProvider);
+    final filterState = ref.watch(multiselectTagsFilterStateProvider);
     final keyFilterState = ref.watch(keyFilterStateProvider);
 
     return Stack(

@@ -72,7 +72,7 @@ const snippetTags = (start: '<?', end: '?>');
 Stream<List<SongResult>> filteredSongs(Ref ref) {
   final String searchString = sanitize(ref.watch(searchStringStateProvider));
   final List<String> searchFields = ref.watch(searchFieldsStateProvider);
-  final Map<String, List<String>> filters = ref.watch(filterStateProvider);
+  final Map<String, List<String>> filters = ref.watch(multiselectTagsFilterStateProvider);
   final KeyFilters keyFilters = ref.watch(keyFilterStateProvider);
 
   String ftsMatchString = '{${searchFields.join(' ')}} : $searchString';

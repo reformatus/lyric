@@ -80,8 +80,8 @@ class LFilterChipsState extends ConsumerState<FilterChips> {
     // todo final
     var selectableValues =
         ref.watch(selectableValuesForFilterableFieldProvider(widget.field, widget.fieldType));
-    var filterState = ref.watch(filterStateProvider);
-    var filterStateNotifier = ref.read(filterStateProvider.notifier);
+    var filterState = ref.watch(multiselectTagsFilterStateProvider);
+    var filterStateNotifier = ref.read(multiselectTagsFilterStateProvider.notifier);
 
     // todo final
     bool active() => filterState.containsKey(widget.field);
