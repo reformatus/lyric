@@ -5,6 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'state.g.dart';
 
 // far future todo: make this plugin extendable / bank provider extendable
+
 // let plugins provide filter ui and logic
 const Map<String, Map<String, dynamic>> songFieldsMap = {
   'title': {
@@ -133,7 +134,7 @@ class SearchStringState extends _$SearchStringState {
 }
 
 @Riverpod(keepAlive: true)
-class FilterState extends _$FilterState {
+class MultiselectTagsFilterState extends _$MultiselectTagsFilterState {
   @override
   Map<String, List<String>> build() {
     return {};

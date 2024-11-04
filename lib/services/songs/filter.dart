@@ -6,7 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/database.dart';
 import '../../data/song/song.dart';
-import '../../ui/base/songs/filter/general/state.dart';
+import '../../ui/base/songs/filter/multiselect-tags/state.dart';
 
 part 'filter.g.dart';
 
