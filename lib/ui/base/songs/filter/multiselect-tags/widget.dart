@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/ui/common/error.dart';
 
-import '../../../../../../services/songs/filter.dart';
-import '../../key/widget.dart';
-import '../state.dart';
+import '../../../../../services/songs/filter.dart';
+import '../key/widget.dart';
+import 'state.dart';
 
 class FiltersColumn extends ConsumerWidget {
   const FiltersColumn({super.key});
