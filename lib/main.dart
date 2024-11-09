@@ -23,14 +23,14 @@ final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(de
 final GlobalKey<NavigatorState> _baseNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'base');
 
 class LyricApp extends StatelessWidget {
-  const LyricApp({super.key});
+  const LyricApp({super.key}); 
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
         theme: ThemeData.from(
             colorScheme: ColorScheme.fromSeed(
-                seedColor: Color(0xff025462), primary: Color(0xffc3a140), brightness: Brightness.dark),
+                seedColor: Color(0xff025462), primary: Color(0xffc3a140), brightness: Brightness.light),
             useMaterial3: true),
         routerConfig: _router);
   }

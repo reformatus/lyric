@@ -5,6 +5,7 @@ import 'package:lyric/services/bank/bank_of_song.dart';
 import 'package:lyric/ui/common/error.dart';
 
 import '../../../data/song/song.dart';
+import '../../../services/assets/get_song_asset.dart';
 
 class SheetView extends ConsumerWidget {
   const SheetView(this.song, {super.key});
@@ -14,36 +15,65 @@ class SheetView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bank = ref.watch(bankOfSongProvider(song));
-    return switch (bank) {
-      AsyncLoading() => CircularProgressIndicator(
+    switch (bank) {
+      case AsyncLoading():
+        return CircularProgressIndicator(
           value: 0.5,
-        ),
-      AsyncError(:final error, :final stackTrace) => Center(
+        );
+      case AsyncError(:final error, :final stackTrace):
+        return Center(
           child: LErrorCard(
-              type: LErrorType.error,
-              title: 'Nem találjuk az énekhez tartozó énektárat',
-              message: error.toString(),
-              stack: stackTrace.toString(),
-              icon: Icons.error),
-        ),
-      AsyncValue(:final value!) => SingleChildScrollView(
-          child: ConstrainedBox(
-            // todo proper tablet view
-            constraints: BoxConstraints(maxWidth: 900),
-            child: FittedBox(
-              // todo asset cache and download to disk
-              // todo parse svg before display to catch errors
-              child: SvgPicture.network(
-                value.baseUrl.resolve(song.contentMap['svg']!).toString(),
-                colorFilter:
-                    ColorFilter.mode(Theme.of(context).textTheme.bodyMedium!.color!, BlendMode.srcIn),
-                placeholderBuilder: (context) => CircularProgressIndicator(
-                  value: 0.7,
-                ),
-              ),
-            ),
+            type: LErrorType.error,
+            title: 'Nem találjuk az énekhez tartozó énektárat',
+            message: error.toString(),
+            stack: stackTrace.toString(),
+            icon: Icons.error,
           ),
-        ),
-    };
+        );
+      case AsyncValue(:final value!):
+        final svgAsset = ref.watch(getSongAssetProvider(
+          song,
+          'svg',
+          value.baseUrl.resolve(song.contentMap['svg']!).toString(),
+        ));
+
+        switch (svgAsset) {
+          case AsyncError(:final error, :final stackTrace):
+            return Center(
+              child: LErrorCard(
+                type: LErrorType.error,
+                title: 'Nem sikerült betölteni a kottaképet.',
+                message: error.toString(),
+                stack: stackTrace.toString(),
+                icon: Icons.error,
+              ),
+            );
+          case AsyncData(value: final assetResult):
+            if (assetResult.data != null) {
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 900),
+                  child: FittedBox(
+                    child: SvgPicture.memory(
+                      assetResult.data!,
+                      // todo make this color configurable
+                      /*colorFilter: ColorFilter.mode(
+                        Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                        BlendMode.src,
+                      ),*/
+                    ),
+                  ),
+                ),
+              );
+            } else {
+              print('Progress: ${assetResult.progress}');
+              return CircularProgressIndicator(
+                value: assetResult.progress,
+              );
+            }
+          default:
+            return SizedBox.shrink();
+        }
+    }
   }
 }

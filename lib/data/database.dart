@@ -9,6 +9,7 @@ import 'package:path/path.dart' as p;
 
 import 'bank/bank.dart';
 import 'song/song.dart';
+import 'asset/asset.dart';
 
 part 'database.g.dart';
 
@@ -19,6 +20,7 @@ late final Directory dataDir;
   tables: [
     Songs,
     Banks,
+    Assets,
   ],
   include: {
     'song/song.drift',
@@ -57,7 +59,7 @@ LazyDatabase _openConnection() {
     final cachebase = (await getTemporaryDirectory()).path;
     sqlite3.tempDirectory = cachebase;
 
-    return NativeDatabase.createInBackground(file, logStatements: true);
+    return NativeDatabase.createInBackground(file, logStatements: false);
   });
 }
 
