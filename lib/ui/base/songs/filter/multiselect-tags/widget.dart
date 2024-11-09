@@ -87,7 +87,7 @@ class LFilterChipsState extends ConsumerState<FilterChips> {
     bool active() => filterState.containsKey(widget.field);
 
     return Card(
-      elevation: active() ? 7 : 0,
+      elevation: active() ? 3 : 0,
       color: active() ? Theme.of(context).colorScheme.secondaryContainer : null,
       child: ListTile(
         contentPadding: const EdgeInsets.only(left: 15),
@@ -184,6 +184,7 @@ class LFilterChip extends StatelessWidget {
             return Theme.of(context).colorScheme.surfaceContainerHighest;
           }
         }),
+        padding: EdgeInsets.symmetric(horizontal: 8),
         labelPadding: EdgeInsets.only(left: leading != null ? 0 : 5, right: 5),
         label: Row(
           children: [

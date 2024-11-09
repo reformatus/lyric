@@ -40,7 +40,7 @@ class _KeyFilterCardState extends ConsumerState<KeyFilterCard> {
     final selectableModes = ref.watch(selectableModesProvider);
 
     return Card(
-      elevation: isActive ? 7 : 0,
+      elevation: isActive ? 3 : 0,
       color: isActive ? Theme.of(context).colorScheme.secondaryContainer : null,
       child: ListTile(
         contentPadding: const EdgeInsets.only(left: 15),
