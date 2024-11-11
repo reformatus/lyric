@@ -68,7 +68,9 @@ class _SongsPageState extends ConsumerState<SongsPage> {
               autocorrect: false,
               decoration: InputDecoration(
                 hintText: 'Keresés (min. 3 betű)',
-                prefixIcon: const Icon(Icons.search),
+                prefixIcon: _searchFieldController.text.isEmpty
+                    ? Icon(Icons.search)
+                    : IconButton(icon: Icon(Icons.clear), onPressed: () => _searchFieldController.clear()),
                 suffixIcon: CompositedTransformTarget(
                   link: _link,
                   child: OverlayPortal(

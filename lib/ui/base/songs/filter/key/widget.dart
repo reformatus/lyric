@@ -21,6 +21,7 @@ class KeyFilterCard extends ConsumerStatefulWidget {
 class _KeyFilterCardState extends ConsumerState<KeyFilterCard> {
   @override
   void initState() {
+    // init scroll controllers in advance so that fading edge scroll view doesn't lose them on rebuild
     keysScrollController = ScrollController();
     pitchesScrollController = ScrollController();
     modesScrollController = ScrollController();
