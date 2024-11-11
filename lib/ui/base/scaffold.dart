@@ -1,44 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lyric/main.dart';
 
-class BaseScaffold extends StatelessWidget {
+typedef GeneralNavigationDestination = ({
+  IconData icon,
+  IconData? selectedIcon,
+  String label,
+});
+
+NavigationDestination destinationFromGeneral(GeneralNavigationDestination d) => NavigationDestination(
+      icon: Icon(d.icon),
+      selectedIcon: d.selectedIcon != null ? Icon(d.selectedIcon) : null,
+      label: d.label,
+    );
+
+NavigationRailDestination railDestinationFromGeneral(GeneralNavigationDestination d) =>
+    NavigationRailDestination(
+      icon: Icon(d.icon),
+      selectedIcon: d.selectedIcon != null ? Icon(d.selectedIcon) : null,
+      label: Text(d.label),
+    );
+
+class BaseScaffold extends StatefulWidget {
   const BaseScaffold({required this.child, super.key});
 
   final Widget child;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: child,
-      bottomNavigationBar: NavigationBar(
-        labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-        destinations: [
-          const NavigationDestination(
-            icon: Icon(Icons.home),
-            label: 'Főoldal',
-          ),
-          const NavigationDestination(
-            icon: Icon(Icons.library_music),
-            label: 'Daltár',
-          ),
-          const NavigationDestination(
-            icon: Icon(Icons.view_list),
-            label: 'Listáim',
-          ),
-          if (GoRouterState.of(context).uri.path.startsWith('/song'))
-            const NavigationDestination(
-              icon: Icon(Icons.music_note),
-              label: 'Dal',
-            )
-        ],
-        selectedIndex: _calculateSelectedIndex(context),
-        onDestinationSelected: (int index) =>
-            _onDestinationSelected(index, context),
-      ),
-    );
-  }
-
-// @see https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/shell_route.dart
+  State<BaseScaffold> createState() => _BaseScaffoldState();
 
   static int _calculateSelectedIndex(BuildContext context) {
     final String location = GoRouterState.of(context).uri.path;
@@ -55,6 +44,106 @@ class BaseScaffold extends StatelessWidget {
       return 3;
     }
     return 0;
+  }
+}
+
+class _BaseScaffoldState extends State<BaseScaffold> {
+  @override
+  void initState() {
+    super.initState();
+    //extendedNavRail = MediaQuery.of(context).size.width > globals.desktopFromWidth;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        extendedNavRail = MediaQuery.of(context).size.width > globals.desktopFromWidth;
+      });
+    });
+  }
+
+  bool extendedNavRail = true;
+
+  @override
+  Widget build(BuildContext context) {
+    final List<GeneralNavigationDestination> destinations = [
+      (
+        icon: Icons.home_outlined,
+        selectedIcon: Icons.home,
+        label: 'Főoldal',
+      ),
+      (
+        icon: Icons.library_music_outlined,
+        selectedIcon: Icons.library_music,
+        label: 'Daltár',
+      ),
+      (
+        icon: Icons.view_list_outlined,
+        selectedIcon: Icons.view_list,
+        label: 'Listáim',
+      ),
+      if (GoRouterState.of(context).uri.path.startsWith('/song'))
+        (
+          icon: Icons.music_note_outlined,
+          selectedIcon: Icons.music_note,
+          label: 'Dal',
+        ),
+    ];
+
+    return LayoutBuilder(builder: (context, constraints) {
+      // most songs are A4, this way we have the highest chance of fitting the song on the screen the biggest possible
+      bool bottomNavBar = constraints.maxHeight / constraints.maxWidth > 1.41;
+      return Scaffold(
+        bottomNavigationBar: bottomNavBar
+            ? NavigationBar(
+                labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
+                height: 65,
+                destinations: destinations.map((d) => destinationFromGeneral(d)).toList(),
+                selectedIndex: BaseScaffold._calculateSelectedIndex(context),
+                onDestinationSelected: (int index) => _onDestinationSelected(index, context),
+              )
+            : null,
+        body: !bottomNavBar
+            ? Row(
+                children: [
+                  Container(
+                    color: Theme.of(context).colorScheme.surfaceContainer,
+                    child: AnimatedSize(
+                      duration: Durations.medium1,
+                      curve: Curves.easeInOutCubicEmphasized,
+                      alignment: Alignment.centerLeft,
+                      child: Stack(
+                        children: [
+                          NavigationRail(
+                            extended: extendedNavRail,
+                            labelType: extendedNavRail
+                                ? NavigationRailLabelType.none
+                                : NavigationRailLabelType.selected,
+                            destinations: destinations.map((d) => railDestinationFromGeneral(d)).toList(),
+                            selectedIndex: BaseScaffold._calculateSelectedIndex(context),
+                            onDestinationSelected: (int index) => _onDestinationSelected(index, context),
+                            backgroundColor: Colors.transparent,
+                            minExtendedWidth: 160,
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: IconButton(
+                              icon: Icon(extendedNavRail ? Icons.chevron_left : Icons.chevron_right),
+                              onPressed: () {
+                                setState(() {
+                                  extendedNavRail = !extendedNavRail;
+                                });
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  Expanded(child: widget.child)
+                ],
+              )
+            : widget.child,
+      );
+    });
   }
 
   void _onDestinationSelected(int index, BuildContext context) {

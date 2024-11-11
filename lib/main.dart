@@ -23,6 +23,11 @@ void main() async {
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 final GlobalKey<NavigatorState> _baseNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'base');
 
+const globals = (
+  tabletFromWidth: 700,
+  desktopFromWidth: 1000,
+);
+
 class LyricApp extends StatelessWidget {
   const LyricApp({super.key});
 
