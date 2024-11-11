@@ -50,18 +50,17 @@ class SheetView extends ConsumerWidget {
             );
           case AsyncData(value: final assetResult):
             if (assetResult.data != null) {
-              return SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: 900),
-                  child: FittedBox(
-                    child: SvgPicture.memory(
-                      assetResult.data!,
-                      // todo make this color configurable
-                      /*colorFilter: ColorFilter.mode(
-                        Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                        BlendMode.src,
-                      ),*/
-                    ),
+              return InteractiveViewer(
+                maxScale: double.infinity,
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: SvgPicture.memory(
+                    assetResult.data!,
+                    // todo make this color configurable
+                    /*colorFilter: ColorFilter.mode(
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                      BlendMode.src,
+                    ),*/
                   ),
                 ),
               );
