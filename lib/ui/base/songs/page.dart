@@ -47,7 +47,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
     });
   }
 
-  bool filtersScrolled = true;
+  bool filtersScrolled = false;
 
   late OverlayPortalController _overlayPortalController;
   late ScrollController _filterExpansionScrollController;
