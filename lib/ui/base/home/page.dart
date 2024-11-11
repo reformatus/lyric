@@ -24,41 +24,57 @@ class HomePage extends StatelessWidget {
               alignment: Alignment.bottomCenter,
               child: Padding(
                 padding: const EdgeInsets.all(10),
-                child: LayoutBuilder(builder: (context, constraints) {
-                  return GridView.count(
-                    shrinkWrap: true,
-                    crossAxisCount: (constraints.maxWidth ~/ 400).clamp(1, 4),
-                    childAspectRatio: 6,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    children: [
-                      HomePageButton(
-                        icon: Icons.library_music,
-                        title: 'Daltárak',
-                        subtitle: 'Hozzáadás, letiltás',
-                        onPressed: () {},
-                      ),
-                      HomePageButton(
-                        icon: Icons.settings,
-                        title: 'Beállítások',
-                        subtitle: 'Téma, nyelv, stb.',
-                        onPressed: () {},
-                      ),
-                      HomePageButton(
-                        icon: Icons.feedback,
-                        title: 'Visszajelzés',
-                        subtitle: 'Hibajelentés, javaslat',
-                        onPressed: () {},
-                      ),
-                      HomePageButton(
-                        icon: Icons.info_outline,
-                        title: 'Névjegy',
-                        subtitle: 'Verzió, jogi információk',
-                        onPressed: () => showLyricAboutDialog(context),
-                      ),
-                    ],
-                  );
-                }),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    int crossAxisCount = (constraints.maxWidth ~/ 300).clamp(1, 4);
+                    double minItemHeight = 80.0;
+                    double itemWidth = constraints.maxWidth / crossAxisCount;
+                    double childAspectRatio = itemWidth / minItemHeight;
+
+                    return GridView.count(
+                      shrinkWrap: true,
+                      crossAxisCount: crossAxisCount,
+                      childAspectRatio: childAspectRatio,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      children: [
+                        Tooltip(
+                          message: 'Hamarosan...',
+                          child: HomePageButton(
+                            icon: Icons.library_music,
+                            title: 'Daltárak',
+                            subtitle: 'Hozzáadás, letiltás',
+                            onPressed: null, // Disable button
+                          ),
+                        ),
+                        Tooltip(
+                          message: 'Hamarosan...',
+                          child: HomePageButton(
+                            icon: Icons.settings,
+                            title: 'Beállítások',
+                            subtitle: 'Téma, nyelv, stb.',
+                            onPressed: null, // Disable button
+                          ),
+                        ),
+                        Tooltip(
+                          message: 'Hamarosan...',
+                          child: HomePageButton(
+                            icon: Icons.feedback,
+                            title: 'Visszajelzés',
+                            subtitle: 'Hibajelentés, javaslat',
+                            onPressed: null, // Disable button
+                          ),
+                        ),
+                        HomePageButton(
+                          icon: Icons.info_outline,
+                          title: 'Névjegy',
+                          subtitle: 'Verzió, jogi információk',
+                          onPressed: () => showLyricAboutDialog(context), // Keep enabled
+                        ),
+                      ],
+                    );
+                  },
+                ),
               ),
             ),
           ),
@@ -87,14 +103,14 @@ class HomePageButton extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.subtitle,
-    required this.onPressed,
+    this.onPressed, // Remove 'required'
     super.key,
   });
 
   final IconData icon;
   final String title;
   final String subtitle;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed; // Make onPressed nullable
 
   @override
   Widget build(BuildContext context) {
@@ -113,12 +129,16 @@ class HomePageButton extends StatelessWidget {
               const EdgeInsets.only(),
             ),
           ),
-          onPressed: onPressed,
+          onPressed: onPressed, // Accept null to disable button
           child: ListTile(
             visualDensity: VisualDensity.comfortable,
             leading: Icon(icon),
-            title: Text(title),
-            subtitle: Text(subtitle),
+            title: Text(title, softWrap: false, overflow: TextOverflow.fade),
+            subtitle: Text(
+              subtitle,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ),
       ),
