@@ -10,6 +10,10 @@ extension KeyFiltersExtension on KeyFilters {
   bool get isEmpty {
     return pitches.isEmpty && modes.isEmpty && keys.isEmpty;
   }
+
+  bool get isNotEmpty {
+    return !isEmpty;
+  }
 }
 
 @Riverpod(keepAlive: true)
