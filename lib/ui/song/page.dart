@@ -1,3 +1,4 @@
+import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/services/song/from_uuid.dart';
@@ -18,48 +19,129 @@ const Set<String> fieldsToOmitFromDetails = {
   'first_line',
 };
 
-class SongPage extends ConsumerWidget {
+class SongPage extends ConsumerStatefulWidget {
   const SongPage(this.songUuid, {super.key});
 
   final String songUuid;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final song = ref.watch(songFromUuidProvider(songUuid));
+  ConsumerState<SongPage> createState() => _SongPageState();
+}
 
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(song.value?.contentMap['title'] ?? ''),
-      ),
-      body: switch (song) {
-        AsyncError(:final error, :final stackTrace) => Center(
-            child: LErrorCard(
-              type: LErrorType.error,
-              title: 'Hiba a dal betöltése közben',
-              message: error.toString(),
-              stack: stackTrace.toString(),
-              icon: Icons.error,
-            ),
+class _SongPageState extends ConsumerState<SongPage> {
+  @override
+  void initState() {
+    detailsSheetScrollController = ScrollController();
+    super.initState();
+  }
+
+  late final ScrollController detailsSheetScrollController;
+  bool detailsRowShown = true;
+
+  @override
+  Widget build(BuildContext context) {
+    final song = ref.watch(songFromUuidProvider(widget.songUuid));
+
+    final List<Widget> summaryContent = song.when(
+      data: (song) => getDetailsSummaryContent(song),
+      loading: () => [],
+      error: (_, __) => [],
+    );
+
+    final List<Widget> detailsContent = song.when(
+      data: (song) => getDetailsContent(song, context),
+      loading: () => [],
+      error: (_, __) => [],
+    );
+
+    return LayoutBuilder(builder: (context, constraints) {
+      return Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.of(context).pop(),
           ),
-        AsyncLoading() => const Center(child: CircularProgressIndicator(value: 0.3)),
-        AsyncValue(:final value!) => Column(
-            children: [
-              ExpansionTile(
-                title: Wrap(
-                  spacing: 10,
-                  // todo handle not showing any entries
-                  children: getDetailsSummaryContent(value),
+          title: Text(song.value?.contentMap['title'] ?? ''),
+          actions: [
+            if (detailsContent.isNotEmpty && constraints.maxWidth > 500)
+              ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: constraints.maxWidth / 2),
+                child: detailsButton(
+                  summaryContent,
+                  context,
+                  detailsContent,
                 ),
-                children: getDetailsContent(value, context),
+              )
+          ],
+        ),
+        body: switch (song) {
+          AsyncError(:final error, :final stackTrace) => Center(
+              child: LErrorCard(
+                type: LErrorType.error,
+                title: 'Hiba a dal betöltése közben',
+                message: error.toString(),
+                stack: stackTrace.toString(),
+                icon: Icons.error,
               ),
-              Expanded(child: Center(child: SheetView(value))),
-            ],
-          ),
-      },
+            ),
+          AsyncLoading() => const Center(child: CircularProgressIndicator(value: 0.3)),
+          AsyncValue(:final value!) => Column(
+              children: [
+                if (detailsContent.isNotEmpty && constraints.maxWidth <= 500)
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: detailsButton(summaryContent, context, detailsContent),
+                  ),
+                Expanded(child: Center(child: SheetView(value))),
+              ],
+            ),
+        },
+      );
+    });
+  }
+
+  Widget detailsButton(List<Widget> summaryContent, BuildContext context, List<Widget> detailsContent) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 5),
+      child: TextButton(
+        style: TextButton.styleFrom(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          textStyle: Theme.of(context).primaryTextTheme.labelMedium!,
+          foregroundColor: Theme.of(context).colorScheme.secondary,
+        ),
+        child: Wrap(
+          spacing: 10,
+          children: summaryContent.isNotEmpty ? summaryContent : [Text('Részletek')],
+        ),
+        onPressed: () => showDetailsBottomSheet(context, detailsSheetScrollController, detailsContent),
+      ),
+    );
+  }
+
+  Future<dynamic> showDetailsBottomSheet(
+      BuildContext context, ScrollController detailsSheetScrollController, List<Widget> detailsContent) {
+    return showModalBottomSheet(
+      // todo factor out to general bottom sheet that can be used troughout the app
+      // todo use https://pub.dev/packages/wtf_sliding_sheet or similar
+      // far future todo consider other view type for desktop
+      context: context,
+      builder: (_) => FadingEdgeScrollView.fromScrollView(
+        child: ListView(
+          controller: detailsSheetScrollController,
+          children: [
+            Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: IconButton(onPressed: () => Navigator.of(context).pop(), icon: Icon(Icons.close)),
+                )),
+            ...detailsContent,
+          ],
+        ),
+      ),
+      isScrollControlled: true,
+      useRootNavigator: false,
+      scrollControlDisabledMaxHeightRatio: 0.5,
     );
   }
 
@@ -71,10 +153,16 @@ class SongPage extends ConsumerWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(songFieldsMap[field]!['icon']),
-              Padding(
-                padding: EdgeInsets.only(left: 3, top: 5, bottom: 5),
-                child: Text(song.contentMap[field]!),
+              Icon(songFieldsMap[field]!['icon'], color: Theme.of(context).colorScheme.secondary),
+              SizedBox(width: 3),
+              Flexible(
+                fit: FlexFit.loose,
+                child: Text(
+                  song.contentMap[field]!,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  softWrap: true,
+                ),
               ),
             ],
           ),
