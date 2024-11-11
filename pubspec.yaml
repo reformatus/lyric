@@ -30,6 +30,7 @@ dependencies:
   sqlite3_flutter_libs: ^0.5.26
   sqlite3: ^2.4.7
   flutter_svg: ^2.0.11
+  package_info_plus: ^8.1.1
 
 dev_dependencies:
   flutter_lints: ^5.0.0
