@@ -128,7 +128,7 @@ class _KeyFilterCardState extends ConsumerState<KeyFilterCard> {
       AsyncValue(:final value) => SizedBox(
           height: 38,
           child: value == null
-              ? LinearProgressIndicator()
+              ? Align(alignment: Alignment.center, child: LinearProgressIndicator())
               : FadingEdgeScrollView.fromScrollView(
                   child: ListView.builder(
                     // hack, but still better than code repetition...
