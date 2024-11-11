@@ -27,6 +27,8 @@ class HomePage extends StatelessWidget {
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     int crossAxisCount = (constraints.maxWidth ~/ 300).clamp(1, 4);
+                    if (crossAxisCount == 3) crossAxisCount = 2;
+
                     double minItemHeight = 80.0;
                     double itemWidth = constraints.maxWidth / crossAxisCount;
                     double childAspectRatio = itemWidth / minItemHeight;
