@@ -5,6 +5,7 @@ import 'package:lyric/data/database.dart';
 import 'package:lyric/ui/base/home/page.dart';
 import 'package:lyric/ui/base/scaffold.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'ui/base/songs/page.dart';
 import 'ui/base/sets/page.dart';
@@ -23,16 +24,23 @@ final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(de
 final GlobalKey<NavigatorState> _baseNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'base');
 
 class LyricApp extends StatelessWidget {
-  const LyricApp({super.key}); 
+  const LyricApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-        theme: ThemeData.from(
-            colorScheme: ColorScheme.fromSeed(
-                seedColor: Color(0xff025462), primary: Color(0xffc3a140), brightness: Brightness.light),
-            useMaterial3: true),
-        routerConfig: _router);
+      theme: ThemeData.from(
+          colorScheme: ColorScheme.fromSeed(
+              seedColor: Color(0xff025462), primary: Color(0xffc3a140), brightness: Brightness.light),
+          useMaterial3: true),
+      routerConfig: _router,
+      supportedLocales: const [Locale('hu')],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+    );
   }
 }
 
