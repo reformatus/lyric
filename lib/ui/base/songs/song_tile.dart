@@ -60,7 +60,7 @@ class LSongResultTile extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (hasMatch(match.matchComposer)) trailingPart(match.matchComposer, context),
-            if (hasMatch(match.matchPoet)) trailingPart(match.matchPoet, context),
+            if (hasMatch(match.matchLyricist)) trailingPart(match.matchLyricist, context),
             if (hasMatch(match.matchTranslator)) trailingPart(match.matchTranslator, context),
           ],
         ),

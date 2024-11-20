@@ -15,7 +15,7 @@ const List<String> fullTextSearchFields = [
   'title',
   'lyrics',
   'composer',
-  'poet',
+  'lyricist',
   'translator',
 ];
 

@@ -8,7 +8,7 @@ CREATE VIRTUAL TABLE songs_fts USING fts5(
   ,title
   ,lyrics
   ,composer
-  ,poet
+  ,lyricist
   ,translator
   ,key_field UNINDEXED
   ,content_map UNINDEXED
@@ -22,14 +22,14 @@ CREATE VIRTUAL TABLE songs_fts USING fts5(
 -- see https://kimsereylam.com/sqlite/2020/03/06/full-text-search-with-sqlite.html
 
 CREATE TRIGGER songs_ai AFTER INSERT ON songs BEGIN
-  INSERT INTO songs_fts (rowid, uuid, source_bank_id, title, lyrics, composer, poet, translator, key_field, content_map) VALUES (new.id, new.uuid, new.source_bank_id, new.title, new.lyrics, new.composer, new.poet, new.translator, new.key_field, new.content_map);
+  INSERT INTO songs_fts (rowid, uuid, source_bank_id, title, lyrics, composer, lyricist, translator, key_field, content_map) VALUES (new.id, new.uuid, new.source_bank_id, new.title, new.lyrics, new.composer, new.lyricist, new.translator, new.key_field, new.content_map);
 END;
 
 CREATE TRIGGER songs_ad AFTER DELETE ON songs BEGIN
-  INSERT INTO songs_fts (songs_fts, rowid, uuid, source_bank_id, title, lyrics, composer, poet, translator, key_field, content_map) VALUES ('delete', old.id, old.uuid, old.source_bank_id, old.title, old.lyrics, old.composer, old.poet, old.translator, old.key_field, old.content_map);
+  INSERT INTO songs_fts (songs_fts, rowid, uuid, source_bank_id, title, lyrics, composer, lyricist, translator, key_field, content_map) VALUES ('delete', old.id, old.uuid, old.source_bank_id, old.title, old.lyrics, old.composer, old.lyricist, old.translator, old.key_field, old.content_map);
 END;
 
 CREATE TRIGGER songs_au AFTER UPDATE ON songs BEGIN
-  INSERT INTO songs_fts (songs_fts, rowid, uuid, source_bank_id, title, lyrics, composer, poet, translator, key_field, content_map) VALUES ('delete', old.id, old.uuid, old.source_bank_id, old.title, old.lyrics, old.composer, old.poet, old.translator, old.key_field, old.content_map);
-  INSERT INTO songs_fts (rowid, uuid, source_bank_id, title, lyrics, composer, poet, translator, key_field, content_map) VALUES (new.id, new.uuid, new.source_bank_id, new.title, new.lyrics, new.composer, new.poet, new.translator, new.key_field, new.content_map);
+  INSERT INTO songs_fts (songs_fts, rowid, uuid, source_bank_id, title, lyrics, composer, lyricist, translator, key_field, content_map) VALUES ('delete', old.id, old.uuid, old.source_bank_id, old.title, old.lyrics, old.composer, old.lyricist, old.translator, old.key_field, old.content_map);
+  INSERT INTO songs_fts (rowid, uuid, source_bank_id, title, lyrics, composer, lyricist, translator, key_field, content_map) VALUES (new.id, new.uuid, new.source_bank_id, new.title, new.lyrics, new.composer, new.lyricist, new.translator, new.key_field, new.content_map);
 END;

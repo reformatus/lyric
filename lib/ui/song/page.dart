@@ -10,7 +10,7 @@ import '../common/error.dart';
 
 const Set<String> fieldsToShowInDetailsSummary = {
   'composer',
-  'poet',
+  'lyricist',
   'translator',
 };
 

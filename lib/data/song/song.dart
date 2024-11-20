@@ -12,7 +12,7 @@ class Song extends Insertable<Song> {
   final String lyrics;
   final KeyField? keyField;
   final String? composer;
-  final String? poet;
+  final String? lyricist;
   final String? translator;
 
   Map<String, String> contentMap;
@@ -28,13 +28,12 @@ class Song extends Insertable<Song> {
         uuid: json['uuid'],
         title: json['title'],
         lyrics: json['lyrics'],
-        keyField: KeyField.fromString(json['pitch']), // todo change to key once song bank gets updated
+        keyField: KeyField.fromString(json['key']),
         contentMap: json.map((key, value) => MapEntry(key, value.toString())),
         sourceBankId: sourceBank?.id,
         composer: json['composer'],
-        poet: json['poet'],
+        lyricist: json['lyricist'],
         translator: json['translator'],
-        userNote: json['user_note'], // todo will this be here? for example, when reading from file?
       );
     } catch (e, s) {
       throw Exception('Invalid song data in: ${json['title']} (${json['uuid']})\nError: $e\n$s\n');
@@ -49,7 +48,7 @@ class Song extends Insertable<Song> {
     required this.contentMap,
     this.sourceBankId,
     this.composer,
-    this.poet,
+    this.lyricist,
     this.translator,
     this.userNote,
   });
@@ -63,7 +62,7 @@ class Song extends Insertable<Song> {
       title: Value(title),
       lyrics: Value(lyrics),
       composer: Value(composer),
-      poet: Value(poet),
+      lyricist: Value(lyricist),
       translator: Value(translator),
       keyField: Value(keyField),
       userNote: Value(userNote),
@@ -82,7 +81,7 @@ class Songs extends Table {
   TextColumn get title => text()();
   TextColumn get lyrics => text()();
   TextColumn get composer => text().nullable()();
-  TextColumn get poet => text().nullable()();
+  TextColumn get lyricist => text().nullable()();
   TextColumn get translator => text().nullable()();
   TextColumn get keyField => text().map(const KeyFieldConverter())();
   TextColumn get userNote => text().nullable()();

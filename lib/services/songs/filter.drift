@@ -10,7 +10,7 @@ songFulltextSearch(:match_string AS TEXT):
       ,snippet(songs_fts, 2, '<?', '?>', '...', 30) AS match_title
       ,snippet(songs_fts, 3, '<?', '?>', '...', 40) AS match_lyrics
       ,snippet(songs_fts, 4, '<?', '?>', '...', 15) AS match_composer
-      ,snippet(songs_fts, 5, '<?', '?>', '...', 15) AS match_poet
+      ,snippet(songs_fts, 5, '<?', '?>', '...', 15) AS match_lyricist
       ,snippet(songs_fts, 6, '<?', '?>', '...', 15) AS match_translator
     FROM songs_fts
     WHERE songs_fts MATCH :match_string

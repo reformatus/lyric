@@ -33,7 +33,7 @@ const Map<String, Map<String, dynamic>> songFieldsMap = {
     'type': 'searchable',
     'icon': Icons.music_note,
   },
-  'poet': {
+  'lyricist': {
     'title_hu': 'Szövegíró',
     'type': 'searchable',
     'icon': Icons.edit,
@@ -68,8 +68,7 @@ const Map<String, Map<String, dynamic>> songFieldsMap = {
     'type': 'filterable_multiselect',
     'icon': Icons.height,
   },
-  'pitch': {
-    // todo change back to key
+  'key': {
     'title_hu': 'Hangnem',
     'type': 'filterable_key',
     'icon': Icons.music_note,
