@@ -10,12 +10,12 @@ import '../song/song.dart';
 // these get added to the database on first run
 // todo add a way to add banks
 final List<Bank> defaultBanks = [
-  Bank(1, 'TESZT Sófár Kottatár', Uri.parse('https://kiskutyafule.csecsy.hu/api/')),
+  /*Bank(1, 'TESZT Sófár Kottatár', Uri.parse('https://kiskutyafule.csecsy.hu/api/')),*/
   Bank(2, 'Sófár Kottatár', Uri.parse('https://sofarkotta.csecsy.hu/api/')),
   /*Bank(
       3, 'Református Énekeskönyv (1948)', Uri.parse('https://banks.lyricapp.org/reformatus-enekeskonyv/48/')),*/
-  Bank(
-      4, 'Református Énekeskönyv (2021)', Uri.parse('https://banks.lyricapp.org/reformatus-enekeskonyv/21/')),
+  /*Bank(
+      4, 'Református Énekeskönyv (2021)', Uri.parse('https://banks.lyricapp.org/reformatus-enekeskonyv/21/')),*/
 ];
 
 class Bank extends Insertable<Bank> {
@@ -43,7 +43,7 @@ class Bank extends Insertable<Bank> {
     try {
       var songJson = jsonDecode(resp.data!);
       if (songJson is List) songJson = songJson.first; //make compatible with sófár kottatár quirk
-      var song = Song.fromJson(songJson as Map<String, dynamic>, sourceBank: this);
+      var song = Song.fromBankApiJson(songJson as Map<String, dynamic>, sourceBank: this);
       return song;
     } catch (e) {
       throw Exception('Error while parsing song details for $uuid\n$e');
