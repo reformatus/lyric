@@ -1,4 +1,3 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'package:lyric/services/song/from_uuid.dart';
 
 import '../song/song.dart';
