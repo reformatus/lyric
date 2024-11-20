@@ -8,6 +8,7 @@ import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
 import 'package:path/path.dart' as p;
 
 import 'bank/bank.dart';
+import 'cue/cue.dart';
 import 'song/song.dart';
 import 'asset/asset.dart';
 
@@ -21,6 +22,7 @@ late final Directory dataDir;
     Songs,
     Banks,
     Assets,
+    Cues,
   ],
   include: {
     'song/song.drift',

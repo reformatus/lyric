@@ -18,7 +18,7 @@ class Song extends Insertable<Song> {
   Map<String, String> contentMap;
   String? userNote;
 
-  factory Song.fromJson(Map<String, dynamic> json, {Bank? sourceBank}) {
+  factory Song.fromBankApiJson(Map<String, dynamic> json, {Bank? sourceBank}) {
     try {
       if (!mandatoryFields.every((field) => json.containsKey(field))) {
         throw Exception('Missing mandatory fields in: ${json['title']} (${json['uuid']})');
@@ -53,6 +53,19 @@ class Song extends Insertable<Song> {
     this.userNote,
   });
 
+  int get contentHash => Object.hash(
+        uuid,
+        title,
+        lyrics,
+        keyField,
+        contentMap,
+        sourceBankId,
+        composer,
+        lyricist,
+        translator,
+        userNote,
+      );
+
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     return SongsCompanion(
@@ -77,7 +90,7 @@ class Songs extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get uuid => text()();
   IntColumn get sourceBankId => integer().nullable().references(Banks, #id)();
-  TextColumn get contentMap => text().map(const ContentConverter())();
+  TextColumn get contentMap => text().map(const SongContentConverter())();
   TextColumn get title => text()();
   TextColumn get lyrics => text()();
   TextColumn get composer => text().nullable()();
@@ -87,8 +100,8 @@ class Songs extends Table {
   TextColumn get userNote => text().nullable()();
 }
 
-class ContentConverter extends TypeConverter<Map<String, String>, String> {
-  const ContentConverter();
+class SongContentConverter extends TypeConverter<Map<String, String>, String> {
+  const SongContentConverter();
 
   @override
   Map<String, String> fromSql(String fromDb) {
