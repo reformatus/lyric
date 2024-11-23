@@ -12,6 +12,7 @@ part 'cue.g.dart';
 @UseRowClass(Cue)
 class Cues extends Table {
   IntColumn get id => integer().autoIncrement()();
+  TextColumn get uuid => text()();
   TextColumn get title => text()();
   TextColumn get description => text()();
   IntColumn get cueVersion => integer()();
@@ -21,6 +22,7 @@ class Cues extends Table {
 
 class Cue extends Insertable<Cue> {
   final int id;
+  final String uuid;
   String title;
   String description;
   int cueVersion;
@@ -36,6 +38,7 @@ class Cue extends Insertable<Cue> {
 
   Cue(
     this.id,
+    this.uuid,
     this.title,
     this.description,
     this.cueVersion,
@@ -46,6 +49,7 @@ class Cue extends Insertable<Cue> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     return CuesCompanion(
       id: Value(id),
+      uuid: Value(uuid),
       title: Value(title),
       description: Value(description),
       cueVersion: Value(cueVersion),
