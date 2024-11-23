@@ -10,8 +10,12 @@ import 'package:lyric/ui/base/songs/filter/key/state.dart';
 import 'package:lyric/ui/base/songs/song_tile.dart';
 import 'package:lyric/ui/common/error.dart';
 
+import '../../../data/cue/cue.dart';
+
 class SongsPage extends ConsumerStatefulWidget {
-  const SongsPage({super.key});
+  const SongsPage({this.addingToCue, super.key});
+
+  final Cue? addingToCue;
 
   @override
   ConsumerState<SongsPage> createState() => _SongsPageState();
@@ -192,7 +196,8 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                                   )
                                 : ListView.separated(
                                     itemBuilder: (BuildContext context, int i) {
-                                      return LSongResultTile(value.elementAt(i));
+                                      return LSongResultTile(value.elementAt(i),
+                                          addingToCue: widget.addingToCue);
                                     },
                                     separatorBuilder: (_, __) => const SizedBox(height: 0),
                                     itemCount: value.length),
@@ -209,6 +214,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                       backgroundColor: Theme.of(context).indicatorColor,
                       appBar: AppBar(
                         title: FiltersTitle(filterState: filterState, keyFilterState: keyFilterState),
+                        automaticallyImplyLeading: false,
                         backgroundColor: filterState.isEmpty && keyFilterState.isEmpty
                             ? Theme.of(context).indicatorColor
                             : Theme.of(context).colorScheme.secondaryContainer,

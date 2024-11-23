@@ -4,6 +4,8 @@ import 'package:lyric/data/cue/slide.dart';
 import 'package:lyric/main.dart';
 import 'package:lyric/services/cue/from_uuid.dart';
 import 'package:lyric/services/cue/slide/watch_revived.dart';
+import 'package:lyric/services/cue/write_cue.dart';
+import 'package:lyric/ui/base/songs/page.dart';
 import 'package:lyric/ui/common/error.dart';
 import 'package:lyric/ui/cue/slide_views/song.dart';
 
@@ -18,31 +20,43 @@ class CuePage extends ConsumerStatefulWidget {
 }
 
 class _CuePageState extends ConsumerState<CuePage> {
-  int? selectedSlideIndex;
-
   @override
   void initState() {
-    selectedSlideIndex = widget.initialSlideIndex;
+    selectedSlideOrIsAdding = widget.initialSlideIndex;
     super.initState();
   }
+
+  /// -1 means song adding mode
+  /// null means neither song selected nor adding mode
+  int? selectedSlideOrIsAdding = 0;
+  bool get isSongAddingMode => selectedSlideOrIsAdding == -1;
+
+  List<Slide>? localSlides;
 
   @override
   Widget build(BuildContext context) {
     final cue = ref.watch(watchCueWithUuidProvider(widget.uuid));
     final slides = ref.watch(watchRevivedSlidesForCueWithUuidProvider(widget.uuid));
 
-    return LayoutBuilder(builder: (context, contraints) {
+    slides.whenData((revivedSlides) {
+      if (localSlides == null || !cue.isLoading) {
+        setState(() {
+          localSlides = revivedSlides;
+        });
+      }
+    });
+
+    addSongsModeCallback() {
+      setState(() => selectedSlideOrIsAdding = -1);
+    }
+
+    return LayoutBuilder(builder: (context, constraints) {
       return Flex(
-        direction: contraints.maxWidth > globals.tabletFromWidth ? Axis.horizontal : Axis.vertical,
+        direction: constraints.maxWidth > globals.tabletFromWidth ? Axis.horizontal : Axis.vertical,
         children: [
           Expanded(
             child: Scaffold(
-              appBar: AppBar(
-                title: Text(cue.value?.title ?? ''),
-                bottom: (cue.isLoading || slides.isLoading)
-                    ? PreferredSize(preferredSize: const Size.fromHeight(4), child: LinearProgressIndicator())
-                    : null,
-              ),
+              appBar: AppBar(title: Text(cue.value?.title ?? '')),
               // todo show error message when cue provider returns error
               body: switch (slides) {
                 AsyncError(:final error, :final stackTrace) => LErrorCard(
@@ -52,79 +66,122 @@ class _CuePageState extends ConsumerState<CuePage> {
                     message: error.toString(),
                     stack: stackTrace.toString(),
                   ),
-                AsyncLoading() => Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                AsyncValue(:final value!) => ListTileTheme(
-                    selectedTileColor: Theme.of(context).indicatorColor,
-                    child: ListView(
-                      children: value.asMap().entries.map(
-                        (indexedEntry) {
-                          callback() => setState(() {
-                                selectedSlideIndex = indexedEntry.key;
-                              });
-                          switch (indexedEntry.value) {
-                            case SongSlide songSlide:
-                              return SongSlideTile(
-                                songSlide,
-                                callback,
-                                selected: indexedEntry.key == selectedSlideIndex,
-                              );
-                            case UnknownTypeSlide unknownTypeSlide:
-                              return UnknownTypeSlideTile(
-                                unknownTypeSlide,
-                                callback,
-                                selected: indexedEntry.key == selectedSlideIndex,
-                              );
-                          }
-                        },
-                      ).toList(),
-                    ),
-                  )
+                AsyncValue(:final value) => value != null
+                    ? ListTileTheme(
+                        selectedTileColor: Theme.of(context).indicatorColor,
+                        child: ReorderableListView(
+                          onReorder: (from, to) {
+                            setState(() {
+                              final item = localSlides!.removeAt(from);
+                              localSlides!.insert(to > from ? to - 1 : to, item);
+                              reorderCueSlides(cue.requireValue, from, to);
+                              if (selectedSlideOrIsAdding == from) {
+                                selectedSlideOrIsAdding = to > from ? to - 1 : to;
+                              }
+                            });
+                          },
+                          children: localSlides!.asMap().entries.map(
+                            (indexedEntry) {
+                              selectCallback() {
+                                setState(() {
+                                  if (selectedSlideOrIsAdding == indexedEntry.key) {
+                                    selectedSlideOrIsAdding = null;
+                                  } else {
+                                    selectedSlideOrIsAdding = indexedEntry.key;
+                                  }
+                                });
+                                // todo update query parameter with selected slide
+                              }
+
+                              removeCallback() {
+                                if (selectedSlideOrIsAdding == indexedEntry.key) {
+                                  setState(() => selectedSlideOrIsAdding = null);
+                                }
+                                if (!isSongAddingMode &&
+                                    selectedSlideOrIsAdding != null &&
+                                    selectedSlideOrIsAdding! > indexedEntry.key) {
+                                  setState(() {
+                                    selectedSlideOrIsAdding = selectedSlideOrIsAdding! - 1;
+                                  });
+                                }
+                                removeSlideAtIndexFromCue(indexedEntry.key, cue.requireValue);
+                              }
+
+                              switch (indexedEntry.value) {
+                                case SongSlide songSlide:
+                                  return SongSlideTile(
+                                    key: Key('${indexedEntry.value}-${songSlide.hashCode}'),
+                                    songSlide,
+                                    selectCallback: selectCallback,
+                                    removeCallback: removeCallback,
+                                    selected: indexedEntry.key == selectedSlideOrIsAdding,
+                                  );
+                                case UnknownTypeSlide unknownTypeSlide:
+                                  return UnknownTypeSlideTile(
+                                    key: Key('${indexedEntry.value}-${unknownTypeSlide.hashCode}'),
+                                    unknownTypeSlide,
+                                    selectCallback: selectCallback,
+                                    removeCallback: removeCallback,
+                                    selected: indexedEntry.key == selectedSlideOrIsAdding,
+                                  );
+                              }
+                            },
+                          ).toList(),
+                        ),
+                      )
+                    : const Center(child: CircularProgressIndicator()),
               },
-              floatingActionButton:
-                  (contraints.maxWidth > globals.tabletFromWidth || selectedSlideIndex == null)
+              floatingActionButton: !isSongAddingMode
+                  ? (constraints.maxWidth > globals.tabletFromWidth || selectedSlideOrIsAdding == null)
                       ? FloatingActionButton.extended(
-                          onPressed: () {},
+                          onPressed: addSongsModeCallback,
                           label: Text('Énekek hozzáadása'),
                           icon: Icon(Icons.playlist_add),
                         )
                       : FloatingActionButton.small(
-                          onPressed: () {},
+                          onPressed: addSongsModeCallback,
                           tooltip: 'Énekek hozzáadása',
                           child: Icon(Icons.playlist_add),
-                        ),
+                        )
+                  : null,
             ),
           ),
-          if (selectedSlideIndex != null && cue.hasValue)
+          if (selectedSlideOrIsAdding != null && selectedSlideOrIsAdding != -1 && cue.hasValue)
             Expanded(
               flex: 2,
               child: Scaffold(
                 backgroundColor: Theme.of(context).indicatorColor,
                 appBar: AppBar(
-                  title: Text(slides.requireValue[selectedSlideIndex!].comment ?? ''),
+                  title: Text(slides.requireValue[selectedSlideOrIsAdding!].comment ?? ''),
                   elevation: 1,
                   automaticallyImplyLeading: false,
                   actions: [
                     IconButton(
                       onPressed: () => setState(() {
-                        selectedSlideIndex = null;
+                        selectedSlideOrIsAdding = null;
                       }),
                       icon: Icon(Icons.close),
                     ),
                   ],
                   actionsPadding: EdgeInsets.only(right: 5),
                 ),
-                body: switch (slides.requireValue[selectedSlideIndex!]) {
+                body: switch (slides.requireValue[selectedSlideOrIsAdding!]) {
                   (SongSlide songSlide) => SongSlideView(songSlide),
                   (UnknownTypeSlide unknownSlide) => LErrorCard(
                       type: LErrorType.warning,
-                      title: 'Ismeretlen diatípus. Elavult az appod?',
+                      title: 'Ismeretlen diatípus. Talán újabb verzióban készítették a listát?',
                       icon: Icons.question_mark,
                       message: unknownSlide.getPreview(),
                       stack: unknownSlide.json.toString(),
                     ),
                 },
+              ),
+            ),
+          if (cue.hasValue && isSongAddingMode)
+            Expanded(
+              flex: 2,
+              child: SongsPage(
+                addingToCue: cue.requireValue,
               ),
             )
         ],
@@ -134,9 +191,11 @@ class _CuePageState extends ConsumerState<CuePage> {
 }
 
 class UnknownTypeSlideTile extends StatelessWidget {
-  const UnknownTypeSlideTile(this.slide, this.selectCallback, {required this.selected, super.key});
+  const UnknownTypeSlideTile(this.slide,
+      {required this.selectCallback, required this.removeCallback, required this.selected, super.key});
 
   final GestureTapCallback selectCallback;
+  final GestureTapCallback removeCallback;
   final bool selected;
   final Slide slide;
 
@@ -145,6 +204,10 @@ class UnknownTypeSlideTile extends StatelessWidget {
     return ListTile(
       title: Text('Ismeretlen diatípus'),
       onTap: selectCallback,
+      trailing: Padding(
+        padding: EdgeInsets.only(right: 10),
+        child: IconButton(onPressed: removeCallback, icon: Icon(Icons.delete_outline)),
+      ),
       selected: selected,
       tileColor: Theme.of(context).colorScheme.errorContainer,
       textColor: Theme.of(context).colorScheme.onErrorContainer,

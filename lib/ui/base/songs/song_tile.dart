@@ -2,15 +2,18 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lyric/services/cue/slide/song_slide.dart';
 import 'package:lyric/services/songs/filter.dart';
 import 'package:lyric/ui/common/error.dart';
 
+import '../../../data/cue/cue.dart';
 import '../../../data/database.dart';
 
 class LSongResultTile extends StatelessWidget {
-  const LSongResultTile(this.songResult, {super.key});
+  const LSongResultTile(this.songResult, {this.addingToCue, super.key});
 
   final SongResult songResult;
+  final Cue? addingToCue;
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +30,14 @@ class LSongResultTile extends StatelessWidget {
       }
       return ListTile(
         // far future todo dense on desktop (maybe even table?)
-        onTap: () => context.push('/song/${songsFt.uuid}'),
+        onTap: addingToCue == null ? () => context.push('/song/${songsFt.uuid}') : null,
         title: Text(songsFt.title),
         trailing: Text(songsFt.keyField.toString()),
+        leading: addingToCue != null
+            ? IconButton.filledTonal(
+                onPressed: () => addSongSlideToCueForSongWithUuid(cue: addingToCue!, songUuid: songsFt.uuid),
+                icon: Icon(Icons.arrow_back))
+            : null,
         subtitle: !firstLine.startsWith(songsFt.title)
             ? Text(
                 firstLine,
@@ -41,7 +49,12 @@ class LSongResultTile extends StatelessWidget {
       );
     } else if (match != null) {
       return ListTile(
-        onTap: () => context.push('/song/${match.uuid}'),
+        onTap: addingToCue == null ? () => context.push('/song/${match.uuid}') : null,
+        leading: addingToCue != null
+            ? IconButton.filledTonal(
+                onPressed: () => addSongSlideToCueForSongWithUuid(cue: addingToCue!, songUuid: match.uuid),
+                icon: Icon(Icons.arrow_back))
+            : null,
         title: RichText(
           text: TextSpan(
             children: spansFromSnippet(

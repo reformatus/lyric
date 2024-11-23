@@ -73,7 +73,7 @@ class SheetView extends ConsumerWidget {
               );
             }
           default:
-            return SizedBox.shrink();
+            return Center(child: CircularProgressIndicator(value: 0.8));
         }
     }
   }
