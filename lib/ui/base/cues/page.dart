@@ -16,7 +16,7 @@ class SetsPage extends ConsumerStatefulWidget {
 class _SetsPageState extends ConsumerState<SetsPage> {
   @override
   Widget build(BuildContext context) {
-    final cues = ref.watch(getAllCuesProvider);
+    final cues = ref.watch(watchAllCuesProvider);
 
     return Scaffold(
       appBar: AppBar(

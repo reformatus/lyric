@@ -7,11 +7,13 @@ import '../../data/cue/cue.dart';
 
 part 'cues.g.dart';
 
+//! watchAllCues
+
 @riverpod
-Future<List<Cue>> getAllCues(Ref ref) async {
-  return await dbGetAllCues();
+Stream<List<Cue>> watchAllCues(Ref ref) async* {
+  yield* dbWatchAllCues();
 }
 
-Future<List<Cue>> dbGetAllCues() async {
-  return await ((db.cues.select().get()));
+Stream<List<Cue>> dbWatchAllCues() async* {
+  yield* ((db.cues.select().watch()));
 }

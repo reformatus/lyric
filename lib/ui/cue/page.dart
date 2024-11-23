@@ -27,7 +27,7 @@ class _CuePageState extends ConsumerState<CuePage> {
 
   @override
   Widget build(BuildContext context) {
-    final cue = ref.watch(revivedCueFromIdProvider(widget.cueId));
+    final cue = ref.watch(watchAndReviveCueWithIdProvider(widget.cueId));
 
     return LayoutBuilder(builder: (context, contraints) {
       return Flex(

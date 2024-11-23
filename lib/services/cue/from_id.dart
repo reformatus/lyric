@@ -8,12 +8,13 @@ import '../../data/cue/cue.dart';
 part 'from_id.g.dart';
 
 @riverpod
-Future<Cue> revivedCueFromId(Ref ref, int id) async {
-  final cue = await dbCueFromId(id);
-  await cue.reviveSlides();
-  return cue;
+Stream<Cue> watchAndReviveCueWithId(Ref ref, int id) async* {
+  await for (Cue cue in dbWatchCueWithId(id)) {
+    await cue.reviveSlides();
+    yield cue;
+  }
 }
 
-Future<Cue> dbCueFromId(int id) async {
-  return await (db.cues.select()..where((c) => c.id.equals(id))).getSingle();
+Stream<Cue> dbWatchCueWithId(int id) async* {
+  yield* (db.cues.select()..where((c) => c.id.equals(id))).watchSingle();
 }
