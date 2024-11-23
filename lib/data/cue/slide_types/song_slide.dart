@@ -17,8 +17,10 @@ class SongSlide implements Slide {
 
   @override
   String getPreview() {
-    // far future todo: maybe do this better
-    return song.lyrics.substring(0, 500);
+    return song.lyrics.substring(
+      0,
+      song.lyrics.indexOf('\n'), // todo proper bounds checking
+    );
   }
 
   static Future<SongSlide> reviveFromJson(Map json) async {
