@@ -97,8 +97,15 @@ final _router = GoRouter(
             path: '/cue/:id',
             pageBuilder: (context, state) {
               final cueId = int.parse(state.pathParameters['id']!);
-              return MaterialPage(child: CuePage(cueId));
-            })
+            int? slideIndex = int.tryParse(state.uri.queryParameters['index'] ?? 'ignoreMe');
+            return MaterialPage(
+              child: CuePage(
+                cueId,
+                initialSlideIndex: slideIndex,
+              ),
+            );
+          },
+        ),
       ],
     )
   ],

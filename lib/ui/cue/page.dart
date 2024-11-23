@@ -8,12 +8,21 @@ class CuePage extends ConsumerStatefulWidget {
   const CuePage(this.cueId, {super.key});
 
   final int cueId;
+  final int? initialSlideIndex;
 
   @override
   ConsumerState<CuePage> createState() => _CuePageState();
 }
 
 class _CuePageState extends ConsumerState<CuePage> {
+  int? selectedSlideIndex;
+
+  @override
+  void initState() {
+    selectedSlideIndex = widget.initialSlideIndex;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final cue = ref.watch(revivedCueFromIdProvider(widget.cueId));
