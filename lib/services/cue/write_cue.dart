@@ -4,27 +4,22 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/v4.dart';
 
 import '../../data/cue/cue.dart';
-import '../../data/cue/slide.dart';
 import '../../data/database.dart';
 
-part 'write_cue.g.dart';
-
-@riverpod
-Future insertNewCue(Ref ref, {required String title, String? description}) async {
-  await db.into(db.cues).insert(
+Future<Cue> insertNewCue({required String title, required String description}) async {
+  return await db.into(db.cues).insertReturning(
         CuesCompanion(
           id: Value.absent(),
           uuid: Value(UuidV4().generate()),
           title: Value(title),
-          description: description != null ? Value(description) : Value.absent(),
+          description: Value(description),
           cueVersion: Value(currentCueVersion),
           content: Value([]),
         ),
       );
 }
 
-@riverpod
-Future updateCueMetadataFor(Ref ref, int id, {String? title, String? description}) async {
+Future updateCueMetadataFor(int id, {String? title, String? description}) async {
   await (db.update(db.cues)..where((c) => c.id.equals(id))).write(
     CuesCompanion(
       title: Value.absentIfNull(title),
@@ -33,16 +28,6 @@ Future updateCueMetadataFor(Ref ref, int id, {String? title, String? description
   );
 }
 
-@riverpod
-Future updateSlidesOfCue(Ref ref, Cue cue) async {
-  //cue.updateContentJson();
-
-  throw UnimplementedError();
+Future deleteCueWithUuid(String uuid) {
+  return db.cues.deleteWhere((c) => c.uuid.equals(uuid));
 }
-
-/*
-@riverpod
-Future updateCueWith(Ref ref, int id, CuesCompanion data) async {
-  await (db.update(db.cues)..where((e) => e.id.equals(id))).write(data);
-}
-*/

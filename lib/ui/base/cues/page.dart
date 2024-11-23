@@ -5,6 +5,7 @@ import 'package:lyric/services/cue/cues.dart';
 import 'package:lyric/ui/common/error.dart';
 
 import '../../../data/cue/cue.dart';
+import 'dialogs.dart';
 
 class SetsPage extends ConsumerStatefulWidget {
   const SetsPage({super.key});
@@ -23,7 +24,10 @@ class _SetsPageState extends ConsumerState<SetsPage> {
         title: Text('Listáim'),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
+        onPressed: () => showAdaptiveDialog(
+          context: context,
+          builder: (context) => EditCueDialog(),
+        ),
         label: Text('Új lista'),
         icon: Icon(Icons.add_box_outlined),
       ),
@@ -58,8 +62,27 @@ class CueTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(cue.title),
-      subtitle: Text(cue.description),
-      onTap: () => context.push('/cue/${cue.id}'),
+      subtitle: cue.description.isNotEmpty ? Text(cue.description) : null,
+      onTap: () => context.push('/cue/${cue.uuid}'),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            icon: Icon(Icons.edit_outlined),
+            onPressed: () => showAdaptiveDialog(
+              context: context,
+              builder: (context) => EditCueDialog(cue: cue),
+            ),
+          ),
+          IconButton(
+            icon: Icon(Icons.delete_outline),
+            onPressed: () => showAdaptiveDialog(
+              context: context,
+              builder: (context) => DeleteCueDialog(cue: cue),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
