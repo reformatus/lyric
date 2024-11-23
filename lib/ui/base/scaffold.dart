@@ -43,6 +43,9 @@ class BaseScaffold extends StatefulWidget {
     if (location.startsWith('/song')) {
       return 3;
     }
+    if (location.startsWith('/cue')) {
+      return 3;
+    }
     return 0;
   }
 }
@@ -84,6 +87,12 @@ class _BaseScaffoldState extends State<BaseScaffold> {
           icon: Icons.music_note_outlined,
           selectedIcon: Icons.music_note,
           label: 'Dal',
+        ),
+      if (GoRouterState.of(context).uri.path.startsWith('/cue'))
+        (
+          icon: Icons.list,
+          selectedIcon: Icons.list,
+          label: 'Lista',
         ),
     ];
 

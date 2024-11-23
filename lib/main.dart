@@ -4,11 +4,12 @@ import 'package:go_router/go_router.dart';
 import 'package:lyric/data/database.dart';
 import 'package:lyric/ui/base/home/page.dart';
 import 'package:lyric/ui/base/scaffold.dart';
+import 'package:lyric/ui/cue/page.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'ui/base/songs/page.dart';
-import 'ui/base/sets/page.dart';
+import 'ui/base/cues/page.dart';
 import 'ui/loading/page.dart';
 import 'ui/song/page.dart';
 
@@ -84,13 +85,20 @@ final _router = GoRouter(
           ),
         ),
         GoRoute(
-            path: '/song/:uuid',
+          path: '/song/:uuid',
+          pageBuilder: (context, state) {
+            final songUuid = state.pathParameters['uuid']!;
+            return MaterialPage(
+              child: SongPage(songUuid),
+            );
+          },
+        ),
+        GoRoute(
+            path: '/cue/:id',
             pageBuilder: (context, state) {
-              final songUuid = state.pathParameters['uuid']!;
-              return MaterialPage(
-                child: SongPage(songUuid),
-              );
-            }),
+              final cueId = int.parse(state.pathParameters['id']!);
+              return MaterialPage(child: CuePage(cueId));
+            })
       ],
     )
   ],
