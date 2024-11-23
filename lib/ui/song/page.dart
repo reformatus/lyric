@@ -56,6 +56,7 @@ class _SongPageState extends ConsumerState<SongPage> {
 
     return LayoutBuilder(builder: (context, constraints) {
       return Scaffold(
+        backgroundColor: Theme.of(context).indicatorColor,
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),

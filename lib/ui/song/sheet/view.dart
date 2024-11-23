@@ -17,8 +17,10 @@ class SheetView extends ConsumerWidget {
     final bank = ref.watch(bankOfSongProvider(song));
     switch (bank) {
       case AsyncLoading():
-        return CircularProgressIndicator(
-          value: 0.5,
+        return Center(
+          child: CircularProgressIndicator(
+            value: 0.5,
+          ),
         );
       case AsyncError(:final error, :final stackTrace):
         return Center(

@@ -46,6 +46,7 @@ class LyricApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -68,21 +69,27 @@ final _router = GoRouter(
       routes: [
         GoRoute(
           path: '/home',
-          pageBuilder: (context, state) => const MaterialPage(
-            child: HomePage(),
-          ),
+          pageBuilder: (context, state) {
+            return const MaterialPage(
+              child: HomePage(),
+            );
+          },
         ),
         GoRoute(
           path: '/bank',
-          pageBuilder: (context, state) => const MaterialPage(
-            child: SongsPage(),
-          ),
+          pageBuilder: (context, state) {
+            return const MaterialPage(
+              child: SongsPage(),
+            );
+          },
         ),
         GoRoute(
           path: '/sets',
-          pageBuilder: (context, state) => const MaterialPage(
-            child: SetsPage(),
-          ),
+          pageBuilder: (context, state) {
+            return const MaterialPage(
+              child: SetsPage(),
+            );
+          },
         ),
         GoRoute(
           path: '/song/:uuid',
@@ -94,9 +101,9 @@ final _router = GoRouter(
           },
         ),
         GoRoute(
-            path: '/cue/:id',
-            pageBuilder: (context, state) {
-              final cueId = int.parse(state.pathParameters['id']!);
+          path: '/cue/:id',
+          pageBuilder: (context, state) {
+            final cueId = int.parse(state.pathParameters['id']!);
             int? slideIndex = int.tryParse(state.uri.queryParameters['index'] ?? 'ignoreMe');
             return MaterialPage(
               child: CuePage(

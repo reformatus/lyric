@@ -25,7 +25,7 @@ class _SetsPageState extends ConsumerState<SetsPage> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {},
         label: Text('Új lista'),
-        icon: Icon(Icons.playlist_add),
+        icon: Icon(Icons.add_box_outlined),
       ),
       body: switch (cues) {
         AsyncError(:final error, :final stackTrace) => Center(
