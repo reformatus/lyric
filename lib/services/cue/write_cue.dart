@@ -6,15 +6,8 @@ import '../../data/database.dart';
 
 part 'write_cue.g.dart';
 
-//! insertNewCue
-
-/// Returns generated id
-Future<int> dbInsertNewCue(NewCue newCue) async {
-  return db.into(db.cues).insert(Cue.newCueToCompanion(newCue));
-}
-
 @riverpod
 Future insertNewCue(Ref ref, NewCue newCue) async {
   // we ignore generated id
-  await dbInsertNewCue(newCue);
+  await db.into(db.cues).insert(Cue.newCueToCompanion(newCue));
 }

@@ -9,12 +9,8 @@ part 'from_id.g.dart';
 
 @riverpod
 Stream<Cue> watchAndReviveCueWithId(Ref ref, int id) async* {
-  await for (Cue cue in dbWatchCueWithId(id)) {
+  await for (Cue cue in (db.cues.select()..where((c) => c.id.equals(id))).watchSingle()) {
     await cue.reviveSlides();
     yield cue;
   }
-}
-
-Stream<Cue> dbWatchCueWithId(int id) async* {
-  yield* (db.cues.select()..where((c) => c.id.equals(id))).watchSingle();
 }
