@@ -54,15 +54,8 @@ class Song extends Insertable<Song> {
   });
 
   int get contentHash => Object.hash(
-        uuid,
-        title,
-        lyrics,
-        keyField,
-        contentMap,
+        jsonEncode(contentMap),
         sourceBankId,
-        composer,
-        lyricist,
-        translator,
         userNote,
       );
 
