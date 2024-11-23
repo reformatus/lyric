@@ -77,18 +77,16 @@ class LFilterChipsState extends ConsumerState<FilterChips> {
 
   @override
   Widget build(BuildContext context) {
-    // todo final
-    var selectableValues =
+    final selectableValues =
         ref.watch(selectableValuesForFilterableFieldProvider(widget.field, widget.fieldType));
-    var filterState = ref.watch(multiselectTagsFilterStateProvider);
-    var filterStateNotifier = ref.read(multiselectTagsFilterStateProvider.notifier);
+    final filterState = ref.watch(multiselectTagsFilterStateProvider);
+    final filterStateNotifier = ref.read(multiselectTagsFilterStateProvider.notifier);
 
-    // todo final
-    bool active() => filterState.containsKey(widget.field);
+    final active = filterState.containsKey(widget.field);
 
     return Card(
-      elevation: active() ? 3 : 0,
-      color: active() ? Theme.of(context).colorScheme.secondaryContainer : null,
+      elevation: active ? 3 : 0,
+      color: active ? Theme.of(context).colorScheme.secondaryContainer : null,
       child: ListTile(
         contentPadding: const EdgeInsets.only(left: 15),
         leading: Icon(songFieldsMap[widget.field]!['icon'] ?? Icons.filter_list),
@@ -146,7 +144,7 @@ class LFilterChipsState extends ConsumerState<FilterChips> {
               ),
             )
         },
-        trailing: active()
+        trailing: active
             ? IconButton(
                 onPressed: () => filterStateNotifier.resetFilterField(widget.field), icon: Icon(Icons.clear))
             : null,
@@ -184,7 +182,7 @@ class LFilterChip extends StatelessWidget {
             return Theme.of(context).colorScheme.surfaceContainerHighest;
           }
         }),
-        padding: EdgeInsets.symmetric(horizontal: 8),
+        //padding: EdgeInsets.symmetric(horizontal: 8),
         labelPadding: EdgeInsets.only(left: leading != null ? 0 : 5, right: 5),
         label: Row(
           children: [
@@ -195,30 +193,6 @@ class LFilterChip extends StatelessWidget {
         selected: selected,
         onSelected: onSelected,
         materialTapTargetSize: MaterialTapTargetSize.padded,
-      ),
-    );
-  }
-}
-
-class CheckboxTile extends StatelessWidget {
-  const CheckboxTile({
-    required this.label,
-    required this.onTap,
-    required this.value,
-    super.key,
-  });
-
-  final String label;
-  final ValueChanged<bool?> onTap;
-  final bool value;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      child: ListTile(
-        leading: Checkbox(value: value, onChanged: onTap),
-        title: Text(label),
-        onTap: () {},
       ),
     );
   }
