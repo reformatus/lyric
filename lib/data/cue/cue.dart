@@ -1,18 +1,14 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/data/database.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:uuid/v4.dart';
 
 import 'slide.dart';
-
-part 'cue.g.dart';
 
 const currentCueVersion = 1;
 
 @UseRowClass(Cue)
+@TableIndex(name: 'cues_uuid', columns: {#uuid}, unique: true)
 class Cues extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get uuid => text()();
@@ -32,11 +28,14 @@ class Cue extends Insertable<Cue> {
 
   List<Map> content;
 
-  List<Slide>? slides;
+  //List<Slide>? slides;
 
-  Future reviveSlides() async {
-    slides = await Future.wait(content.map((e) => Slide.reviveFromJson(e)));
-    return;
+  Future<List<Slide>> getRevivedSlides() async {
+    return await Future.wait(content.map((e) => Slide.reviveFromJson(e)));
+  }
+
+  static List<Map> getContentMapFromSlides(List<Slide> slides) {
+    return slides.map((s) => s.toJson()).toList();
   }
 
   Cue(
@@ -59,20 +58,7 @@ class Cue extends Insertable<Cue> {
       content: Value(content),
     ).toColumns(nullToAbsent);
   }
-
-  static CuesCompanion newCueToCompanion(NewCue newCue) {
-    return CuesCompanion(
-      id: Value.absent(),
-      uuid: Value(UuidV4().generate()),
-      title: Value(newCue.title),
-      description: newCue.description != null ? Value(newCue.description!) : Value.absent(),
-      cueVersion: Value(currentCueVersion),
-      content: Value([]),
-    );
-  }
 }
-
-typedef NewCue = ({String title, String? description});
 
 class CueContentConverter extends TypeConverter<List<Map>, String> {
   const CueContentConverter();
@@ -86,9 +72,4 @@ class CueContentConverter extends TypeConverter<List<Map>, String> {
   String toSql(List<Map> value) {
     return jsonEncode(value);
   }
-}
-
-@riverpod
-Future reviveSlidesForCue(Ref ref, Cue cue) async {
-  return await cue.reviveSlides();
 }

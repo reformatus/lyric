@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/data/cue/slide.dart';
 import 'package:lyric/main.dart';
-import 'package:lyric/services/cue/from_id.dart';
+import 'package:lyric/services/cue/from_uuid.dart';
+import 'package:lyric/services/cue/slide/watch_revived.dart';
 import 'package:lyric/ui/common/error.dart';
 import 'package:lyric/ui/cue/slide_views/song.dart';
 
 class CuePage extends ConsumerStatefulWidget {
-  const CuePage(this.cueId, {this.initialSlideIndex, super.key});
+  const CuePage(this.uuid, {this.initialSlideIndex, super.key});
 
-  final int cueId;
+  final String uuid;
   final int? initialSlideIndex;
 
   @override
@@ -27,7 +28,8 @@ class _CuePageState extends ConsumerState<CuePage> {
 
   @override
   Widget build(BuildContext context) {
-    final cue = ref.watch(watchAndReviveCueWithIdProvider(widget.cueId));
+    final cue = ref.watch(watchCueWithUuidProvider(widget.uuid));
+    final slides = ref.watch(watchRevivedSlidesForCueWithUuidProvider(widget.uuid));
 
     return LayoutBuilder(builder: (context, contraints) {
       return Flex(
@@ -37,11 +39,15 @@ class _CuePageState extends ConsumerState<CuePage> {
             child: Scaffold(
               appBar: AppBar(
                 title: Text(cue.value?.title ?? ''),
+                bottom: (cue.isLoading || slides.isLoading)
+                    ? PreferredSize(preferredSize: const Size.fromHeight(4), child: LinearProgressIndicator())
+                    : null,
               ),
-              body: switch (cue) {
+              // todo show error message when cue provider returns error
+              body: switch (slides) {
                 AsyncError(:final error, :final stackTrace) => LErrorCard(
                     type: LErrorType.error,
-                    title: 'Nem sikerült betölteni a listát!',
+                    title: 'Nem sikerült betölteni a lista diáit!',
                     icon: Icons.error,
                     message: error.toString(),
                     stack: stackTrace.toString(),
@@ -52,7 +58,7 @@ class _CuePageState extends ConsumerState<CuePage> {
                 AsyncValue(:final value!) => ListTileTheme(
                     selectedTileColor: Theme.of(context).indicatorColor,
                     child: ListView(
-                      children: value.slides!.asMap().entries.map(
+                      children: value.asMap().entries.map(
                         (indexedEntry) {
                           callback() => setState(() {
                                 selectedSlideIndex = indexedEntry.key;
@@ -96,7 +102,7 @@ class _CuePageState extends ConsumerState<CuePage> {
               child: Scaffold(
                 backgroundColor: Theme.of(context).indicatorColor,
                 appBar: AppBar(
-                  title: Text(cue.requireValue.slides![selectedSlideIndex!].comment ?? ''),
+                  title: Text(slides.requireValue[selectedSlideIndex!].comment ?? ''),
                   elevation: 1,
                   automaticallyImplyLeading: false,
                   actions: [
@@ -109,7 +115,7 @@ class _CuePageState extends ConsumerState<CuePage> {
                   ],
                   actionsPadding: EdgeInsets.only(right: 5),
                 ),
-                body: switch (cue.requireValue.slides![selectedSlideIndex!]) {
+                body: switch (slides.requireValue[selectedSlideIndex!]) {
                   (SongSlide songSlide) => SongSlideView(songSlide),
                   (UnknownTypeSlide unknownSlide) => LErrorCard(
                       type: LErrorType.warning,

@@ -85,6 +85,7 @@ class Song extends Insertable<Song> {
 
 const List<String> mandatoryFields = ['uuid', 'title', 'lyrics'];
 
+@TableIndex(name: 'songs_uuid', columns: {#uuid}, unique: true)
 @UseRowClass(Song)
 class Songs extends Table {
   IntColumn get id => integer().autoIncrement()();

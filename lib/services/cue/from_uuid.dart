@@ -5,12 +5,12 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/cue/cue.dart';
 
-part 'from_id.g.dart';
+part 'from_uuid.g.dart';
 
 @riverpod
-Stream<Cue> watchAndReviveCueWithId(Ref ref, int id) async* {
-  await for (Cue cue in (db.cues.select()..where((c) => c.id.equals(id))).watchSingle()) {
-    await cue.reviveSlides();
+Stream<Cue> watchCueWithUuid(Ref ref, String uuid) async* {
+  await for (Cue cue in (db.cues.select()..where((c) => c.uuid.equals(uuid))).watchSingle()) {
+    await cue.getRevivedSlides();
     yield cue;
   }
 }
