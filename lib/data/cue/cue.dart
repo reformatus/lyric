@@ -1,10 +1,15 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/data/database.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'slide.dart';
 
+part 'cue.g.dart';
+
+@UseRowClass(Cue)
 class Cues extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get title => text()();
@@ -20,12 +25,12 @@ class Cue extends Insertable<Cue> {
   String description;
   int cueVersion;
 
-  List<Map> protoSlides;
+  List<Map> content;
 
   List<Slide>? slides;
 
   Future reviveSlides() async {
-    slides = await Future.wait(protoSlides.map((e) => Slide.reviveFromJson(e)));
+    slides = await Future.wait(content.map((e) => Slide.reviveFromJson(e)));
     return;
   }
 
@@ -34,7 +39,7 @@ class Cue extends Insertable<Cue> {
     this.title,
     this.description,
     this.cueVersion,
-    this.protoSlides,
+    this.content,
   );
 
   @override
@@ -44,7 +49,7 @@ class Cue extends Insertable<Cue> {
       title: Value(title),
       description: Value(description),
       cueVersion: Value(cueVersion),
-      content: Value(protoSlides),
+      content: Value(content),
     ).toColumns(nullToAbsent);
   }
 }
@@ -61,4 +66,9 @@ class CueContentConverter extends TypeConverter<List<Map>, String> {
   String toSql(List<Map> value) {
     return jsonEncode(value);
   }
+}
+
+@riverpod
+Future reviveSlidesForCue(Ref ref, Cue cue) async {
+  return await cue.reviveSlides();
 }
