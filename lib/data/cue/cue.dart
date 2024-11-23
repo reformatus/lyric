@@ -4,10 +4,13 @@ import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/data/database.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:uuid/v4.dart';
 
 import 'slide.dart';
 
 part 'cue.g.dart';
+
+const currentCueVersion = 1;
 
 @UseRowClass(Cue)
 class Cues extends Table {
@@ -56,7 +59,20 @@ class Cue extends Insertable<Cue> {
       content: Value(content),
     ).toColumns(nullToAbsent);
   }
+
+  static CuesCompanion newCueToCompanion(NewCue newCue) {
+    return CuesCompanion(
+      id: Value.absent(),
+      uuid: Value(UuidV4().generate()),
+      title: Value(newCue.title),
+      description: newCue.description != null ? Value(newCue.description!) : Value.absent(),
+      cueVersion: Value(currentCueVersion),
+      content: Value([]),
+    );
+  }
 }
+
+typedef NewCue = ({String title, String? description});
 
 class CueContentConverter extends TypeConverter<List<Map>, String> {
   const CueContentConverter();
