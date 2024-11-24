@@ -2,7 +2,7 @@
 
 ## Downloads
 
-You can now download a test version for Android here: https://github.com/reformatus/lyric/releases
+You can now download a test version for Android here: https://github.com/reformatus/lyric/releases \
 Coming soon to beta programs on Play Store and App Store.
 
 ## Your Open Worship Superapp
