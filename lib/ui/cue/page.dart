@@ -9,6 +9,17 @@ import 'package:lyric/ui/base/songs/page.dart';
 import 'package:lyric/ui/common/error.dart';
 import 'package:lyric/ui/cue/slide_views/song.dart';
 
+/* // todo improve cue page:
+ * move state management to riverpod
+ * move slide list to left drawer on mobile
+ * make close search consistent with closing slide preview button (using proper state management)
+ * factor out repeated code, ternaries, and in-line callback definitions
+ * prevent unnecessary ui updates and db reads
+ * implement proper presentation view with tap controls
+ * implement tap to fullscreen
+ * save last selected cue index to db (maybe?)
+ */
+
 class CuePage extends ConsumerStatefulWidget {
   const CuePage(this.uuid, {this.initialSlideIndex, super.key});
 
