@@ -36,7 +36,7 @@ class LSongResultTile extends StatelessWidget {
         leading: addingToCue != null
             ? IconButton.filledTonal(
                 onPressed: () => addSongSlideToCueForSongWithUuid(cue: addingToCue!, songUuid: songsFt.uuid),
-                icon: Icon(Icons.arrow_back))
+                icon: Icon(Icons.add))
             : null,
         subtitle: !firstLine.startsWith(songsFt.title)
             ? Text(
@@ -53,7 +53,7 @@ class LSongResultTile extends StatelessWidget {
         leading: addingToCue != null
             ? IconButton.filledTonal(
                 onPressed: () => addSongSlideToCueForSongWithUuid(cue: addingToCue!, songUuid: match.uuid),
-                icon: Icon(Icons.arrow_back))
+                icon: Icon(Icons.add))
             : null,
         title: RichText(
           text: TextSpan(
