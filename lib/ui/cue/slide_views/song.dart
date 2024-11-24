@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:lyric/data/cue/slide.dart';
 import 'package:lyric/ui/song/sheet/view.dart';
@@ -16,9 +18,12 @@ class SongSlideTile extends StatelessWidget {
     return ListTile(
       title: Text(slide.song.title),
       onTap: selectCallback,
-      trailing: Padding(
-        padding: EdgeInsets.only(right: 10),
-        child: IconButton(onPressed: removeCallback, icon: Icon(Icons.delete_outline)),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(onPressed: removeCallback, icon: Icon(Icons.delete_outline)),
+          if (Platform.isAndroid || Platform.isIOS) Icon(Icons.drag_handle),
+        ],
       ),
       selected: selected,
     );

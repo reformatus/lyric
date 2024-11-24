@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/data/cue/slide.dart';
@@ -63,185 +65,193 @@ class _CuePageState extends ConsumerState<CuePage> {
     }
 
     return LayoutBuilder(builder: (context, constraints) {
-      return Flex(
-        direction: constraints.maxWidth > globals.tabletFromWidth ? Axis.horizontal : Axis.vertical,
-        children: [
-          if (!(isSlideViewExpanded && selectedSlideOrIsAdding != null && selectedSlideOrIsAdding != -1))
-            Expanded(
-              child: Scaffold(
-                appBar: AppBar(title: Text(cue.value?.title ?? '')),
-                // todo show error message when cue provider returns error
-                body: switch (slides) {
-                  AsyncError(:final error, :final stackTrace) => LErrorCard(
-                      type: LErrorType.error,
-                      title: 'Nem sikerült betölteni a lista diáit!',
-                      icon: Icons.error,
-                      message: error.toString(),
-                      stack: stackTrace.toString(),
-                    ),
-                  AsyncValue(:final value) => value != null
-                      ? ListTileTheme(
-                          selectedTileColor: Theme.of(context).indicatorColor,
-                          child: ReorderableListView(
-                            onReorder: (from, to) {
-                              setState(() {
-                                final item = localSlides!.removeAt(from);
-                                localSlides!.insert(to > from ? to - 1 : to, item);
-                                reorderCueSlides(cue.requireValue, from, to);
-                                if (selectedSlideOrIsAdding == from) {
-                                  selectedSlideOrIsAdding = to > from ? to - 1 : to;
-                                }
-                              });
-                            },
-                            footer: SizedBox(
-                              height: 60,
-                            ),
-                            children: localSlides!.asMap().entries.map(
-                              (indexedEntry) {
-                                selectCallback() {
-                                  setState(() {
-                                    if (selectedSlideOrIsAdding == indexedEntry.key) {
-                                      selectedSlideOrIsAdding = null;
-                                    } else {
-                                      selectedSlideOrIsAdding = indexedEntry.key;
-                                    }
-                                  });
-                                  // todo update query parameter with selected slide
-                                }
-
-                                removeCallback() {
-                                  if (selectedSlideOrIsAdding == indexedEntry.key) {
-                                    setState(() => selectedSlideOrIsAdding = null);
+      return SafeArea(
+        child: Flex(
+          direction: constraints.maxWidth > globals.tabletFromWidth ? Axis.horizontal : Axis.vertical,
+          children: [
+            if (!(isSlideViewExpanded && selectedSlideOrIsAdding != null && selectedSlideOrIsAdding != -1))
+              Expanded(
+                child: Scaffold(
+                  appBar: AppBar(title: Text(cue.value?.title ?? '')),
+                  // todo show error message when cue provider returns error
+                  body: switch (slides) {
+                    AsyncError(:final error, :final stackTrace) => LErrorCard(
+                        type: LErrorType.error,
+                        title: 'Nem sikerült betölteni a lista diáit!',
+                        icon: Icons.error,
+                        message: error.toString(),
+                        stack: stackTrace.toString(),
+                      ),
+                    AsyncValue(:final value) => value != null
+                        ? ListTileTheme(
+                            selectedTileColor: Theme.of(context).indicatorColor,
+                            child: ReorderableListView(
+                              onReorder: (from, to) {
+                                setState(() {
+                                  final item = localSlides!.removeAt(from);
+                                  localSlides!.insert(to > from ? to - 1 : to, item);
+                                  reorderCueSlides(cue.requireValue, from, to);
+                                  if (selectedSlideOrIsAdding == from) {
+                                    selectedSlideOrIsAdding = to > from ? to - 1 : to;
                                   }
-                                  if (!isSongAddingMode &&
-                                      selectedSlideOrIsAdding != null &&
-                                      selectedSlideOrIsAdding! > indexedEntry.key) {
-                                    setState(() {
-                                      selectedSlideOrIsAdding = selectedSlideOrIsAdding! - 1;
-                                    });
-                                  }
-                                  removeSlideAtIndexFromCue(indexedEntry.key, cue.requireValue);
-                                }
-
-                                switch (indexedEntry.value) {
-                                  case SongSlide songSlide:
-                                    return SongSlideTile(
-                                      key: Key('${indexedEntry.value}-${songSlide.hashCode}'),
-                                      songSlide,
-                                      selectCallback: selectCallback,
-                                      removeCallback: removeCallback,
-                                      selected: indexedEntry.key == selectedSlideOrIsAdding,
-                                    );
-                                  case UnknownTypeSlide unknownTypeSlide:
-                                    return UnknownTypeSlideTile(
-                                      key: Key('${indexedEntry.value}-${unknownTypeSlide.hashCode}'),
-                                      unknownTypeSlide,
-                                      selectCallback: selectCallback,
-                                      removeCallback: removeCallback,
-                                      selected: indexedEntry.key == selectedSlideOrIsAdding,
-                                    );
-                                }
+                                });
                               },
-                            ).toList(),
-                          ),
-                        )
-                      : const Center(child: CircularProgressIndicator()),
-                },
-                floatingActionButton: isSongAddingMode
-                    ? (constraints.maxWidth <= globals.tabletFromWidth)
-                        ? FloatingActionButton.small(
-                            onPressed: () => setState(() {
-                              selectedSlideOrIsAdding = null;
-                            }),
-                            tooltip: 'Kereső bezárása',
-                            child: Icon(Icons.keyboard_arrow_down),
+                              footer: SizedBox(
+                                height: 60,
+                              ),
+                              children: localSlides!.asMap().entries.map(
+                                (indexedEntry) {
+                                  selectCallback() {
+                                    setState(() {
+                                      if (selectedSlideOrIsAdding == indexedEntry.key) {
+                                        selectedSlideOrIsAdding = null;
+                                      } else {
+                                        selectedSlideOrIsAdding = indexedEntry.key;
+                                      }
+                                    });
+                                    // todo update query parameter with selected slide
+                                  }
+
+                                  removeCallback() {
+                                    if (selectedSlideOrIsAdding == indexedEntry.key) {
+                                      setState(() => selectedSlideOrIsAdding = null);
+                                    }
+                                    if (!isSongAddingMode &&
+                                        selectedSlideOrIsAdding != null &&
+                                        selectedSlideOrIsAdding! > indexedEntry.key) {
+                                      setState(() {
+                                        selectedSlideOrIsAdding = selectedSlideOrIsAdding! - 1;
+                                      });
+                                    }
+                                    removeSlideAtIndexFromCue(indexedEntry.key, cue.requireValue);
+                                  }
+
+                                  switch (indexedEntry.value) {
+                                    case SongSlide songSlide:
+                                      return SongSlideTile(
+                                        key: Key('${indexedEntry.value}-${songSlide.hashCode}'),
+                                        songSlide,
+                                        selectCallback: selectCallback,
+                                        removeCallback: removeCallback,
+                                        selected: indexedEntry.key == selectedSlideOrIsAdding,
+                                      );
+                                    case UnknownTypeSlide unknownTypeSlide:
+                                      return UnknownTypeSlideTile(
+                                        key: Key('${indexedEntry.value}-${unknownTypeSlide.hashCode}'),
+                                        unknownTypeSlide,
+                                        selectCallback: selectCallback,
+                                        removeCallback: removeCallback,
+                                        selected: indexedEntry.key == selectedSlideOrIsAdding,
+                                      );
+                                  }
+                                },
+                              ).toList(),
+                            ),
                           )
-                        : null
-                    : (constraints.maxWidth > globals.tabletFromWidth || selectedSlideOrIsAdding == null)
-                        ? FloatingActionButton.extended(
-                            onPressed: addSongsModeCallback,
-                            label: Text('Énekek hozzáadása'),
-                            icon: Icon(Icons.playlist_add),
-                          )
-                        : FloatingActionButton.small(
-                            onPressed: addSongsModeCallback,
-                            tooltip: 'Énekek hozzáadása',
-                            child: Icon(Icons.playlist_add),
-                          ),
+                        : const Center(child: CircularProgressIndicator()),
+                  },
+                  floatingActionButton: isSongAddingMode
+                      ? (constraints.maxWidth <= globals.tabletFromWidth)
+                          ? FloatingActionButton.small(
+                              onPressed: () => setState(() {
+                                selectedSlideOrIsAdding = null;
+                              }),
+                              tooltip: 'Kereső bezárása',
+                              child: Icon(Icons.keyboard_arrow_down),
+                            )
+                          : null
+                      : (constraints.maxWidth > globals.tabletFromWidth || selectedSlideOrIsAdding == null)
+                          ? FloatingActionButton.extended(
+                              onPressed: addSongsModeCallback,
+                              label: Text('Énekek hozzáadása'),
+                              icon: Icon(Icons.playlist_add),
+                            )
+                          : FloatingActionButton.small(
+                              onPressed: addSongsModeCallback,
+                              tooltip: 'Énekek hozzáadása',
+                              child: Icon(Icons.playlist_add),
+                            ),
+                ),
               ),
-            ),
-          if (selectedSlideOrIsAdding != null && selectedSlideOrIsAdding != -1 && cue.hasValue)
-            Expanded(
-              flex: 2,
-              child: Scaffold(
-                backgroundColor: Theme.of(context).indicatorColor,
-                appBar: AppBar(
-                  title: Row(
+            if (selectedSlideOrIsAdding != null && selectedSlideOrIsAdding != -1 && cue.hasValue)
+              Expanded(
+                flex: 2,
+                child: Container(
+                  color: Theme.of(context).indicatorColor,
+                  child: Column(
                     children: [
-                      IconButton.filledTonal(
-                        onPressed: selectedSlideOrIsAdding! > 0
-                            ? () {
-                                setState(() {
-                                  selectedSlideOrIsAdding = selectedSlideOrIsAdding! - 1;
-                                });
-                              }
-                            : null,
-                        icon: Icon(Icons.navigate_before),
+                      Container(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        height: 56,
+                        child: Row(
+                          children: [
+                            SizedBox(width: 5),
+                            IconButton.filledTonal(
+                              onPressed: selectedSlideOrIsAdding! > 0
+                                  ? () {
+                                      setState(() {
+                                        selectedSlideOrIsAdding = selectedSlideOrIsAdding! - 1;
+                                      });
+                                    }
+                                  : null,
+                              icon: Icon(Icons.navigate_before),
+                            ),
+                            SizedBox(width: 5),
+                            IconButton.filledTonal(
+                              onPressed: selectedSlideOrIsAdding! < cue.requireValue.content.length - 1
+                                  ? () {
+                                      setState(() {
+                                        selectedSlideOrIsAdding = selectedSlideOrIsAdding! + 1;
+                                      });
+                                    }
+                                  : null,
+                              icon: Icon(Icons.navigate_next),
+                            ),
+                            Text(slides.requireValue[selectedSlideOrIsAdding!].comment ?? ''),
+                            Spacer(),
+                            IconButton(
+                              onPressed: () => setState(() {
+                                isSlideViewExpanded = !isSlideViewExpanded;
+                              }),
+                              tooltip: isSlideViewExpanded ? 'Előnézet' : 'Teljes képernyő',
+                              icon: Icon(isSlideViewExpanded ? Icons.fullscreen_exit : Icons.fullscreen),
+                            ),
+                            IconButton(
+                              onPressed: () => setState(() {
+                                selectedSlideOrIsAdding = null;
+                              }),
+                              tooltip: 'Előnézet bezárása',
+                              icon: Icon(Icons.close),
+                            ),
+                            SizedBox(width: 5),
+                          ],
+                        ),
                       ),
-                      SizedBox(width: 5),
-                      IconButton.filledTonal(
-                        onPressed: selectedSlideOrIsAdding! < cue.requireValue.content.length - 1
-                            ? () {
-                                setState(() {
-                                  selectedSlideOrIsAdding = selectedSlideOrIsAdding! + 1;
-                                });
-                              }
-                            : null,
-                        icon: Icon(Icons.navigate_next),
+                      Expanded(
+                        child: switch (slides.requireValue[selectedSlideOrIsAdding!]) {
+                          (SongSlide songSlide) => SongSlideView(songSlide),
+                          (UnknownTypeSlide unknownSlide) => LErrorCard(
+                              type: LErrorType.warning,
+                              title: 'Ismeretlen diatípus. Talán újabb verzióban készítették a listát?',
+                              icon: Icons.question_mark,
+                              message: unknownSlide.getPreview(),
+                              stack: unknownSlide.json.toString(),
+                            ),
+                        },
                       ),
-                      Text(slides.requireValue[selectedSlideOrIsAdding!].comment ?? ''),
                     ],
                   ),
-                  elevation: 1,
-                  automaticallyImplyLeading: false,
-                  actions: [
-                    IconButton(
-                      onPressed: () => setState(() {
-                        isSlideViewExpanded = !isSlideViewExpanded;
-                      }),
-                      tooltip: isSlideViewExpanded ? 'Előnézet' : 'Teljes képernyő',
-                      icon: Icon(isSlideViewExpanded ? Icons.fullscreen_exit : Icons.fullscreen),
-                    ),
-                    IconButton(
-                      onPressed: () => setState(() {
-                        selectedSlideOrIsAdding = null;
-                      }),
-                      tooltip: 'Előnézet bezárása',
-                      icon: Icon(Icons.close),
-                    ),
-                  ],
-                  actionsPadding: EdgeInsets.only(right: 5),
                 ),
-                body: switch (slides.requireValue[selectedSlideOrIsAdding!]) {
-                  (SongSlide songSlide) => SongSlideView(songSlide),
-                  (UnknownTypeSlide unknownSlide) => LErrorCard(
-                      type: LErrorType.warning,
-                      title: 'Ismeretlen diatípus. Talán újabb verzióban készítették a listát?',
-                      icon: Icons.question_mark,
-                      message: unknownSlide.getPreview(),
-                      stack: unknownSlide.json.toString(),
-                    ),
-                },
               ),
-            ),
-          if (cue.hasValue && isSongAddingMode)
-            Expanded(
-              flex: 2,
-              child: SongsPage(
-                addingToCue: cue.requireValue,
-              ),
-            )
-        ],
+            if (cue.hasValue && isSongAddingMode)
+              Expanded(
+                flex: 2,
+                child: SongsPage(
+                  addingToCue: cue.requireValue,
+                ),
+              )
+          ],
+        ),
       );
     });
   }
@@ -261,9 +271,12 @@ class UnknownTypeSlideTile extends StatelessWidget {
     return ListTile(
       title: Text('Ismeretlen diatípus'),
       onTap: selectCallback,
-      trailing: Padding(
-        padding: EdgeInsets.only(right: 10),
-        child: IconButton(onPressed: removeCallback, icon: Icon(Icons.delete_outline)),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(onPressed: removeCallback, icon: Icon(Icons.delete_outline)),
+          if (Platform.isAndroid || Platform.isIOS) Icon(Icons.drag_handle),
+        ],
       ),
       selected: selected,
       tileColor: Theme.of(context).colorScheme.errorContainer,

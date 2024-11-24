@@ -68,169 +68,174 @@ class _SongsPageState extends ConsumerState<SongsPage> {
 
     return Stack(
       children: [
-        Scaffold(
-          body: LayoutBuilder(builder: (context, constraints) {
-            return Row(
-              children: [
-                Expanded(
-                  child: Scaffold(
-                    body: Column(
-                      children: [
-                        SizedBox(height: 5, child: songResults.isLoading ? LinearProgressIndicator() : null),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8),
-                          child: TextField(
-                            controller: _searchFieldController,
-                            autocorrect: false,
-                            decoration: InputDecoration(
-                              hintText: 'Keresés (min. 3 betű)',
-                              prefixIcon: _searchFieldController.text.isEmpty
-                                  ? Icon(Icons.search)
-                                  : IconButton(
-                                      icon: Icon(Icons.clear),
-                                      onPressed: () => _searchFieldController.clear()),
-                              suffixIcon: CompositedTransformTarget(
-                                link: _link,
-                                child: OverlayPortal(
-                                  controller: _overlayPortalController,
-                                  overlayChildBuilder: (context) => CompositedTransformFollower(
-                                    link: _link,
-                                    followerAnchor: Alignment.topRight,
-                                    targetAnchor: Alignment.bottomRight,
-                                    child: Align(
-                                      alignment: Alignment.topRight,
-                                      child: SizedBox(
-                                        width: 300,
-                                        child: Card(
-                                          elevation: 10,
-                                          clipBehavior: Clip.antiAlias,
-                                          child: SingleChildScrollView(
-                                            child: SearchFieldSelectorColumn(),
+        LayoutBuilder(builder: (context, constraints) {
+          return Row(
+            children: [
+              Expanded(
+                child: SafeArea(
+                  top: !(constraints.maxHeight > constraints.maxWidth && widget.addingToCue != null),
+                  child: Column(
+                    children: [
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                              height: 5, child: songResults.isLoading ? LinearProgressIndicator() : null),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8),
+                            child: TextField(
+                              controller: _searchFieldController,
+                              autocorrect: false,
+                              decoration: InputDecoration(
+                                hintText: 'Keresés (min. 3 betű)',
+                                prefixIcon: _searchFieldController.text.isEmpty
+                                    ? Icon(Icons.search)
+                                    : IconButton(
+                                        icon: Icon(Icons.clear),
+                                        onPressed: () => _searchFieldController.clear()),
+                                suffixIcon: CompositedTransformTarget(
+                                  link: _link,
+                                  child: OverlayPortal(
+                                    controller: _overlayPortalController,
+                                    overlayChildBuilder: (context) => CompositedTransformFollower(
+                                      link: _link,
+                                      followerAnchor: Alignment.topRight,
+                                      targetAnchor: Alignment.bottomRight,
+                                      child: Align(
+                                        alignment: Alignment.topRight,
+                                        child: SizedBox(
+                                          width: 300,
+                                          child: Card(
+                                            elevation: 10,
+                                            clipBehavior: Clip.antiAlias,
+                                            child: SingleChildScrollView(
+                                              child: SearchFieldSelectorColumn(),
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  child: IconButton(
-                                    tooltip: 'Miben keressen',
-                                    icon: _overlayPortalController.isShowing
-                                        ? const Icon(Icons.close)
-                                        : const Icon(Icons.check_box_outlined),
-                                    onPressed: () {
-                                      _overlayPortalController.toggle();
-                                      setState(() {});
-                                    },
+                                    child: IconButton(
+                                      tooltip: 'Miben keressen',
+                                      icon: _overlayPortalController.isShowing
+                                          ? const Icon(Icons.close)
+                                          : const Icon(Icons.check_box_outlined),
+                                      onPressed: () {
+                                        _overlayPortalController.toggle();
+                                        setState(() {});
+                                      },
+                                    ),
                                   ),
                                 ),
                               ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (constraints.maxWidth < globals.tabletFromWidth)
+                        Card(
+                          clipBehavior: Clip.antiAlias,
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(maxHeight: constraints.maxHeight / 2),
+                            child: Stack(
+                              children: [
+                                FadingEdgeScrollView.fromSingleChildScrollView(
+                                  child: SingleChildScrollView(
+                                    controller: _filterExpansionScrollController,
+                                    child: Theme(
+                                      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                                      child: ExpansionTile(
+                                        expansionAnimationStyle: AnimationStyle(
+                                          duration: Durations.medium1,
+                                          curve: Curves.easeInOutCubicEmphasized,
+                                          //reverseDuration: Durations.medium1,
+                                          //reverseCurve: Curves.easeInOutCubicEmphasized,
+                                        ),
+                                        collapsedBackgroundColor:
+                                            (filterState.isEmpty && keyFilterState.isEmpty)
+                                                ? null
+                                                : Theme.of(context).colorScheme.secondaryContainer,
+                                        collapsedIconColor: (filterState.isEmpty && keyFilterState.isEmpty)
+                                            ? null
+                                            : Theme.of(context).colorScheme.onSecondaryContainer,
+                                        controller: _filterExpansionTileController,
+                                        leading: const Icon(Icons.filter_list),
+                                        title: FiltersTitle(
+                                            filterState: filterState, keyFilterState: keyFilterState),
+                                        children: [
+                                          FiltersColumn(),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                if (filtersScrolled)
+                                  Positioned(
+                                    right: 12,
+                                    top: 6,
+                                    child: IconButton.filledTonal(
+                                      icon: Icon(Icons.expand_less),
+                                      onPressed: () {
+                                        _filterExpansionScrollController.jumpTo(0);
+                                        _filterExpansionTileController.collapse();
+                                      },
+                                    ),
+                                  ),
+                              ],
                             ),
                           ),
                         ),
-                        if (constraints.maxWidth < globals.tabletFromWidth)
-                          Card(
-                            clipBehavior: Clip.antiAlias,
-                            child: ConstrainedBox(
-                              constraints: BoxConstraints(maxHeight: constraints.maxHeight / 2),
-                              child: Stack(
-                                children: [
-                                  FadingEdgeScrollView.fromSingleChildScrollView(
-                                    child: SingleChildScrollView(
-                                      controller: _filterExpansionScrollController,
-                                      child: Theme(
-                                        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-                                        child: ExpansionTile(
-                                          expansionAnimationStyle: AnimationStyle(
-                                            duration: Durations.medium1,
-                                            curve: Curves.easeInOutCubicEmphasized,
-                                            //reverseDuration: Durations.medium1,
-                                            //reverseCurve: Curves.easeInOutCubicEmphasized,
-                                          ),
-                                          collapsedBackgroundColor:
-                                              (filterState.isEmpty && keyFilterState.isEmpty)
-                                                  ? null
-                                                  : Theme.of(context).colorScheme.secondaryContainer,
-                                          collapsedIconColor: (filterState.isEmpty && keyFilterState.isEmpty)
-                                              ? null
-                                              : Theme.of(context).colorScheme.onSecondaryContainer,
-                                          controller: _filterExpansionTileController,
-                                          leading: const Icon(Icons.filter_list),
-                                          title: FiltersTitle(
-                                              filterState: filterState, keyFilterState: keyFilterState),
-                                          children: [
-                                            FiltersColumn(),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  if (filtersScrolled)
-                                    Positioned(
-                                      right: 12,
-                                      top: 6,
-                                      child: IconButton.filledTonal(
-                                        icon: Icon(Icons.expand_less),
-                                        onPressed: () {
-                                          _filterExpansionScrollController.jumpTo(0);
-                                          _filterExpansionTileController.collapse();
-                                        },
-                                      ),
-                                    ),
-                                ],
+                      Expanded(
+                        child: switch (songResults) {
+                          AsyncError(:final error, :final stackTrace) => Center(
+                              child: LErrorCard(
+                                type: LErrorType.error,
+                                title: 'Hová lettek a dalok? :(',
+                                message: error.toString(),
+                                icon: Icons.error,
+                                stack: stackTrace.toString(),
                               ),
                             ),
-                          ),
-                        Expanded(
-                          child: switch (songResults) {
-                            AsyncError(:final error, :final stackTrace) => Center(
-                                child: LErrorCard(
-                                  type: LErrorType.error,
-                                  title: 'Hová lettek a dalok? :(',
-                                  message: error.toString(),
-                                  icon: Icons.error,
-                                  stack: stackTrace.toString(),
-                                ),
-                              ),
-                            AsyncValue(:final value) => value == null
-                                ? const Center(
-                                    child: CircularProgressIndicator(),
-                                  )
-                                : ListView.separated(
-                                    itemBuilder: (BuildContext context, int i) {
-                                      return LSongResultTile(value.elementAt(i),
-                                          addingToCue: widget.addingToCue);
-                                    },
-                                    separatorBuilder: (_, __) => const SizedBox(height: 0),
-                                    itemCount: value.length),
-                          },
-                        )
-                      ],
+                          AsyncValue(:final value) => value == null
+                              ? const Center(
+                                  child: CircularProgressIndicator(),
+                                )
+                              : ListView.separated(
+                                  itemBuilder: (BuildContext context, int i) {
+                                    return LSongResultTile(value.elementAt(i),
+                                        addingToCue: widget.addingToCue);
+                                  },
+                                  separatorBuilder: (_, __) => const SizedBox(height: 0),
+                                  itemCount: value.length),
+                        },
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              if (constraints.maxWidth >= globals.tabletFromWidth)
+                SizedBox(
+                  width: (constraints.maxWidth / 3).clamp(400, double.infinity),
+                  child: Scaffold(
+                    backgroundColor: Theme.of(context).indicatorColor,
+                    appBar: AppBar(
+                      title: FiltersTitle(filterState: filterState, keyFilterState: keyFilterState),
+                      automaticallyImplyLeading: false,
+                      backgroundColor: filterState.isEmpty && keyFilterState.isEmpty
+                          ? Theme.of(context).indicatorColor
+                          : Theme.of(context).colorScheme.secondaryContainer,
+                    ),
+                    body: FadingEdgeScrollView.fromSingleChildScrollView(
+                      child: SingleChildScrollView(
+                        controller: _filterSidebarScrollController,
+                        child: FiltersColumn(),
+                      ),
                     ),
                   ),
                 ),
-                if (constraints.maxWidth >= globals.tabletFromWidth)
-                  SizedBox(
-                    width: (constraints.maxWidth / 3).clamp(400, double.infinity),
-                    child: Scaffold(
-                      backgroundColor: Theme.of(context).indicatorColor,
-                      appBar: AppBar(
-                        title: FiltersTitle(filterState: filterState, keyFilterState: keyFilterState),
-                        automaticallyImplyLeading: false,
-                        backgroundColor: filterState.isEmpty && keyFilterState.isEmpty
-                            ? Theme.of(context).indicatorColor
-                            : Theme.of(context).colorScheme.secondaryContainer,
-                      ),
-                      body: FadingEdgeScrollView.fromSingleChildScrollView(
-                        child: SingleChildScrollView(
-                          controller: _filterSidebarScrollController,
-                          child: FiltersColumn(),
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            );
-          }),
-        ),
+            ],
+          );
+        }),
         GestureDetector(
           // When showing the overlay, the user can tap anywhere to close it
           onTap: () {
