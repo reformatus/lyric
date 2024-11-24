@@ -93,6 +93,10 @@ class _CuePageState extends ConsumerState<CuePage> {
                                   reorderCueSlides(cue.requireValue, from, to);
                                   if (selectedSlideOrIsAdding == from) {
                                     selectedSlideOrIsAdding = to > from ? to - 1 : to;
+                                  } else if (selectedSlideOrIsAdding != null &&
+                                      from <= selectedSlideOrIsAdding! &&
+                                      to > selectedSlideOrIsAdding!) {
+                                    selectedSlideOrIsAdding = selectedSlideOrIsAdding! - 1;
                                   }
                                 });
                               },
