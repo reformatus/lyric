@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lyric/ui/base/home/dialogs/feedback/send_mail.dart';
 
 class LErrorCard extends StatelessWidget {
   const LErrorCard({
@@ -47,6 +48,12 @@ class LErrorCard extends StatelessWidget {
                 title,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
+              trailing: FilledButton.icon(
+                onPressed: () => launchFeedbackEmail(errorMessage: message, stackTrace: stack),
+                icon: Icon(Icons.feedback_outlined),
+                label: Text('Hibajelentés'),
+              ),
+              contentPadding: EdgeInsets.only(left: 13, right: 8),
             ),
             if (message != null || stack != null)
               Padding(
