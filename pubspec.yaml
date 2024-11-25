@@ -68,8 +68,8 @@ flutter_launcher_icons:
 
   windows:
     generate: true
-    image_path: "assets/icon/sofar_dalapp_rounded_1000.png"
-    icon_size: 256
+    image_path: "assets/icon/sofar_dalapp_windows_48.png"
+    icon_size: 48
 
   macos:
     generate: true
