@@ -117,7 +117,13 @@ class LFilterChipsState extends ConsumerState<FilterChips> {
         ),
         subtitle: switch (selectableValues) {
           AsyncLoading() => LinearProgressIndicator(),
-          AsyncError(:final error) => Text('Hiba a szűrőértékek lekérdezése közben: $error'),
+          AsyncError(:final error, :final stackTrace) => LErrorCard(
+              title: 'Hiba a szűrőértékek lekérdezése közben',
+              icon: Icons.warning,
+              type: LErrorType.warning,
+              message: error.toString(),
+              stack: stackTrace.toString(),
+            ),
           AsyncValue(:final value) => SizedBox(
               height: 38,
               child: FadingEdgeScrollView.fromScrollView(
