@@ -6,7 +6,7 @@ void showLyricAboutDialog(BuildContext context) async {
   showAboutDialog(
     // ignore: use_build_context_synchronously // this would only cause a problem if packageInto takes a long time to resolve
     context: context,
-    applicationName: 'Sófár Lyric',
+    applicationName: 'Lyric',
     applicationVersion: '${packageInfo.version}+${packageInfo.buildNumber}',
     applicationIcon: Icon(Icons.music_note), // todo replace with app icon
     children: [

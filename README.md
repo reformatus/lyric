@@ -1,8 +1,8 @@
-# Sófár Lyric
+# Lyric
 
 ## Downloads
 
-You can now download a test version for Android here: https://github.com/reformatus/lyric/releases \
+You can now download a test version for Android here: https://github.com/reformatus/lyric/releases 
 Coming soon to beta programs on Play Store and App Store.
 
 ## Your Open Worship Superapp
@@ -10,7 +10,7 @@ Coming soon to beta programs on Play Store and App Store.
 [![On Commit or PR](https://github.com/reformatus/lyric/actions/workflows/on-commit.yml/badge.svg)](https://github.com/reformatus/lyric/actions/workflows/on-commit.yml)
 [![On Release](https://github.com/reformatus/lyric/actions/workflows/on-release.yml/badge.svg)](https://github.com/reformatus/lyric/actions/workflows/on-release.yml)
 
-**Sófár Lyric** will be your one-stop-shop for making the best setlists, performing from sheet music with your band, and projecting lyrics with sheet music.
+**Lyric** will be your one-stop-shop for making the best setlists, performing from sheet music with your band, and projecting lyrics with sheet music.
 It will have an open and growing ecosystem of song libraries.
 
 We are yet far from this future, but please enjoy the beginnings of the app as-is.

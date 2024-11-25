@@ -32,7 +32,7 @@ class LoadingPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sófár Lyric'),
+        title: const Text('Sófár DalApp'),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(4),
           child: LinearProgressIndicator(),

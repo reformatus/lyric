@@ -12,7 +12,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sófár DalApp'),
+        title: const Text('Sófár DalApp Béta'),
       ),
       body: Column(
         children: [
