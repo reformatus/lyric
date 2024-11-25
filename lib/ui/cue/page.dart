@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/data/cue/slide.dart';
@@ -279,7 +277,7 @@ class UnknownTypeSlideTile extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           IconButton(onPressed: removeCallback, icon: Icon(Icons.delete_outline)),
-          if (Platform.isAndroid || Platform.isIOS) Icon(Icons.drag_handle),
+          if (globals.isMobile) Icon(Icons.drag_handle),
         ],
       ),
       selected: selected,

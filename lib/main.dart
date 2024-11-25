@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -24,9 +26,11 @@ void main() async {
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 final GlobalKey<NavigatorState> _baseNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'base');
 
-const globals = (
+final globals = (
   tabletFromWidth: 700,
   desktopFromWidth: 1000,
+  isDesktop: Platform.isMacOS || Platform.isWindows || Platform.isLinux,
+  isMobile: Platform.isIOS || Platform.isAndroid,
 );
 
 class LyricApp extends StatelessWidget {

@@ -1,8 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:lyric/data/cue/slide.dart';
 import 'package:lyric/ui/song/sheet/view.dart';
+
+import '../../../main.dart';
 
 class SongSlideTile extends StatelessWidget {
   const SongSlideTile(this.slide,
@@ -22,7 +22,7 @@ class SongSlideTile extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           IconButton(onPressed: removeCallback, icon: Icon(Icons.delete_outline)),
-          if (Platform.isAndroid || Platform.isIOS) Icon(Icons.drag_handle),
+          if (globals.isMobile) Icon(Icons.drag_handle),
         ],
       ),
       selected: selected,
