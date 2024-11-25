@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/data/database.dart';
+import 'package:lyric/services/bank/bank_updated.dart';
 import 'package:queue/queue.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -44,44 +45,51 @@ Stream<({int toUpdateCount, int updatedCount})> updateBank(Bank bank) async* {
   // stay in indefinite loading state until we know protosong count
   // return protosong count for display
   List<ProtoSong> toUpdate = await bank.getProtoSongs(since: bank.lastUpdated);
+  bool hadErrors = false; // todo proper logging across app
 
   print(
       '  Updating bank ${bank.name} with ${toUpdate.length} new or updated songs since ${bank.lastUpdated}');
 
-  if (toUpdate.isEmpty) {
+  /*if (toUpdate.isEmpty) {
     print('  No new songs to update');
     yield (toUpdateCount: 0, updatedCount: 0);
     return;
-  }
+  }*/
 
   yield (toUpdateCount: toUpdate.length, updatedCount: 0);
 
-  final Queue queue = Queue(parallel: 10);
-  for (var protoSong in toUpdate) {
-    queue.add(() async {
-      try {
-        Song song = await bank.getSongDetails(protoSong.uuid);
+  if (toUpdate.isNotEmpty) {
+    final Queue queue = Queue(parallel: 10);
+    for (var protoSong in toUpdate) {
+      queue.add(() async {
         try {
-          db
-              .into(db.songs)
-              .insert(song, mode: InsertMode.insertOrReplace); // todo handle user modified data, etc
-        } catch (f) {
-          print('Error while writing song ${protoSong.uuid} to database:\n$f');
+          Song song = await bank.getSongDetails(protoSong.uuid);
+          try {
+            db
+                .into(db.songs)
+                .insert(song, mode: InsertMode.insertOrReplace); // todo handle user modified data, etc
+          } catch (f) {
+            print('Error while writing song ${protoSong.uuid} to database:\n$f');
+            hadErrors = true;
+          }
+        } catch (e) {
+          print('Error while fetching details for song ${protoSong.uuid}:\n$e'); // todo log/ui
+          hadErrors = true;
         }
-      } catch (e) {
-        print('Error while fetching details for song ${protoSong.uuid}:\n$e'); // todo log/ui
-      }
-    });
-  }
+      });
+    }
 
-  queue.onComplete.then((v) => print('  Queue completed: $v'));
+    queue.onComplete.then((v) => print('  Queue completed: $v'));
 
-  await for (int remaining in queue.remainingItems) {
-    yield (toUpdateCount: toUpdate.length, updatedCount: toUpdate.length - remaining);
-    if (remaining == 0) break;
+    await for (int remaining in queue.remainingItems) {
+      yield (toUpdateCount: toUpdate.length, updatedCount: toUpdate.length - remaining);
+      if (remaining == 0) break;
+    }
   }
 
   print('  All songs updated');
+
+  if (!hadErrors) await setAsUpdatedNow(bank);
 
   return;
 }
