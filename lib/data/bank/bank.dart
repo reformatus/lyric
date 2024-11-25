@@ -31,10 +31,10 @@ import '../song/song.dart';
 final List<Bank> defaultBanks = [
   /*Bank(1, 'TESZT Sófár Kottatár', Uri.parse('https://kiskutyafule.csecsy.hu/api/')),*/
   Bank(0, true, null, 'Sófár Kottatár', Uri.parse('https://sofarkotta.csecsy.hu/api/')),
-  /*Bank(
-      3, 'Református Énekeskönyv (1948)', Uri.parse('https://banks.lyricapp.org/reformatus-enekeskonyv/48/')),*/
-  /*Bank(
-      4, 'Református Énekeskönyv (2021)', Uri.parse('https://banks.lyricapp.org/reformatus-enekeskonyv/21/')),*/
+  /*Bank(1, true, null, 'Református Énekeskönyv (1948)',
+      Uri.parse('https://banks.lyricapp.org/reformatus-enekeskonyv/48/')),
+  Bank(2, true, null, 'Református Énekeskönyv (2021)',
+      Uri.parse('https://banks.lyricapp.org/reformatus-enekeskonyv/21/')),*/
 ];
 
 class Bank extends Insertable<Bank> {

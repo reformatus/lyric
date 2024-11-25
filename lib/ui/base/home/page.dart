@@ -75,7 +75,7 @@ class HomePage extends StatelessWidget {
                         HomePageButton(
                           icon: Icons.info_outline,
                           title: 'Névjegy',
-                          subtitle: 'Verzió, jogi információk',
+                          subtitle: 'Verzió, licencek',
                           onPressed: () => showLyricAboutDialog(context), // Keep enabled
                         ),
                       ],

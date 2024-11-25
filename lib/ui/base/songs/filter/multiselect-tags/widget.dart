@@ -22,30 +22,31 @@ class FiltersColumn extends ConsumerWidget {
           stack: stackTrace.toString(),
           icon: Icons.error,
         ),
-      AsyncLoading() => Center(child: LinearProgressIndicator()),
-      AsyncValue(:final value) => Column(
-          mainAxisSize: MainAxisSize.min,
-          children: value!.entries
-              .map(
-                (e) => switch (e.value.type) {
-                  FieldType.multiselect || FieldType.multiselectTags => FilterChips(
-                      field: e.key,
-                      fieldType: e.value.type,
-                      fieldPopulatedCount: e.value.count,
-                    ),
-                  FieldType.key => KeyFilterCard(
-                      fieldPopulatedCount: e.value.count,
-                    ),
-                  _ => LErrorCard(
-                      type: LErrorType.warning,
-                      title: 'Nem támogatott szűrőtípus!',
-                      message: e.value.toString(),
-                      icon: Icons.filter_alt,
-                    ),
-                },
-              )
-              .toList(),
-        )
+      AsyncValue(:final value) => value == null
+          ? Center(child: LinearProgressIndicator())
+          : Column(
+              mainAxisSize: MainAxisSize.min,
+              children: value.entries
+                  .map(
+                    (e) => switch (e.value.type) {
+                      FieldType.multiselect || FieldType.multiselectTags => FilterChips(
+                          field: e.key,
+                          fieldType: e.value.type,
+                          fieldPopulatedCount: e.value.count,
+                        ),
+                      FieldType.key => KeyFilterCard(
+                          fieldPopulatedCount: e.value.count,
+                        ),
+                      _ => LErrorCard(
+                          type: LErrorType.warning,
+                          title: 'Nem támogatott szűrőtípus!',
+                          message: e.value.toString(),
+                          icon: Icons.filter_alt,
+                        ),
+                    },
+                  )
+                  .toList(),
+            )
     };
   }
 }
@@ -116,7 +117,6 @@ class LFilterChipsState extends ConsumerState<FilterChips> {
           ],
         ),
         subtitle: switch (selectableValues) {
-          AsyncLoading() => LinearProgressIndicator(),
           AsyncError(:final error, :final stackTrace) => LErrorCard(
               title: 'Hiba a szűrőértékek lekérdezése közben',
               icon: Icons.warning,
@@ -124,31 +124,33 @@ class LFilterChipsState extends ConsumerState<FilterChips> {
               message: error.toString(),
               stack: stackTrace.toString(),
             ),
-          AsyncValue(:final value) => SizedBox(
-              height: 38,
-              child: FadingEdgeScrollView.fromScrollView(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  controller: _filterChipsRowController,
-                  scrollDirection: Axis.horizontal,
-                  itemCount: value!.length,
-                  itemBuilder: (context, i) {
-                    // todo move all logic to service (like in filter/key/widget.dart)
-                    String item = value[i];
-                    bool selected = filterState[widget.field]?.contains(item) ?? false;
-                    onSelected(bool newValue) {
-                      if (newValue) {
-                        filterStateNotifier.addFilter(widget.field, item);
-                      } else {
-                        filterStateNotifier.removeFilter(widget.field, item);
-                      }
-                    }
+          AsyncValue(:final value) => value == null
+              ? LinearProgressIndicator()
+              : SizedBox(
+                  height: 38,
+                  child: FadingEdgeScrollView.fromScrollView(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      controller: _filterChipsRowController,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: value.length,
+                      itemBuilder: (context, i) {
+                        // todo move all logic to service (like in filter/key/widget.dart)
+                        String item = value[i];
+                        bool selected = filterState[widget.field]?.contains(item) ?? false;
+                        onSelected(bool newValue) {
+                          if (newValue) {
+                            filterStateNotifier.addFilter(widget.field, item);
+                          } else {
+                            filterStateNotifier.removeFilter(widget.field, item);
+                          }
+                        }
 
-                    return LFilterChip(label: item, onSelected: onSelected, selected: selected);
-                  },
-                ),
-              ),
-            )
+                        return LFilterChip(label: item, onSelected: onSelected, selected: selected);
+                      },
+                    ),
+                  ),
+                )
         },
         trailing: active
             ? IconButton(

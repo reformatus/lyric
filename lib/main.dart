@@ -32,6 +32,8 @@ final globals = (
   isDesktop: Platform.isMacOS || Platform.isWindows || Platform.isLinux,
   isMobile: Platform.isIOS || Platform.isAndroid,
   gitHubApiRoot: 'https://api.github.com/repos/reformatus/lyric',
+  scaffoldKey: GlobalKey<ScaffoldMessengerState>(),
+  router: _router,
 );
 
 class LyricApp extends StatelessWidget {
@@ -44,6 +46,7 @@ class LyricApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(
               seedColor: Color(0xff025462), primary: Color(0xffc3a140), brightness: Brightness.light),
           useMaterial3: true),
+      scaffoldMessengerKey: globals.scaffoldKey,
       routerConfig: _router,
       supportedLocales: const [Locale('hu')],
       localizationsDelegates: const [

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/main.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -23,6 +24,17 @@ Future<VersionInfo?> checkNewVersion(Ref ref) async {
     final current = currentVersion.split('.').map((e) => int.parse(e)).toList();
 
     if (current[0] >= latest[0] && current[1] >= latest[1] && current[2] >= latest[2]) return null;
+
+    globals.scaffoldKey.currentState?.showSnackBar(SnackBar(
+        content: Text('Új verzió elérhető!'),
+        backgroundColor: Colors.blue[700],
+        showCloseIcon: true,
+        duration: Duration(seconds: 10),
+        action: SnackBarAction(
+          label: 'Nézzük',
+          onPressed: () => globals.router.go('/home'),
+          backgroundColor: Colors.blue[900],
+        )));
 
     return (
       versionNumber: latestVersion,
