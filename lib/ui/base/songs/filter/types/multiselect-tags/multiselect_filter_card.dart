@@ -84,7 +84,7 @@ class LFilterChipsState extends ConsumerState<MultiselectFilterCard> {
           AsyncValue(:final value) => value == null
               ? LinearProgressIndicator()
               : SizedBox(
-                  height: 38,
+                  height: 42,
                   child: FadingEdgeScrollView.fromScrollView(
                     child: ListView.builder(
                       shrinkWrap: true,

@@ -86,7 +86,7 @@ class _KeyFilterCardState extends ConsumerState<KeyFilterCard> {
               ),
               if (state.keys.isNotEmpty)
                 SizedBox(
-                  height: 38,
+                  height: 42,
                   child: FadingEdgeScrollView.fromScrollView(
                     child: ListView(
                       controller: keysScrollController,
@@ -127,7 +127,7 @@ class _KeyFilterCardState extends ConsumerState<KeyFilterCard> {
           stack: error.stackTrace.toString(),
           icon: Icons.error),
       AsyncValue(:final value) => SizedBox(
-          height: 38,
+          height: 42,
           child: value == null
               ? Align(alignment: Alignment.center, child: LinearProgressIndicator())
               : FadingEdgeScrollView.fromScrollView(

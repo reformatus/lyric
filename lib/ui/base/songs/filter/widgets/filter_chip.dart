@@ -19,7 +19,7 @@ class LFilterChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 5),
+      padding: const EdgeInsets.only(right: 5, top: 2, bottom: 2, left: 2),
       child: FilterChip.elevated(
         color: WidgetStateProperty.resolveWith((states) {
           if (!states.contains(WidgetState.selected)) {
@@ -39,7 +39,7 @@ class LFilterChip extends StatelessWidget {
         ),
         selected: selected,
         onSelected: onSelected,
-        materialTapTargetSize: MaterialTapTargetSize.padded,
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
     );
   }
