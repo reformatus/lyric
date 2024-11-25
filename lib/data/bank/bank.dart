@@ -11,7 +11,7 @@ import '../song/song.dart';
 // todo add a way to add banks
 final List<Bank> defaultBanks = [
   /*Bank(1, 'TESZT Sófár Kottatár', Uri.parse('https://kiskutyafule.csecsy.hu/api/')),*/
-  Bank(2, 'Sófár Kottatár', Uri.parse('https://sofarkotta.csecsy.hu/api/')),
+  Bank(0, true, null, 'Sófár Kottatár', Uri.parse('https://sofarkotta.csecsy.hu/api/')),
   /*Bank(
       3, 'Református Énekeskönyv (1948)', Uri.parse('https://banks.lyricapp.org/reformatus-enekeskonyv/48/')),*/
   /*Bank(
@@ -20,6 +20,8 @@ final List<Bank> defaultBanks = [
 
 class Bank extends Insertable<Bank> {
   final int id;
+  bool isEnabled;
+  DateTime? lastUpdated;
   final Uri baseUrl;
   final String name;
   final Dio dio = Dio();
@@ -27,7 +29,13 @@ class Bank extends Insertable<Bank> {
   @deprecated
   List<Song> songs = [];
 
-  Bank(this.id, this.name, this.baseUrl);
+  Bank(
+    this.id,
+    this.isEnabled,
+    this.lastUpdated,
+    this.name,
+    this.baseUrl,
+  );
 
   Future<List<ProtoSong>> getProtoSongs() async {
     final resp = await dio.get<String>('$baseUrl/songs');
@@ -54,6 +62,8 @@ class Bank extends Insertable<Bank> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     return BanksCompanion(
       id: Value.absent(),
+      isEnabled: Value(isEnabled),
+      lastUpdated: Value(lastUpdated),
       name: Value(name),
       baseUrl: Value(baseUrl),
     ).toColumns(nullToAbsent);
@@ -63,6 +73,8 @@ class Bank extends Insertable<Bank> {
 @UseRowClass(Bank)
 class Banks extends Table {
   IntColumn get id => integer().autoIncrement()();
+  BoolColumn get isEnabled => boolean()();
+  DateTimeColumn get lastUpdated => dateTime().nullable()();
   TextColumn get name => text()();
   TextColumn get baseUrl => text().map(const UriConverter())();
 }
