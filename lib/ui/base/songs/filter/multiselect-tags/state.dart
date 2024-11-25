@@ -54,7 +54,7 @@ const Map<String, Map<String, dynamic>> songFieldsMap = {
     'icon': Icons.menu_book,
   },
   'language': {
-    'title_hu': 'Nyelv',
+    'title_hu': 'Eredeti nyelv',
     'type': 'filterable_multiselect_tags',
     'icon': Icons.language,
   },
