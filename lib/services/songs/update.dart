@@ -23,7 +23,7 @@ double? getProgress(({int toUpdateCount, int updatedCount})? record) {
 @riverpod
 Stream<Map<Bank, ({int toUpdateCount, int updatedCount})?>> updateAllBanks(Ref ref) async* {
   Map<Bank, ({int toUpdateCount, int updatedCount})?> bankStates = Map.fromEntries(
-    (await db.banks.select().get()).map(
+    (await (db.banks.select()..where((b) => b.isEnabled)).get()).map(
       (e) => MapEntry(e, null),
     ),
   );
@@ -43,13 +43,10 @@ Stream<Map<Bank, ({int toUpdateCount, int updatedCount})?>> updateAllBanks(Ref r
 Stream<({int toUpdateCount, int updatedCount})> updateBank(Bank bank) async* {
   // stay in indefinite loading state until we know protosong count
   // return protosong count for display
-  List<ProtoSong> protoSongs = await bank.getProtoSongs();
-  Iterable<String> existingUuids = (await db.songs.select().get()).map((song) => song.uuid);
+  List<ProtoSong> toUpdate = await bank.getProtoSongs(since: bank.lastUpdated);
 
-  // todo instead supply last update date to api and get new/updated protosongs
-  Iterable<ProtoSong> toUpdate = protoSongs.where((protoSong) => !existingUuids.contains(protoSong.uuid));
-
-  print('  Updating bank ${bank.name} with ${toUpdate.length} new songs');
+  print(
+      '  Updating bank ${bank.name} with ${toUpdate.length} new or updated songs since ${bank.lastUpdated}');
 
   if (toUpdate.isEmpty) {
     print('  No new songs to update');
@@ -80,7 +77,7 @@ Stream<({int toUpdateCount, int updatedCount})> updateBank(Bank bank) async* {
   queue.onComplete.then((v) => print('  Queue completed: $v'));
 
   await for (int remaining in queue.remainingItems) {
-    yield (toUpdateCount: protoSongs.length, updatedCount: protoSongs.length - remaining);
+    yield (toUpdateCount: toUpdate.length, updatedCount: toUpdate.length - remaining);
     if (remaining == 0) break;
   }
 

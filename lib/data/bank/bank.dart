@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:intl/intl.dart';
 
 import 'package:dio/dio.dart';
 import 'package:drift/drift.dart';
@@ -37,8 +38,13 @@ class Bank extends Insertable<Bank> {
     this.baseUrl,
   );
 
-  Future<List<ProtoSong>> getProtoSongs() async {
-    final resp = await dio.get<String>('$baseUrl/songs');
+  Future<List<ProtoSong>> getProtoSongs({DateTime? since}) async {
+    String url = '$baseUrl/songs';
+    if (since != null) {
+      String formattedDate = DateFormat('yyyy-MM-dd+HH:mm').format(since);
+      url += '?c=$formattedDate';
+    }
+    final resp = await dio.get<String>(url);
     final jsonList = jsonDecode(resp.data ?? "[]") as List;
 
     return jsonList.map((e) => ProtoSong.fromJson(e as Map<String, dynamic>)).toList();
