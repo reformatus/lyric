@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../services/songs/filter.dart';
-import '../../../common/error.dart';
-import 'field_type.dart';
-import 'key/key_filter_card.dart';
-import 'multiselect-tags/multiselect_filter_card.dart';
+import '../../../../../services/songs/filter.dart';
+import '../../../../common/error.dart';
+import '../types/field_type.dart';
+import '../types/key/key_filter_card.dart';
+import '../types/multiselect-tags/multiselect_filter_card.dart';
 
 class FiltersColumn extends ConsumerWidget {
   const FiltersColumn({super.key});

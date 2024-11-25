@@ -3,7 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/database.dart';
 import '../../data/song/song.dart';
-import '../../ui/base/songs/filter/key/state.dart';
+import '../../ui/base/songs/filter/types/key/state.dart';
 
 part 'filter.g.dart';
 

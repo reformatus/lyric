@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/song/song.dart';
 import '../../services/song/from_uuid.dart';
-import '../base/songs/filter/field_type.dart';
+import '../base/songs/filter/types/field_type.dart';
 import '../common/error.dart';
 import 'sheet/view.dart';
 

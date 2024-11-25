@@ -2,14 +2,14 @@
 import 'package:drift/drift.dart';
 import 'package:drift/extensions/json1.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/ui/base/songs/filter/key/state.dart';
+import 'package:lyric/ui/base/songs/filter/types/key/state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/database.dart';
 import '../../data/song/song.dart';
-import '../../ui/base/songs/filter/field_type.dart';
-import '../../ui/base/songs/filter/multiselect-tags/state.dart';
-import '../../ui/base/songs/filter/search/state.dart';
+import '../../ui/base/songs/filter/types/field_type.dart';
+import '../../ui/base/songs/filter/types/multiselect-tags/state.dart';
+import '../../ui/base/songs/filter/types/search/state.dart';
 
 part 'filter.g.dart';
 

@@ -1,6 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../../../services/songs/filter.dart';
+import '../../../../../../services/songs/filter.dart';
 
 part 'state.g.dart';
 
