@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lyric/ui/base/home/dialogs/feedback/send_mail.dart';
+import 'package:lyric/ui/base/home/parts/feedback/send_mail.dart';
 
 class LErrorCard extends StatelessWidget {
   const LErrorCard({

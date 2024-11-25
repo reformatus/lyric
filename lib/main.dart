@@ -31,6 +31,7 @@ final globals = (
   desktopFromWidth: 1000,
   isDesktop: Platform.isMacOS || Platform.isWindows || Platform.isLinux,
   isMobile: Platform.isIOS || Platform.isAndroid,
+  gitHubApiRoot: 'https://api.github.com/repos/reformatus/lyric',
 );
 
 class LyricApp extends StatelessWidget {

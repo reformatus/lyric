@@ -1,33 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lyric/main.dart';
+import 'package:lyric/services/app_version/check_new_version.dart';
 
 typedef GeneralNavigationDestination = ({
-  IconData icon,
-  IconData? selectedIcon,
+  Widget icon,
+  Widget? selectedIcon,
   String label,
 });
 
 NavigationDestination destinationFromGeneral(GeneralNavigationDestination d) => NavigationDestination(
-      icon: Icon(d.icon),
-      selectedIcon: d.selectedIcon != null ? Icon(d.selectedIcon) : null,
+      icon: d.icon,
+      selectedIcon: d.selectedIcon ?? d.icon,
       label: d.label,
     );
 
 NavigationRailDestination railDestinationFromGeneral(GeneralNavigationDestination d) =>
     NavigationRailDestination(
-      icon: Icon(d.icon),
-      selectedIcon: d.selectedIcon != null ? Icon(d.selectedIcon) : null,
+      icon: d.icon,
+      selectedIcon: d.selectedIcon ?? d.icon,
       label: Text(d.label),
     );
 
-class BaseScaffold extends StatefulWidget {
+class BaseScaffold extends ConsumerStatefulWidget {
   const BaseScaffold({required this.child, super.key});
 
   final Widget child;
 
   @override
-  State<BaseScaffold> createState() => _BaseScaffoldState();
+  ConsumerState<BaseScaffold> createState() => _BaseScaffoldState();
 
   static int _calculateSelectedIndex(BuildContext context) {
     final String location = GoRouterState.of(context).uri.path;
@@ -50,7 +52,7 @@ class BaseScaffold extends StatefulWidget {
   }
 }
 
-class _BaseScaffoldState extends State<BaseScaffold> {
+class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
   @override
   void initState() {
     super.initState();
@@ -66,32 +68,34 @@ class _BaseScaffoldState extends State<BaseScaffold> {
 
   @override
   Widget build(BuildContext context) {
+    final newVersion = ref.watch(checkNewVersionProvider);
+
     final List<GeneralNavigationDestination> destinations = [
       (
-        icon: Icons.home_outlined,
-        selectedIcon: Icons.home,
+        icon: Badge(isLabelVisible: newVersion.valueOrNull != null, child: Icon(Icons.home_outlined)),
+        selectedIcon: Icon(Icons.home),
         label: 'Főoldal',
       ),
       (
-        icon: Icons.library_music_outlined,
-        selectedIcon: Icons.library_music,
+        icon: Icon(Icons.library_music_outlined),
+        selectedIcon: Icon(Icons.library_music),
         label: 'Daltár',
       ),
       (
-        icon: Icons.view_list_outlined,
-        selectedIcon: Icons.view_list,
+        icon: Icon(Icons.view_list_outlined),
+        selectedIcon: Icon(Icons.view_list),
         label: 'Listáim',
       ),
       if (GoRouterState.of(context).uri.path.startsWith('/song'))
         (
-          icon: Icons.music_note_outlined,
-          selectedIcon: Icons.music_note,
+          icon: Icon(Icons.music_note_outlined),
+          selectedIcon: Icon(Icons.music_note),
           label: 'Dal',
         ),
       if (GoRouterState.of(context).uri.path.startsWith('/cue'))
         (
-          icon: Icons.list,
-          selectedIcon: Icons.list,
+          icon: Icon(Icons.list),
+          selectedIcon: Icon(Icons.list),
           label: 'Lista',
         ),
     ];

@@ -42,9 +42,9 @@ class _SetsPageState extends ConsumerState<SetsPage> {
             ),
           ),
         AsyncLoading() => Center(child: CircularProgressIndicator()),
-        AsyncValue(:final value) => ListView(
-            children: value!.map((e) => CueTile(e)).toList(),
-          ),
+        AsyncValue(:final value!) => value.isNotEmpty
+            ? ListView(children: value.map((e) => CueTile(e)).toList())
+            : Center(child: Text('Adj hozzá egy listát a jobb alsó sarokban!')),
       },
     );
   }

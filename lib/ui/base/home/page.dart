@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lyric/ui/base/home/dialogs/feedback/send_mail.dart';
+import 'package:lyric/ui/base/home/parts/feedback/send_mail.dart';
 
 import 'button.dart';
-import 'dialogs/about.dart';
+import 'parts/about.dart';
+import 'parts/new_version_widget.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -22,6 +23,7 @@ class HomePage extends StatelessWidget {
               style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
+          NewVersionWidget(),
           Expanded(
             child: Align(
               alignment: Alignment.bottomCenter,
