@@ -7,7 +7,7 @@ import '../bank/bank.dart';
 
 class Song extends Insertable<Song> {
   final String uuid;
-  final int? sourceBankId;
+  final int? sourceBankId; // todo store bank uuid (planned) instead
   final String title;
   final String lyrics;
   final KeyField? keyField;

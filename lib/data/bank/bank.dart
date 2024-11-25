@@ -8,8 +8,26 @@ import 'package:drift/drift.dart';
 import '../database.dart';
 import '../song/song.dart';
 
+/*
+  far future todo: support bank discovery based on url
+  baseUrl/discover => {
+    name? description?
+    supports lastUpdated? (is static?)
+    available filter types?
+  }
+ */
+
+/*
+  far future todo: online bank discovery service
+  api.lyricapp.org/banks => [...list of urls to autodiscover banks from]
+  including name, description, metadata type, etc
+  user can pick and choose
+  banks can announce themselves (get added to community banks) (federation!)
+  moderators can promote banks to officially endorsed
+ */
+
 // these get added to the database on first run
-// todo add a way to add banks
+// todo add a way to add and disable banks
 final List<Bank> defaultBanks = [
   /*Bank(1, 'TESZT Sófár Kottatár', Uri.parse('https://kiskutyafule.csecsy.hu/api/')),*/
   Bank(0, true, null, 'Sófár Kottatár', Uri.parse('https://sofarkotta.csecsy.hu/api/')),
@@ -21,10 +39,13 @@ final List<Bank> defaultBanks = [
 
 class Bank extends Insertable<Bank> {
   final int id;
+  // todo add global uuid (to support banks changing urls)
   bool isEnabled;
   DateTime? lastUpdated;
+  // todo support static banks where lastUpdated is not used, only new songs are downloaded
   final Uri baseUrl;
   final String name;
+  // todo add description
   final Dio dio = Dio();
 
   @deprecated

@@ -5,6 +5,11 @@ import 'package:lyric/data/database.dart';
 
 import 'slide.dart';
 
+/*
+  far future todo: self-hostable cue collaboration platforms
+  far future todo: local network cue collaboration
+ */
+
 const currentCueVersion = 1;
 
 @UseRowClass(Cue)
