@@ -1,4 +1,4 @@
-package com.example.lyric
+package org.lyricapp.sofar
 
 import io.flutter.embedding.android.FlutterActivity
 
