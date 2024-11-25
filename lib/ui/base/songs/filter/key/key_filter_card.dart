@@ -2,9 +2,10 @@ import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/services/key/filter.dart';
-import 'package:lyric/ui/base/songs/filter/multiselect-tags/widget.dart';
 import 'package:lyric/ui/base/songs/filter/key/state.dart';
 import 'package:lyric/ui/common/error.dart';
+
+import '../filter_chip_widget.dart';
 
 class KeyFilterCard extends ConsumerStatefulWidget {
   const KeyFilterCard({

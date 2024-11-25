@@ -4,13 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/main.dart';
 import 'package:lyric/services/songs/filter.dart';
 import 'package:lyric/ui/base/songs/filter/multiselect-tags/state.dart';
-import 'package:lyric/ui/base/songs/filter/multiselect-tags/widget.dart';
-import 'package:lyric/ui/base/songs/filter/search/widget/search_field_selector.dart';
+import 'package:lyric/ui/base/songs/filter/search/search_field_selector.dart';
 import 'package:lyric/ui/base/songs/filter/key/state.dart';
 import 'package:lyric/ui/base/songs/song_tile.dart';
 import 'package:lyric/ui/common/error.dart';
 
 import '../../../data/cue/cue.dart';
+import 'filter/filters_column.dart';
+import 'filter/search/state.dart';
 
 class SongsPage extends ConsumerStatefulWidget {
   const SongsPage({this.addingToCue, super.key});

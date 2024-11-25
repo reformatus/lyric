@@ -4,55 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/ui/common/error.dart';
 
 import '../../../../../services/songs/filter.dart';
-import '../key/widget.dart';
+import '../field_type.dart';
 import 'state.dart';
+import '../filter_chip_widget.dart';
 
-class FiltersColumn extends ConsumerWidget {
-  const FiltersColumn({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    var filterableFieldsList = ref.watch(existingFilterableFieldsProvider);
-
-    return switch (filterableFieldsList) {
-      AsyncError(:final error, :final stackTrace) => LErrorCard(
-          type: LErrorType.error,
-          title: 'Hiba a szűrők betöltése közben',
-          message: error.toString(),
-          stack: stackTrace.toString(),
-          icon: Icons.error,
-        ),
-      AsyncValue(:final value) => value == null
-          ? Center(child: LinearProgressIndicator())
-          : Column(
-              mainAxisSize: MainAxisSize.min,
-              children: value.entries
-                  .map(
-                    (e) => switch (e.value.type) {
-                      FieldType.multiselect || FieldType.multiselectTags => FilterChips(
-                          field: e.key,
-                          fieldType: e.value.type,
-                          fieldPopulatedCount: e.value.count,
-                        ),
-                      FieldType.key => KeyFilterCard(
-                          fieldPopulatedCount: e.value.count,
-                        ),
-                      _ => LErrorCard(
-                          type: LErrorType.warning,
-                          title: 'Nem támogatott szűrőtípus!',
-                          message: e.value.toString(),
-                          icon: Icons.filter_alt,
-                        ),
-                    },
-                  )
-                  .toList(),
-            )
-    };
-  }
-}
-
-class FilterChips extends ConsumerStatefulWidget {
-  const FilterChips({
+class MultiselectFilterCard extends ConsumerStatefulWidget {
+  const MultiselectFilterCard({
     required this.field,
     required this.fieldType,
     required this.fieldPopulatedCount,
@@ -64,10 +21,10 @@ class FilterChips extends ConsumerStatefulWidget {
   final int fieldPopulatedCount;
 
   @override
-  ConsumerState<FilterChips> createState() => LFilterChipsState();
+  ConsumerState<MultiselectFilterCard> createState() => LFilterChipsState();
 }
 
-class LFilterChipsState extends ConsumerState<FilterChips> {
+class LFilterChipsState extends ConsumerState<MultiselectFilterCard> {
   @override
   void initState() {
     super.initState();
@@ -156,51 +113,6 @@ class LFilterChipsState extends ConsumerState<FilterChips> {
             ? IconButton(
                 onPressed: () => filterStateNotifier.resetFilterField(widget.field), icon: Icon(Icons.clear))
             : null,
-      ),
-    );
-  }
-}
-
-class LFilterChip extends StatelessWidget {
-  const LFilterChip({
-    required this.label,
-    required this.onSelected,
-    required this.selected,
-    this.leading,
-    this.special = false,
-    super.key,
-  });
-
-  final String label;
-  final Function(bool) onSelected;
-  final bool selected;
-  final bool special;
-  final Widget? leading;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 5),
-      child: FilterChip.elevated(
-        color: WidgetStateProperty.resolveWith((states) {
-          if (!states.contains(WidgetState.selected)) {
-            if (special) return Theme.of(context).colorScheme.surfaceContainer;
-            return Theme.of(context).cardColor;
-          } else {
-            return Theme.of(context).colorScheme.surfaceContainerHighest;
-          }
-        }),
-        //padding: EdgeInsets.symmetric(horizontal: 8),
-        labelPadding: EdgeInsets.only(left: leading != null ? 0 : 5, right: 5),
-        label: Row(
-          children: [
-            if (leading != null) Padding(padding: EdgeInsets.only(right: 5), child: leading!),
-            Text(label),
-          ],
-        ),
-        selected: selected,
-        onSelected: onSelected,
-        materialTapTargetSize: MaterialTapTargetSize.padded,
       ),
     );
   }

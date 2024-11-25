@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/services/songs/filter.dart';
-import 'package:lyric/ui/base/songs/filter/multiselect-tags/state.dart';
+
+import '../field_type.dart';
+import 'state.dart';
 
 class SearchFieldSelectorColumn extends ConsumerWidget {
   const SearchFieldSelectorColumn({super.key});

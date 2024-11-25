@@ -5,7 +5,7 @@ import 'package:lyric/services/song/from_uuid.dart';
 import 'package:lyric/ui/song/sheet/view.dart';
 
 import '../../data/song/song.dart';
-import '../base/songs/filter/multiselect-tags/state.dart';
+import '../base/songs/filter/field_type.dart';
 import '../common/error.dart';
 
 const Set<String> fieldsToShowInDetailsSummary = {
