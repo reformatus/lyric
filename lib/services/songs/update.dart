@@ -1,12 +1,12 @@
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/data/database.dart';
-import 'package:lyric/services/bank/bank_updated.dart';
 import 'package:queue/queue.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/bank/bank.dart';
+import '../../data/database.dart';
 import '../../data/song/song.dart';
+import '../bank/bank_updated.dart';
 
 part 'update.g.dart';
 

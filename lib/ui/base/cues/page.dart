@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lyric/services/cue/cues.dart';
-import 'package:lyric/ui/common/error.dart';
 
 import '../../../data/cue/cue.dart';
+import '../../../services/cue/cues.dart';
+import '../../common/error.dart';
 import 'dialogs.dart';
 
 class SetsPage extends ConsumerStatefulWidget {

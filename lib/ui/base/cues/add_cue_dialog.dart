@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lyric/services/cue/write_cue.dart';
+
+import '../../../services/cue/write_cue.dart';
 
 class EditCueDialog extends StatefulWidget {
   const EditCueDialog({

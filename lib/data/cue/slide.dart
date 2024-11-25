@@ -1,5 +1,4 @@
-import 'package:lyric/services/song/from_uuid.dart';
-
+import '../../services/song/from_uuid.dart';
 import '../song/song.dart';
 
 part 'slide_types/song_slide.dart';

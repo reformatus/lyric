@@ -1,9 +1,9 @@
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/data/bank/bank.dart';
-import 'package:lyric/data/database.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../data/bank/bank.dart';
+import '../../data/database.dart';
 import '../../data/song/song.dart';
 
 part 'bank_of_song.g.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:lyric/data/cue/slide.dart';
-import 'package:lyric/ui/song/sheet/view.dart';
 
+import '../../../data/cue/slide.dart';
 import '../../../main.dart';
+import '../../song/sheet/view.dart';
 
 class SongSlideTile extends StatelessWidget {
   const SongSlideTile(this.slide,

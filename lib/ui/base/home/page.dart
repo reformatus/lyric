@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:lyric/ui/base/home/parts/feedback/send_mail.dart';
 
 import 'button.dart';
 import 'parts/about.dart';
+import 'parts/feedback/send_mail.dart';
 import 'parts/new_version_widget.dart';
 
 class HomePage extends StatelessWidget {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lyric/services/cue/write_cue.dart';
 
 import '../../../data/cue/cue.dart';
+import '../../../services/cue/write_cue.dart';
 
 class EditCueDialog extends StatefulWidget {
   /// If cue is null, dialog adds new cue

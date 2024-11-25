@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
-import 'package:lyric/data/database.dart';
 
+import '../database.dart';
 import 'slide.dart';
 
 /*

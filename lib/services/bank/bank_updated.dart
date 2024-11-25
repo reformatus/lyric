@@ -1,9 +1,9 @@
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/data/database.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/bank/bank.dart';
+import '../../data/database.dart';
 
 part 'bank_updated.g.dart';
 

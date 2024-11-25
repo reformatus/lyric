@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/data/cue/slide.dart';
-import 'package:lyric/main.dart';
-import 'package:lyric/services/cue/from_uuid.dart';
-import 'package:lyric/services/cue/slide/watch_revived.dart';
-import 'package:lyric/services/cue/write_cue.dart';
-import 'package:lyric/ui/base/songs/page.dart';
-import 'package:lyric/ui/common/error.dart';
-import 'package:lyric/ui/cue/slide_views/song.dart';
+
+import '../../data/cue/slide.dart';
+import '../../main.dart';
+import '../../services/cue/from_uuid.dart';
+import '../../services/cue/slide/watch_revived.dart';
+import '../../services/cue/write_cue.dart';
+import '../base/songs/page.dart';
+import '../common/error.dart';
+import 'slide_views/song.dart';
 
 /* // todo improve cue page:
  * move state management to riverpod

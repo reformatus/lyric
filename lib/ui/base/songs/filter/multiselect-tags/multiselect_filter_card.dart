@@ -1,12 +1,12 @@
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/ui/common/error.dart';
 
 import '../../../../../services/songs/filter.dart';
+import '../../../../common/error.dart';
 import '../field_type.dart';
-import 'state.dart';
 import '../filter_chip_widget.dart';
+import 'state.dart';
 
 class MultiselectFilterCard extends ConsumerStatefulWidget {
   const MultiselectFilterCard({

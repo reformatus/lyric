@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/services/cue/from_uuid.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../data/cue/slide.dart';
+import '../from_uuid.dart';
 
 part 'watch_revived.g.dart';
 

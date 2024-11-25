@@ -1,8 +1,8 @@
 import 'package:drift/drift.dart';
-import 'package:lyric/data/cue/slide.dart';
-import 'package:lyric/data/database.dart';
 
 import '../../../data/cue/cue.dart';
+import '../../../data/cue/slide.dart';
+import '../../../data/database.dart';
 
 Future addSongSlideToCueForSongWithUuid({required Cue cue, required String songUuid}) async {
   // necessary to add the song's latest hashcode

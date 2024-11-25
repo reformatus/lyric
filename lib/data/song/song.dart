@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
-import 'package:lyric/data/database.dart';
 
 import '../bank/bank.dart';
+import '../database.dart';
 
 class Song extends Insertable<Song> {
   final String uuid;

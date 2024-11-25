@@ -1,8 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/data/database.dart';
-import 'package:lyric/data/song/song.dart';
-import 'package:lyric/ui/base/songs/filter/key/state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import '../../data/database.dart';
+import '../../data/song/song.dart';
+import '../../ui/base/songs/filter/key/state.dart';
 
 part 'filter.g.dart';
 

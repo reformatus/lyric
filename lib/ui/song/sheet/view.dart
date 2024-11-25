@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:lyric/services/bank/bank_of_song.dart';
-import 'package:lyric/ui/common/error.dart';
 
 import '../../../data/song/song.dart';
 import '../../../services/assets/get_song_asset.dart';
+import '../../../services/bank/bank_of_song.dart';
+import '../../common/error.dart';
 
 class SheetView extends ConsumerWidget {
   const SheetView(this.song, {super.key});

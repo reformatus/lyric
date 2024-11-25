@@ -2,12 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lyric/services/cue/slide/song_slide.dart';
-import 'package:lyric/services/songs/filter.dart';
-import 'package:lyric/ui/common/error.dart';
 
 import '../../../data/cue/cue.dart';
 import '../../../data/database.dart';
+import '../../../services/cue/slide/song_slide.dart';
+import '../../../services/songs/filter.dart';
+import '../../common/error.dart';
 
 class LSongResultTile extends StatelessWidget {
   const LSongResultTile(this.songResult, {this.addingToCue, super.key});

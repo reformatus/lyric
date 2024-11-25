@@ -1,17 +1,17 @@
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/main.dart';
-import 'package:lyric/services/songs/filter.dart';
-import 'package:lyric/ui/base/songs/filter/multiselect-tags/state.dart';
-import 'package:lyric/ui/base/songs/filter/search/search_field_selector.dart';
-import 'package:lyric/ui/base/songs/filter/key/state.dart';
-import 'package:lyric/ui/base/songs/song_tile.dart';
-import 'package:lyric/ui/common/error.dart';
 
 import '../../../data/cue/cue.dart';
+import '../../../main.dart';
+import '../../../services/songs/filter.dart';
+import '../../common/error.dart';
 import 'filter/filters_column.dart';
+import 'filter/key/state.dart';
+import 'filter/multiselect-tags/state.dart';
+import 'filter/search/search_field_selector.dart';
 import 'filter/search/state.dart';
+import 'song_tile.dart';
 
 class SongsPage extends ConsumerStatefulWidget {
   const SongsPage({this.addingToCue, super.key});

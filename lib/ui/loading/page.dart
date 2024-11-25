@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lyric/services/bank/bank_updated.dart';
-import 'package:lyric/services/songs/update.dart';
-import 'package:lyric/ui/loading/banner.dart';
 
+import '../../services/bank/bank_updated.dart';
+import '../../services/songs/update.dart';
 import '../common/error.dart';
+import 'banner.dart';
 
 class LoadingPage extends ConsumerWidget {
   const LoadingPage({super.key});

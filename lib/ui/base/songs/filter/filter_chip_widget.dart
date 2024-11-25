@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class LFilterChip extends StatelessWidget {
   const LFilterChip({
     required this.label,
