@@ -55,7 +55,7 @@ flutter_launcher_icons:
   image_path_android: "assets/icon/sofar_dalapp_rounded_1000.png"
   adaptive_icon_foreground: "assets/icon/sofar_dalapp_foreground_1000.png"
   adaptive_icon_background: "#c4a140"
-  adaptive_icon_foreground_inset: 5
+  adaptive_icon_foreground_inset: 17
   adaptive_icon_monochrome: "assets/icon/sofar_dalapp_foreground_1000.png"
 
   ios: true
