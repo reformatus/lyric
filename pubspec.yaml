@@ -3,10 +3,10 @@ description: "Your Open Worship Superapp"
 
 publish_to: 'none'
 
-version: 0.2.3+11
+version: 0.3.0+20
 
 environment:
-  sdk: '>=3.5.3 <4.0.0'
+  sdk: '>=3.7.0 <4.0.0'
 
 dependencies:
   flutter:
