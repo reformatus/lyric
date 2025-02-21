@@ -13,6 +13,8 @@ Future setAsUpdatedNow(Bank bank) {
   ));
 }
 
+/// Checks if there was ever a successful bank update.\
+/// Effectively, checks if the app has been launched for the first time.
 @Riverpod(keepAlive: true)
 Future<bool> hasEverUpdatedAnything(Ref ref) async {
   return (await (db.banks.select()..where((b) => b.lastUpdated.isNotNull())).get()).isNotEmpty;
