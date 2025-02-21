@@ -24,9 +24,10 @@ Future<VersionInfo?> checkNewVersion(Ref ref) async {
     final latest = latestVersion.split('.').map((e) => int.parse(e)).toList();
     final current = currentVersion.split('.').map((e) => int.parse(e)).toList();
 
-    if (current[0] >= latest[0] && current[1] >= latest[1] && current[2] >= latest[2]) return null;
+    if (!latest.isNeverVersionThan(current)) return null;
 
-    globals.scaffoldKey.currentState?.showSnackBar(SnackBar(
+    globals.scaffoldKey.currentState?.showSnackBar(
+      SnackBar(
         content: Text('Új verzió elérhető!'),
         backgroundColor: Colors.blue[700],
         showCloseIcon: true,
@@ -35,16 +36,27 @@ Future<VersionInfo?> checkNewVersion(Ref ref) async {
           label: 'Nézzük',
           onPressed: () => globals.router.go('/home'),
           backgroundColor: Colors.blue[900],
-        )));
+        ),
+      ),
+    );
 
     return (
       versionNumber: latestVersion,
       releaseNotesMd: latestRelease['body'] as String,
       releaseInfoLink: Uri.parse(latestRelease['html_url'] as String),
-      downloadLink: Uri.parse(latestRelease['assets'][0]['browser_download_url'])
+      downloadLink: Uri.parse(latestRelease['assets'][0]['browser_download_url']),
     );
   } catch (e, s) {
     print("Couldn't check for new versions: $e\n$s");
     return null;
+  }
+}
+
+extension VersionCompare on List<int> {
+  /// Compare 3-number semantic versions
+  bool isNeverVersionThan(List<int> other) {
+    if (this[0] != other[0]) return this[0] > other[0];
+    if (this[1] != other[1]) return this[1] > other[1];
+    return this[2] > other[2];
   }
 }
