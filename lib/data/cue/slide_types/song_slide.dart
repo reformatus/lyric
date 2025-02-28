@@ -14,6 +14,7 @@ class SongSlide implements Slide {
 
   @override
   String? comment;
+  // TODO implement saving wheter sheet music or lyrics were opened
 
   @override
   String getPreview() {
