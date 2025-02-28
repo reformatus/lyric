@@ -236,10 +236,11 @@ packages:
   dart_opensong:
     dependency: "direct main"
     description:
-      name: dart_opensong
-      sha256: "7261739f284ad128277cad467b159573005ddb4e21d319b839e6948c9b228fdf"
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: dev
+      resolved-ref: "22c69d49f8d82cf450b6ef5f49281c552874f033"
+      url: "https://github.com/reformatus/dart_opensong.git"
+    source: git
     version: "0.0.1"
   dart_style:
     dependency: transitive

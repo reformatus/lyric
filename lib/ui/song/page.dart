@@ -1,12 +1,16 @@
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/ui/song/lyrics/view.dart';
+import 'package:lyric/ui/song/sheet/view.dart';
 import 'package:lyric/ui/song/tabs.dart';
 
 import '../../data/song/song.dart';
 import '../../services/song/from_uuid.dart';
 import '../base/songs/filter/types/field_type.dart';
 import '../common/error.dart';
+
+import 'state.dart';
 
 const Set<String> fieldsToShowInDetailsSummary = {'composer', 'lyricist', 'translator'};
 
@@ -34,21 +38,23 @@ class _SongPageState extends ConsumerState<SongPage> {
   @override
   Widget build(BuildContext context) {
     final song = ref.watch(songFromUuidProvider(widget.songUuid));
+    final showLyrics = ref.watch(showLyricsProvider);
 
     final List<Widget> summaryContent = song.when(
       data: (song) => getDetailsSummaryContent(song),
       loading: () => [],
-      error: (_, __) => [],
+      error: (_, _) => [],
     );
 
     final List<Widget> detailsContent = song.when(
       data: (song) => getDetailsContent(song, context),
       loading: () => [],
-      error: (_, __) => [],
+      error: (_, _) => [],
     );
 
     return LayoutBuilder(
       builder: (context, constraints) {
+        var isHorizontal = constraints.maxHeight < constraints.maxWidth;
         return Scaffold(
           backgroundColor: Theme.of(context).indicatorColor,
           appBar: AppBar(
@@ -65,28 +71,52 @@ class _SongPageState extends ConsumerState<SongPage> {
                 ),
             ],
           ),
-          body: switch (song) {
-            AsyncError(:final error, :final stackTrace) => Center(
-              child: LErrorCard(
-                type: LErrorType.error,
-                title: 'Hiba a dal betöltése közben',
-                message: error.toString(),
-                stack: stackTrace.toString(),
-                icon: Icons.error,
-              ),
-            ),
-            AsyncLoading() => const Center(child: CircularProgressIndicator(value: 0.3)),
-            AsyncValue(:final value!) => Column(
-              children: [
-                if (detailsContent.isNotEmpty && constraints.maxWidth <= 500)
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: detailsButton(summaryContent, context, detailsContent),
+          body: Flex(
+            direction: isHorizontal ? Axis.horizontal : Axis.vertical,
+            children: [
+              Expanded(
+                child: switch (song) {
+                  AsyncError(:final error, :final stackTrace) => Center(
+                    child: LErrorCard(
+                      type: LErrorType.error,
+                      title: 'Hiba a dal betöltése közben',
+                      message: error.toString(),
+                      stack: stackTrace.toString(),
+                      icon: Icons.error,
+                    ),
                   ),
-                Expanded(child: SongTabView(song: value)),
-              ],
-            ),
-          },
+                  AsyncLoading() => const Center(child: CircularProgressIndicator(value: 0.3)),
+                  AsyncValue(:final value!) => Column(
+                    children: [
+                      if (detailsContent.isNotEmpty && constraints.maxWidth <= 500)
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: detailsButton(summaryContent, context, detailsContent),
+                        ),
+                      if (showLyrics)
+                        Expanded(child: LyricsView(value))
+                      else
+                        Expanded(child: Center(child: SheetView(value))),
+                    ],
+                  ),
+                },
+              ),
+              Container(
+                padding: EdgeInsets.all(8),
+                color: Theme.of(context).scaffoldBackgroundColor,
+                child: Flex(
+                  direction: isHorizontal ? Axis.vertical : Axis.horizontal,
+                  children: [
+                    FilledButton.tonalIcon(
+                      onPressed: () => ref.read(showLyricsProvider.notifier).toggle(),
+                      label: showLyrics ? Text('Kotta') : Text('Dalszöveg'),
+                      icon: Icon(showLyrics ? Icons.music_video : Icons.description_outlined),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         );
       },
     );

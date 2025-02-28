@@ -35,7 +35,10 @@ dependencies:
   url_launcher: ^6.3.1
   mailto: ^2.0.0
   flutter_markdown: ^0.7.4+2
-  dart_opensong: ^0.0.1
+  dart_opensong:
+    git:
+      url: https://github.com/reformatus/dart_opensong.git
+      ref: dev
 
 dev_dependencies:
   flutter_lints: ^5.0.0
