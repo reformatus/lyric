@@ -1,23 +1,16 @@
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/ui/song/tabs.dart';
 
 import '../../data/song/song.dart';
 import '../../services/song/from_uuid.dart';
 import '../base/songs/filter/types/field_type.dart';
 import '../common/error.dart';
-import 'sheet/view.dart';
 
-const Set<String> fieldsToShowInDetailsSummary = {
-  'composer',
-  'lyricist',
-  'translator',
-};
+const Set<String> fieldsToShowInDetailsSummary = {'composer', 'lyricist', 'translator'};
 
-const Set<String> fieldsToOmitFromDetails = {
-  'lyrics',
-  'first_line',
-};
+const Set<String> fieldsToOmitFromDetails = {'lyrics', 'first_line'};
 
 class SongPage extends ConsumerStatefulWidget {
   const SongPage(this.songUuid, {super.key});
@@ -54,29 +47,26 @@ class _SongPageState extends ConsumerState<SongPage> {
       error: (_, __) => [],
     );
 
-    return LayoutBuilder(builder: (context, constraints) {
-      return Scaffold(
-        backgroundColor: Theme.of(context).indicatorColor,
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          title: Text(song.value?.contentMap['title'] ?? ''),
-          actions: [
-            if (detailsContent.isNotEmpty && constraints.maxWidth > 500)
-              ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: constraints.maxWidth / 2),
-                child: detailsButton(
-                  summaryContent,
-                  context,
-                  detailsContent,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Scaffold(
+          backgroundColor: Theme.of(context).indicatorColor,
+          appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            title: Text(song.value?.contentMap['title'] ?? ''),
+            actions: [
+              if (detailsContent.isNotEmpty && constraints.maxWidth > 500)
+                ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: constraints.maxWidth / 2),
+                  child: detailsButton(summaryContent, context, detailsContent),
                 ),
-              )
-          ],
-        ),
-        body: switch (song) {
-          AsyncError(:final error, :final stackTrace) => Center(
+            ],
+          ),
+          body: switch (song) {
+            AsyncError(:final error, :final stackTrace) => Center(
               child: LErrorCard(
                 type: LErrorType.error,
                 title: 'Hiba a dal betöltése közben',
@@ -85,20 +75,21 @@ class _SongPageState extends ConsumerState<SongPage> {
                 icon: Icons.error,
               ),
             ),
-          AsyncLoading() => const Center(child: CircularProgressIndicator(value: 0.3)),
-          AsyncValue(:final value!) => Column(
+            AsyncLoading() => const Center(child: CircularProgressIndicator(value: 0.3)),
+            AsyncValue(:final value!) => Column(
               children: [
                 if (detailsContent.isNotEmpty && constraints.maxWidth <= 500)
                   Align(
                     alignment: Alignment.centerRight,
                     child: detailsButton(summaryContent, context, detailsContent),
                   ),
-                Expanded(child: Center(child: SheetView(value))),
+                Expanded(child: SongTabView(song: value)),
               ],
             ),
-        },
-      );
-    });
+          },
+        );
+      },
+    );
   }
 
   Widget detailsButton(List<Widget> summaryContent, BuildContext context, List<Widget> detailsContent) {
@@ -110,36 +101,38 @@ class _SongPageState extends ConsumerState<SongPage> {
           textStyle: Theme.of(context).primaryTextTheme.labelMedium!,
           foregroundColor: Theme.of(context).colorScheme.secondary,
         ),
-        child: Wrap(
-          spacing: 10,
-          children: summaryContent.isNotEmpty ? summaryContent : [Text('Részletek')],
-        ),
+        child: Wrap(spacing: 10, children: summaryContent.isNotEmpty ? summaryContent : [Text('Részletek')]),
         onPressed: () => showDetailsBottomSheet(context, detailsSheetScrollController, detailsContent),
       ),
     );
   }
 
   Future<dynamic> showDetailsBottomSheet(
-      BuildContext context, ScrollController detailsSheetScrollController, List<Widget> detailsContent) {
+    BuildContext context,
+    ScrollController detailsSheetScrollController,
+    List<Widget> detailsContent,
+  ) {
     return showModalBottomSheet(
       // todo factor out to general bottom sheet that can be used troughout the app
       // todo use https://pub.dev/packages/wtf_sliding_sheet or similar
       // far future todo consider other view type for desktop
       context: context,
-      builder: (_) => FadingEdgeScrollView.fromScrollView(
-        child: ListView(
-          controller: detailsSheetScrollController,
-          children: [
-            Align(
-                alignment: Alignment.topRight,
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: IconButton(onPressed: () => Navigator.of(context).pop(), icon: Icon(Icons.close)),
-                )),
-            ...detailsContent,
-          ],
-        ),
-      ),
+      builder:
+          (_) => FadingEdgeScrollView.fromScrollView(
+            child: ListView(
+              controller: detailsSheetScrollController,
+              children: [
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: IconButton(onPressed: () => Navigator.of(context).pop(), icon: Icon(Icons.close)),
+                  ),
+                ),
+                ...detailsContent,
+              ],
+            ),
+          ),
       isScrollControlled: true,
       useRootNavigator: false,
       scrollControlDisabledMaxHeightRatio: 0.5,
@@ -179,16 +172,18 @@ class _SongPageState extends ConsumerState<SongPage> {
       if (fieldsToOmitFromDetails.contains(contentEntry.key)) continue;
       if (contentEntry.value.isNotEmpty) {
         if (songFieldsMap.containsKey(contentEntry.key)) {
-          detailsContent.add(ListTile(
-            visualDensity: VisualDensity.compact,
-            leading: Icon(songFieldsMap[contentEntry.key]!['icon']),
-            title: Text(
-              songFieldsMap[contentEntry.key]!['title_hu'],
-              style: Theme.of(context).primaryTextTheme.labelMedium,
+          detailsContent.add(
+            ListTile(
+              visualDensity: VisualDensity.compact,
+              leading: Icon(songFieldsMap[contentEntry.key]!['icon']),
+              title: Text(
+                songFieldsMap[contentEntry.key]!['title_hu'],
+                style: Theme.of(context).primaryTextTheme.labelMedium,
+              ),
+              subtitle: Text(contentEntry.value),
+              subtitleTextStyle: Theme.of(context).listTileTheme.titleTextStyle,
             ),
-            subtitle: Text(contentEntry.value),
-            subtitleTextStyle: Theme.of(context).listTileTheme.titleTextStyle,
-          ));
+          );
         } else {
           // return compatibility listtile
         }
