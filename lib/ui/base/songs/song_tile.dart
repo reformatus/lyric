@@ -23,7 +23,8 @@ class LSongResultTile extends StatelessWidget {
     if (songsFt != null) {
       String firstLine = "";
       try {
-        firstLine = jsonDecode(songsFt.contentMap)['first_line'] ??
+        firstLine =
+            jsonDecode(songsFt.contentMap)['first_line'] ??
             songsFt.lyrics.substring(songsFt.lyrics.indexOf('\n'));
       } catch (_) {
         firstLine = songsFt.lyrics;
@@ -33,37 +34,38 @@ class LSongResultTile extends StatelessWidget {
         onTap: addingToCue == null ? () => context.push('/song/${songsFt.uuid}') : null,
         title: Text(songsFt.title),
         trailing: Text(songsFt.keyField.toString()),
-        leading: addingToCue != null
-            ? IconButton.filledTonal(
-                onPressed: () => addSongSlideToCueForSongWithUuid(cue: addingToCue!, songUuid: songsFt.uuid),
-                icon: Icon(Icons.add))
-            : null,
-        subtitle: !firstLine.startsWith(songsFt.title)
-            ? Text(
-                firstLine,
-                maxLines: 1,
-                softWrap: false,
-                overflow: TextOverflow.fade,
-              )
-            : null,
+        leading:
+            addingToCue != null
+                ? IconButton.filledTonal(
+                  onPressed:
+                      () => addSongSlideToCueForSongWithUuid(cue: addingToCue!, songUuid: songsFt.uuid),
+                  icon: Icon(Icons.add),
+                )
+                : null,
+        subtitle:
+            !firstLine.startsWith(songsFt.title)
+                ? Text(firstLine, maxLines: 1, softWrap: false, overflow: TextOverflow.fade)
+                : null,
       );
     } else if (match != null) {
       return ListTile(
         onTap: addingToCue == null ? () => context.push('/song/${match.uuid}') : null,
-        leading: addingToCue != null
-            ? IconButton.filledTonal(
-                onPressed: () => addSongSlideToCueForSongWithUuid(cue: addingToCue!, songUuid: match.uuid),
-                icon: Icon(Icons.add))
-            : null,
+        leading:
+            addingToCue != null
+                ? IconButton.filledTonal(
+                  onPressed: () => addSongSlideToCueForSongWithUuid(cue: addingToCue!, songUuid: match.uuid),
+                  icon: Icon(Icons.add),
+                )
+                : null,
         title: RichText(
           text: TextSpan(
             children: spansFromSnippet(
               match.matchTitle,
               normalStyle: Theme.of(context).textTheme.bodyLarge!,
               highlightStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ),
           ),
         ),
@@ -89,16 +91,16 @@ class LSongResultTile extends StatelessWidget {
     }
   }
 
-  RichText trailingPart(String matchString, BuildContext context) {
+  RichText trailingPart(String? matchString, BuildContext context) {
     return RichText(
       text: TextSpan(
         children: spansFromSnippet(
-          matchString,
+          matchString ?? "",
           normalStyle: Theme.of(context).textTheme.bodySmall!,
           highlightStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
-              ),
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
       ),
       maxLines: 1,
@@ -108,17 +110,18 @@ class LSongResultTile extends StatelessWidget {
   }
 }
 
-bool hasMatch(String snippet) {
+bool hasMatch(String? snippet) {
+  if (snippet == null) return false;
   return snippet.contains(snippetTags.start) && snippet.contains(snippetTags.end);
 }
 
 List<TextSpan> spansFromSnippet(
-  String snippet, {
+  String? snippet, {
   required TextStyle normalStyle,
   required TextStyle highlightStyle,
 }) {
   List<TextSpan> spans = [];
-  String remainingText = snippet.replaceAll('\n', ' ');
+  String remainingText = (snippet ?? "").replaceAll('\n', ' ');
   while (remainingText.contains(snippetTags.start) && remainingText.contains(snippetTags.end)) {
     // Get the text before the match
     final int startIndex = remainingText.indexOf(snippetTags.start);
