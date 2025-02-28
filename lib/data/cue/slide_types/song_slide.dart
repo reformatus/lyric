@@ -27,10 +27,8 @@ class SongSlide implements Slide {
   static Future<SongSlide> reviveFromJson(Map json) async {
     var songResult = await getSongForSlideJson(json['song']);
 
-    return SongSlide(
-      songResult.song,
-      json['comment'],
-    )..contentDifferentFlag = songResult.contentDifferentFlag;
+    return SongSlide(songResult.song, json['comment'])
+      ..contentDifferentFlag = songResult.contentDifferentFlag;
   }
 
   @override
@@ -45,15 +43,17 @@ class SongSlide implements Slide {
   SongSlide(this.song, [this.comment]);
 }
 
-Future<({Song song, bool contentDifferentFlag})> getSongForSlideJson(Map json) async {
+Future<({Song song, bool contentDifferentFlag})> getSongForSlideJson(
+  Map json,
+) async {
   Song song = await dbSongFromUuid(json['uuid']);
   // far future todo: handle edge cases; reading from list file, from network, from bank, from local etc
-  return (song: song, contentDifferentFlag: song.contentHash == json['contentHash']);
+  return (
+    song: song,
+    contentDifferentFlag: song.contentHash == json['contentHash'],
+  );
 }
 
 Map songOfSlideToJson(Song song) {
-  return {
-    'uuid': song.uuid,
-    'contentHash': song.contentHash,
-  };
+  return {'uuid': song.uuid, 'contentHash': song.contentHash};
 }

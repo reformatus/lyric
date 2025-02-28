@@ -31,29 +31,47 @@ class LSongResultTile extends StatelessWidget {
       }
       return ListTile(
         // far future todo dense on desktop (maybe even table?)
-        onTap: addingToCue == null ? () => context.push('/song/${songsFt.uuid}') : null,
+        onTap:
+            addingToCue == null
+                ? () => context.push('/song/${songsFt.uuid}')
+                : null,
         title: Text(songsFt.title),
         trailing: Text(songsFt.keyField.toString()),
         leading:
             addingToCue != null
                 ? IconButton.filledTonal(
                   onPressed:
-                      () => addSongSlideToCueForSongWithUuid(cue: addingToCue!, songUuid: songsFt.uuid),
+                      () => addSongSlideToCueForSongWithUuid(
+                        cue: addingToCue!,
+                        songUuid: songsFt.uuid,
+                      ),
                   icon: Icon(Icons.add),
                 )
                 : null,
         subtitle:
             !firstLine.startsWith(songsFt.title)
-                ? Text(firstLine, maxLines: 1, softWrap: false, overflow: TextOverflow.fade)
+                ? Text(
+                  firstLine,
+                  maxLines: 1,
+                  softWrap: false,
+                  overflow: TextOverflow.fade,
+                )
                 : null,
       );
     } else if (match != null) {
       return ListTile(
-        onTap: addingToCue == null ? () => context.push('/song/${match.uuid}') : null,
+        onTap:
+            addingToCue == null
+                ? () => context.push('/song/${match.uuid}')
+                : null,
         leading:
             addingToCue != null
                 ? IconButton.filledTonal(
-                  onPressed: () => addSongSlideToCueForSongWithUuid(cue: addingToCue!, songUuid: match.uuid),
+                  onPressed:
+                      () => addSongSlideToCueForSongWithUuid(
+                        cue: addingToCue!,
+                        songUuid: match.uuid,
+                      ),
                   icon: Icon(Icons.add),
                 )
                 : null,
@@ -69,14 +87,20 @@ class LSongResultTile extends StatelessWidget {
             ),
           ),
         ),
-        subtitle: hasMatch(match.matchLyrics) ? trailingPart(match.matchLyrics, context) : null,
+        subtitle:
+            hasMatch(match.matchLyrics)
+                ? trailingPart(match.matchLyrics, context)
+                : null,
         trailing: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (hasMatch(match.matchComposer)) trailingPart(match.matchComposer, context),
-            if (hasMatch(match.matchLyricist)) trailingPart(match.matchLyricist, context),
-            if (hasMatch(match.matchTranslator)) trailingPart(match.matchTranslator, context),
+            if (hasMatch(match.matchComposer))
+              trailingPart(match.matchComposer, context),
+            if (hasMatch(match.matchLyricist))
+              trailingPart(match.matchLyricist, context),
+            if (hasMatch(match.matchTranslator))
+              trailingPart(match.matchTranslator, context),
           ],
         ),
       );
@@ -112,7 +136,8 @@ class LSongResultTile extends StatelessWidget {
 
 bool hasMatch(String? snippet) {
   if (snippet == null) return false;
-  return snippet.contains(snippetTags.start) && snippet.contains(snippetTags.end);
+  return snippet.contains(snippetTags.start) &&
+      snippet.contains(snippetTags.end);
 }
 
 List<TextSpan> spansFromSnippet(
@@ -122,17 +147,30 @@ List<TextSpan> spansFromSnippet(
 }) {
   List<TextSpan> spans = [];
   String remainingText = (snippet ?? "").replaceAll('\n', ' ');
-  while (remainingText.contains(snippetTags.start) && remainingText.contains(snippetTags.end)) {
+  while (remainingText.contains(snippetTags.start) &&
+      remainingText.contains(snippetTags.end)) {
     // Get the text before the match
     final int startIndex = remainingText.indexOf(snippetTags.start);
     if (startIndex > 0) {
-      spans.add(TextSpan(text: remainingText.substring(0, startIndex), style: normalStyle));
+      spans.add(
+        TextSpan(
+          text: remainingText.substring(0, startIndex),
+          style: normalStyle,
+        ),
+      );
     }
 
     // Get the highlighted match
-    remainingText = remainingText.substring(startIndex + snippetTags.start.length);
+    remainingText = remainingText.substring(
+      startIndex + snippetTags.start.length,
+    );
     final int endIndex = remainingText.indexOf(snippetTags.end);
-    spans.add(TextSpan(text: remainingText.substring(0, endIndex), style: highlightStyle));
+    spans.add(
+      TextSpan(
+        text: remainingText.substring(0, endIndex),
+        style: highlightStyle,
+      ),
+    );
 
     // Update the remaining text after the match
     remainingText = remainingText.substring(endIndex + snippetTags.end.length);

@@ -5,8 +5,13 @@ import '../../../main.dart';
 import '../../song/sheet/view.dart';
 
 class SongSlideTile extends StatelessWidget {
-  const SongSlideTile(this.slide,
-      {required this.selectCallback, required this.removeCallback, required this.selected, super.key});
+  const SongSlideTile(
+    this.slide, {
+    required this.selectCallback,
+    required this.removeCallback,
+    required this.selected,
+    super.key,
+  });
 
   final GestureTapCallback selectCallback;
   final GestureTapCallback removeCallback;
@@ -21,7 +26,10 @@ class SongSlideTile extends StatelessWidget {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          IconButton(onPressed: removeCallback, icon: Icon(Icons.delete_outline)),
+          IconButton(
+            onPressed: removeCallback,
+            icon: Icon(Icons.delete_outline),
+          ),
           if (globals.isMobile) Icon(Icons.drag_handle),
         ],
       ),

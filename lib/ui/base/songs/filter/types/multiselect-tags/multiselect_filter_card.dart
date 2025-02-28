@@ -35,10 +35,16 @@ class LFilterChipsState extends ConsumerState<MultiselectFilterCard> {
 
   @override
   Widget build(BuildContext context) {
-    final selectableValues =
-        ref.watch(selectableValuesForFilterableFieldProvider(widget.field, widget.fieldType));
+    final selectableValues = ref.watch(
+      selectableValuesForFilterableFieldProvider(
+        widget.field,
+        widget.fieldType,
+      ),
+    );
     final filterState = ref.watch(multiselectTagsFilterStateProvider);
-    final filterStateNotifier = ref.read(multiselectTagsFilterStateProvider.notifier);
+    final filterStateNotifier = ref.read(
+      multiselectTagsFilterStateProvider.notifier,
+    );
 
     final active = filterState.containsKey(widget.field);
 
@@ -47,7 +53,9 @@ class LFilterChipsState extends ConsumerState<MultiselectFilterCard> {
       color: active ? Theme.of(context).colorScheme.secondaryContainer : null,
       child: ListTile(
         contentPadding: const EdgeInsets.only(left: 15),
-        leading: Icon(songFieldsMap[widget.field]!['icon'] ?? Icons.filter_list),
+        leading: Icon(
+          songFieldsMap[widget.field]!['icon'] ?? Icons.filter_list,
+        ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.max,
@@ -55,7 +63,8 @@ class LFilterChipsState extends ConsumerState<MultiselectFilterCard> {
           children: [
             Text(
               // far future todo: i18n
-              songFieldsMap[widget.field]!['title_hu'] ?? "[Szűrő neve hiányzik]",
+              songFieldsMap[widget.field]!['title_hu'] ??
+                  "[Szűrő neve hiányzik]",
             ),
             Expanded(
               child: Text(
@@ -70,20 +79,21 @@ class LFilterChipsState extends ConsumerState<MultiselectFilterCard> {
                   fontSize: Theme.of(context).textTheme.bodySmall!.fontSize,
                 ),
               ),
-            )
+            ),
           ],
         ),
         subtitle: switch (selectableValues) {
           AsyncError(:final error, :final stackTrace) => LErrorCard(
-              title: 'Hiba a szűrőértékek lekérdezése közben',
-              icon: Icons.warning,
-              type: LErrorType.warning,
-              message: error.toString(),
-              stack: stackTrace.toString(),
-            ),
-          AsyncValue(:final value) => value == null
-              ? LinearProgressIndicator()
-              : SizedBox(
+            title: 'Hiba a szűrőértékek lekérdezése közben',
+            icon: Icons.warning,
+            type: LErrorType.warning,
+            message: error.toString(),
+            stack: stackTrace.toString(),
+          ),
+          AsyncValue(:final value) =>
+            value == null
+                ? LinearProgressIndicator()
+                : SizedBox(
                   height: 42,
                   child: FadingEdgeScrollView.fromScrollView(
                     child: ListView.builder(
@@ -94,25 +104,37 @@ class LFilterChipsState extends ConsumerState<MultiselectFilterCard> {
                       itemBuilder: (context, i) {
                         // todo move all logic to service (like in filter/key/widget.dart)
                         String item = value[i];
-                        bool selected = filterState[widget.field]?.contains(item) ?? false;
+                        bool selected =
+                            filterState[widget.field]?.contains(item) ?? false;
                         onSelected(bool newValue) {
                           if (newValue) {
                             filterStateNotifier.addFilter(widget.field, item);
                           } else {
-                            filterStateNotifier.removeFilter(widget.field, item);
+                            filterStateNotifier.removeFilter(
+                              widget.field,
+                              item,
+                            );
                           }
                         }
 
-                        return LFilterChip(label: item, onSelected: onSelected, selected: selected);
+                        return LFilterChip(
+                          label: item,
+                          onSelected: onSelected,
+                          selected: selected,
+                        );
                       },
                     ),
                   ),
-                )
+                ),
         },
-        trailing: active
-            ? IconButton(
-                onPressed: () => filterStateNotifier.resetFilterField(widget.field), icon: Icon(Icons.clear))
-            : null,
+        trailing:
+            active
+                ? IconButton(
+                  onPressed:
+                      () => filterStateNotifier.resetFilterField(widget.field),
+                  icon: Icon(Icons.clear),
+                )
+                : null,
       ),
     );
   }

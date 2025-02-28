@@ -6,10 +6,7 @@ import '../../../services/cue/write_cue.dart';
 
 class EditCueDialog extends StatefulWidget {
   /// If cue is null, dialog adds new cue
-  const EditCueDialog({
-    this.cue,
-    super.key,
-  });
+  const EditCueDialog({this.cue, super.key});
 
   final Cue? cue;
 
@@ -21,7 +18,9 @@ class EditCueDialogState extends State<EditCueDialog> {
   @override
   void initState() {
     _titleController = TextEditingController(text: widget.cue?.title);
-    _descriptionController = TextEditingController(text: widget.cue?.description);
+    _descriptionController = TextEditingController(
+      text: widget.cue?.description,
+    );
     super.initState();
   }
 
@@ -45,13 +44,18 @@ class EditCueDialogState extends State<EditCueDialog> {
         setState(() => isSaving = true);
 
         if (widget.cue != null) {
-          updateCueMetadataFor(widget.cue!.id,
-              title: _titleController.text, description: _descriptionController.text);
+          updateCueMetadataFor(
+            widget.cue!.id,
+            title: _titleController.text,
+            description: _descriptionController.text,
+          );
           // ignore: use_build_context_synchronously
           context.pop();
         } else {
-          final createdCue =
-              await insertNewCue(title: _titleController.text, description: _descriptionController.text);
+          final createdCue = await insertNewCue(
+            title: _titleController.text,
+            description: _descriptionController.text,
+          );
           // ignore: use_build_context_synchronously
           context.pop();
           // ignore: use_build_context_synchronously
@@ -61,7 +65,10 @@ class EditCueDialogState extends State<EditCueDialog> {
     }
 
     return AlertDialog.adaptive(
-      title: widget.cue != null ? Text('Lista szerkesztése') : Text('Lista létrehozása'),
+      title:
+          widget.cue != null
+              ? Text('Lista szerkesztése')
+              : Text('Lista létrehozása'),
       content: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -71,9 +78,7 @@ class EditCueDialogState extends State<EditCueDialog> {
               TextFormField(
                 controller: _titleController,
                 autofocus: true,
-                decoration: InputDecoration(
-                  hintText: 'Cím',
-                ),
+                decoration: InputDecoration(hintText: 'Cím'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Kötelező címet adni a listának!';
@@ -85,9 +90,7 @@ class EditCueDialogState extends State<EditCueDialog> {
               TextFormField(
                 controller: _descriptionController,
                 maxLines: null,
-                decoration: InputDecoration(
-                  hintText: 'Leírás',
-                ),
+                decoration: InputDecoration(hintText: 'Leírás'),
               ),
             ],
           ),
@@ -101,10 +104,12 @@ class EditCueDialogState extends State<EditCueDialog> {
         FilledButton(
           onPressed: onSubmit,
           child: AnimatedSize(
-              duration: Durations.medium1,
-              child: isSaving
-                  ? SizedBox(width: 50, child: LinearProgressIndicator())
-                  : Text(widget.cue != null ? 'Mentés' : 'Létrehozás')),
+            duration: Durations.medium1,
+            child:
+                isSaving
+                    ? SizedBox(width: 50, child: LinearProgressIndicator())
+                    : Text(widget.cue != null ? 'Mentés' : 'Létrehozás'),
+          ),
         ),
       ],
     );
@@ -112,10 +117,7 @@ class EditCueDialogState extends State<EditCueDialog> {
 }
 
 class DeleteCueDialog extends StatelessWidget {
-  const DeleteCueDialog({
-    super.key,
-    required this.cue,
-  });
+  const DeleteCueDialog({super.key, required this.cue});
 
   final Cue cue;
 
@@ -127,7 +129,9 @@ class DeleteCueDialog extends StatelessWidget {
         TextButton.icon(
           label: Text(
             'Törlés',
-            style: TextStyle(color: Theme.of(context).textTheme.bodySmall!.color),
+            style: TextStyle(
+              color: Theme.of(context).textTheme.bodySmall!.color,
+            ),
           ),
           icon: IconTheme(
             data: IconThemeData(color: Colors.red),

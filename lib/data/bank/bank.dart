@@ -31,7 +31,13 @@ import '../song/song.dart';
 // todo add a way to add and disable banks
 final List<Bank> defaultBanks = [
   /*Bank(1, 'TESZT Sófár Kottatár', Uri.parse('https://kiskutyafule.csecsy.hu/api/')),*/
-  Bank(0, true, null, 'Sófár Kottatár', Uri.parse('https://sofarkotta.csecsy.hu/api/')),
+  Bank(
+    0,
+    true,
+    null,
+    'Sófár Kottatár',
+    Uri.parse('https://sofarkotta.csecsy.hu/api/'),
+  ),
   /*Bank(1, true, null, 'Református Énekeskönyv (1948)',
       Uri.parse('https://banks.lyricapp.org/reformatus-enekeskonyv/48/')),
   Bank(2, true, null, 'Református Énekeskönyv (2021)',
@@ -52,13 +58,7 @@ class Bank extends Insertable<Bank> {
   @deprecated
   List<Song> songs = [];
 
-  Bank(
-    this.id,
-    this.isEnabled,
-    this.lastUpdated,
-    this.name,
-    this.baseUrl,
-  );
+  Bank(this.id, this.isEnabled, this.lastUpdated, this.name, this.baseUrl);
 
   Future<List<ProtoSong>> getProtoSongs({DateTime? since}) async {
     String url = '$baseUrl/songs';
@@ -69,7 +69,9 @@ class Bank extends Insertable<Bank> {
     final resp = await dio.get<String>(url);
     final jsonList = jsonDecode(resp.data ?? "[]") as List;
 
-    return jsonList.map((e) => ProtoSong.fromJson(e as Map<String, dynamic>)).toList();
+    return jsonList
+        .map((e) => ProtoSong.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
   Future<Song> getSongDetails(String uuid) async {
@@ -78,8 +80,12 @@ class Bank extends Insertable<Bank> {
     final resp = await dio.getUri<String>(source);
     try {
       var songJson = jsonDecode(resp.data!);
-      if (songJson is List) songJson = songJson.first; //make compatible with sófár kottatár quirk
-      var song = Song.fromBankApiJson(songJson as Map<String, dynamic>, sourceBank: this);
+      if (songJson is List)
+        songJson = songJson.first; //make compatible with sófár kottatár quirk
+      var song = Song.fromBankApiJson(
+        songJson as Map<String, dynamic>,
+        sourceBank: this,
+      );
       return song;
     } catch (e) {
       throw Exception('Error while parsing song details for $uuid\n$e');

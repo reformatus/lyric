@@ -33,7 +33,8 @@ class LFilterChip extends StatelessWidget {
         labelPadding: EdgeInsets.only(left: leading != null ? 0 : 5, right: 5),
         label: Row(
           children: [
-            if (leading != null) Padding(padding: EdgeInsets.only(right: 5), child: leading!),
+            if (leading != null)
+              Padding(padding: EdgeInsets.only(right: 5), child: leading!),
             Text(label),
           ],
         ),

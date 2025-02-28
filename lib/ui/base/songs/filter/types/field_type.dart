@@ -4,11 +4,7 @@
 import 'package:flutter/material.dart';
 
 const Map<String, Map<String, dynamic>> songFieldsMap = {
-  'title': {
-    'title_hu': 'Cím',
-    'type': 'searchable',
-    'icon': Icons.text_fields,
-  },
+  'title': {'title_hu': 'Cím', 'type': 'searchable', 'icon': Icons.text_fields},
   'title_original': {
     'title_hu': 'Cím (eredeti)',
     'type': 'searchable',
@@ -94,19 +90,29 @@ const Map<String, Map<String, dynamic>> songFieldsMap = {
 // @project2
 enum FieldType {
   multiselect("filterable_multiselect", isFilterable: true),
-  multiselectTags("filterable_multiselect_tags", isFilterable: true, commaDividedValues: true),
+  multiselectTags(
+    "filterable_multiselect_tags",
+    isFilterable: true,
+    commaDividedValues: true,
+  ),
   key("filterable_key", isFilterable: true),
   searchable("searchable", isSearchable: true);
 
-  const FieldType(this.name,
-      {this.isSearchable = false, this.isFilterable = false, this.commaDividedValues = false});
+  const FieldType(
+    this.name, {
+    this.isSearchable = false,
+    this.isFilterable = false,
+    this.commaDividedValues = false,
+  });
   final String name;
   final bool isSearchable;
   final bool isFilterable;
   final bool commaDividedValues;
 
   // Static map for fast lookup
-  static final Map<String, FieldType> _typeMap = {for (var field in FieldType.values) field.name: field};
+  static final Map<String, FieldType> _typeMap = {
+    for (var field in FieldType.values) field.name: field,
+  };
 
   static FieldType? fromString(String value) => _typeMap[value];
 }

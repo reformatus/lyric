@@ -22,14 +22,19 @@ double? getProgress(({int toUpdateCount, int updatedCount})? record) {
 }
 
 @riverpod
-Stream<Map<Bank, ({int toUpdateCount, int updatedCount})?>> updateAllBanks(Ref ref) async* {
-  Map<Bank, ({int toUpdateCount, int updatedCount})?> bankStates = Map.fromEntries(
-    (await (db.banks.select()..where((b) => b.isEnabled)).get()).map(
-      (e) => MapEntry(e, null),
-    ),
-  );
+Stream<Map<Bank, ({int toUpdateCount, int updatedCount})?>> updateAllBanks(
+  Ref ref,
+) async* {
+  Map<Bank, ({int toUpdateCount, int updatedCount})?> bankStates =
+      Map.fromEntries(
+        (await (db.banks.select()..where((b) => b.isEnabled)).get()).map(
+          (e) => MapEntry(e, null),
+        ),
+      );
 
-  yield {...bankStates}; // copy to new instance to avoid it getting changed during ui
+  yield {
+    ...bankStates,
+  }; // copy to new instance to avoid it getting changed during ui
 
   for (var bankState in bankStates.entries) {
     print('Updating bank ${bankState.key.name}');
@@ -48,7 +53,8 @@ Stream<({int toUpdateCount, int updatedCount})> updateBank(Bank bank) async* {
   bool hadErrors = false; // todo proper logging across app
 
   print(
-      '  Updating bank ${bank.name} with ${toUpdate.length} new or updated songs since ${bank.lastUpdated}');
+    '  Updating bank ${bank.name} with ${toUpdate.length} new or updated songs since ${bank.lastUpdated}',
+  );
 
   /*if (toUpdate.isEmpty) {
     print('  No new songs to update');
@@ -67,13 +73,20 @@ Stream<({int toUpdateCount, int updatedCount})> updateBank(Bank bank) async* {
           try {
             db
                 .into(db.songs)
-                .insert(song, mode: InsertMode.insertOrReplace); // todo handle user modified data, etc
+                .insert(
+                  song,
+                  mode: InsertMode.insertOrReplace,
+                ); // todo handle user modified data, etc
           } catch (f) {
-            print('Error while writing song ${protoSong.uuid} to database:\n$f');
+            print(
+              'Error while writing song ${protoSong.uuid} to database:\n$f',
+            );
             hadErrors = true;
           }
         } catch (e) {
-          print('Error while fetching details for song ${protoSong.uuid}:\n$e'); // todo log/ui
+          print(
+            'Error while fetching details for song ${protoSong.uuid}:\n$e',
+          ); // todo log/ui
           hadErrors = true;
         }
       });
@@ -82,7 +95,10 @@ Stream<({int toUpdateCount, int updatedCount})> updateBank(Bank bank) async* {
     queue.onComplete.then((v) => print('  Queue completed: $v'));
 
     await for (int remaining in queue.remainingItems) {
-      yield (toUpdateCount: toUpdate.length, updatedCount: toUpdate.length - remaining);
+      yield (
+        toUpdateCount: toUpdate.length,
+        updatedCount: toUpdate.length - remaining,
+      );
       if (remaining == 0) break;
     }
   }

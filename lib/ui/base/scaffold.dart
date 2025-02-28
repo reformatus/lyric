@@ -5,24 +5,23 @@ import 'package:go_router/go_router.dart';
 import '../../main.dart';
 import '../../services/app_version/check_new_version.dart';
 
-typedef GeneralNavigationDestination = ({
-  Widget icon,
-  Widget? selectedIcon,
-  String label,
-});
+typedef GeneralNavigationDestination =
+    ({Widget icon, Widget? selectedIcon, String label});
 
-NavigationDestination destinationFromGeneral(GeneralNavigationDestination d) => NavigationDestination(
+NavigationDestination destinationFromGeneral(GeneralNavigationDestination d) =>
+    NavigationDestination(
       icon: d.icon,
       selectedIcon: d.selectedIcon ?? d.icon,
       label: d.label,
     );
 
-NavigationRailDestination railDestinationFromGeneral(GeneralNavigationDestination d) =>
-    NavigationRailDestination(
-      icon: d.icon,
-      selectedIcon: d.selectedIcon ?? d.icon,
-      label: Text(d.label),
-    );
+NavigationRailDestination railDestinationFromGeneral(
+  GeneralNavigationDestination d,
+) => NavigationRailDestination(
+  icon: d.icon,
+  selectedIcon: d.selectedIcon ?? d.icon,
+  label: Text(d.label),
+);
 
 class BaseScaffold extends ConsumerStatefulWidget {
   const BaseScaffold({required this.child, super.key});
@@ -60,7 +59,8 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
     //extendedNavRail = MediaQuery.of(context).size.width > globals.desktopFromWidth;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
-        extendedNavRail = MediaQuery.of(context).size.width > globals.desktopFromWidth;
+        extendedNavRail =
+            MediaQuery.of(context).size.width > globals.desktopFromWidth;
       });
     });
   }
@@ -73,7 +73,10 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
 
     final List<GeneralNavigationDestination> destinations = [
       (
-        icon: Badge(isLabelVisible: newVersion.valueOrNull != null, child: Icon(Icons.home_outlined)),
+        icon: Badge(
+          isLabelVisible: newVersion.valueOrNull != null,
+          child: Icon(Icons.home_outlined),
+        ),
         selectedIcon: Icon(Icons.home),
         label: 'Főoldal',
       ),
@@ -101,63 +104,89 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
         ),
     ];
 
-    return LayoutBuilder(builder: (context, constraints) {
-      // most songs are A4, this way we have the highest chance of fitting the song on the screen the biggest possible
-      bool bottomNavBar = constraints.maxHeight / constraints.maxWidth > 1.41;
-      return Scaffold(
-        bottomNavigationBar: bottomNavBar
-            ? NavigationBar(
-                labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-                height: 65,
-                destinations: destinations.map((d) => destinationFromGeneral(d)).toList(),
-                selectedIndex: BaseScaffold._calculateSelectedIndex(context),
-                onDestinationSelected: (int index) => _onDestinationSelected(index, context),
-              )
-            : null,
-        body: !bottomNavBar
-            ? Row(
-                children: [
-                  Container(
-                    color: Theme.of(context).colorScheme.surfaceContainer,
-                    child: AnimatedSize(
-                      duration: Durations.medium1,
-                      curve: Curves.easeInOutCubicEmphasized,
-                      alignment: Alignment.centerLeft,
-                      child: Stack(
-                        children: [
-                          NavigationRail(
-                            extended: extendedNavRail,
-                            labelType: extendedNavRail
-                                ? NavigationRailLabelType.none
-                                : NavigationRailLabelType.selected,
-                            destinations: destinations.map((d) => railDestinationFromGeneral(d)).toList(),
-                            selectedIndex: BaseScaffold._calculateSelectedIndex(context),
-                            onDestinationSelected: (int index) => _onDestinationSelected(index, context),
-                            backgroundColor: Colors.transparent,
-                            minExtendedWidth: 160,
-                          ),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: IconButton(
-                              icon: Icon(extendedNavRail ? Icons.chevron_left : Icons.chevron_right),
-                              onPressed: () {
-                                setState(() {
-                                  extendedNavRail = !extendedNavRail;
-                                });
-                              },
-                            ),
-                          )
-                        ],
-                      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // most songs are A4, this way we have the highest chance of fitting the song on the screen the biggest possible
+        bool bottomNavBar = constraints.maxHeight / constraints.maxWidth > 1.41;
+        return Scaffold(
+          bottomNavigationBar:
+              bottomNavBar
+                  ? NavigationBar(
+                    labelBehavior:
+                        NavigationDestinationLabelBehavior.onlyShowSelected,
+                    height: 65,
+                    destinations:
+                        destinations
+                            .map((d) => destinationFromGeneral(d))
+                            .toList(),
+                    selectedIndex: BaseScaffold._calculateSelectedIndex(
+                      context,
                     ),
-                  ),
-                  Expanded(child: widget.child)
-                ],
-              )
-            : widget.child,
-      );
-    });
+                    onDestinationSelected:
+                        (int index) => _onDestinationSelected(index, context),
+                  )
+                  : null,
+          body:
+              !bottomNavBar
+                  ? Row(
+                    children: [
+                      Container(
+                        color: Theme.of(context).colorScheme.surfaceContainer,
+                        child: AnimatedSize(
+                          duration: Durations.medium1,
+                          curve: Curves.easeInOutCubicEmphasized,
+                          alignment: Alignment.centerLeft,
+                          child: Stack(
+                            children: [
+                              NavigationRail(
+                                extended: extendedNavRail,
+                                labelType:
+                                    extendedNavRail
+                                        ? NavigationRailLabelType.none
+                                        : NavigationRailLabelType.selected,
+                                destinations:
+                                    destinations
+                                        .map(
+                                          (d) => railDestinationFromGeneral(d),
+                                        )
+                                        .toList(),
+                                selectedIndex:
+                                    BaseScaffold._calculateSelectedIndex(
+                                      context,
+                                    ),
+                                onDestinationSelected:
+                                    (int index) =>
+                                        _onDestinationSelected(index, context),
+                                backgroundColor: Colors.transparent,
+                                minExtendedWidth: 160,
+                              ),
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: IconButton(
+                                  icon: Icon(
+                                    extendedNavRail
+                                        ? Icons.chevron_left
+                                        : Icons.chevron_right,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      extendedNavRail = !extendedNavRail;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Expanded(child: widget.child),
+                    ],
+                  )
+                  : widget.child,
+        );
+      },
+    );
   }
 
   void _onDestinationSelected(int index, BuildContext context) {

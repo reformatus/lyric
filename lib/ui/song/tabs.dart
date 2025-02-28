@@ -6,13 +6,14 @@ import 'sheet/view.dart';
 class SongTabView extends StatefulWidget {
   final Song song;
 
-  const SongTabView({required this.song, Key? key}) : super(key: key);
+  const SongTabView({required this.song, super.key});
 
   @override
   State<SongTabView> createState() => _SongTabViewState();
 }
 
-class _SongTabViewState extends State<SongTabView> with SingleTickerProviderStateMixin {
+class _SongTabViewState extends State<SongTabView>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -56,12 +57,21 @@ class _SongTabViewState extends State<SongTabView> with SingleTickerProviderStat
                   // Lyrics tab
                   SingleChildScrollView(
                     padding: const EdgeInsets.all(16.0),
-                    child: Text(widget.song.lyrics, style: theme.textTheme.bodyLarge),
+                    child: Text(
+                      widget.song.lyrics,
+                      style: theme.textTheme.bodyLarge,
+                    ),
                   ),
                 ],
               ),
             ),
-            Material(color: appBarColor, child: RotatedBox(quarterTurns: isLandscape ? 1 : 0, child: tabBar)),
+            Material(
+              color: appBarColor,
+              child: RotatedBox(
+                quarterTurns: isLandscape ? 1 : 0,
+                child: tabBar,
+              ),
+            ),
           ],
         );
       },

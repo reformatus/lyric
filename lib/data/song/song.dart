@@ -21,7 +21,9 @@ class Song extends Insertable<Song> {
   factory Song.fromBankApiJson(Map<String, dynamic> json, {Bank? sourceBank}) {
     try {
       if (!mandatoryFields.every((field) => json.containsKey(field))) {
-        throw Exception('Missing mandatory fields in: ${json['title']} (${json['uuid']})');
+        throw Exception(
+          'Missing mandatory fields in: ${json['title']} (${json['uuid']})',
+        );
       }
 
       return Song(
@@ -36,7 +38,9 @@ class Song extends Insertable<Song> {
         translator: json['translator'],
       );
     } catch (e, s) {
-      throw Exception('Invalid song data in: ${json['title']} (${json['uuid']})\nError: $e\n$s\n');
+      throw Exception(
+        'Invalid song data in: ${json['title']} (${json['uuid']})\nError: $e\n$s\n',
+      );
     }
   }
 
@@ -53,11 +57,8 @@ class Song extends Insertable<Song> {
     this.userNote,
   });
 
-  int get contentHash => Object.hash(
-        jsonEncode(contentMap),
-        sourceBankId,
-        userNote,
-      );
+  int get contentHash =>
+      Object.hash(jsonEncode(contentMap), sourceBankId, userNote);
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {

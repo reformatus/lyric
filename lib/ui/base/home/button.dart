@@ -23,13 +23,9 @@ class HomePageButton extends StatelessWidget {
         child: ElevatedButton(
           style: ButtonStyle(
             shape: WidgetStateProperty.all(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
-            padding: WidgetStateProperty.all(
-              const EdgeInsets.only(),
-            ),
+            padding: WidgetStateProperty.all(const EdgeInsets.only()),
           ),
           onPressed: onPressed, // Accept null to disable button
           child: ListTile(

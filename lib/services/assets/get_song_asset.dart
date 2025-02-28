@@ -13,11 +13,18 @@ part 'get_song_asset.g.dart';
 typedef AssetResult = ({double progress, Uint8List? data});
 
 @riverpod
-Stream<AssetResult> getSongAsset(Ref ref, Song song, String fieldName, String sourceUrl) {
+Stream<AssetResult> getSongAsset(
+  Ref ref,
+  Song song,
+  String fieldName,
+  String sourceUrl,
+) {
   final controller = StreamController<AssetResult>(sync: true);
 
   () async {
-    final asset = await (db.assets.select()..where((a) => a.sourceUrl.equals(sourceUrl))).getSingleOrNull();
+    final asset =
+        await (db.assets.select()..where((a) => a.sourceUrl.equals(sourceUrl)))
+            .getSingleOrNull();
 
     if (asset != null) {
       controller.add((progress: 1.0, data: asset.content));
@@ -31,9 +38,10 @@ Stream<AssetResult> getSongAsset(Ref ref, Song song, String fieldName, String so
         final response = await dio.get<List<int>>(
           sourceUrl,
           options: Options(
-              responseType: ResponseType.bytes,
-              sendTimeout: Duration(seconds: 3),
-              receiveTimeout: Duration(seconds: 10)),
+            responseType: ResponseType.bytes,
+            sendTimeout: Duration(seconds: 3),
+            receiveTimeout: Duration(seconds: 10),
+          ),
           onReceiveProgress: (received, total) {
             if (total != -1) {
               final progress = (received / total).clamp(0.0, 1.0);
@@ -43,15 +51,20 @@ Stream<AssetResult> getSongAsset(Ref ref, Song song, String fieldName, String so
         );
 
         // Save the downloaded asset to the database
-        await db.assets.insert().insert(AssetsCompanion(
-              songUuid: Value(song.uuid),
-              fieldName: Value(fieldName),
-              sourceUrl: Value(sourceUrl),
-              content: Value(Uint8List.fromList(response.data!)),
-            ));
+        await db.assets.insert().insert(
+          AssetsCompanion(
+            songUuid: Value(song.uuid),
+            fieldName: Value(fieldName),
+            sourceUrl: Value(sourceUrl),
+            content: Value(Uint8List.fromList(response.data!)),
+          ),
+        );
 
         // Add the final value
-        controller.add((progress: 1.0, data: Uint8List.fromList(response.data!)));
+        controller.add((
+          progress: 1.0,
+          data: Uint8List.fromList(response.data!),
+        ));
       } catch (e) {
         controller.addError(e);
       } finally {

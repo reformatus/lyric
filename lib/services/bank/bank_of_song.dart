@@ -10,6 +10,8 @@ part 'bank_of_song.g.dart';
 
 @riverpod
 Future<Bank> bankOfSong(Ref ref, Song song) {
-  if (song.sourceBankId == null) throw Exception("Can't get Bank object for song with no song bank set");
-  return (db.banks.select()..where((b) => b.id.equals(song.sourceBankId!))).getSingle();
+  if (song.sourceBankId == null)
+    throw Exception("Can't get Bank object for song with no song bank set");
+  return (db.banks.select()..where((b) => b.id.equals(song.sourceBankId!)))
+      .getSingle();
 }

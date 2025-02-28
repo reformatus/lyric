@@ -8,10 +8,7 @@ import '../../widgets/filter_chip.dart';
 import 'state.dart';
 
 class KeyFilterCard extends ConsumerStatefulWidget {
-  const KeyFilterCard({
-    required this.fieldPopulatedCount,
-    super.key,
-  });
+  const KeyFilterCard({required this.fieldPopulatedCount, super.key});
 
   final int fieldPopulatedCount;
 
@@ -36,7 +33,8 @@ class _KeyFilterCardState extends ConsumerState<KeyFilterCard> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(keyFilterStateProvider);
-    final isActive = !(state.pitches.isEmpty && state.modes.isEmpty && state.keys.isEmpty);
+    final isActive =
+        !(state.pitches.isEmpty && state.modes.isEmpty && state.keys.isEmpty);
 
     final selectablePitches = ref.watch(selectablePitchesProvider);
     final selectableModes = ref.watch(selectableModesProvider);
@@ -47,12 +45,14 @@ class _KeyFilterCardState extends ConsumerState<KeyFilterCard> {
       child: ListTile(
         contentPadding: const EdgeInsets.only(left: 15),
         leading: Icon(Icons.piano),
-        trailing: isActive
-            ? IconButton(
-                icon: Icon(Icons.clear),
-                onPressed: () => ref.read(keyFilterStateProvider.notifier).reset(),
-              )
-            : null,
+        trailing:
+            isActive
+                ? IconButton(
+                  icon: Icon(Icons.clear),
+                  onPressed:
+                      () => ref.read(keyFilterStateProvider.notifier).reset(),
+                )
+                : null,
         title: AnimatedSize(
           duration: Durations.medium1,
           child: Stack(
@@ -76,8 +76,12 @@ class _KeyFilterCardState extends ConsumerState<KeyFilterCard> {
                         overflow: TextOverflow.fade,
                         style: TextStyle(
                           fontStyle: FontStyle.italic,
-                          color: Theme.of(context).colorScheme.onSecondaryContainer,
-                          fontSize: Theme.of(context).textTheme.bodySmall!.fontSize,
+                          color:
+                              Theme.of(
+                                context,
+                              ).colorScheme.onSecondaryContainer,
+                          fontSize:
+                              Theme.of(context).textTheme.bodySmall!.fontSize,
                         ),
                       ),
                     ),
@@ -91,15 +95,19 @@ class _KeyFilterCardState extends ConsumerState<KeyFilterCard> {
                     child: ListView(
                       controller: keysScrollController,
                       scrollDirection: Axis.horizontal,
-                      children: state.keys
-                          .map(
-                            (e) => LFilterChip(
-                              label: e.toString(),
-                              onSelected: (v) => ref.read(keyFilterStateProvider.notifier).setKeyTo(e, v),
-                              selected: state.keys.contains(e),
-                            ),
-                          )
-                          .toList(),
+                      children:
+                          state.keys
+                              .map(
+                                (e) => LFilterChip(
+                                  label: e.toString(),
+                                  onSelected:
+                                      (v) => ref
+                                          .read(keyFilterStateProvider.notifier)
+                                          .setKeyTo(e, v),
+                                  selected: state.keys.contains(e),
+                                ),
+                              )
+                              .toList(),
                     ),
                   ),
                 ),
@@ -118,35 +126,48 @@ class _KeyFilterCardState extends ConsumerState<KeyFilterCard> {
     );
   }
 
-  Widget chipsRow(AsyncValue<List<KeyFilterSelectable>> selectables, {bool modes = false}) {
+  Widget chipsRow(
+    AsyncValue<List<KeyFilterSelectable>> selectables, {
+    bool modes = false,
+  }) {
     return switch (selectables) {
       AsyncError(:final Error error) => LErrorCard(
-          type: LErrorType.warning,
-          title: 'Hiba a hangsoradatok lekérdezésekor',
-          message: error.toString(),
-          stack: error.stackTrace.toString(),
-          icon: Icons.error),
+        type: LErrorType.warning,
+        title: 'Hiba a hangsoradatok lekérdezésekor',
+        message: error.toString(),
+        stack: error.stackTrace.toString(),
+        icon: Icons.error,
+      ),
       AsyncValue(:final value) => SizedBox(
-          height: 42,
-          child: value == null
-              ? Align(alignment: Alignment.center, child: LinearProgressIndicator())
-              : FadingEdgeScrollView.fromScrollView(
+        height: 42,
+        child:
+            value == null
+                ? Align(
+                  alignment: Alignment.center,
+                  child: LinearProgressIndicator(),
+                )
+                : FadingEdgeScrollView.fromScrollView(
                   child: ListView.builder(
                     // hack, but still better than code repetition...
-                    controller: modes ? modesScrollController : pitchesScrollController,
+                    controller:
+                        modes ? modesScrollController : pitchesScrollController,
                     shrinkWrap: true,
                     scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, i) => LFilterChip(
-                      label: value[i].label,
-                      selected: value[i].selected,
-                      onSelected: value[i].onSelected,
-                      special: value[i].addingKey,
-                      leading: value[i].addingKey ? Icon(Icons.add, size: 20) : null,
-                    ),
+                    itemBuilder:
+                        (context, i) => LFilterChip(
+                          label: value[i].label,
+                          selected: value[i].selected,
+                          onSelected: value[i].onSelected,
+                          special: value[i].addingKey,
+                          leading:
+                              value[i].addingKey
+                                  ? Icon(Icons.add, size: 20)
+                                  : null,
+                        ),
                     itemCount: value.length,
                   ),
                 ),
-        ),
+      ),
     };
   }
 }

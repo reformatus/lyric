@@ -17,11 +17,7 @@ class SheetView extends ConsumerWidget {
     final bank = ref.watch(bankOfSongProvider(song));
     switch (bank) {
       case AsyncLoading():
-        return Center(
-          child: CircularProgressIndicator(
-            value: 0.5,
-          ),
-        );
+        return Center(child: CircularProgressIndicator(value: 0.5));
       case AsyncError(:final error, :final stackTrace):
         return Center(
           child: LErrorCard(
@@ -33,11 +29,13 @@ class SheetView extends ConsumerWidget {
           ),
         );
       case AsyncValue(:final value!):
-        final svgAsset = ref.watch(getSongAssetProvider(
-          song,
-          'svg',
-          value.baseUrl.resolve(song.contentMap['svg']!).toString(),
-        ));
+        final svgAsset = ref.watch(
+          getSongAssetProvider(
+            song,
+            'svg',
+            value.baseUrl.resolve(song.contentMap['svg']!).toString(),
+          ),
+        );
 
         switch (svgAsset) {
           case AsyncError(:final error, :final stackTrace):
@@ -68,9 +66,7 @@ class SheetView extends ConsumerWidget {
               );
             } else {
               print('Progress: ${assetResult.progress}');
-              return CircularProgressIndicator(
-                value: assetResult.progress,
-              );
+              return CircularProgressIndicator(value: assetResult.progress);
             }
           default:
             return Center(child: CircularProgressIndicator(value: 0.8));

@@ -14,5 +14,6 @@ Future<Song> songFromUuid(Ref ref, String uuid) async {
 }
 
 Future<Song> dbSongFromUuid(String uuid) async {
-  return (await (db.songs.select()..where((s) => s.uuid.equals(uuid))).getSingle());
+  return (await (db.songs.select()..where((s) => s.uuid.equals(uuid)))
+      .getSingle());
 }

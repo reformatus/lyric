@@ -24,13 +24,14 @@ class LErrorCard extends StatelessWidget {
       padding: EdgeInsets.all(10),
       child: Card(
         color: Color.lerp(
-            switch (type) {
-              LErrorType.error => Colors.red,
-              LErrorType.warning => Colors.orange,
-              LErrorType.info => Colors.blue,
-            },
-            Theme.of(context).scaffoldBackgroundColor,
-            0.8),
+          switch (type) {
+            LErrorType.error => Colors.red,
+            LErrorType.warning => Colors.orange,
+            LErrorType.info => Colors.blue,
+          },
+          Theme.of(context).scaffoldBackgroundColor,
+          0.8,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -42,15 +43,18 @@ class LErrorCard extends StatelessWidget {
                   LErrorType.error => Colors.red,
                   LErrorType.warning => Colors.orange,
                   LErrorType.info => Colors.blue,
-                }
-                    .withAlpha(200),
+                }.withAlpha(200),
               ),
               title: Text(
                 title,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               trailing: FilledButton.icon(
-                onPressed: () => launchFeedbackEmail(errorMessage: message, stackTrace: stack),
+                onPressed:
+                    () => launchFeedbackEmail(
+                      errorMessage: message,
+                      stackTrace: stack,
+                    ),
                 icon: Icon(Icons.feedback_outlined),
                 label: Text('Hibajelentés'),
               ),
@@ -71,7 +75,9 @@ class LErrorCard extends StatelessWidget {
                             scrollDirection: Axis.horizontal,
                             child: Text(
                               stack!,
-                              style: TextStyle(fontFamily: 'Courier New'), // todo is available on android?
+                              style: TextStyle(
+                                fontFamily: 'Courier New',
+                              ), // todo is available on android?
                             ),
                           ),
                         ),
@@ -86,8 +92,4 @@ class LErrorCard extends StatelessWidget {
   }
 }
 
-enum LErrorType {
-  error,
-  warning,
-  info,
-}
+enum LErrorType { error, warning, info }

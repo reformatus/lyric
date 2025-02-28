@@ -8,13 +8,21 @@ import '../../main.dart';
 
 part 'check_new_version.g.dart';
 
-typedef VersionInfo = ({String versionNumber, String releaseNotesMd, Uri releaseInfoLink, Uri downloadLink});
+typedef VersionInfo =
+    ({
+      String versionNumber,
+      String releaseNotesMd,
+      Uri releaseInfoLink,
+      Uri downloadLink,
+    });
 
 @Riverpod(keepAlive: true)
 Future<VersionInfo?> checkNewVersion(Ref ref) async {
   try {
     final latestRelease =
-        (await Dio().get<Map<String, dynamic>>('${globals.gitHubApiRoot}/releases/latest')).data!;
+        (await Dio().get<Map<String, dynamic>>(
+          '${globals.gitHubApiRoot}/releases/latest',
+        )).data!;
 
     final latestVersion = (latestRelease['tag_name'] as String);
 
@@ -44,7 +52,9 @@ Future<VersionInfo?> checkNewVersion(Ref ref) async {
       versionNumber: latestVersion,
       releaseNotesMd: latestRelease['body'] as String,
       releaseInfoLink: Uri.parse(latestRelease['html_url'] as String),
-      downloadLink: Uri.parse(latestRelease['assets'][0]['browser_download_url']),
+      downloadLink: Uri.parse(
+        latestRelease['assets'][0]['browser_download_url'],
+      ),
     );
   } catch (e, s) {
     print("Couldn't check for new versions: $e\n$s");

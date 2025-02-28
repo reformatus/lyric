@@ -1,5 +1,4 @@
 import 'package:dart_opensong/dart_opensong.dart' as os;
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:lyric/services/song/verse_tag_pretty.dart';
 import 'package:lyric/ui/common/error.dart';
@@ -14,7 +13,8 @@ class LyricsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var openSongContent = song.contentMap['opensong'];
-    if (openSongContent == null) return Center(child: Text('Ehhez az énekhez nincs dalszöveg :('));
+    if (openSongContent == null)
+      return Center(child: Text('Ehhez az énekhez nincs dalszöveg :('));
 
     var verses = os.getVersesFromString(openSongContent);
     return LayoutBuilder(
@@ -31,7 +31,12 @@ class LyricsView extends StatelessWidget {
             constraints: BoxConstraints(minWidth: constraints.maxWidth),
             child: Wrap(
               direction: Axis.vertical,
-              children: verses.map((e) => SizedBox(width: cardWidth, child: VerseCard(e))).toList(),
+              children:
+                  verses
+                      .map(
+                        (e) => SizedBox(width: cardWidth, child: VerseCard(e)),
+                      )
+                      .toList(),
             ),
           ),
         );
@@ -58,12 +63,17 @@ class VerseCard extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(5), bottomRight: Radius.circular(5)),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(5),
+                  bottomRight: Radius.circular(5),
+                ),
                 color: Theme.of(context).colorScheme.primary,
               ),
               child: Text(
                 getPrettyVerseTagFrom(verse.type, verse.index),
-                style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
               ),
             ),
             Padding(
@@ -81,17 +91,27 @@ class VerseCard extends StatelessWidget {
                                   segments
                                       .map(
                                         (e) => Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            if (segments.any((s) => s.chord != null))
+                                            if (segments.any(
+                                              (s) => s.chord != null,
+                                            ))
                                               Padding(
-                                                padding: EdgeInsets.only(right: 3),
+                                                padding: EdgeInsets.only(
+                                                  right: 3,
+                                                ),
                                                 child: Text(
                                                   e.chord ?? '',
-                                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
                                                 ),
                                               ),
-                                            if (e.lyrics.isNotEmpty) Text(e.lyrics) else SizedBox(height: 10),
+                                            if (e.lyrics.isNotEmpty)
+                                              Text(e.lyrics)
+                                            else
+                                              SizedBox(height: 10),
                                           ],
                                         ),
                                       )

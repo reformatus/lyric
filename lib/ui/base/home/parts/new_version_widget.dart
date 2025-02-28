@@ -9,9 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../services/app_version/check_new_version.dart';
 
 class NewVersionWidget extends ConsumerWidget {
-  const NewVersionWidget({
-    super.key,
-  });
+  const NewVersionWidget({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,12 +20,14 @@ class NewVersionWidget extends ConsumerWidget {
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 7),
         child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: 400,
-          ),
+          constraints: BoxConstraints(maxWidth: 400),
           child: Badge(
             child: Card(
-              color: Color.lerp(Colors.blue, Theme.of(context).scaffoldBackgroundColor, 0.8),
+              color: Color.lerp(
+                Colors.blue,
+                Theme.of(context).scaffoldBackgroundColor,
+                0.8,
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -43,17 +43,18 @@ class NewVersionWidget extends ConsumerWidget {
                       ],
                     ),
                     subtitle: FutureBuilder(
-                        future: PackageInfo.fromPlatform(),
-                        builder: (context, packageInfo) {
-                          if (packageInfo.data != null) {
-                            return Text(
-                              'Jelenlegi: ${packageInfo.data!.version}\nTelepítés forrása: ${packageInfo.data!.installerStore}',
-                              style: TextStyle(fontStyle: FontStyle.italic),
-                            );
-                          } else {
-                            return Text('\n...');
-                          }
-                        }),
+                      future: PackageInfo.fromPlatform(),
+                      builder: (context, packageInfo) {
+                        if (packageInfo.data != null) {
+                          return Text(
+                            'Jelenlegi: ${packageInfo.data!.version}\nTelepítés forrása: ${packageInfo.data!.installerStore}',
+                            style: TextStyle(fontStyle: FontStyle.italic),
+                          );
+                        } else {
+                          return Text('\n...');
+                        }
+                      },
+                    ),
                   ),
                   Divider(),
                   ConstrainedBox(
@@ -67,9 +68,11 @@ class NewVersionWidget extends ConsumerWidget {
                   Divider(),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 15),
-                    child: Text(Platform.isAndroid || Platform.isWindows
-                        ? 'Csak akkor töltsd le manuálisan az appot, ha nem alkalmazásboltból telepítetted!'
-                        : 'Nézz be az alkalmazásboltba a frissítésért.'),
+                    child: Text(
+                      Platform.isAndroid || Platform.isWindows
+                          ? 'Csak akkor töltsd le manuálisan az appot, ha nem alkalmazásboltból telepítetted!'
+                          : 'Nézz be az alkalmazásboltba a frissítésért.',
+                    ),
                   ),
                   Padding(
                     padding: EdgeInsets.all(15),
@@ -78,15 +81,18 @@ class NewVersionWidget extends ConsumerWidget {
                       children: [
                         if (Platform.isAndroid)
                           ElevatedButton(
-                              onPressed: () => launchUrl(newVersion.downloadLink), child: Text('Letöltés')),
-                        SizedBox(
-                          width: 5,
-                        ),
+                            onPressed: () => launchUrl(newVersion.downloadLink),
+                            child: Text('Letöltés'),
+                          ),
+                        SizedBox(width: 5),
                         FilledButton(
-                            onPressed: () => launchUrl(newVersion.releaseInfoLink), child: Text('Részletek')),
+                          onPressed:
+                              () => launchUrl(newVersion.releaseInfoLink),
+                          child: Text('Részletek'),
+                        ),
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

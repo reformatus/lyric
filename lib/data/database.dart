@@ -18,12 +18,7 @@ late LyricDatabase db;
 late final Directory dataDir;
 
 @DriftDatabase(
-  tables: [
-    Songs,
-    Banks,
-    Assets,
-    Cues,
-  ],
+  tables: [Songs, Banks, Assets, Cues],
   include: {
     'song/song.drift',
     '../services/songs/filter.drift',
@@ -38,12 +33,14 @@ class LyricDatabase extends _$LyricDatabase {
 
   @override
   MigrationStrategy get migration {
-    return MigrationStrategy(onCreate: (Migrator m) async {
-      await m.createAll();
-      for (var bank in defaultBanks) {
-        await into(banks).insert(bank);
-      }
-    });
+    return MigrationStrategy(
+      onCreate: (Migrator m) async {
+        await m.createAll();
+        for (var bank in defaultBanks) {
+          await into(banks).insert(bank);
+        }
+      },
+    );
   }
 }
 
@@ -79,4 +76,5 @@ class UriConverter extends TypeConverter<Uri, String> {
   }
 }
 
-String sanitize(String s) => s.replaceAll(RegExp(r'[^\p{Letter}\p{Number} ]', unicode: true), '');
+String sanitize(String s) =>
+    s.replaceAll(RegExp(r'[^\p{Letter}\p{Number} ]', unicode: true), '');

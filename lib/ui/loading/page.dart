@@ -39,82 +39,109 @@ class LoadingPage extends ConsumerWidget {
         ),
       ),
       body: Center(
-        child: hasEverUpdatedProvider.valueOrNull == false
-            ? switch (bankStates) {
-                AsyncError(:final error, :final stackTrace) => LErrorCard(
+        child:
+            hasEverUpdatedProvider.valueOrNull == false
+                ? switch (bankStates) {
+                  AsyncError(:final error, :final stackTrace) => LErrorCard(
                     type: LErrorType.error,
                     title: 'Hiba a tárak frissítése közben',
                     message: error.toString(),
                     stack: stackTrace.toString(),
                     icon: Icons.error,
                   ),
-                AsyncValue(:final value) => value == null
-                    ? Center(child: CircularProgressIndicator())
-                    : ConstrainedBox(
-                        constraints: BoxConstraints(
-                          maxWidth: 600,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Card(
-                                margin: EdgeInsets.only(bottom: 15),
-                                clipBehavior: Clip.antiAlias,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(top: 16, left: 16, bottom: 13),
-                                      child: Text('Online tárak frissítése...',
-                                          style: Theme.of(context).textTheme.titleLarge),
-                                    ),
-                                    LinearProgressIndicator(
-                                      value: () {
-                                        if (!bankStates.hasValue) {
-                                          return null;
-                                        }
-                                        int stateCount = value.length;
-                                        if (stateCount == 0) return null;
-
-                                        int doneCount = value.values
-                                            .where((e) => e != null && (e.toUpdateCount == e.updatedCount))
-                                            .length;
-
-                                        return doneCount / stateCount;
-                                      }(),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              if (bankStates.hasValue)
-                                ...value.entries.map(
-                                  (e) => Padding(
-                                    padding: EdgeInsets.only(left: 20),
-                                    child: ListTile(
-                                        leading: isDone(e.value)
-                                            ? Icon(Icons.check)
-                                            : SizedBox.square(
-                                                dimension: 25,
-                                                child:
-                                                    CircularProgressIndicator(value: getProgress(e.value))),
-                                        title: Text(
-                                          e.key.name,
-                                          style: TextStyle(fontWeight: FontWeight.w500),
+                  AsyncValue(:final value) =>
+                    value == null
+                        ? Center(child: CircularProgressIndicator())
+                        : ConstrainedBox(
+                          constraints: BoxConstraints(maxWidth: 600),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Card(
+                                  margin: EdgeInsets.only(bottom: 15),
+                                  clipBehavior: Clip.antiAlias,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                          top: 16,
+                                          left: 16,
+                                          bottom: 13,
                                         ),
-                                        subtitle: Text(e.value != null
-                                            ? "${e.value!.updatedCount} / ${e.value!.toUpdateCount} frissítve"
-                                            : "")),
+                                        child: Text(
+                                          'Online tárak frissítése...',
+                                          style:
+                                              Theme.of(
+                                                context,
+                                              ).textTheme.titleLarge,
+                                        ),
+                                      ),
+                                      LinearProgressIndicator(
+                                        value: () {
+                                          if (!bankStates.hasValue) {
+                                            return null;
+                                          }
+                                          int stateCount = value.length;
+                                          if (stateCount == 0) return null;
+
+                                          int doneCount =
+                                              value.values
+                                                  .where(
+                                                    (e) =>
+                                                        e != null &&
+                                                        (e.toUpdateCount ==
+                                                            e.updatedCount),
+                                                  )
+                                                  .length;
+
+                                          return doneCount / stateCount;
+                                        }(),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                            ],
+                                if (bankStates.hasValue)
+                                  ...value.entries.map(
+                                    (e) => Padding(
+                                      padding: EdgeInsets.only(left: 20),
+                                      child: ListTile(
+                                        leading:
+                                            isDone(e.value)
+                                                ? Icon(Icons.check)
+                                                : SizedBox.square(
+                                                  dimension: 25,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                        value: getProgress(
+                                                          e.value,
+                                                        ),
+                                                      ),
+                                                ),
+                                        title: Text(
+                                          e.key.name,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        subtitle: Text(
+                                          e.value != null
+                                              ? "${e.value!.updatedCount} / ${e.value!.toUpdateCount} frissítve"
+                                              : "",
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-              }
-            : CircularProgressIndicator(),
+                }
+                : CircularProgressIndicator(),
       ),
     );
   }

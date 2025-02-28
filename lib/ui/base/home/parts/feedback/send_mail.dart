@@ -15,9 +15,10 @@ Future launchFeedbackEmail({String? errorMessage, String? stackTrace}) async {
   });
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
-  final String exceptionString = errorMessage == null
-      ? ''
-      : '''
+  final String exceptionString =
+      errorMessage == null
+          ? ''
+          : '''
 [HIBA]
 $errorMessage
 ${stackTrace?.split('\n').take(6).join('\n')}
@@ -42,11 +43,13 @@ ${stackTrace?.split('\n').take(6).join('\n')}
     };
   } catch (_) {}
 
-  final String subject = errorMessage == null ? 'Visszajelzés' : 'Hibajelentés: $errorMessage';
+  final String subject =
+      errorMessage == null ? 'Visszajelzés' : 'Hibajelentés: $errorMessage';
 
   Mailto mail = Mailto(
     to: ['lyric@reflabs.hu'],
-    subject: '$subject - Lyric ${packageInfo.version}+${packageInfo.buildNumber}',
+    subject:
+        '$subject - Lyric ${packageInfo.version}+${packageInfo.buildNumber}',
     body: '''
 Írd le, mit tapasztaltál:
 

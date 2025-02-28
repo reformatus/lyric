@@ -4,7 +4,6 @@ import '../../../../../../services/songs/filter.dart';
 
 part 'state.g.dart';
 
-
 @Riverpod(keepAlive: true)
 class SearchFieldsState extends _$SearchFieldsState {
   @override
@@ -20,7 +19,8 @@ class SearchFieldsState extends _$SearchFieldsState {
   }
 
   void removeSearchField(String field) {
-    if (state.length < 2) return; // Make sure at least one column stays selected
+    if (state.length < 2)
+      return; // Make sure at least one column stays selected
     state.remove(field);
     ref.notifyListeners();
   }

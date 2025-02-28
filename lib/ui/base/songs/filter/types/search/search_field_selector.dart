@@ -25,27 +25,30 @@ class SearchFieldSelectorColumn extends ConsumerWidget {
             textAlign: TextAlign.center,
           ),
         ),
-        ...fullTextSearchFields.map(
-          (e) {
-            var field = songFieldsMap[e]!;
-            return CheckboxListTile.adaptive(
-              title: Text(field['title_hu']),
-              secondary: Icon(field['icon']),
-              value: searchFieldsState.contains(e),
-              onChanged: (searchFieldsState.length < 2 && searchFieldsState.contains(e))
-                  // Make sure at least one column stays selected
-                  ? null
-                  : (value) {
+        ...fullTextSearchFields.map((e) {
+          var field = songFieldsMap[e]!;
+          return CheckboxListTile.adaptive(
+            title: Text(field['title_hu']),
+            secondary: Icon(field['icon']),
+            value: searchFieldsState.contains(e),
+            onChanged:
+                (searchFieldsState.length < 2 && searchFieldsState.contains(e))
+                    // Make sure at least one column stays selected
+                    ? null
+                    : (value) {
                       if (value == null) return;
                       if (value) {
-                        ref.read(searchFieldsStateProvider.notifier).addSearchField(e);
+                        ref
+                            .read(searchFieldsStateProvider.notifier)
+                            .addSearchField(e);
                       } else {
-                        ref.read(searchFieldsStateProvider.notifier).removeSearchField(e);
+                        ref
+                            .read(searchFieldsStateProvider.notifier)
+                            .removeSearchField(e);
                       }
                     },
-            );
-          },
-        ),
+          );
+        }),
       ],
     );
   }

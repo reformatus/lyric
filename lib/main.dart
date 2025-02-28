@@ -23,8 +23,12 @@ void main() async {
   runApp(const ProviderScope(child: LyricApp()));
 }
 
-final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
-final GlobalKey<NavigatorState> _baseNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'base');
+final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'root',
+);
+final GlobalKey<NavigatorState> _baseNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'base',
+);
 
 final globals = (
   tabletFromWidth: 700,
@@ -43,9 +47,13 @@ class LyricApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       theme: ThemeData.from(
-          colorScheme: ColorScheme.fromSeed(
-              seedColor: Color(0xff025462), primary: Color(0xffc3a140), brightness: Brightness.light),
-          useMaterial3: true),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Color(0xff025462),
+          primary: Color(0xffc3a140),
+          brightness: Brightness.light,
+        ),
+        useMaterial3: true,
+      ),
       scaffoldMessengerKey: globals.scaffoldKey,
       routerConfig: _router,
       supportedLocales: const [Locale('hu')],
@@ -65,9 +73,7 @@ final _router = GoRouter(
   routes: [
     GoRoute(
       path: '/loading',
-      pageBuilder: (context, state) => const MaterialPage(
-        child: LoadingPage(),
-      ),
+      pageBuilder: (context, state) => const MaterialPage(child: LoadingPage()),
     ),
     ShellRoute(
       navigatorKey: _baseNavigatorKey,
@@ -78,50 +84,41 @@ final _router = GoRouter(
         GoRoute(
           path: '/home',
           pageBuilder: (context, state) {
-            return const MaterialPage(
-              child: HomePage(),
-            );
+            return const MaterialPage(child: HomePage());
           },
         ),
         GoRoute(
           path: '/bank',
           pageBuilder: (context, state) {
-            return const MaterialPage(
-              child: SongsPage(),
-            );
+            return const MaterialPage(child: SongsPage());
           },
         ),
         GoRoute(
           path: '/sets',
           pageBuilder: (context, state) {
-            return const MaterialPage(
-              child: SetsPage(),
-            );
+            return const MaterialPage(child: SetsPage());
           },
         ),
         GoRoute(
           path: '/song/:uuid',
           pageBuilder: (context, state) {
             final songUuid = state.pathParameters['uuid']!;
-            return MaterialPage(
-              child: SongPage(songUuid),
-            );
+            return MaterialPage(child: SongPage(songUuid));
           },
         ),
         GoRoute(
           path: '/cue/:uuid',
           pageBuilder: (context, state) {
             final cueUuid = state.pathParameters['uuid']!;
-            int? slideIndex = int.tryParse(state.uri.queryParameters['index'] ?? 'ignoreMe');
+            int? slideIndex = int.tryParse(
+              state.uri.queryParameters['index'] ?? 'ignoreMe',
+            );
             return MaterialPage(
-              child: CuePage(
-                cueUuid,
-                initialSlideIndex: slideIndex,
-              ),
+              child: CuePage(cueUuid, initialSlideIndex: slideIndex),
             );
           },
         ),
       ],
-    )
+    ),
   ],
 );

@@ -11,17 +11,12 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sófár DalApp Béta'),
-      ),
+      appBar: AppBar(title: const Text('Sófár DalApp Béta')),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 15),
-            child: Text(
-              'Üdv!',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
+            child: Text('Üdv!', style: Theme.of(context).textTheme.titleLarge),
           ),
           NewVersionWidget(),
           Expanded(
@@ -31,7 +26,10 @@ class HomePage extends StatelessWidget {
                 padding: const EdgeInsets.all(10),
                 child: LayoutBuilder(
                   builder: (context, constraints) {
-                    int crossAxisCount = (constraints.maxWidth ~/ 300).clamp(1, 4);
+                    int crossAxisCount = (constraints.maxWidth ~/ 300).clamp(
+                      1,
+                      4,
+                    );
                     if (crossAxisCount == 3) crossAxisCount = 2;
 
                     double minItemHeight = 80.0;
@@ -76,7 +74,9 @@ class HomePage extends StatelessWidget {
                           icon: Icons.info_outline,
                           title: 'Névjegy',
                           subtitle: 'Verzió, licencek',
-                          onPressed: () => showLyricAboutDialog(context), // Keep enabled
+                          onPressed:
+                              () =>
+                                  showLyricAboutDialog(context), // Keep enabled
                         ),
                       ],
                     );

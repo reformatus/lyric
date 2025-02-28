@@ -4,9 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../services/cue/write_cue.dart';
 
 class EditCueDialog extends StatefulWidget {
-  const EditCueDialog({
-    super.key,
-  });
+  const EditCueDialog({super.key});
 
   @override
   EditCueDialogState createState() => EditCueDialogState();
@@ -31,7 +29,10 @@ class EditCueDialogState extends State<EditCueDialog> {
     onSubmit() {
       if (_formKey.currentState!.validate()) {
         setState(() => isSaving = true);
-        insertNewCue(title: _titleController.text, description: _descriptionController.text).then((cue) {
+        insertNewCue(
+          title: _titleController.text,
+          description: _descriptionController.text,
+        ).then((cue) {
           // ignore: use_build_context_synchronously
           context.pop();
           // ignore: use_build_context_synchronously
@@ -51,9 +52,7 @@ class EditCueDialogState extends State<EditCueDialog> {
               TextFormField(
                 controller: _titleController,
                 autofocus: true,
-                decoration: InputDecoration(
-                  hintText: 'Cím',
-                ),
+                decoration: InputDecoration(hintText: 'Cím'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Kötelező címet adni a listának!';
@@ -65,9 +64,7 @@ class EditCueDialogState extends State<EditCueDialog> {
               TextFormField(
                 controller: _descriptionController,
                 maxLines: null,
-                decoration: InputDecoration(
-                  hintText: 'Leírás',
-                ),
+                decoration: InputDecoration(hintText: 'Leírás'),
               ),
             ],
           ),
@@ -81,8 +78,12 @@ class EditCueDialogState extends State<EditCueDialog> {
         FilledButton(
           onPressed: onSubmit,
           child: AnimatedSize(
-              duration: Durations.medium1,
-              child: isSaving ? SizedBox(width: 50, child: LinearProgressIndicator()) : Text('Létrehozás')),
+            duration: Durations.medium1,
+            child:
+                isSaving
+                    ? SizedBox(width: 50, child: LinearProgressIndicator())
+                    : Text('Létrehozás'),
+          ),
         ),
       ],
     );

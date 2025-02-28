@@ -7,7 +7,10 @@ import '../from_uuid.dart';
 part 'watch_revived.g.dart';
 
 @riverpod
-Stream<List<Slide>> watchRevivedSlidesForCueWithUuid(Ref ref, String uuid) async* {
+Stream<List<Slide>> watchRevivedSlidesForCueWithUuid(
+  Ref ref,
+  String uuid,
+) async* {
   final cue = ref.watch(watchCueWithUuidProvider(uuid));
 
   if (cue.hasValue) {
