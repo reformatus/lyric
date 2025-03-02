@@ -13,8 +13,10 @@ class LyricsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var openSongContent = song.contentMap['opensong'];
-    if (openSongContent == null)
-      return Center(child: Text('Ehhez az énekhez nincs dalszöveg :('));
+
+    if (openSongContent == null) {
+      return Center(child: Text('Ehhez az énekhez nincs dalszöveg :(')); // TODO handle properly
+    }
 
     var verses = os.getVersesFromString(openSongContent);
     return LayoutBuilder(
@@ -31,12 +33,7 @@ class LyricsView extends StatelessWidget {
             constraints: BoxConstraints(minWidth: constraints.maxWidth),
             child: Wrap(
               direction: Axis.vertical,
-              children:
-                  verses
-                      .map(
-                        (e) => SizedBox(width: cardWidth, child: VerseCard(e)),
-                      )
-                      .toList(),
+              children: verses.map((e) => SizedBox(width: cardWidth, child: VerseCard(e))).toList(),
             ),
           ),
         );
@@ -63,17 +60,12 @@ class VerseCard extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(5),
-                  bottomRight: Radius.circular(5),
-                ),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(5), bottomRight: Radius.circular(5)),
                 color: Theme.of(context).colorScheme.primary,
               ),
               child: Text(
                 getPrettyVerseTagFrom(verse.type, verse.index),
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
+                style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
               ),
             ),
             Padding(
@@ -87,35 +79,7 @@ class VerseCard extends StatelessWidget {
                             os.VerseLine(:final segments) => Wrap(
                               alignment: WrapAlignment.start,
                               crossAxisAlignment: WrapCrossAlignment.start,
-                              children:
-                                  segments
-                                      .map(
-                                        (e) => Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            if (segments.any(
-                                              (s) => s.chord != null,
-                                            ))
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                  right: 3,
-                                                ),
-                                                child: Text(
-                                                  e.chord ?? '',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                ),
-                                              ),
-                                            if (e.lyrics.isNotEmpty)
-                                              Text(e.lyrics)
-                                            else
-                                              SizedBox(height: 10),
-                                          ],
-                                        ),
-                                      )
-                                      .toList(),
+                              children: segments.map((e) => lyricsSegment(segments, e)).toList(),
                             ),
                             os.CommentLine(:final comment) => Text(
                               comment,
@@ -137,6 +101,55 @@ class VerseCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget lyricsSegment(List<os.VerseLineSegment> segments, os.VerseLineSegment e) {
+    final TextPainter chordPainter = TextPainter(
+      text: TextSpan(text: e.chord ?? '', style: TextStyle(fontWeight: FontWeight.w600)),
+      textDirection: TextDirection.ltr,
+    )..layout();
+
+    final TextPainter lyricsPainter = TextPainter(
+      text: TextSpan(text: e.lyrics),
+      textDirection: TextDirection.ltr,
+    )..layout();
+
+    final double chordWidth = e.chord != null ? chordPainter.width + 4 : 0;
+
+    double hyphenWidth = 0;
+
+    if (e.hyphenAfter) {
+      hyphenWidth = (chordWidth - lyricsPainter.width).clamp(0, double.infinity);
+    }
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (segments.any((s) => s.chord != null))
+              Padding(
+                padding: EdgeInsets.only(right: 4),
+                child: Text(e.chord ?? '', style: TextStyle(fontWeight: FontWeight.w600)),
+              ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (e.lyrics.isNotEmpty)
+                  ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: constraints.maxWidth),
+                    child: Text(e.lyrics),
+                  )
+                else
+                  SizedBox(height: 8),
+                if (hyphenWidth > 0)
+                  SizedBox(width: hyphenWidth, child: ClipRect(child: Center(child: Text("-")))),
+              ],
+            ),
+          ],
+        );
+      },
     );
   }
 }
