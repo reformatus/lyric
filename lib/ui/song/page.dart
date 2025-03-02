@@ -1,6 +1,7 @@
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/ui/song/lyrics/state.dart';
 import 'package:lyric/ui/song/lyrics/view.dart';
 import 'package:lyric/ui/song/sheet/view.dart';
 
@@ -11,11 +12,7 @@ import '../common/error.dart';
 
 import 'state.dart';
 
-const Set<String> fieldsToShowInDetailsSummary = {
-  'composer',
-  'lyricist',
-  'translator',
-};
+const Set<String> fieldsToShowInDetailsSummary = {'composer', 'lyricist', 'translator'};
 
 const Set<String> fieldsToOmitFromDetails = {'lyrics', 'first_line'};
 
@@ -42,6 +39,7 @@ class _SongPageState extends ConsumerState<SongPage> {
   Widget build(BuildContext context) {
     final song = ref.watch(songFromUuidProvider(widget.songUuid));
     final showLyrics = ref.watch(showLyricsProvider);
+    final transposeAmount = ref.watch(transposeStateProvider);
 
     final List<Widget> summaryContent = song.when(
       data: (song) => getDetailsSummaryContent(song),
@@ -69,9 +67,7 @@ class _SongPageState extends ConsumerState<SongPage> {
             actions: [
               if (detailsContent.isNotEmpty && constraints.maxWidth > 500)
                 ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxWidth: constraints.maxWidth / 2,
-                  ),
+                  constraints: BoxConstraints(maxWidth: constraints.maxWidth / 2),
                   child: detailsButton(summaryContent, context, detailsContent),
                 ),
             ],
@@ -90,20 +86,13 @@ class _SongPageState extends ConsumerState<SongPage> {
                       icon: Icons.error,
                     ),
                   ),
-                  AsyncLoading() => const Center(
-                    child: CircularProgressIndicator(value: 0.3),
-                  ),
+                  AsyncLoading() => const Center(child: CircularProgressIndicator(value: 0.3)),
                   AsyncValue(:final value!) => Column(
                     children: [
-                      if (detailsContent.isNotEmpty &&
-                          constraints.maxWidth <= 500)
+                      if (detailsContent.isNotEmpty && constraints.maxWidth <= 500)
                         Align(
                           alignment: Alignment.centerRight,
-                          child: detailsButton(
-                            summaryContent,
-                            context,
-                            detailsContent,
-                          ),
+                          child: detailsButton(summaryContent, context, detailsContent),
                         ),
                       if (showLyrics)
                         Expanded(child: LyricsView(value))
@@ -120,15 +109,21 @@ class _SongPageState extends ConsumerState<SongPage> {
                   direction: isHorizontal ? Axis.vertical : Axis.horizontal,
                   children: [
                     FilledButton.tonalIcon(
-                      onPressed:
-                          () => ref.read(showLyricsProvider.notifier).toggle(),
+                      onPressed: () => ref.read(showLyricsProvider.notifier).toggle(),
                       label: showLyrics ? Text('Kotta') : Text('Dalszöveg'),
-                      icon: Icon(
-                        showLyrics
-                            ? Icons.music_video
-                            : Icons.description_outlined,
-                      ),
+                      icon: Icon(showLyrics ? Icons.music_video : Icons.description_outlined),
                     ),
+                    if (showLyrics) ...[
+                      IconButton.filledTonal(
+                        onPressed: () => ref.read(transposeStateProvider.notifier).decrement(),
+                        icon: Icon(Icons.arrow_downward),
+                      ),
+                      Text(transposeAmount.toString()),
+                      IconButton.filledTonal(
+                        onPressed: () => ref.read(transposeStateProvider.notifier).increment(),
+                        icon: Icon(Icons.arrow_upward),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -139,32 +134,17 @@ class _SongPageState extends ConsumerState<SongPage> {
     );
   }
 
-  Widget detailsButton(
-    List<Widget> summaryContent,
-    BuildContext context,
-    List<Widget> detailsContent,
-  ) {
+  Widget detailsButton(List<Widget> summaryContent, BuildContext context, List<Widget> detailsContent) {
     return Padding(
       padding: const EdgeInsets.only(right: 5),
       child: TextButton(
         style: TextButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           textStyle: Theme.of(context).primaryTextTheme.labelMedium!,
           foregroundColor: Theme.of(context).colorScheme.secondary,
         ),
-        child: Wrap(
-          spacing: 10,
-          children:
-              summaryContent.isNotEmpty ? summaryContent : [Text('Részletek')],
-        ),
-        onPressed:
-            () => showDetailsBottomSheet(
-              context,
-              detailsSheetScrollController,
-              detailsContent,
-            ),
+        child: Wrap(spacing: 10, children: summaryContent.isNotEmpty ? summaryContent : [Text('Részletek')]),
+        onPressed: () => showDetailsBottomSheet(context, detailsSheetScrollController, detailsContent),
       ),
     );
   }
@@ -188,10 +168,7 @@ class _SongPageState extends ConsumerState<SongPage> {
                   alignment: Alignment.topRight,
                   child: Padding(
                     padding: const EdgeInsets.all(8),
-                    child: IconButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      icon: Icon(Icons.close),
-                    ),
+                    child: IconButton(onPressed: () => Navigator.of(context).pop(), icon: Icon(Icons.close)),
                   ),
                 ),
                 ...detailsContent,
@@ -207,16 +184,12 @@ class _SongPageState extends ConsumerState<SongPage> {
   List<Widget> getDetailsSummaryContent(Song song) {
     List<Widget> detailsSummary = [];
     for (String field in fieldsToShowInDetailsSummary) {
-      if (song.contentMap[field] != null &&
-          song.contentMap[field]!.isNotEmpty) {
+      if (song.contentMap[field] != null && song.contentMap[field]!.isNotEmpty) {
         detailsSummary.add(
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                songFieldsMap[field]!['icon'],
-                color: Theme.of(context).colorScheme.secondary,
-              ),
+              Icon(songFieldsMap[field]!['icon'], color: Theme.of(context).colorScheme.secondary),
               SizedBox(width: 3),
               Flexible(
                 fit: FlexFit.loose,

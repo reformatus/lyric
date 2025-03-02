@@ -1,9 +1,12 @@
 import 'package:dart_opensong/dart_opensong.dart' as os;
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/services/song/verse_tag_pretty.dart';
 import 'package:lyric/ui/common/error.dart';
+import 'package:tonic/tonic.dart';
 
 import '../../../data/song/song.dart';
+import 'state.dart';
 
 class LyricsView extends StatelessWidget {
   const LyricsView(this.song, {super.key});
@@ -79,7 +82,7 @@ class VerseCard extends StatelessWidget {
                             os.VerseLine(:final segments) => Wrap(
                               alignment: WrapAlignment.start,
                               crossAxisAlignment: WrapCrossAlignment.start,
-                              children: segments.map((e) => lyricsSegment(segments, e)).toList(),
+                              children: segments.map((e) => LyricsSegment(segments: segments, e: e)).toList(),
                             ),
                             os.CommentLine(:final comment) => Text(
                               comment,
@@ -103,10 +106,21 @@ class VerseCard extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget lyricsSegment(List<os.VerseLineSegment> segments, os.VerseLineSegment e) {
+class LyricsSegment extends ConsumerWidget {
+  const LyricsSegment({super.key, required this.segments, required this.e});
+
+  final List<os.VerseLineSegment> segments;
+  final os.VerseLineSegment e;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final transposeAmount = ref.watch(transposeStateProvider);
+    final chord = getTransposedChord(e.chord, transposeAmount);
+
     final TextPainter chordPainter = TextPainter(
-      text: TextSpan(text: e.chord ?? '', style: TextStyle(fontWeight: FontWeight.w600)),
+      text: TextSpan(text: chord ?? '', style: TextStyle(fontWeight: FontWeight.w600)),
       textDirection: TextDirection.ltr,
     )..layout();
 
@@ -115,7 +129,7 @@ class VerseCard extends StatelessWidget {
       textDirection: TextDirection.ltr,
     )..layout();
 
-    final double chordWidth = e.chord != null ? chordPainter.width + 4 : 0;
+    final double chordWidth = chord != null ? chordPainter.width + 4 : 0;
 
     double hyphenWidth = 0;
 
@@ -131,7 +145,7 @@ class VerseCard extends StatelessWidget {
             if (segments.any((s) => s.chord != null))
               Padding(
                 padding: EdgeInsets.only(right: 4),
-                child: Text(e.chord ?? '', style: TextStyle(fontWeight: FontWeight.w600)),
+                child: Text(chord ?? '', style: TextStyle(fontWeight: FontWeight.w600)),
               ),
             Row(
               mainAxisSize: MainAxisSize.min,
@@ -152,4 +166,13 @@ class VerseCard extends StatelessWidget {
       },
     );
   }
+}
+
+String? getTransposedChord(String? original, int transposeAmount) {
+  /*if (original == null) return null;
+  var originalChord = Chord.parse(original);
+  var newChord = Chord(pattern: originalChord.pattern, root: originalChord.root);
+
+  return newChord.abbr;*/
+  return original;
 }
