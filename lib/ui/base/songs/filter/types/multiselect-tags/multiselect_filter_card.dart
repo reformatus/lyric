@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../../services/songs/filter.dart';
 import '../../../../../common/error.dart';
-import '../field_type.dart';
 import '../../widgets/filter_chip.dart';
+import '../field_type.dart';
 import 'state.dart';
 
 class MultiselectFilterCard extends ConsumerStatefulWidget {

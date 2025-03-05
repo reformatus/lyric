@@ -1,9 +1,9 @@
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/ui/song/lyrics/state.dart';
-import 'package:lyric/ui/song/lyrics/view.dart';
-import 'package:lyric/ui/song/sheet/view.dart';
+import 'lyrics/state.dart';
+import 'lyrics/view.dart';
+import 'sheet/view.dart';
 
 import '../../data/song/song.dart';
 import '../../services/song/from_uuid.dart';

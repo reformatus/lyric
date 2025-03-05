@@ -1,8 +1,8 @@
 import 'package:dart_opensong/dart_opensong.dart' as os;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/services/song/verse_tag_pretty.dart';
-import 'package:lyric/ui/common/error.dart';
+import '../../../services/song/verse_tag_pretty.dart';
+import '../../common/error.dart';
 import 'package:chord_transposer/chord_transposer.dart';
 
 import '../../../data/song/song.dart';
@@ -18,7 +18,9 @@ class LyricsView extends StatelessWidget {
     var openSongContent = song.contentMap['opensong'];
 
     if (openSongContent == null) {
-      return Center(child: Text('Ehhez az énekhez nincs dalszöveg :(')); // TODO handle properly
+      return Center(
+        child: Text('Ehhez az énekhez nincs dalszöveg :('),
+      ); // TODO handle properly
     }
 
     var verses = os.getVersesFromString(openSongContent);
@@ -36,7 +38,12 @@ class LyricsView extends StatelessWidget {
             constraints: BoxConstraints(minWidth: constraints.maxWidth),
             child: Wrap(
               direction: Axis.vertical,
-              children: verses.map((e) => SizedBox(width: cardWidth, child: VerseCard(e))).toList(),
+              children:
+                  verses
+                      .map(
+                        (e) => SizedBox(width: cardWidth, child: VerseCard(e)),
+                      )
+                      .toList(),
             ),
           ),
         );
@@ -63,12 +70,17 @@ class VerseCard extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(5), bottomRight: Radius.circular(5)),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(5),
+                  bottomRight: Radius.circular(5),
+                ),
                 color: Theme.of(context).colorScheme.primary,
               ),
               child: Text(
                 getPrettyVerseTagFrom(verse.type, verse.index),
-                style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
               ),
             ),
             Padding(
@@ -82,7 +94,15 @@ class VerseCard extends StatelessWidget {
                             os.VerseLine(:final segments) => Wrap(
                               alignment: WrapAlignment.start,
                               crossAxisAlignment: WrapCrossAlignment.start,
-                              children: segments.map((e) => LyricsSegment(segments: segments, e: e)).toList(),
+                              children:
+                                  segments
+                                      .map(
+                                        (e) => LyricsSegment(
+                                          segments: segments,
+                                          e: e,
+                                        ),
+                                      )
+                                      .toList(),
                             ),
                             os.CommentLine(:final comment) => Text(
                               comment,
@@ -120,7 +140,10 @@ class LyricsSegment extends ConsumerWidget {
     final chord = getTransposedChord(e.chord, transposeAmount);
 
     final TextPainter chordPainter = TextPainter(
-      text: TextSpan(text: chord ?? '', style: TextStyle(fontWeight: FontWeight.w600)),
+      text: TextSpan(
+        text: chord ?? '',
+        style: TextStyle(fontWeight: FontWeight.w600),
+      ),
       textDirection: TextDirection.ltr,
     )..layout();
 
@@ -134,7 +157,10 @@ class LyricsSegment extends ConsumerWidget {
     double hyphenWidth = 0;
 
     if (e.hyphenAfter) {
-      hyphenWidth = (chordWidth - lyricsPainter.width).clamp(0, double.infinity);
+      hyphenWidth = (chordWidth - lyricsPainter.width).clamp(
+        0,
+        double.infinity,
+      );
     }
 
     return LayoutBuilder(
@@ -145,7 +171,10 @@ class LyricsSegment extends ConsumerWidget {
             if (segments.any((s) => s.chord != null))
               Padding(
                 padding: EdgeInsets.only(right: 4),
-                child: Text(chord ?? '', style: TextStyle(fontWeight: FontWeight.w600)),
+                child: Text(
+                  chord ?? '',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
               ),
             Row(
               mainAxisSize: MainAxisSize.min,
@@ -157,8 +186,11 @@ class LyricsSegment extends ConsumerWidget {
                   )
                 else
                   SizedBox(height: 8),
-                if (hyphenWidth > 0)
-                  SizedBox(width: hyphenWidth, child: ClipRect(child: Center(child: Text("-")))),
+                if (hyphenWidth > 2)
+                  SizedBox(
+                    width: hyphenWidth,
+                    child: ClipRect(child: Center(child: Text("-"))),
+                  ),
               ],
             ),
           ],

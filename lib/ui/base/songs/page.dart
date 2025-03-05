@@ -6,11 +6,11 @@ import '../../../data/cue/cue.dart';
 import '../../../main.dart';
 import '../../../services/songs/filter.dart';
 import '../../common/error.dart';
-import 'filter/widgets/filters_column.dart';
 import 'filter/types/key/state.dart';
 import 'filter/types/multiselect-tags/state.dart';
 import 'filter/types/search/search_field_selector.dart';
 import 'filter/types/search/state.dart';
+import 'filter/widgets/filters_column.dart';
 import 'song_tile.dart';
 
 class SongsPage extends ConsumerStatefulWidget {

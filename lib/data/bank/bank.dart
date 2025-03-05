@@ -80,8 +80,9 @@ class Bank extends Insertable<Bank> {
     final resp = await dio.getUri<String>(source);
     try {
       var songJson = jsonDecode(resp.data!);
-      if (songJson is List)
+      if (songJson is List) {
         songJson = songJson.first; //make compatible with sófár kottatár quirk
+      }
       var song = Song.fromBankApiJson(
         songJson as Map<String, dynamic>,
         sourceBank: this,
