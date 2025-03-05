@@ -145,6 +145,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.3"
+  chord_transposer:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: main
+      resolved-ref: e834851d72fdfad486bbce0ffa0831c4b1cce7b9
+      url: "https://github.com/RedyAu/dart_chord_transposer"
+    source: git
+    version: "0.0.2"
   ci:
     dependency: transitive
     description:
@@ -934,14 +943,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.2"
-  tonic:
-    dependency: "direct main"
-    description:
-      name: tonic
-      sha256: "4c5f3cc7d41cb256822aa5875cd89ccd94a2854912db3dddf4425a46d3d3dd15"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.5"
   typed_data:
     dependency: transitive
     description:

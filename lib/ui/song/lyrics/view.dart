@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/services/song/verse_tag_pretty.dart';
 import 'package:lyric/ui/common/error.dart';
-import 'package:tonic/tonic.dart';
+import 'package:chord_transposer/chord_transposer.dart';
 
 import '../../../data/song/song.dart';
 import 'state.dart';
@@ -168,11 +168,15 @@ class LyricsSegment extends ConsumerWidget {
   }
 }
 
-String? getTransposedChord(String? original, int transposeAmount) {
-  /*if (original == null) return null;
-  var originalChord = Chord.parse(original);
-  var newChord = Chord(pattern: originalChord.pattern, root: originalChord.root);
-
-  return newChord.abbr;*/
-  return original;
+String? getTransposedChord(String? original, int semitones) {
+  if (semitones == 0) return original;
+  if (original == null) return null;
+  try {
+    var transposer = ChordTransposer(
+      notation: NoteNotation.germanWithAccidentals,
+    );
+    return transposer.chordUp(chord: original, semitones: semitones);
+  } catch (e) {
+    return '?';
+  }
 }
