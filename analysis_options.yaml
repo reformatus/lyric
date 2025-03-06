@@ -9,3 +9,5 @@ analyzer:
     provide_deprecation_message: ignore
   plugins:
     - custom_lint
+formatter:
+  page_width: 80

@@ -9,9 +9,17 @@ import '../../../data/song/song.dart';
 import 'state.dart';
 
 class LyricsView extends StatelessWidget {
-  const LyricsView(this.song, {super.key});
+  LyricsView(this.song, {super.key}) {
+    songKey = song.keyField?.pitch;
+  }
 
   final Song song;
+
+  late final String? songKey;
+
+  final ChordTransposer transposer = ChordTransposer(
+    notation: NoteNotation.germanWithAccidentals,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +49,10 @@ class LyricsView extends StatelessWidget {
               children:
                   verses
                       .map(
-                        (e) => SizedBox(width: cardWidth, child: VerseCard(e)),
+                        (e) => SizedBox(
+                          width: cardWidth,
+                          child: VerseCard(songKey, e),
+                        ),
                       )
                       .toList(),
             ),
@@ -53,8 +64,9 @@ class LyricsView extends StatelessWidget {
 }
 
 class VerseCard extends StatelessWidget {
-  const VerseCard(this.verse, {super.key});
+  const VerseCard(this.songKey, this.verse, {super.key});
 
+  final String? songKey;
   final os.Verse verse;
 
   @override
@@ -98,6 +110,7 @@ class VerseCard extends StatelessWidget {
                                   segments
                                       .map(
                                         (e) => LyricsSegment(
+                                          songKey: songKey,
                                           segments: segments,
                                           e: e,
                                         ),
@@ -129,15 +142,21 @@ class VerseCard extends StatelessWidget {
 }
 
 class LyricsSegment extends ConsumerWidget {
-  const LyricsSegment({super.key, required this.segments, required this.e});
+  const LyricsSegment({
+    super.key,
+    required this.songKey,
+    required this.segments,
+    required this.e,
+  });
 
   final List<os.VerseLineSegment> segments;
   final os.VerseLineSegment e;
+  final String? songKey;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final transposeAmount = ref.watch(transposeStateProvider);
-    final chord = getTransposedChord(e.chord, transposeAmount);
+    final chord = getTransposedChord(e.chord, songKey, transposeAmount);
 
     final TextPainter chordPainter = TextPainter(
       text: TextSpan(
@@ -200,14 +219,17 @@ class LyricsSegment extends ConsumerWidget {
   }
 }
 
-String? getTransposedChord(String? original, int semitones) {
-  if (semitones == 0) return original;
+String? getTransposedChord(String? original, String? fromKey, int semitones) {
   if (original == null) return null;
   try {
     var transposer = ChordTransposer(
       notation: NoteNotation.germanWithAccidentals,
     );
-    return transposer.chordUp(chord: original, semitones: semitones);
+    return transposer.chordUp(
+      chord: original,
+      fromKey: fromKey,
+      semitones: semitones,
+    );
   } catch (e) {
     return '?';
   }
