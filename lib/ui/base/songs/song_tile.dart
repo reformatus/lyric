@@ -36,7 +36,6 @@ class LSongResultTile extends StatelessWidget {
                 ? () => context.push('/song/${songsFt.uuid}')
                 : null,
         title: Text(songsFt.title),
-        trailing: Text(songsFt.keyField.toString()),
         leading:
             addingToCue != null
                 ? IconButton.filledTonal(
@@ -57,6 +56,41 @@ class LSongResultTile extends StatelessWidget {
                   overflow: TextOverflow.fade,
                 )
                 : null,
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(songsFt.keyField.toString()),
+            SizedBox(width: 5),
+            SizedBox(
+              width: 40,
+              child: Wrap(
+                children: [
+                  // TODO implement
+                  Icon(
+                    Icons.music_note_outlined,
+                    color: Theme.of(context).disabledColor,
+                    size: 20,
+                  ),
+                  Icon(
+                    Icons.audio_file_outlined,
+                    color: Theme.of(context).disabledColor,
+                    size: 20,
+                  ),
+                  Icon(
+                    Icons.text_snippet_outlined,
+                    color: Theme.of(context).disabledColor,
+                    size: 20,
+                  ),
+                  Icon(
+                    Icons.tag_outlined,
+                    color: Theme.of(context).disabledColor,
+                    size: 20,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       );
     } else if (match != null) {
       return ListTile(
