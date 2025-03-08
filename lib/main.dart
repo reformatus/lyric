@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lyric/ui/song/sheet/view.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'data/database.dart';
@@ -14,7 +13,6 @@ import 'ui/base/scaffold.dart';
 import 'ui/base/songs/page.dart';
 import 'ui/cue/page.dart';
 import 'ui/loading/page.dart';
-import 'ui/song/lyrics/view.dart';
 import 'ui/song/page.dart';
 
 part 'router.dart';

@@ -2,7 +2,6 @@ import 'package:dart_opensong/dart_opensong.dart' as os;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../services/key/get_transposed.dart';
-import '../../../services/song/from_uuid.dart';
 import '../../../services/song/verse_tag_pretty.dart';
 import '../../common/error.dart';
 import 'package:chord_transposer/chord_transposer.dart';
@@ -43,6 +42,8 @@ class LyricsView extends ConsumerWidget {
         }
         var verses = os.getVersesFromString(openSongContent);
 
+        final transpose = ref.watch(transposeStateForProvider(song.uuid));
+
         // far future todo Parse ChordPro
 
         return SingleChildScrollView(
@@ -51,15 +52,16 @@ class LyricsView extends ConsumerWidget {
             constraints: BoxConstraints(minWidth: constraints.maxWidth),
             child: Wrap(
               direction: Axis.vertical,
-              children:
-                  verses
-                      .map(
-                        (e) => SizedBox(
-                          width: cardWidth,
-                          child: VerseCard(song.keyField!.pitch, e),
-                        ),
-                      )
-                      .toList(),
+              children: [
+                if (transpose.capo != 0)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('Capo: ${transpose.capo}'),
+                  ),
+                ...verses.map(
+                  (e) => SizedBox(width: cardWidth, child: VerseCard(song, e)),
+                ),
+              ],
             ),
           ),
         );
@@ -69,10 +71,10 @@ class LyricsView extends ConsumerWidget {
 }
 
 class VerseCard extends StatelessWidget {
-  const VerseCard(this.songKey, this.verse, {super.key});
+  const VerseCard(this.song, this.verse, {super.key});
 
-  final String? songKey;
   final os.Verse verse;
+  final Song song;
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +117,7 @@ class VerseCard extends StatelessWidget {
                                   segments
                                       .map(
                                         (e) => LyricsSegment(
-                                          songKey: songKey,
+                                          song: song,
                                           segments: segments,
                                           e: e,
                                         ),
@@ -149,21 +151,21 @@ class VerseCard extends StatelessWidget {
 class LyricsSegment extends ConsumerWidget {
   const LyricsSegment({
     super.key,
-    required this.songKey,
+    required this.song,
     required this.segments,
     required this.e,
   });
 
   final List<os.VerseLineSegment> segments;
   final os.VerseLineSegment e;
-  final String? songKey;
+  final Song song;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final transpose = ref.watch(transposeStateProvider);
+    final transpose = ref.watch(TransposeStateForProvider(song.uuid));
     final chord = getTransposedChord(
       e.chord,
-      songKey,
+      song.keyField?.pitch,
       transpose.finalTransposeBy,
     );
 

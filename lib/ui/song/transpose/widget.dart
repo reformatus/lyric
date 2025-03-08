@@ -2,24 +2,52 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/ui/song/transpose/state.dart';
 
-class TransposeControls extends ConsumerWidget {
-  const TransposeControls({super.key});
+import '../../../data/song/song.dart';
+
+class TransposeResetButton extends ConsumerWidget {
+  const TransposeResetButton(this.song, {required this.isHorizontal, super.key});
+
+  final bool isHorizontal;
+  final Song song;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final transpose = ref.watch(transposeStateProvider);
+    final transpose = ref.watch(TransposeStateForProvider(song.uuid));
+    if (transpose.semitones != 0 || transpose.capo != 0) {
+      return IconButton(
+        tooltip: 'Transzponálás visszaállítása',
+        onPressed: () => ref.read(TransposeStateForProvider(song.uuid).notifier).reset(),
+        icon: Icon(Icons.replay),
+        iconSize: isHorizontal ? 18 : null,
+        visualDensity: VisualDensity.compact,
+      );
+    } else {
+      return Container();
+    }
+  }
+}
+
+class TransposeControls extends ConsumerWidget {
+  const TransposeControls(this.song, {super.key});
+
+  final Song song;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final transpose = ref.watch(TransposeStateForProvider(song.uuid));
 
     return SizedBox(
       width: 130,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
         children: [
           sectionTitle(context, 'TRANSZPONÁLÁS'),
           Row(
             children: [
               IconButton.filledTonal(
                 onPressed: () {
-                  ref.read(transposeStateProvider.notifier).down();
+                  ref.read(TransposeStateForProvider(song.uuid).notifier).down();
                 },
                 icon: Icon(Icons.expand_more),
               ),
@@ -29,7 +57,7 @@ class TransposeControls extends ConsumerWidget {
                     Text(
                       transpose.semitones.toString(),
                       style: TextStyle(
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         fontSize:
                             Theme.of(context).textTheme.bodyLarge!.fontSize,
                       ),
@@ -39,7 +67,7 @@ class TransposeControls extends ConsumerWidget {
               ),
               IconButton.filledTonal(
                 onPressed: () {
-                  ref.read(transposeStateProvider.notifier).up();
+                  ref.read(TransposeStateForProvider(song.uuid).notifier).up();
                 },
                 icon: Icon(Icons.expand_less),
               ),
@@ -50,7 +78,7 @@ class TransposeControls extends ConsumerWidget {
             children: [
               IconButton.filledTonal(
                 onPressed: () {
-                  ref.read(transposeStateProvider.notifier).removeCapo();
+                  ref.read(TransposeStateForProvider(song.uuid).notifier).removeCapo();
                 },
                 icon: Icon(Icons.remove),
               ),
@@ -60,7 +88,7 @@ class TransposeControls extends ConsumerWidget {
                     Text(
                       transpose.capo.toString(),
                       style: TextStyle(
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         fontSize:
                             Theme.of(context).textTheme.bodyLarge!.fontSize,
                       ),
@@ -70,7 +98,7 @@ class TransposeControls extends ConsumerWidget {
               ),
               IconButton.filledTonal(
                 onPressed: () {
-                  ref.read(transposeStateProvider.notifier).addCapo();
+                  ref.read(TransposeStateForProvider(song.uuid).notifier).addCapo();
                 },
                 icon: Icon(Icons.add),
               ),

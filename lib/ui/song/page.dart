@@ -1,7 +1,6 @@
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/data/cue/slide.dart';
 import 'package:lyric/data/song/extensions.dart';
 import 'package:lyric/services/key/get_transposed.dart';
 import 'package:lyric/ui/song/transpose/widget.dart';
@@ -34,11 +33,16 @@ class SongPage extends ConsumerStatefulWidget {
 class _SongPageState extends ConsumerState<SongPage> {
   @override
   void initState() {
-    detailsSheetScrollController = ScrollController();
+    _detailsSheetScrollController = ScrollController();
+    _transposeOverlayPortalController = OverlayPortalController();
+
     super.initState();
   }
 
-  late final ScrollController detailsSheetScrollController;
+  late final ScrollController _detailsSheetScrollController;
+  late final OverlayPortalController _transposeOverlayPortalController;
+
+  final _transposeOverlayLink = LayerLink();
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +98,7 @@ class _SongPageState extends ConsumerState<SongPage> {
               .changeTo(initialType);
 */
           final viewType = ref.watch(ViewTypeForProvider(song.uuid));
-          final transpose = ref.watch(transposeStateProvider);
+          final transpose = ref.watch(TransposeStateForProvider(song.uuid));
 
           return Scaffold(
             backgroundColor: Theme.of(context).indicatorColor,
@@ -141,19 +145,86 @@ class _SongPageState extends ConsumerState<SongPage> {
                         segmentedButtonHorizontal: isHorizontal,
                         useDropdown: constraints.maxWidth < 400,
                       ),
-                      // TODO handle null keyfield
-                      Text(
-                        getTransposedKey(
-                          song.keyField!,
-                          transpose.semitones,
-                        ).toString(),
-                      ),
-                      Card(
-                        child: Padding(
-                          padding: EdgeInsets.all(5),
-                          child: TransposeControls(),
-                        ),
-                      ),
+                      if (viewType == SongViewType.lyrics) ...[
+                        SizedBox(height: 10),
+                        if (isHorizontal)
+                          Card(
+                            child: Padding(
+                              padding: EdgeInsets.all(5),
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    height: 30,
+                                    child: Row(
+                                      children: [
+                                        if (song.keyField != null)
+                                          Text(
+                                            getTransposedKey(
+                                              song.keyField!,
+                                              transpose.semitones,
+                                            ).toString(),
+                                            style:
+                                                Theme.of(
+                                                  context,
+                                                ).textTheme.bodyLarge,
+                                          ),
+                                        TransposeResetButton(
+                                          song, 
+                                          isHorizontal: isHorizontal,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  TransposeControls(song),
+                                ],
+                              ),
+                            ),
+                          ),
+                        if (!isHorizontal) ...[
+                          Spacer(),
+                          TransposeResetButton(song, isHorizontal: isHorizontal),
+                          CompositedTransformTarget(
+                            link: _transposeOverlayLink,
+                            child: OverlayPortal(
+                              controller: _transposeOverlayPortalController,
+                              overlayChildBuilder:
+                                  (context) => CompositedTransformFollower(
+                                    link: _transposeOverlayLink,
+                                    followerAnchor: Alignment.bottomRight,
+                                    targetAnchor: Alignment.topRight,
+                                    child: Align(
+                                      alignment: Alignment.bottomRight,
+                                      child: Card(
+                                        child: Padding(
+                                          padding: EdgeInsets.all(10),
+                                          child: TransposeControls(song),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              child: FilledButton.tonalIcon(
+                                onPressed: () {
+                                  _transposeOverlayPortalController.toggle();
+                                  setState(() {});
+                                },
+                                label: Text(
+                                  song.keyField != null
+                                      ? getTransposedKey(
+                                        song.keyField!,
+                                        transpose.semitones,
+                                      ).toString()
+                                      : 'Transzponálás',
+                                ),
+                                icon: Icon(
+                                  _transposeOverlayPortalController.isShowing
+                                      ? Icons.close
+                                      : Icons.unfold_more,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
                     ],
                   ),
                 ),
@@ -188,7 +259,7 @@ class _SongPageState extends ConsumerState<SongPage> {
         onPressed:
             () => showDetailsBottomSheet(
               context,
-              detailsSheetScrollController,
+              _detailsSheetScrollController,
               detailsContent,
             ),
       ),

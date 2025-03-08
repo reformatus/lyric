@@ -7,8 +7,6 @@ final GlobalKey<NavigatorState> _baseNavigatorKey = GlobalKey<NavigatorState>(
   debugLabel: 'base',
 );
 
-Map<String, GlobalKey<NavigatorState>> _songNavigatorKeys = {};
-
 final _router = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: '/loading',

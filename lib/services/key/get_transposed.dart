@@ -17,6 +17,7 @@ String? getTransposedChord(String? original, String? fromKey, int semitones) {
   }
 }
 
+// TODO hungarian notation? Handle non-base input pitch?
 KeyField getTransposedKey(KeyField key, int semitones) {
   var transposer = ChordTransposer(notation: NoteNotation.german);
   return KeyField(
