@@ -1,44 +1,49 @@
 import 'package:dart_opensong/dart_opensong.dart' as os;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../services/key/get_transposed.dart';
+import '../../../services/song/from_uuid.dart';
 import '../../../services/song/verse_tag_pretty.dart';
 import '../../common/error.dart';
 import 'package:chord_transposer/chord_transposer.dart';
 
 import '../../../data/song/song.dart';
-import 'state.dart';
+import '../transpose/state.dart';
 
-class LyricsView extends StatelessWidget {
-  LyricsView(this.song, {super.key}) {
-    songKey = song.keyField?.pitch;
-  }
+class LyricsView extends ConsumerWidget {
+  LyricsView(this.song, {super.key});
 
   final Song song;
 
-  late final String? songKey;
-
   final ChordTransposer transposer = ChordTransposer(
-    notation: NoteNotation.germanWithAccidentals,
+    notation: NoteNotation.germanWithAccidentals, // TODO configurable
   );
 
   @override
-  Widget build(BuildContext context) {
-    var openSongContent = song.contentMap['opensong'];
-
-    if (openSongContent == null) {
-      return Center(
-        child: Text('Ehhez az énekhez nincs dalszöveg :('),
-      ); // TODO handle properly
-    }
-
-    var verses = os.getVersesFromString(openSongContent);
+  Widget build(BuildContext context, WidgetRef ref) {
     return LayoutBuilder(
       builder: (context, constraints) {
+        //! Calculate layout
         int crossAxisCount = (constraints.maxWidth ~/ 400).clamp(1, 9999);
         double cardWidth = (constraints.maxWidth / crossAxisCount);
 
         // When scrolling sideways, make sure a bit of the next column is visible
         if (crossAxisCount > 1) cardWidth -= (30 / (crossAxisCount));
+
+        //! Parse OpenSong
+        var openSongContent = song.contentMap['opensong'];
+        if (openSongContent == null) {
+          return Center(
+            child: LErrorCard(
+              type: LErrorType.warning,
+              title: 'A dalhoz nem tartozik dalszöveg!',
+              icon: Icons.error,
+            ),
+          );
+        }
+        var verses = os.getVersesFromString(openSongContent);
+
+        // far future todo Parse ChordPro
 
         return SingleChildScrollView(
           scrollDirection: crossAxisCount > 1 ? Axis.horizontal : Axis.vertical,
@@ -51,7 +56,7 @@ class LyricsView extends StatelessWidget {
                       .map(
                         (e) => SizedBox(
                           width: cardWidth,
-                          child: VerseCard(songKey, e),
+                          child: VerseCard(song.keyField!.pitch, e),
                         ),
                       )
                       .toList(),
@@ -155,8 +160,12 @@ class LyricsSegment extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final transposeAmount = ref.watch(transposeStateProvider);
-    final chord = getTransposedChord(e.chord, songKey, transposeAmount);
+    final transpose = ref.watch(transposeStateProvider);
+    final chord = getTransposedChord(
+      e.chord,
+      songKey,
+      transpose.finalTransposeBy,
+    );
 
     final TextPainter chordPainter = TextPainter(
       text: TextSpan(
@@ -216,21 +225,5 @@ class LyricsSegment extends ConsumerWidget {
         );
       },
     );
-  }
-}
-
-String? getTransposedChord(String? original, String? fromKey, int semitones) {
-  if (original == null) return null;
-  try {
-    var transposer = ChordTransposer(
-      notation: NoteNotation.germanWithAccidentals,
-    );
-    return transposer.chordUp(
-      chord: original,
-      fromKey: fromKey,
-      semitones: semitones,
-    );
-  } catch (e) {
-    return '?';
   }
 }

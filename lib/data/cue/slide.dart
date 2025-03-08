@@ -1,4 +1,7 @@
+import 'package:lyric/data/song/transpose.dart';
+
 import '../../services/song/from_uuid.dart';
+import '../../ui/song/state.dart';
 import '../song/song.dart';
 
 part 'slide_types/song_slide.dart';

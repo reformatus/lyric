@@ -1,7 +1,11 @@
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'lyrics/state.dart';
+import 'package:lyric/data/cue/slide.dart';
+import 'package:lyric/data/song/extensions.dart';
+import 'package:lyric/services/key/get_transposed.dart';
+import 'package:lyric/ui/song/transpose/widget.dart';
+import 'transpose/state.dart';
 import 'lyrics/view.dart';
 import 'sheet/view.dart';
 
@@ -9,20 +13,18 @@ import '../../data/song/song.dart';
 import '../../services/song/from_uuid.dart';
 import '../base/songs/filter/types/field_type.dart';
 import '../common/error.dart';
-
 import 'state.dart';
 
+// far future read from songbank introduction
 const Set<String> fieldsToShowInDetailsSummary = {
   'composer',
   'lyricist',
   'translator',
 };
-
 const Set<String> fieldsToOmitFromDetails = {'lyrics', 'first_line'};
 
 class SongPage extends ConsumerStatefulWidget {
   const SongPage(this.songUuid, {super.key});
-
   final String songUuid;
 
   @override
@@ -37,15 +39,12 @@ class _SongPageState extends ConsumerState<SongPage> {
   }
 
   late final ScrollController detailsSheetScrollController;
-  bool detailsRowShown = true;
 
   @override
   Widget build(BuildContext context) {
     final song = ref.watch(songFromUuidProvider(widget.songUuid));
-    final showLyrics = ref.watch(showLyricsProvider);
-    final transposeAmount = ref.watch(transposeStateProvider);
 
-    final List<Widget> summaryContent = song.when(
+    /*final List<Widget> summaryContent = song.when(
       data: (song) => getDetailsSummaryContent(song),
       loading: () => [],
       error: (_, _) => [],
@@ -55,109 +54,115 @@ class _SongPageState extends ConsumerState<SongPage> {
       data: (song) => getDetailsContent(song, context),
       loading: () => [],
       error: (_, _) => [],
-    );
+    );*/
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        var isHorizontal = constraints.maxHeight < constraints.maxWidth;
-        return Scaffold(
-          backgroundColor: Theme.of(context).indicatorColor,
-          appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () => Navigator.of(context).pop(),
+    return switch (song) {
+      AsyncLoading() => Center(child: CircularProgressIndicator()),
+      AsyncError(:final error, :final stackTrace) => Center(
+        child: LErrorCard(
+          type: LErrorType.error,
+          title: 'Nem sikerült betölteni a dalt :(',
+          message: error.toString(),
+          stack: stackTrace.toString(),
+          icon: Icons.music_note,
+        ),
+      ),
+      AsyncValue(value: null) => Center(
+        child: LErrorCard(
+          type: LErrorType.info,
+          title: 'Úgy tűnik, ez a dal nincs a táradban...',
+          icon: Icons.search_off,
+        ),
+      ),
+      AsyncValue(value: final Song song) => LayoutBuilder(
+        builder: (context, constraints) {
+          var isHorizontal = constraints.maxHeight < constraints.maxWidth;
+          final List<Widget> summaryContent = getDetailsSummaryContent(song);
+          final List<Widget> detailsContent = getDetailsContent(song, context);
+          /* // TODO set initial tab
+          late final SongViewType initialType;
+          if (song.hasSvg) {
+            initialType = SongViewType.svg;
+          } else if (song.hasPdf) {
+            initialType = SongViewType.pdf;
+          } else {
+            initialType = SongViewType.lyrics;
+          }
+
+          ref
+              .read(ViewTypeForProvider(song.uuid).notifier)
+              .changeTo(initialType);
+*/
+          final viewType = ref.watch(ViewTypeForProvider(song.uuid));
+          final transpose = ref.watch(transposeStateProvider);
+
+          return Scaffold(
+            backgroundColor: Theme.of(context).indicatorColor,
+            appBar: AppBar(
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              title: Text(song.contentMap['title'] ?? ''),
+              actions: [
+                if (detailsContent.isNotEmpty && constraints.maxWidth > 500)
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: constraints.maxWidth / 2,
+                    ),
+                    child: detailsButton(
+                      summaryContent,
+                      context,
+                      detailsContent,
+                    ),
+                  ),
+              ],
             ),
-            title: Text(song.value?.contentMap['title'] ?? ''),
-            actions: [
-              if (detailsContent.isNotEmpty && constraints.maxWidth > 500)
-                ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxWidth: constraints.maxWidth / 2,
-                  ),
-                  child: detailsButton(summaryContent, context, detailsContent),
+            body: Flex(
+              direction: isHorizontal ? Axis.horizontal : Axis.vertical,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: switch (viewType) {
+                    SongViewType.svg => SheetView.svg(song),
+                    SongViewType.pdf => SheetView.pdf(song),
+                    SongViewType.lyrics => LyricsView(song),
+                  },
                 ),
-            ],
-          ),
-          body: Flex(
-            direction: isHorizontal ? Axis.horizontal : Axis.vertical,
-            children: [
-              Expanded(
-                child: switch (song) {
-                  AsyncError(:final error, :final stackTrace) => Center(
-                    child: LErrorCard(
-                      type: LErrorType.error,
-                      title: 'Hiba a dal betöltése közben',
-                      message: error.toString(),
-                      stack: stackTrace.toString(),
-                      icon: Icons.error,
-                    ),
-                  ),
-                  AsyncLoading() => const Center(
-                    child: CircularProgressIndicator(value: 0.3),
-                  ),
-                  AsyncValue(:final value!) => Column(
+                Container(
+                  padding: EdgeInsets.all(8),
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  child: Flex(
+                    direction: isHorizontal ? Axis.vertical : Axis.horizontal,
                     children: [
-                      if (detailsContent.isNotEmpty &&
-                          constraints.maxWidth <= 500)
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: detailsButton(
-                            summaryContent,
-                            context,
-                            detailsContent,
-                          ),
+                      ViewChooser(
+                        viewType: viewType,
+                        song: song,
+                        segmentedButtonHorizontal: isHorizontal,
+                        useDropdown: constraints.maxWidth < 400,
+                      ),
+                      // TODO handle null keyfield
+                      Text(
+                        getTransposedKey(
+                          song.keyField!,
+                          transpose.semitones,
+                        ).toString(),
+                      ),
+                      Card(
+                        child: Padding(
+                          padding: EdgeInsets.all(5),
+                          child: TransposeControls(),
                         ),
-                      if (showLyrics)
-                        Expanded(child: LyricsView(value))
-                      else
-                        Expanded(child: Center(child: SheetView(value))),
+                      ),
                     ],
                   ),
-                },
-              ),
-              Container(
-                padding: EdgeInsets.all(8),
-                color: Theme.of(context).scaffoldBackgroundColor,
-                child: Flex(
-                  direction: isHorizontal ? Axis.vertical : Axis.horizontal,
-                  children: [
-                    FilledButton.tonalIcon(
-                      onPressed:
-                          () => ref.read(showLyricsProvider.notifier).toggle(),
-                      label: showLyrics ? Text('Kotta') : Text('Dalszöveg'),
-                      icon: Icon(
-                        showLyrics
-                            ? Icons.music_video
-                            : Icons.description_outlined,
-                      ),
-                    ),
-                    if (showLyrics) ...[
-                      IconButton.filledTonal(
-                        onPressed:
-                            () =>
-                                ref
-                                    .read(transposeStateProvider.notifier)
-                                    .decrement(),
-                        icon: Icon(Icons.arrow_downward),
-                      ),
-                      Text(transposeAmount.toString()),
-                      IconButton.filledTonal(
-                        onPressed:
-                            () =>
-                                ref
-                                    .read(transposeStateProvider.notifier)
-                                    .increment(),
-                        icon: Icon(Icons.arrow_upward),
-                      ),
-                    ],
-                  ],
                 ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+              ],
+            ),
+          );
+        },
+      ),
+    };
   }
 
   Widget detailsButton(
@@ -280,5 +285,113 @@ class _SongPageState extends ConsumerState<SongPage> {
       }
     }
     return detailsContent;
+  }
+}
+
+class ViewChooser extends ConsumerWidget {
+  const ViewChooser({
+    super.key,
+    required this.viewType,
+    required this.song,
+    required this.useDropdown,
+    required this.segmentedButtonHorizontal,
+  });
+
+  final SongViewType viewType;
+  final Song song;
+  final bool useDropdown;
+  final bool segmentedButtonHorizontal;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final List<
+      ({SongViewType value, IconData icon, String label, bool enabled})
+    >
+    viewTypeEntries = [
+      (
+        value: SongViewType.svg,
+        icon: Icons.music_note_outlined,
+        label: 'Kotta',
+        enabled: song.hasSvg,
+      ),
+      (
+        value: SongViewType.pdf,
+        icon: Icons.audio_file_outlined,
+        label: 'PDF',
+        enabled: song.hasPdf,
+      ),
+      (
+        value: SongViewType.lyrics,
+        icon: song.hasChords ? Icons.tag_outlined : Icons.text_snippet_outlined,
+        label: song.hasChords ? 'Akkordok' : 'Dalszöveg',
+        enabled: song.hasLyrics,
+      ),
+    ];
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (!useDropdown) {
+          return SegmentedButton<SongViewType>(
+            selected: {viewType},
+            onSelectionChanged: (viewTypeSet) {
+              ref
+                  .read(ViewTypeForProvider(song.uuid).notifier)
+                  .changeTo(viewTypeSet.first);
+            },
+            direction:
+                segmentedButtonHorizontal ? Axis.vertical : Axis.horizontal,
+            showSelectedIcon: false,
+            multiSelectionEnabled: false,
+            style: ButtonStyle(
+              shape: WidgetStatePropertyAll(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(9)),
+                ),
+              ),
+            ),
+            segments:
+                viewTypeEntries
+                    .map(
+                      (e) => ButtonSegment(
+                        value: e.value,
+                        label: Text(e.label),
+                        icon: Icon(e.icon),
+                        enabled: e.enabled,
+                      ),
+                    )
+                    .toList(),
+          );
+        } else {
+          return DropdownButtonHideUnderline(
+            child: DropdownButton<SongViewType>(
+              value: viewType,
+              onChanged:
+                  (viewType) => ref
+                      .read(ViewTypeForProvider(song.uuid).notifier)
+                      .changeTo(viewType!),
+              items:
+                  viewTypeEntries
+                      .where((e) => e.enabled)
+                      .map(
+                        (e) => DropdownMenuItem(
+                          enabled: e.enabled,
+                          value: e.value,
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(right: 10),
+                                child: Icon(e.icon),
+                              ),
+                              Text(e.label),
+                            ],
+                          ),
+                        ),
+                      )
+                      .toList(),
+            ),
+          );
+        }
+      },
+    );
   }
 }

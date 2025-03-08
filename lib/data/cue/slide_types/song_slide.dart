@@ -1,11 +1,10 @@
 part of '../slide.dart';
 
-// ScriptureSlide impl ..laksdm
-// TextSlide impl. asdd
-
 class SongSlide implements Slide {
   static String slideType = 'song';
   Song song;
+  SongViewType viewType;
+  SongTranspose? transpose;
   // future: List<Verse> verses override
 
   bool contentDifferentFlag = false;
@@ -27,8 +26,12 @@ class SongSlide implements Slide {
   static Future<SongSlide> reviveFromJson(Map json) async {
     var songResult = await getSongForSlideJson(json['song']);
 
-    return SongSlide(songResult.song, json['comment'])
-      ..contentDifferentFlag = songResult.contentDifferentFlag;
+    return SongSlide(
+      songResult.song,
+      viewType: json['viewType'],
+      transpose: json['transpose'],
+      comment: json['comment'],
+    )..contentDifferentFlag = songResult.contentDifferentFlag;
   }
 
   @override
@@ -36,11 +39,13 @@ class SongSlide implements Slide {
     return {
       'slideType': slideType,
       'song': songOfSlideToJson(song),
+      'viewType': viewType.name,
+      'transpose': transpose?.toJson(),
       'comment': comment,
     };
   }
 
-  SongSlide(this.song, [this.comment]);
+  SongSlide(this.song, {required this.viewType, this.transpose, this.comment});
 }
 
 Future<({Song song, bool contentDifferentFlag})> getSongForSlideJson(

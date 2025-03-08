@@ -12,8 +12,9 @@ Future addSongSlideToCueForSongWithUuid({
   final song =
       await (db.select(db.songs)
         ..where((s) => s.uuid.equals(songUuid))).getSingle();
-
+  throw UnimplementedError();
+  /*
   (db.update(db.cues)..where((c) => c.uuid.equals(cue.uuid))).write(
     CuesCompanion(content: Value([...cue.content, SongSlide(song).toJson()])),
-  );
+  );*/
 }

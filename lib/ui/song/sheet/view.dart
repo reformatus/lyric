@@ -1,55 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lyric/ui/song/state.dart';
+import 'package:pdfrx/pdfrx.dart';
 
 import '../../../data/song/song.dart';
 import '../../../services/assets/get_song_asset.dart';
-import '../../../services/bank/bank_of_song.dart';
 import '../../common/error.dart';
 
 class SheetView extends ConsumerWidget {
-  const SheetView(this.song, {super.key});
+  const SheetView.svg(this.song, {super.key}) : _viewType = SongViewType.svg;
+  const SheetView.pdf(this.song, {super.key}) : _viewType = SongViewType.pdf;
 
+  final SongViewType _viewType;
   final Song song;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final bank = ref.watch(bankOfSongProvider(song));
-    switch (bank) {
-      case AsyncLoading():
-        return Center(child: CircularProgressIndicator(value: 0.5));
+    assert(_viewType != SongViewType.lyrics);
+
+    final asset = ref.watch(
+      getSongAssetProvider(song, switch (_viewType) {
+        SongViewType.svg => 'svg',
+        SongViewType.pdf || _ => 'pdf',
+      }),
+    );
+
+    switch (asset) {
       case AsyncError(:final error, :final stackTrace):
         return Center(
           child: LErrorCard(
             type: LErrorType.error,
-            title: 'Nem találjuk az énekhez tartozó énektárat',
+            title: 'Nem sikerült betölteni a kottaképet.',
             message: error.toString(),
             stack: stackTrace.toString(),
             icon: Icons.error,
           ),
         );
-      case AsyncValue(:final value!):
-        final svgAsset = ref.watch(
-          getSongAssetProvider(
-            song,
-            'svg',
-            value.baseUrl.resolve(song.contentMap['svg']!).toString(),
-          ),
-        );
-
-        switch (svgAsset) {
-          case AsyncError(:final error, :final stackTrace):
-            return Center(
-              child: LErrorCard(
-                type: LErrorType.error,
-                title: 'Nem sikerült betölteni a kottaképet.',
-                message: error.toString(),
-                stack: stackTrace.toString(),
-                icon: Icons.error,
-              ),
-            );
-          case AsyncData(value: final assetResult):
-            if (assetResult.data != null) {
+      case AsyncData(value: final assetResult):
+        if (assetResult.data != null) {
+          switch (_viewType) {
+            case SongViewType.svg:
               return InteractiveViewer(
                 maxScale: double.infinity,
                 child: Padding(
@@ -64,13 +55,16 @@ class SheetView extends ConsumerWidget {
                   ),
                 ),
               );
-            } else {
-              print('Progress: ${assetResult.progress}');
-              return CircularProgressIndicator(value: assetResult.progress);
-            }
-          default:
-            return Center(child: CircularProgressIndicator(value: 0.8));
+            case SongViewType.pdf || _:
+              // TODO build out a proper pdf viewer
+              return PdfViewer.data(assetResult.data!, sourceName: song.uuid);
+          }
+        } else {
+          print('Progress: ${assetResult.progress}');
+          return CircularProgressIndicator(value: assetResult.progress);
         }
+      default:
+        return Center(child: CircularProgressIndicator(value: 0.8));
     }
   }
 }

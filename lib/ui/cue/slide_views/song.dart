@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../../data/cue/slide.dart';
 import '../../../main.dart';
+import '../../song/lyrics/view.dart';
 import '../../song/sheet/view.dart';
+import '../../song/state.dart';
 
 class SongSlideTile extends StatelessWidget {
   const SongSlideTile(
@@ -45,6 +47,10 @@ class SongSlideView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SheetView(songSlide.song);
+    return switch (songSlide.viewType) {
+      SongViewType.svg => SheetView.svg(songSlide.song),
+      SongViewType.pdf => SheetView.pdf(songSlide.song),
+      SongViewType.lyrics => LyricsView(songSlide.song),
+    };
   }
 }

@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/services/bank/bank_of_song.dart';
+import 'package:lyric/services/song/from_uuid.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/database.dart';
@@ -17,11 +19,15 @@ Stream<AssetResult> getSongAsset(
   Ref ref,
   Song song,
   String fieldName,
-  String sourceUrl,
+  //int fieldIndex, // TODO handle multi-file fields?
 ) {
-  final controller = StreamController<AssetResult>(sync: true);
+  final controller = StreamController<AssetResult>();
 
   () async {
+    final bank = await ref.watch(bankOfSongProvider(song).future);
+    final String sourceUrl =
+        bank.baseUrl.resolve(song.contentMap[fieldName]!).toString();
+
     final asset =
         await (db.assets.select()..where((a) => a.sourceUrl.equals(sourceUrl)))
             .getSingleOrNull();
