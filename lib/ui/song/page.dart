@@ -2,6 +2,7 @@ import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/data/song/extensions.dart';
+import 'package:lyric/main.dart';
 import 'package:lyric/services/key/get_transposed.dart';
 import 'package:lyric/ui/song/transpose/widget.dart';
 import 'transpose/state.dart';
@@ -48,18 +49,6 @@ class _SongPageState extends ConsumerState<SongPage> {
   Widget build(BuildContext context) {
     final song = ref.watch(songFromUuidProvider(widget.songUuid));
 
-    /*final List<Widget> summaryContent = song.when(
-      data: (song) => getDetailsSummaryContent(song),
-      loading: () => [],
-      error: (_, _) => [],
-    );
-
-    final List<Widget> detailsContent = song.when(
-      data: (song) => getDetailsContent(song, context),
-      loading: () => [],
-      error: (_, _) => [],
-    );*/
-
     return switch (song) {
       AsyncLoading() => Center(child: CircularProgressIndicator()),
       AsyncError(:final error, :final stackTrace) => Center(
@@ -80,7 +69,11 @@ class _SongPageState extends ConsumerState<SongPage> {
       ),
       AsyncValue(value: final Song song) => LayoutBuilder(
         builder: (context, constraints) {
-          var isHorizontal = constraints.maxHeight < constraints.maxWidth;
+          var isDesktop =
+              (constraints.maxHeight < constraints.maxWidth) &&
+              constraints.maxWidth > globals.desktopFromWidth;
+          var isMobile = constraints.maxWidth < 400;
+
           final List<Widget> summaryContent = getDetailsSummaryContent(song);
           final List<Widget> detailsContent = getDetailsContent(song, context);
           /* // TODO set initial tab
@@ -109,10 +102,16 @@ class _SongPageState extends ConsumerState<SongPage> {
               ),
               title: Text(song.contentMap['title'] ?? ''),
               actions: [
-                if (detailsContent.isNotEmpty && constraints.maxWidth > 500)
+                if (isDesktop)
+                  ViewChooser(
+                    viewType: viewType,
+                    song: song,
+                    useDropdown: false,
+                  ),
+                if ((detailsContent.isNotEmpty && !isDesktop) && !isMobile)
                   ConstrainedBox(
                     constraints: BoxConstraints(
-                      maxWidth: constraints.maxWidth / 2,
+                      maxWidth: constraints.maxWidth / 2.5,
                     ),
                     child: detailsButton(
                       summaryContent,
@@ -120,114 +119,145 @@ class _SongPageState extends ConsumerState<SongPage> {
                       detailsContent,
                     ),
                   ),
+                SizedBox(width: 10),
               ],
             ),
             body: Flex(
-              direction: isHorizontal ? Axis.horizontal : Axis.vertical,
+              direction: isDesktop ? Axis.horizontal : Axis.vertical,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Expanded(
+                  flex: 4,
                   child: switch (viewType) {
                     SongViewType.svg => SheetView.svg(song),
                     SongViewType.pdf => SheetView.pdf(song),
                     SongViewType.lyrics => LyricsView(song),
                   },
                 ),
-                Container(
-                  padding: EdgeInsets.all(8),
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  child: Flex(
-                    direction: isHorizontal ? Axis.vertical : Axis.horizontal,
-                    children: [
-                      ViewChooser(
-                        viewType: viewType,
-                        song: song,
-                        segmentedButtonHorizontal: isHorizontal,
-                        useDropdown: constraints.maxWidth < 400,
-                      ),
-                      if (viewType == SongViewType.lyrics) ...[
-                        SizedBox(height: 10),
-                        if (isHorizontal)
-                          Card(
-                            child: Padding(
-                              padding: EdgeInsets.all(5),
-                              child: Column(
-                                children: [
-                                  SizedBox(
-                                    height: 30,
-                                    child: Row(
+                if (isMobile)
+                  detailsButton(summaryContent, context, detailsContent),
+                if (isDesktop)
+                  SizedBox(
+                    width: (constraints.maxWidth / 5).clamp(200, 350),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (viewType == SongViewType.lyrics &&
+                                song.hasChords) ...[
+                              ConstrainedBox(
+                                constraints: BoxConstraints(maxWidth: 200),
+                                child: Card(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(8),
+                                    child: Column(
                                       children: [
-                                        if (song.keyField != null)
-                                          Text(
-                                            getTransposedKey(
-                                              song.keyField!,
-                                              transpose.semitones,
-                                            ).toString(),
-                                            style:
-                                                Theme.of(
-                                                  context,
-                                                ).textTheme.bodyLarge,
+                                        SizedBox(
+                                          height: 30,
+                                          child: Row(
+                                            children: [
+                                              if (song.keyField != null)
+                                                Text(
+                                                  getTransposedKey(
+                                                    song.keyField!,
+                                                    transpose.semitones,
+                                                  ).toString(),
+                                                  style:
+                                                      Theme.of(
+                                                        context,
+                                                      ).textTheme.bodyLarge,
+                                                ),
+                                              TransposeResetButton(
+                                                song,
+                                                isHorizontal: isDesktop,
+                                              ),
+                                            ],
                                           ),
-                                        TransposeResetButton(
-                                          song, 
-                                          isHorizontal: isHorizontal,
                                         ),
+                                        TransposeControls(song),
                                       ],
                                     ),
                                   ),
-                                  TransposeControls(song),
-                                ],
+                                ),
                               ),
-                            ),
+                              Divider(),
+                            ],
+                            ...detailsContent,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                if (!isDesktop)
+                  SizedBox(
+                    height: 50,
+                    child: Container(
+                      padding: EdgeInsets.all(8),
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      child: Row(
+                        children: [
+                          ViewChooser(
+                            viewType: viewType,
+                            song: song,
+                            useDropdown: constraints.maxWidth < 550,
                           ),
-                        if (!isHorizontal) ...[
-                          Spacer(),
-                          TransposeResetButton(song, isHorizontal: isHorizontal),
-                          CompositedTransformTarget(
-                            link: _transposeOverlayLink,
-                            child: OverlayPortal(
-                              controller: _transposeOverlayPortalController,
-                              overlayChildBuilder:
-                                  (context) => CompositedTransformFollower(
-                                    link: _transposeOverlayLink,
-                                    followerAnchor: Alignment.bottomRight,
-                                    targetAnchor: Alignment.topRight,
-                                    child: Align(
-                                      alignment: Alignment.bottomRight,
-                                      child: Card(
-                                        child: Padding(
-                                          padding: EdgeInsets.all(10),
-                                          child: TransposeControls(song),
+                          if (viewType == SongViewType.lyrics &&
+                              song.hasChords) ...[
+                            Spacer(),
+                            TransposeResetButton(song, isHorizontal: isDesktop),
+                            CompositedTransformTarget(
+                              link: _transposeOverlayLink,
+                              child: OverlayPortal(
+                                controller: _transposeOverlayPortalController,
+                                overlayChildBuilder:
+                                    (context) => CompositedTransformFollower(
+                                      link: _transposeOverlayLink,
+                                      followerAnchor: Alignment.bottomRight,
+                                      targetAnchor: Alignment.topRight,
+                                      child: Align(
+                                        alignment: Alignment.bottomRight,
+                                        child: Card(
+                                          child: Padding(
+                                            padding: EdgeInsets.all(10),
+                                            child: ConstrainedBox(
+                                              constraints: BoxConstraints(
+                                                maxWidth: 150,
+                                              ),
+                                              child: TransposeControls(song),
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
+                                child: FilledButton.tonalIcon(
+                                  onPressed: () {
+                                    _transposeOverlayPortalController.toggle();
+                                    setState(() {});
+                                  },
+                                  label: Text(
+                                    song.keyField != null
+                                        ? getTransposedKey(
+                                          song.keyField!,
+                                          transpose.semitones,
+                                        ).toString()
+                                        : 'Transzponálás',
                                   ),
-                              child: FilledButton.tonalIcon(
-                                onPressed: () {
-                                  _transposeOverlayPortalController.toggle();
-                                  setState(() {});
-                                },
-                                label: Text(
-                                  song.keyField != null
-                                      ? getTransposedKey(
-                                        song.keyField!,
-                                        transpose.semitones,
-                                      ).toString()
-                                      : 'Transzponálás',
-                                ),
-                                icon: Icon(
-                                  _transposeOverlayPortalController.isShowing
-                                      ? Icons.close
-                                      : Icons.unfold_more,
+                                  icon: Icon(
+                                    _transposeOverlayPortalController.isShowing
+                                        ? Icons.close
+                                        : Icons.unfold_more,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
+                          ],
                         ],
-                      ],
-                    ],
+                      ),
+                    ),
                   ),
-                ),
               ],
             ),
           );
@@ -365,13 +395,11 @@ class ViewChooser extends ConsumerWidget {
     required this.viewType,
     required this.song,
     required this.useDropdown,
-    required this.segmentedButtonHorizontal,
   });
 
   final SongViewType viewType;
   final Song song;
   final bool useDropdown;
-  final bool segmentedButtonHorizontal;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -409,8 +437,6 @@ class ViewChooser extends ConsumerWidget {
                   .read(ViewTypeForProvider(song.uuid).notifier)
                   .changeTo(viewTypeSet.first);
             },
-            direction:
-                segmentedButtonHorizontal ? Axis.vertical : Axis.horizontal,
             showSelectedIcon: false,
             multiSelectionEnabled: false,
             style: ButtonStyle(
@@ -428,6 +454,7 @@ class ViewChooser extends ConsumerWidget {
                         label: Text(e.label),
                         icon: Icon(e.icon),
                         enabled: e.enabled,
+                        tooltip: !e.enabled ? 'Nem elérhető' : null,
                       ),
                     )
                     .toList(),
