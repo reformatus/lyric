@@ -76,22 +76,16 @@ class _SongPageState extends ConsumerState<SongPage> {
 
           final List<Widget> summaryContent = getDetailsSummaryContent(song);
           final List<Widget> detailsContent = getDetailsContent(song, context);
-          /* // TODO set initial tab
-          late final SongViewType initialType;
-          if (song.hasSvg) {
-            initialType = SongViewType.svg;
-          } else if (song.hasPdf) {
-            initialType = SongViewType.pdf;
-          } else {
-            initialType = SongViewType.lyrics;
-          }
 
-          ref
-              .read(ViewTypeForProvider(song.uuid).notifier)
-              .changeTo(initialType);
-*/
           final viewType = ref.watch(ViewTypeForProvider(song.uuid));
           final transpose = ref.watch(TransposeStateForProvider(song.uuid));
+
+          if (viewType == null) {
+            ref
+                .read(viewTypeForProvider(song.uuid).notifier)
+                .setDefaultFor(song);
+            return Center(child: CircularProgressIndicator());
+          }
 
           return Scaffold(
             backgroundColor: Theme.of(context).indicatorColor,
