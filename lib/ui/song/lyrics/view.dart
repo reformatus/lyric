@@ -23,7 +23,7 @@ class LyricsView extends ConsumerWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         //! Calculate layout
-        int crossAxisCount = (constraints.maxWidth ~/ 400).clamp(1, 9999);
+        int crossAxisCount = (constraints.maxWidth ~/ 350).clamp(1, 9999);
         double cardWidth = (constraints.maxWidth / crossAxisCount);
 
         // When scrolling sideways, make sure a bit of the next column is visible
