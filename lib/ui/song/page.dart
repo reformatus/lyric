@@ -21,7 +21,7 @@ const Set<String> fieldsToShowInDetailsSummary = {
   'lyricist',
   'translator',
 };
-const Set<String> fieldsToOmitFromDetails = {'lyrics', 'first_line'};
+const Set<String> fieldsToOmitFromDetails = {'tite', 'opensong', 'first_line'};
 
 class SongPage extends ConsumerStatefulWidget {
   const SongPage(this.songUuid, {super.key});

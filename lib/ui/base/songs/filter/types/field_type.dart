@@ -15,7 +15,7 @@ const Map<String, Map<String, dynamic>> songFieldsMap = {
     'type': 'searchable',
     'icon': Icons.short_text,
   },
-  'lyrics': {
+  'opensong': {
     'title_hu': 'Dalszöveg',
     'type': 'searchable',
     'icon': Icons.text_snippet,

@@ -9,7 +9,7 @@ class Song extends Insertable<Song> {
   final String uuid;
   final int? sourceBankId; // todo store bank uuid (planned) instead
   final String title;
-  final String lyrics;
+  final String opensong;
   final KeyField? keyField;
   final String? composer;
   final String? lyricist;
@@ -29,7 +29,7 @@ class Song extends Insertable<Song> {
       return Song(
         uuid: json['uuid'],
         title: json['title'],
-        lyrics: json['lyrics'],
+        opensong: json['opensong'],
         keyField: KeyField.fromString(json['key']),
         contentMap: json.map((key, value) => MapEntry(key, value.toString())),
         sourceBankId: sourceBank?.id,
@@ -47,7 +47,7 @@ class Song extends Insertable<Song> {
   Song({
     required this.uuid,
     required this.title,
-    required this.lyrics,
+    required this.opensong,
     required this.keyField,
     required this.contentMap,
     this.sourceBankId,
@@ -67,7 +67,7 @@ class Song extends Insertable<Song> {
       sourceBankId: Value(sourceBankId),
       contentMap: Value(contentMap),
       title: Value(title),
-      lyrics: Value(lyrics),
+      opensong: Value(opensong),
       composer: Value(composer),
       lyricist: Value(lyricist),
       translator: Value(translator),
@@ -77,7 +77,7 @@ class Song extends Insertable<Song> {
   }
 }
 
-const List<String> mandatoryFields = ['uuid', 'title', 'lyrics'];
+const List<String> mandatoryFields = ['uuid', 'title', 'opensong'];
 
 @TableIndex(name: 'songs_uuid', columns: {#uuid}, unique: true)
 @UseRowClass(Song)
@@ -87,7 +87,7 @@ class Songs extends Table {
   IntColumn get sourceBankId => integer().nullable().references(Banks, #id)();
   TextColumn get contentMap => text().map(const SongContentConverter())();
   TextColumn get title => text()();
-  TextColumn get lyrics => text()();
+  TextColumn get opensong => text()();
   TextColumn get composer => text().nullable()();
   TextColumn get lyricist => text().nullable()();
   TextColumn get translator => text().nullable()();

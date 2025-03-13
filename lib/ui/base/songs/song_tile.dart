@@ -25,9 +25,9 @@ class LSongResultTile extends StatelessWidget {
       try {
         firstLine =
             jsonDecode(songsFt.contentMap)['first_line'] ??
-            songsFt.lyrics.substring(songsFt.lyrics.indexOf('\n'));
+            songsFt.opensong.substring(songsFt.opensong.indexOf('\n'));
       } catch (_) {
-        firstLine = songsFt.lyrics;
+        firstLine = songsFt.opensong;
       }
       return ListTile(
         // far future todo dense on desktop (maybe even table?)
@@ -122,8 +122,8 @@ class LSongResultTile extends StatelessWidget {
           ),
         ),
         subtitle:
-            hasMatch(match.matchLyrics)
-                ? trailingPart(match.matchLyrics, context)
+            hasMatch(match.matchOpensong)
+                ? trailingPart(match.matchOpensong, context)
                 : null,
         trailing: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
