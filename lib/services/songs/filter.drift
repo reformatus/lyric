@@ -1,18 +1,18 @@
 import '../../data/song/song.drift';
 import '../../data/song/song.dart';
+import 'filter.dart';
 
 songFulltextSearch(:match_string AS TEXT):
   SELECT
-      bm25(songs_fts, 0.0, 0.0, 10.0, 0.5, 5.0, 5.0, 2.0, 0.0, 0.0) AS rank
-      ,uuid
-      ,source_bank_id
-      ,key_field
-      ,snippet(songs_fts, 2, '<?', '?>', '...', 30) AS match_title
-      ,snippet(songs_fts, 3, '<?', '?>', '...', 40) AS match_opensong
-      ,snippet(songs_fts, 4, '<?', '?>', '...', 15) AS match_composer
-      ,snippet(songs_fts, 5, '<?', '?>', '...', 15) AS match_lyricist
-      ,snippet(songs_fts, 6, '<?', '?>', '...', 15) AS match_translator
+      songs.** AS song
+      ,bm25(songs_fts, 10.0, 0.5, 5.0, 5.0, 2.0) AS rank
+      ,snippet(songs_fts, 0, '<?', '?>', '...', 30) AS match_title
+      ,snippet(songs_fts, 1, '<?', '?>', '...', 40) AS match_opensong
+      ,snippet(songs_fts, 2, '<?', '?>', '...', 15) AS match_composer
+      ,snippet(songs_fts, 3, '<?', '?>', '...', 15) AS match_lyricist
+      ,snippet(songs_fts, 4, '<?', '?>', '...', 15) AS match_translator
     FROM songs_fts
+    INNER JOIN songs ON songs_fts.rowid = songs.id
     WHERE songs_fts MATCH :match_string
     AND (
       $filter

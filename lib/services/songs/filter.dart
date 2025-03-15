@@ -102,11 +102,11 @@ Stream<List<SongResult>> filteredSongs(Ref ref) {
   String ftsMatchString = '{${searchFields.join(' ')}} : $searchString';
   print(ftsMatchString);
 
-  Expression<bool> filterExpression(SongsFts songsFts) {
+  Expression<bool> filterExpression(Songs songs) {
     return Expression.and(
       filters.entries
           .map((entry) {
-            final fieldData = songsFts.contentMap.jsonExtract<String>(
+            final fieldData = songs.contentMap.jsonExtract<String>(
               '\$.${entry.key}',
             );
             return Expression.or(
@@ -120,20 +120,18 @@ Stream<List<SongResult>> filteredSongs(Ref ref) {
                   if (keyFilters.pitches.isNotEmpty)
                     Expression.or(
                       keyFilters.pitches.map(
-                        (e) => songsFts.keyField.like('$e-%'),
+                        (e) => songs.keyField.like('$e-%'),
                       ),
                     ),
                   if (keyFilters.modes.isNotEmpty)
                     Expression.or(
-                      keyFilters.modes.map(
-                        (e) => songsFts.keyField.like('%-$e'),
-                      ),
+                      keyFilters.modes.map((e) => songs.keyField.like('%-$e')),
                     ),
                 ]),
               if (keyFilters.keys.isNotEmpty)
                 Expression.or(
                   keyFilters.keys.map(
-                    (e) => songsFts.keyField.equals(e.toString()),
+                    (e) => songs.keyField.equals(e.toString()),
                   ),
                 ),
             ], ifEmpty: Constant(true)),
@@ -142,36 +140,26 @@ Stream<List<SongResult>> filteredSongs(Ref ref) {
   }
 
   if (searchString.isEmpty) {
-    return ((db.select(db.songsFts)
-          ..where((songsFts) => filterExpression(songsFts))).watch())
-        .map(
-          (songsFtList) =>
-              songsFtList
-                  .map((songsFt) => SongResult(songsFt: songsFt))
-                  .toList(),
-        );
+    return ((db.select(db.songs)
+          ..where((songs) => filterExpression(songs))).watch())
+        .map((songsList) => songsList.map((song) => SongResult(song)).toList());
   } else {
-    return (db
-            .songFulltextSearch(
-              ftsMatchString,
-              (songsFts) => filterExpression(songsFts),
-            )
-            .watch())
+    return db
+        .songFulltextSearch(
+          ftsMatchString,
+          (_, songs) => filterExpression(songs),
+        )
+        .watch()
         .map(
-          (matchList) =>
-              matchList.map((match) => SongResult(match: match)).toList(),
+          (results) =>
+              results.map((result) => SongResult(result.song, result)).toList(),
         );
   }
 }
 
 class SongResult {
-  final SongsFt? songsFt;
-  final SongFulltextSearchResult? match;
+  final Song song;
+  final SongFulltextSearchResult? result;
 
-  SongResult({this.songsFt, this.match}) {
-    assert(
-      songsFt != null || match != null,
-      'Either SongFt (normally) or SongFulltextSearchResult (when using FTS search) should be returned!',
-    );
-  }
+  SongResult(this.song, [this.result]);
 }

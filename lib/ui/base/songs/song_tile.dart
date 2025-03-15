@@ -1,13 +1,11 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../data/cue/cue.dart';
 import '../../../data/database.dart';
+import '../../../data/song/song.dart';
 import '../../../services/cue/slide/song_slide.dart';
 import '../../../services/songs/filter.dart';
-import '../../common/error.dart';
 
 class LSongResultTile extends StatelessWidget {
   const LSongResultTile(this.songResult, {this.addingToCue, super.key});
@@ -17,38 +15,38 @@ class LSongResultTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final SongsFt? songsFt = songResult.songsFt;
-    final SongFulltextSearchResult? match = songResult.match;
+    final Song song = songResult.song;
+    final SongFulltextSearchResult? result = songResult.result;
 
-    if (songsFt != null) {
+    if (result == null) {
       String firstLine = "";
       try {
         firstLine =
-            jsonDecode(songsFt.contentMap)['first_line'] ??
-            songsFt.opensong.substring(songsFt.opensong.indexOf('\n'));
+            song.contentMap['first_line'] ??
+            song.opensong.substring(song.opensong.indexOf('\n'));
       } catch (_) {
-        firstLine = songsFt.opensong;
+        firstLine = song.opensong;
       }
       return ListTile(
         // far future todo dense on desktop (maybe even table?)
         onTap:
             addingToCue == null
-                ? () => context.push('/song/${songsFt.uuid}')
+                ? () => context.push('/song/${song.uuid}')
                 : null,
-        title: Text(songsFt.title),
+        title: Text(song.title),
         leading:
             addingToCue != null
                 ? IconButton.filledTonal(
                   onPressed:
                       () => addSongSlideToCueForSongWithUuid(
                         cue: addingToCue!,
-                        songUuid: songsFt.uuid,
+                        songUuid: song.uuid,
                       ),
                   icon: Icon(Icons.add),
                 )
                 : null,
         subtitle:
-            !firstLine.startsWith(songsFt.title)
+            !firstLine.startsWith(song.title)
                 ? Text(
                   firstLine,
                   maxLines: 1,
@@ -59,7 +57,7 @@ class LSongResultTile extends StatelessWidget {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(songsFt.keyField.toString()),
+            Text(song.keyField.toString()),
             SizedBox(width: 5),
             SizedBox(
               width: 40,
@@ -92,11 +90,11 @@ class LSongResultTile extends StatelessWidget {
           ],
         ),
       );
-    } else if (match != null) {
+    } else {
       return ListTile(
         onTap:
             addingToCue == null
-                ? () => context.push('/song/${match.uuid}')
+                ? () => context.push('/song/${song.uuid}')
                 : null,
         leading:
             addingToCue != null
@@ -104,7 +102,7 @@ class LSongResultTile extends StatelessWidget {
                   onPressed:
                       () => addSongSlideToCueForSongWithUuid(
                         cue: addingToCue!,
-                        songUuid: match.uuid,
+                        songUuid: song.uuid,
                       ),
                   icon: Icon(Icons.add),
                 )
@@ -112,7 +110,7 @@ class LSongResultTile extends StatelessWidget {
         title: RichText(
           text: TextSpan(
             children: spansFromSnippet(
-              match.matchTitle,
+              result.matchTitle,
               normalStyle: Theme.of(context).textTheme.bodyLarge!,
               highlightStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
                 fontWeight: FontWeight.bold,
@@ -122,29 +120,21 @@ class LSongResultTile extends StatelessWidget {
           ),
         ),
         subtitle:
-            hasMatch(match.matchOpensong)
-                ? trailingPart(match.matchOpensong, context)
+            hasMatch(result.matchOpensong)
+                ? trailingPart(result.matchOpensong, context)
                 : null,
         trailing: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (hasMatch(match.matchComposer))
-              trailingPart(match.matchComposer, context),
-            if (hasMatch(match.matchLyricist))
-              trailingPart(match.matchLyricist, context),
-            if (hasMatch(match.matchTranslator))
-              trailingPart(match.matchTranslator, context),
+            if (hasMatch(result.matchComposer))
+              trailingPart(result.matchComposer, context),
+            if (hasMatch(result.matchLyricist))
+              trailingPart(result.matchLyricist, context),
+            if (hasMatch(result.matchTranslator))
+              trailingPart(result.matchTranslator, context),
           ],
         ),
-      );
-    } else {
-      return LErrorCard(
-        type: LErrorType.warning,
-        title: 'Itt egy dalnak kéne lennie',
-        message: "Se a 'match', se a 'songsFt' nem volt kitöltve",
-        stack: 'ui/base/songs/song_tile:70',
-        icon: Icons.music_note,
       );
     }
   }
