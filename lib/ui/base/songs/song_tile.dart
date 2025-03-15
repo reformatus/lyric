@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lyric/data/song/extensions.dart';
 
 import '../../../data/cue/cue.dart';
 import '../../../data/database.dart';
@@ -18,142 +19,143 @@ class LSongResultTile extends StatelessWidget {
     final Song song = songResult.song;
     final SongFulltextSearchResult? result = songResult.result;
 
-    if (result == null) {
-      String firstLine = "";
-      try {
-        firstLine =
-            song.contentMap['first_line'] ??
-            song.opensong.substring(song.opensong.indexOf('\n'));
-      } catch (_) {
-        firstLine = song.opensong;
+    String firstLine = "";
+    try {
+      firstLine = song.contentMap['first_line'] ?? "";
+      if (firstLine.isEmpty) {
+        song.opensong.substring(song.opensong.indexOf('\n'));
       }
-      return ListTile(
-        // far future todo dense on desktop (maybe even table?)
-        onTap:
-            addingToCue == null
-                ? () => context.push('/song/${song.uuid}')
-                : null,
-        title: Text(song.title),
-        leading:
-            addingToCue != null
-                ? IconButton.filledTonal(
-                  onPressed:
-                      () => addSongSlideToCueForSongWithUuid(
-                        cue: addingToCue!,
-                        songUuid: song.uuid,
-                      ),
-                  icon: Icon(Icons.add),
-                )
-                : null,
-        subtitle:
-            !firstLine.startsWith(song.title)
-                ? Text(
-                  firstLine,
-                  maxLines: 1,
-                  softWrap: false,
-                  overflow: TextOverflow.fade,
-                )
-                : null,
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(song.keyField.toString()),
-            SizedBox(width: 5),
-            SizedBox(
-              width: 40,
-              child: Wrap(
+    } catch (_) {
+      firstLine = song.opensong;
+    }
+    return ListTile(
+      // far future todo dense on desktop (maybe even table?)
+      onTap:
+          addingToCue == null ? () => context.push('/song/${song.uuid}') : null,
+      title: RichText(
+        text: TextSpan(
+          children: spansFromSnippet(
+            result?.matchTitle ?? song.title,
+            normalStyle: Theme.of(context).textTheme.bodyLarge!,
+            highlightStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+        ),
+      ),
+      leading:
+          addingToCue != null
+              ? IconButton.filledTonal(
+                onPressed:
+                    () => addSongSlideToCueForSongWithUuid(
+                      cue: addingToCue!,
+                      songUuid: song.uuid,
+                    ),
+                icon: Icon(Icons.add),
+              )
+              : null,
+      subtitle:
+          result == null
+              ? firstLine.startsWith(song.title) || firstLine.isEmpty
+                  ? null
+                  : Text(
+                    firstLine,
+                    maxLines: 1,
+                    softWrap: false,
+                    overflow: TextOverflow.fade,
+                  )
+              : Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // TODO implement
-                  Icon(
-                    Icons.music_note_outlined,
-                    color: Theme.of(context).disabledColor,
-                    size: 20,
-                  ),
-                  Icon(
-                    Icons.audio_file_outlined,
-                    color: Theme.of(context).disabledColor,
-                    size: 20,
-                  ),
-                  Icon(
-                    Icons.text_snippet_outlined,
-                    color: Theme.of(context).disabledColor,
-                    size: 20,
-                  ),
-                  Icon(
-                    Icons.tag_outlined,
-                    color: Theme.of(context).disabledColor,
-                    size: 20,
-                  ),
+                  if (hasMatch(result.matchOpensong))
+                    contentResultRow(
+                      context,
+                      Icons.text_snippet,
+                      result.matchOpensong,
+                    ),
+                  if (hasMatch(result.matchComposer))
+                    contentResultRow(
+                      context,
+                      Icons.music_note,
+                      result.matchComposer,
+                    ),
+                  if (hasMatch(result.matchLyricist))
+                    contentResultRow(context, Icons.edit, result.matchLyricist),
+                  if (hasMatch(result.matchTranslator))
+                    contentResultRow(
+                      context,
+                      Icons.translate,
+                      result.matchTranslator,
+                    ),
                 ],
               ),
-            ),
-          ],
-        ),
-      );
-    } else {
-      return ListTile(
-        onTap:
-            addingToCue == null
-                ? () => context.push('/song/${song.uuid}')
-                : null,
-        leading:
-            addingToCue != null
-                ? IconButton.filledTonal(
-                  onPressed:
-                      () => addSongSlideToCueForSongWithUuid(
-                        cue: addingToCue!,
-                        songUuid: song.uuid,
-                      ),
-                  icon: Icon(Icons.add),
-                )
-                : null,
-        title: RichText(
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(song.keyField.toString()),
+          SizedBox(width: 10),
+          SongFeatures(song),
+        ],
+      ),
+    );
+  }
+
+  Row contentResultRow(
+    BuildContext context,
+    IconData iconData,
+    String? matchString,
+  ) {
+    return Row(
+      children: [
+        Icon(iconData, size: 18),
+        SizedBox(width: 5),
+        RichText(
           text: TextSpan(
             children: spansFromSnippet(
-              result.matchTitle,
-              normalStyle: Theme.of(context).textTheme.bodyLarge!,
-              highlightStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
+              matchString ?? "",
+              normalStyle: Theme.of(context).textTheme.bodySmall!,
+              highlightStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).colorScheme.primary,
               ),
             ),
           ),
+          maxLines: 1,
+          softWrap: false,
+          overflow: TextOverflow.fade,
         ),
-        subtitle:
-            hasMatch(result.matchOpensong)
-                ? trailingPart(result.matchOpensong, context)
-                : null,
-        trailing: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (hasMatch(result.matchComposer))
-              trailingPart(result.matchComposer, context),
-            if (hasMatch(result.matchLyricist))
-              trailingPart(result.matchLyricist, context),
-            if (hasMatch(result.matchTranslator))
-              trailingPart(result.matchTranslator, context),
-          ],
-        ),
-      );
-    }
+      ],
+    );
+  }
+}
+
+class SongFeatures extends StatelessWidget {
+  const SongFeatures(this.song, {super.key});
+
+  final Song song;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 36,
+      child: Wrap(
+        children: [
+          indicatorIcon(context, Icons.music_note_outlined, song.hasSvg),
+          indicatorIcon(context, Icons.audio_file_outlined, song.hasPdf),
+          indicatorIcon(context, Icons.text_snippet_outlined, song.hasLyrics),
+          indicatorIcon(context, Icons.tag_outlined, song.hasChords),
+        ],
+      ),
+    );
   }
 
-  RichText trailingPart(String? matchString, BuildContext context) {
-    return RichText(
-      text: TextSpan(
-        children: spansFromSnippet(
-          matchString ?? "",
-          normalStyle: Theme.of(context).textTheme.bodySmall!,
-          highlightStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
-      ),
-      maxLines: 1,
-      softWrap: false,
-      overflow: TextOverflow.fade,
+  Widget indicatorIcon(BuildContext context, IconData iconData, bool active) {
+    return Icon(
+      iconData,
+      color: active ? null : Theme.of(context).disabledColor,
+      size: 18,
     );
   }
 }
