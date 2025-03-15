@@ -269,7 +269,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                       double.infinity,
                     ),
                     child: Scaffold(
-                      backgroundColor: Theme.of(context).indicatorColor,
+                      backgroundColor: Theme.of(context).colorScheme.surface,
                       appBar: AppBar(
                         title: FiltersTitle(
                           filterState: filterState,
@@ -278,7 +278,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                         automaticallyImplyLeading: false,
                         backgroundColor:
                             filterState.isEmpty && keyFilterState.isEmpty
-                                ? Theme.of(context).indicatorColor
+                                ? Theme.of(context).colorScheme.surface
                                 : Theme.of(
                                   context,
                                 ).colorScheme.secondaryContainer,

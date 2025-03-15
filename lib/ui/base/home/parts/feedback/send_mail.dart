@@ -68,6 +68,4 @@ ${encoder.convert(platformInfo)}
   );
 
   launchUrl(Uri.parse(mail.toString()));
-
-  throw UnimplementedError();
 }

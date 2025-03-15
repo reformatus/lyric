@@ -56,8 +56,20 @@ class SheetView extends ConsumerWidget {
                 ),
               );
             case SongViewType.pdf || _:
-              // TODO build out a proper pdf viewer
-              return PdfViewer.data(assetResult.data!, sourceName: song.uuid);
+              return PdfViewer.data(
+                assetResult.data!,
+                sourceName: song.uuid,
+                params: PdfViewerParams(
+                  backgroundColor: Theme.of(context).canvasColor,
+                  loadingBannerBuilder:
+                      (_, _, _) => Center(child: CircularProgressIndicator()),
+                  pageDropShadow: BoxShadow(
+                    color: Theme.of(context).shadowColor.withAlpha(30),
+                    blurRadius: 30,
+                  ),
+                  scrollByMouseWheel: null,
+                ),
+              );
           }
         } else {
           print('Progress: ${assetResult.progress}');

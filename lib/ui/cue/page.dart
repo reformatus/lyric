@@ -93,7 +93,7 @@ class _CuePageState extends ConsumerState<CuePage> {
                         value != null
                             ? ListTileTheme(
                               selectedTileColor:
-                                  Theme.of(context).indicatorColor,
+                                  Theme.of(context).colorScheme.surface,
                               child: ReorderableListView(
                                 onReorder: (from, to) {
                                   setState(() {
@@ -223,7 +223,7 @@ class _CuePageState extends ConsumerState<CuePage> {
                 Expanded(
                   flex: 2,
                   child: Container(
-                    color: Theme.of(context).indicatorColor,
+                    color: Theme.of(context).colorScheme.surface,
                     child: Column(
                       children: [
                         Container(
