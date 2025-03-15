@@ -70,6 +70,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
     final songResults = ref.watch(filteredSongsProvider);
     final filterState = ref.watch(multiselectTagsFilterStateProvider);
     final keyFilterState = ref.watch(keyFilterStateProvider);
+    final searchString = ref.watch(searchStringStateProvider);
 
     return Stack(
       children: [
@@ -245,6 +246,17 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                                   ? const Center(
                                     child: CircularProgressIndicator(),
                                   )
+                                  : searchString.isNotEmpty &&
+                                      searchString.length < 3
+                                  ? CenteredHint(
+                                    'Írj be legalább három betűt a kereséshez.',
+                                    Icons.search,
+                                  )
+                                  : value.isEmpty
+                                  ? CenteredHint(
+                                    'Nincs találat :(',
+                                    Icons.search_off,
+                                  )
                                   : ListView.separated(
                                     itemBuilder: (BuildContext context, int i) {
                                       return LSongResultTile(
@@ -309,6 +321,22 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                   : HitTestBehavior.deferToChild,
         ),
       ],
+    );
+  }
+}
+
+class CenteredHint extends StatelessWidget {
+  const CenteredHint(this.title, this.iconData, {super.key});
+
+  final String title;
+  final IconData iconData;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: IntrinsicWidth(
+        child: ListTile(leading: Icon(iconData), title: Text(title)),
+      ),
     );
   }
 }
