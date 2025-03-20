@@ -1,3 +1,6 @@
+// TODO remove ignore
+// ignore_for_file: unused_import, unused_element
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -65,6 +68,14 @@ class _CuePageState extends ConsumerState<CuePage> {
       setState(() => selectedSlideOrIsAdding = -1);
     }
 
+    return Scaffold(
+      appBar: AppBar(),
+      body: CenteredHint(
+        'A listák hamarosan visszatérnek...',
+        Icons.construction,
+      ),
+    );
+    /*
     return LayoutBuilder(
       builder: (context, constraints) {
         return SafeArea(
@@ -320,7 +331,7 @@ class _CuePageState extends ConsumerState<CuePage> {
           ),
         );
       },
-    );
+    );*/
   }
 }
 
