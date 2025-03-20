@@ -1,3 +1,4 @@
+import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,11 +7,24 @@ import 'package:lyric/main.dart';
 import 'package:lyric/ui/base/songs/page.dart';
 import 'package:logging/logging.dart';
 
-class LogViewDialog extends ConsumerWidget {
+class LogViewDialog extends ConsumerStatefulWidget {
   const LogViewDialog({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<LogViewDialog> createState() => _LogViewDialogState();
+}
+
+class _LogViewDialogState extends ConsumerState<LogViewDialog> {
+  late final ScrollController scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    scrollController = ScrollController();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final messages = ref.watch(logMessagesProvider);
     // Needs to take all types into account, so not using the existing provider
     final unreadCount = messages.where((e) => !e.isRead).length;
@@ -39,14 +53,23 @@ class LogViewDialog extends ConsumerWidget {
                       Icons.mark_chat_read_outlined,
                     ),
                   )
-                  : ListView.builder(
-                    shrinkWrap: true,
-                    reverse: true,
-                    itemBuilder:
-                        (context, i) => LogMessageCard(
-                          message: messages[messages.length - 1 - i],
-                        ),
-                    itemCount: messages.length,
+                  : Padding(
+                    padding: EdgeInsets.only(
+                      top: 4,
+                      bottom: unreadCount > 0 ? 65 : 4,
+                    ),
+                    child: FadingEdgeScrollView.fromScrollView(
+                      child: ListView.builder(
+                        controller: scrollController,
+                        shrinkWrap: true,
+                        reverse: true,
+                        itemBuilder:
+                            (context, i) => LogMessageCard(
+                              message: messages[messages.length - 1 - i],
+                            ),
+                        itemCount: messages.length,
+                      ),
+                    ),
                   ),
           floatingActionButton:
               unreadCount > 0
@@ -60,7 +83,6 @@ class LogViewDialog extends ConsumerWidget {
                     child: Icon(Icons.done_all),
                   )
                   : null,
-          floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
         ),
       ),
     );
