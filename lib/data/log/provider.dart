@@ -31,13 +31,22 @@ class LogMessages extends _$LogMessages {
     }
     ref.notifyListeners();
   }
+
+  void markAsRead(LogMessage message) {
+    if (!message.isRead) {
+      message.isRead = true;
+      ref.notifyListeners();
+    }
+  }
 }
 
 @riverpod
-int unreadLogs(Ref ref) {
+int unreadLogCount(Ref ref) {
   final logs = ref.watch(logMessagesProvider);
   final level = ref.watch(showLogLevelProvider);
-  return logs.where((e) => e.record.level.value >= level.value).length;
+  return logs
+      .where((e) => e.record.level.value >= level.value && !e.isRead)
+      .length;
 }
 
 class LogMessage {

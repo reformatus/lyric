@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lyric/data/log/provider.dart';
+import 'package:lyric/ui/common/log/dialog.dart';
 
 import '../../main.dart';
 import '../../services/app_version/check_new_version.dart';
@@ -70,11 +72,13 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
   @override
   Widget build(BuildContext context) {
     final newVersion = ref.watch(checkNewVersionProvider);
+    final unreadLogCount = ref.watch(unreadLogCountProvider);
 
     final List<GeneralNavigationDestination> destinations = [
       (
         icon: Badge(
-          isLabelVisible: newVersion.valueOrNull != null,
+          isLabelVisible:
+              (newVersion.valueOrNull != null || unreadLogCount != 0),
           child: Icon(Icons.home_outlined),
         ),
         selectedIcon: Icon(Icons.home),
@@ -108,10 +112,11 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
       builder: (context, constraints) {
         // most songs are A4, this way we have the highest chance of fitting the song on the screen the biggest possible
         // TODO move this to global; take this into account on song page as well?
-        bool bottomNavBar = constraints.maxHeight / constraints.maxWidth > 1.41;
+        bool showBottomNavBar =
+            constraints.maxHeight / constraints.maxWidth > 1.41;
         return Scaffold(
           bottomNavigationBar:
-              bottomNavBar
+              showBottomNavBar
                   ? NavigationBar(
                     labelBehavior:
                         NavigationDestinationLabelBehavior.onlyShowSelected,
@@ -128,48 +133,96 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
                   )
                   : null,
           body:
-              !bottomNavBar
+              !showBottomNavBar
                   ? Row(
                     children: [
                       Container(
                         color: Theme.of(context).colorScheme.surfaceContainer,
-                        child: Stack(
-                          children: [
-                            NavigationRail(
-                              extended: extendedNavRail,
-                              labelType:
-                                  extendedNavRail
-                                      ? NavigationRailLabelType.none
-                                      : NavigationRailLabelType.selected,
-                              destinations:
-                                  destinations
-                                      .map((d) => railDestinationFromGeneral(d))
-                                      .toList(),
-                              selectedIndex:
-                                  BaseScaffold._calculateSelectedIndex(context),
-                              onDestinationSelected:
-                                  (int index) =>
-                                      _onDestinationSelected(index, context),
-                              backgroundColor: Colors.transparent,
-                              minExtendedWidth: 160,
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: IconButton(
-                                icon: Icon(
-                                  extendedNavRail
-                                      ? Icons.chevron_left
-                                      : Icons.chevron_right,
+                        child: AnimatedSize(
+                          duration: Duration(milliseconds: 300),
+                          curve: Curves.easeInOutCubicEmphasized,
+                          child: SizedBox(
+                            width: extendedNavRail ? 150 : 70,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                IntrinsicHeight(
+                                  child: NavigationRail(
+                                    extended: extendedNavRail,
+                                    labelType:
+                                        extendedNavRail
+                                            ? NavigationRailLabelType.none
+                                            : NavigationRailLabelType.selected,
+                                    destinations:
+                                        destinations
+                                            .map(
+                                              (d) =>
+                                                  railDestinationFromGeneral(d),
+                                            )
+                                            .toList(),
+                                    selectedIndex:
+                                        BaseScaffold._calculateSelectedIndex(
+                                          context,
+                                        ),
+                                    onDestinationSelected:
+                                        (int index) => _onDestinationSelected(
+                                          index,
+                                          context,
+                                        ),
+                                    backgroundColor: Colors.transparent,
+                                    minExtendedWidth: 160,
+                                  ),
                                 ),
-                                onPressed: () {
-                                  setState(() {
-                                    extendedNavRail = !extendedNavRail;
-                                  });
-                                },
-                              ),
+                                Spacer(),
+                                Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: Flex(
+                                    direction:
+                                        extendedNavRail
+                                            ? Axis.horizontal
+                                            : Axis.vertical,
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Badge(
+                                        label: Text(unreadLogCount.toString()),
+                                        isLabelVisible: unreadLogCount > 0,
+                                        child: IconButton.outlined(
+                                          onPressed:
+                                              () => showDialog(
+                                                context: context,
+                                                builder:
+                                                    (context) =>
+                                                        LogViewDialog(),
+                                              ),
+                                          tooltip: "Napló",
+                                          icon: Icon(
+                                            Icons.notification_important,
+                                          ),
+                                        ),
+                                      ),
+                                      if (extendedNavRail) Spacer(),
+                                      IconButton(
+                                        icon: Icon(
+                                          extendedNavRail
+                                              ? Icons.chevron_left
+                                              : Icons.chevron_right,
+                                        ),
+                                        tooltip:
+                                            extendedNavRail
+                                                ? "Összecsukás"
+                                                : "Kinyitás",
+                                        onPressed: () {
+                                          setState(() {
+                                            extendedNavRail = !extendedNavRail;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
                       ),
                       Expanded(child: widget.child),
