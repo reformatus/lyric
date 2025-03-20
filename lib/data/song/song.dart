@@ -133,6 +133,9 @@ class KeyField {
   static KeyField? fromString(String? value) {
     if (value == null || value.isEmpty) return null;
 
+    // TODO handle multiple keys with a key list
+    value = value.split(', ').first;
+
     var parts = value.split('-');
     if (parts.length != 2) {
       throw Exception('Invalid key field: $value');
