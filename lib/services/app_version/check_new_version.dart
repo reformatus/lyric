@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../data/log/logger.dart';
 import '../../main.dart';
 
 part 'check_new_version.g.dart';
@@ -57,7 +58,7 @@ Future<VersionInfo?> checkNewVersion(Ref ref) async {
       ),
     );
   } catch (e, s) {
-    print("Couldn't check for new versions: $e\n$s");
+    log.warning("Couldn't check for new versions:", e, s);
     return null;
   }
 }

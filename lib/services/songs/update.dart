@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/data/log/logger.dart';
 import 'package:queue/queue.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -32,16 +33,17 @@ Stream<Map<Bank, ({int toUpdateCount, int updatedCount})?>> updateAllBanks(
         ),
       );
 
-  yield {
-    ...bankStates,
-  }; // copy to new instance to avoid it getting changed during ui
+  // copy to new instance to avoid it getting changed during ui
+  yield {...bankStates};
 
   for (var bankState in bankStates.entries) {
-    print('Updating bank ${bankState.key.name}');
-    await for (var newState in updateBank(bankState.key)) {
-      print('  New state: $newState');
-      bankStates[bankState.key] = newState;
-      yield {...bankStates};
+    try {
+      await for (var newState in updateBank(bankState.key)) {
+        bankStates[bankState.key] = newState;
+        yield {...bankStates};
+      }
+    } catch (e, s) {
+      log.severe('Error while updating bank ${bankState.key.name}:', e, s);
     }
   }
 }
@@ -50,17 +52,7 @@ Stream<({int toUpdateCount, int updatedCount})> updateBank(Bank bank) async* {
   // stay in indefinite loading state until we know protosong count
   // return protosong count for display
   List<ProtoSong> toUpdate = await bank.getProtoSongs(since: bank.lastUpdated);
-  bool hadErrors = false; // todo proper logging across app
-
-  print(
-    '  Updating bank ${bank.name} with ${toUpdate.length} new or updated songs since ${bank.lastUpdated}',
-  );
-
-  /*if (toUpdate.isEmpty) {
-    print('  No new songs to update');
-    yield (toUpdateCount: 0, updatedCount: 0);
-    return;
-  }*/
+  bool hadErrors = false;
 
   yield (toUpdateCount: toUpdate.length, updatedCount: 0);
 
@@ -77,22 +69,24 @@ Stream<({int toUpdateCount, int updatedCount})> updateBank(Bank bank) async* {
                   song,
                   mode: InsertMode.insertOrReplace,
                 ); // todo handle user modified data, etc
-          } catch (f) {
-            print(
-              'Error while writing song ${protoSong.uuid} to database:\n$f',
-            );
+          } catch (f, t) {
             hadErrors = true;
+            log.severe(
+              'Error while writing song ${protoSong.uuid} to database:',
+              f,
+              t,
+            );
           }
-        } catch (e) {
-          print(
-            'Error while fetching details for song ${protoSong.uuid}:\n$e',
-          ); // todo log/ui
+        } catch (e, s) {
           hadErrors = true;
+          log.severe(
+            'Error while fetching details for song ${protoSong.uuid}:',
+            e,
+            s,
+          );
         }
       });
     }
-
-    queue.onComplete.then((v) => print('  Queue completed: $v'));
 
     await for (int remaining in queue.remainingItems) {
       yield (
@@ -103,7 +97,7 @@ Stream<({int toUpdateCount, int updatedCount})> updateBank(Bank bank) async* {
     }
   }
 
-  print('  All songs updated');
+  log.info('All songs updated for bank ${bank.name}');
 
   if (!hadErrors) await setAsUpdatedNow(bank);
 

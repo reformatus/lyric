@@ -39,7 +39,6 @@ Stream<AssetResult> getSongAsset(
 
       // Download the asset with progress updates
       try {
-        print('Downloading asset from $sourceUrl');
         final response = await dio.get<List<int>>(
           sourceUrl,
           options: Options(

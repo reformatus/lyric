@@ -100,7 +100,6 @@ Stream<List<SongResult>> filteredSongs(Ref ref) {
   final KeyFilters keyFilters = ref.watch(keyFilterStateProvider);
 
   String ftsMatchString = '{${searchFields.join(' ')}} : $searchString';
-  print(ftsMatchString);
 
   Expression<bool> filterExpression(Songs songs) {
     return Expression.and(

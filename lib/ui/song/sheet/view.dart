@@ -72,7 +72,6 @@ class SheetView extends ConsumerWidget {
               );
           }
         } else {
-          print('Progress: ${assetResult.progress}');
           return CircularProgressIndicator(value: assetResult.progress);
         }
       default:
