@@ -37,9 +37,9 @@ class Song extends Insertable<Song> {
         lyricist: json['lyricist'],
         translator: json['translator'],
       );
-    } catch (e, s) {
+    } catch (e) {
       throw Exception(
-        'Invalid song data in: ${json['title']} (${json['uuid']})\nError: $e\n$s\n',
+        'Invalid song data in: ${json['title']} (${json['uuid']})\nError: $e',
       );
     }
   }

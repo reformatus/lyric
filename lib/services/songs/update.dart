@@ -97,9 +97,12 @@ Stream<({int toUpdateCount, int updatedCount})> updateBank(Bank bank) async* {
     }
   }
 
-  log.info('All songs updated for bank ${bank.name}');
-
-  if (!hadErrors) await setAsUpdatedNow(bank);
+  if (!hadErrors) {
+    await setAsUpdatedNow(bank);
+    log.info('All songs updated for bank ${bank.name}');
+  } else {
+    log.warning('Some songs failed to update for bank ${bank.name}');
+  }
 
   return;
 }
