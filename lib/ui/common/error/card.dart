@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../base/home/parts/feedback/send_mail.dart';
+import '../../base/home/parts/feedback/send_mail.dart';
 
 class LErrorCard extends StatelessWidget {
   const LErrorCard({

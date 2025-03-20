@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../data/cue/cue.dart';
 import '../../../services/cue/cues.dart';
-import '../../common/error.dart';
+import '../../common/error/card.dart';
 import 'dialogs.dart';
 
 class SetsPage extends ConsumerStatefulWidget {

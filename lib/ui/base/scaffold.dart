@@ -107,6 +107,7 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
     return LayoutBuilder(
       builder: (context, constraints) {
         // most songs are A4, this way we have the highest chance of fitting the song on the screen the biggest possible
+        // TODO move this to global; take this into account on song page as well?
         bool bottomNavBar = constraints.maxHeight / constraints.maxWidth > 1.41;
         return Scaffold(
           bottomNavigationBar:
@@ -132,52 +133,43 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
                     children: [
                       Container(
                         color: Theme.of(context).colorScheme.surfaceContainer,
-                        child: AnimatedSize(
-                          duration: Durations.medium1,
-                          curve: Curves.easeInOutCubicEmphasized,
-                          alignment: Alignment.centerLeft,
-                          child: Stack(
-                            children: [
-                              NavigationRail(
-                                extended: extendedNavRail,
-                                labelType:
-                                    extendedNavRail
-                                        ? NavigationRailLabelType.none
-                                        : NavigationRailLabelType.selected,
-                                destinations:
-                                    destinations
-                                        .map(
-                                          (d) => railDestinationFromGeneral(d),
-                                        )
-                                        .toList(),
-                                selectedIndex:
-                                    BaseScaffold._calculateSelectedIndex(
-                                      context,
-                                    ),
-                                onDestinationSelected:
-                                    (int index) =>
-                                        _onDestinationSelected(index, context),
-                                backgroundColor: Colors.transparent,
-                                minExtendedWidth: 160,
-                              ),
-                              Positioned(
-                                bottom: 0,
-                                right: 0,
-                                child: IconButton(
-                                  icon: Icon(
-                                    extendedNavRail
-                                        ? Icons.chevron_left
-                                        : Icons.chevron_right,
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      extendedNavRail = !extendedNavRail;
-                                    });
-                                  },
+                        child: Stack(
+                          children: [
+                            NavigationRail(
+                              extended: extendedNavRail,
+                              labelType:
+                                  extendedNavRail
+                                      ? NavigationRailLabelType.none
+                                      : NavigationRailLabelType.selected,
+                              destinations:
+                                  destinations
+                                      .map((d) => railDestinationFromGeneral(d))
+                                      .toList(),
+                              selectedIndex:
+                                  BaseScaffold._calculateSelectedIndex(context),
+                              onDestinationSelected:
+                                  (int index) =>
+                                      _onDestinationSelected(index, context),
+                              backgroundColor: Colors.transparent,
+                              minExtendedWidth: 160,
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: IconButton(
+                                icon: Icon(
+                                  extendedNavRail
+                                      ? Icons.chevron_left
+                                      : Icons.chevron_right,
                                 ),
+                                onPressed: () {
+                                  setState(() {
+                                    extendedNavRail = !extendedNavRail;
+                                  });
+                                },
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                       Expanded(child: widget.child),

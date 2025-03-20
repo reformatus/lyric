@@ -7,7 +7,7 @@ import '../../services/cue/from_uuid.dart';
 import '../../services/cue/slide/watch_revived.dart';
 import '../../services/cue/write_cue.dart';
 import '../base/songs/page.dart';
-import '../common/error.dart';
+import '../common/error/card.dart';
 import 'slide_views/song.dart';
 
 /* // todo improve cue page:

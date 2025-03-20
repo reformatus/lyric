@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lyric/data/log/logger.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'data/database.dart';
@@ -35,8 +36,19 @@ final globals = (
   router: _router,
 );
 
-class LyricApp extends StatelessWidget {
+class LyricApp extends ConsumerStatefulWidget {
   const LyricApp({super.key});
+
+  @override
+  ConsumerState<LyricApp> createState() => _LyricAppState();
+}
+
+class _LyricAppState extends ConsumerState<LyricApp> {
+  @override
+  void initState() {
+    initLogger(ref);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

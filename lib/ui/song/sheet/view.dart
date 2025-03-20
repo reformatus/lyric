@@ -6,7 +6,7 @@ import 'package:pdfrx/pdfrx.dart';
 
 import '../../../data/song/song.dart';
 import '../../../services/assets/get_song_asset.dart';
-import '../../common/error.dart';
+import '../../common/error/card.dart';
 
 class SheetView extends ConsumerWidget {
   const SheetView.svg(this.song, {super.key}) : _viewType = SongViewType.svg;

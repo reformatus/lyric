@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../services/bank/bank_updated.dart';
 import '../../services/songs/update.dart';
-import '../common/error.dart';
+import '../common/error/card.dart';
 import 'banner.dart';
 
 class LoadingPage extends ConsumerWidget {

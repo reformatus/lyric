@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../services/key/get_transposed.dart';
 import '../../../services/song/verse_tag_pretty.dart';
-import '../../common/error.dart';
+import '../../common/error/card.dart';
 import 'package:chord_transposer/chord_transposer.dart';
 
 import '../../../data/song/song.dart';

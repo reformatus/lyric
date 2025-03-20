@@ -7,6 +7,11 @@ part 'state.g.dart';
 
 enum SongViewType { svg, pdf, lyrics }
 
+// TODO refactor
+//* maybe make list uuid part of family definition?
+//* needs to be separated - maybe song page can store state locally without provider
+//* song page needs to be used in lists as well for editing transpose and view - how are these separated?
+
 @Riverpod(keepAlive: true)
 class ViewTypeFor extends _$ViewTypeFor {
   @override

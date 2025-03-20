@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../main.dart';
 import '../../services/songs/update.dart';
-import '../common/error.dart';
+import '../common/error/card.dart';
 
 showOnlineBanksUpdatingBanner() {
   globals.scaffoldKey.currentState?.clearMaterialBanners();

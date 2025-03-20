@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../data/cue/cue.dart';
 import '../../../main.dart';
 import '../../../services/songs/filter.dart';
-import '../../common/error.dart';
+import '../../common/error/card.dart';
 import 'filter/types/key/state.dart';
 import 'filter/types/multiselect-tags/state.dart';
 import 'filter/types/search/search_field_selector.dart';

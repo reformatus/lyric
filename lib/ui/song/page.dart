@@ -12,7 +12,7 @@ import 'sheet/view.dart';
 import '../../data/song/song.dart';
 import '../../services/song/from_uuid.dart';
 import '../base/songs/filter/types/field_type.dart';
-import '../common/error.dart';
+import '../common/error/card.dart';
 import 'state.dart';
 
 // far future read from songbank introduction
