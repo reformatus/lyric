@@ -257,15 +257,13 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                                     'Nincs találat :(',
                                     Icons.search_off,
                                   )
-                                  : ListView.separated(
+                                  : ListView.builder(
                                     itemBuilder: (BuildContext context, int i) {
                                       return LSongResultTile(
                                         value.elementAt(i),
                                         addingToCue: widget.addingToCue,
                                       );
                                     },
-                                    separatorBuilder:
-                                        (_, __) => const SizedBox(height: 0),
                                     itemCount: value.length,
                                   ),
                           },

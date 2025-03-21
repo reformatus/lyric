@@ -24,8 +24,9 @@ const Set<String> fieldsToShowInDetailsSummary = {
 const Set<String> fieldsToOmitFromDetails = {'tite', 'opensong', 'first_line'};
 
 class SongPage extends ConsumerStatefulWidget {
-  const SongPage(this.songUuid, {super.key});
-  final String songUuid;
+  const SongPage(this.songId, {this.cueId, super.key});
+  final String songId;
+  final String? cueId;
 
   @override
   ConsumerState<SongPage> createState() => _SongPageState();
@@ -47,7 +48,7 @@ class _SongPageState extends ConsumerState<SongPage> {
 
   @override
   Widget build(BuildContext context) {
-    final song = ref.watch(songFromUuidProvider(widget.songUuid));
+    final song = ref.watch(songFromUuidProvider(widget.songId));
 
     return switch (song) {
       AsyncLoading() => Center(child: CircularProgressIndicator()),
@@ -77,12 +78,16 @@ class _SongPageState extends ConsumerState<SongPage> {
           final List<Widget> summaryContent = getDetailsSummaryContent(song);
           final List<Widget> detailsContent = getDetailsContent(song, context);
 
-          final viewType = ref.watch(ViewTypeForProvider(song.uuid));
-          final transpose = ref.watch(TransposeStateForProvider(song.uuid));
+          final viewType = ref.watch(
+            ViewTypeForProvider(song.uuid, widget.cueId),
+          );
+          final transpose = ref.watch(
+            TransposeStateForProvider(song.uuid, widget.cueId),
+          );
 
           if (viewType == null) {
             ref
-                .read(viewTypeForProvider(song.uuid).notifier)
+                .read(viewTypeForProvider(song.uuid, widget.cueId).notifier)
                 .setDefaultFor(song);
             return Center(child: CircularProgressIndicator());
           }
@@ -100,6 +105,7 @@ class _SongPageState extends ConsumerState<SongPage> {
                   ViewChooser(
                     viewType: viewType,
                     song: song,
+                    listId: widget.cueId,
                     useDropdown: false,
                   ),
                 if ((detailsContent.isNotEmpty && !isDesktop) && !isMobile)
@@ -125,7 +131,10 @@ class _SongPageState extends ConsumerState<SongPage> {
                   child: switch (viewType) {
                     SongViewType.svg => SheetView.svg(song),
                     SongViewType.pdf => SheetView.pdf(song),
-                    SongViewType.lyrics => LyricsView(song),
+                    SongViewType.lyrics => LyricsView(
+                      song,
+                      cueId: widget.cueId,
+                    ),
                   },
                 ),
                 if (isMobile)
@@ -166,12 +175,16 @@ class _SongPageState extends ConsumerState<SongPage> {
                                                 ),
                                               TransposeResetButton(
                                                 song,
+                                                cueId: widget.cueId,
                                                 isHorizontal: isDesktop,
                                               ),
                                             ],
                                           ),
                                         ),
-                                        TransposeControls(song),
+                                        TransposeControls(
+                                          song,
+                                          cueId: widget.cueId,
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -196,12 +209,17 @@ class _SongPageState extends ConsumerState<SongPage> {
                           ViewChooser(
                             viewType: viewType,
                             song: song,
+                            listId: widget.cueId,
                             useDropdown: constraints.maxWidth < 550,
                           ),
                           if (viewType == SongViewType.lyrics &&
                               song.hasChords) ...[
                             Spacer(),
-                            TransposeResetButton(song, isHorizontal: isDesktop),
+                            TransposeResetButton(
+                              song,
+                              cueId: widget.cueId,
+                              isHorizontal: isDesktop,
+                            ),
                             CompositedTransformTarget(
                               link: _transposeOverlayLink,
                               child: OverlayPortal(
@@ -220,7 +238,10 @@ class _SongPageState extends ConsumerState<SongPage> {
                                               constraints: BoxConstraints(
                                                 maxWidth: 150,
                                               ),
-                                              child: TransposeControls(song),
+                                              child: TransposeControls(
+                                                song,
+                                                cueId: widget.cueId,
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -388,11 +409,13 @@ class ViewChooser extends ConsumerWidget {
     super.key,
     required this.viewType,
     required this.song,
+    required this.listId,
     required this.useDropdown,
   });
 
   final SongViewType viewType;
   final Song song;
+  final String? listId;
   final bool useDropdown;
 
   @override
@@ -428,7 +451,7 @@ class ViewChooser extends ConsumerWidget {
             selected: {viewType},
             onSelectionChanged: (viewTypeSet) {
               ref
-                  .read(ViewTypeForProvider(song.uuid).notifier)
+                  .read(ViewTypeForProvider(song.uuid, listId).notifier)
                   .changeTo(viewTypeSet.first);
             },
             showSelectedIcon: false,
@@ -459,7 +482,7 @@ class ViewChooser extends ConsumerWidget {
               value: viewType,
               onChanged:
                   (viewType) => ref
-                      .read(ViewTypeForProvider(song.uuid).notifier)
+                      .read(ViewTypeForProvider(song.uuid, listId).notifier)
                       .changeTo(viewType!),
               items:
                   viewTypeEntries

@@ -6,7 +6,7 @@ part 'state.g.dart';
 @Riverpod(keepAlive: true)
 class TransposeStateFor extends _$TransposeStateFor {
   @override
-  SongTranspose build(String uuid) {
+  SongTranspose build(String songId, String? listId) {
     return SongTranspose(semitones: 0, capo: 0);
   }
 

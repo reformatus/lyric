@@ -7,22 +7,26 @@ import '../../../data/song/song.dart';
 class TransposeResetButton extends ConsumerWidget {
   const TransposeResetButton(
     this.song, {
+    required this.cueId,
     required this.isHorizontal,
     super.key,
   });
 
   final bool isHorizontal;
   final Song song;
+  final String? cueId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final transpose = ref.watch(TransposeStateForProvider(song.uuid));
+    final transpose = ref.watch(TransposeStateForProvider(song.uuid, cueId));
     if (transpose.semitones != 0 || transpose.capo != 0) {
       return IconButton(
         tooltip: 'Transzponálás visszaállítása',
         onPressed:
             () =>
-                ref.read(TransposeStateForProvider(song.uuid).notifier).reset(),
+                ref
+                    .read(TransposeStateForProvider(song.uuid, cueId).notifier)
+                    .reset(),
         icon: Icon(Icons.replay),
         iconSize: isHorizontal ? 18 : null,
         visualDensity: VisualDensity.compact,
@@ -34,13 +38,14 @@ class TransposeResetButton extends ConsumerWidget {
 }
 
 class TransposeControls extends ConsumerWidget {
-  const TransposeControls(this.song, {super.key});
+  const TransposeControls(this.song, {required this.cueId, super.key});
 
   final Song song;
+  final String? cueId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final transpose = ref.watch(TransposeStateForProvider(song.uuid));
+    final transpose = ref.watch(TransposeStateForProvider(song.uuid, cueId));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -52,7 +57,7 @@ class TransposeControls extends ConsumerWidget {
             IconButton.filledTonal(
               onPressed: () {
                 ref
-                    .read(TransposeStateForProvider(song.uuid).notifier)
+                    .read(TransposeStateForProvider(song.uuid, cueId).notifier)
                     .down();
               },
               icon: Icon(Icons.expand_more),
@@ -64,8 +69,7 @@ class TransposeControls extends ConsumerWidget {
                     transpose.semitones.toString(),
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      fontSize:
-                          Theme.of(context).textTheme.bodyLarge!.fontSize,
+                      fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize,
                     ),
                   ),
                 ],
@@ -73,7 +77,9 @@ class TransposeControls extends ConsumerWidget {
             ),
             IconButton.filledTonal(
               onPressed: () {
-                ref.read(TransposeStateForProvider(song.uuid).notifier).up();
+                ref
+                    .read(TransposeStateForProvider(song.uuid, cueId).notifier)
+                    .up();
               },
               icon: Icon(Icons.expand_less),
             ),
@@ -85,7 +91,7 @@ class TransposeControls extends ConsumerWidget {
             IconButton.filledTonal(
               onPressed: () {
                 ref
-                    .read(TransposeStateForProvider(song.uuid).notifier)
+                    .read(TransposeStateForProvider(song.uuid, cueId).notifier)
                     .removeCapo();
               },
               icon: Icon(Icons.remove),
@@ -97,8 +103,7 @@ class TransposeControls extends ConsumerWidget {
                     transpose.capo.toString(),
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      fontSize:
-                          Theme.of(context).textTheme.bodyLarge!.fontSize,
+                      fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize,
                     ),
                   ),
                 ],
@@ -107,7 +112,7 @@ class TransposeControls extends ConsumerWidget {
             IconButton.filledTonal(
               onPressed: () {
                 ref
-                    .read(TransposeStateForProvider(song.uuid).notifier)
+                    .read(TransposeStateForProvider(song.uuid, cueId).notifier)
                     .addCapo();
               },
               icon: Icon(Icons.add),

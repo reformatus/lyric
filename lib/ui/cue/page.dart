@@ -68,14 +68,6 @@ class _CuePageState extends ConsumerState<CuePage> {
       setState(() => selectedSlideOrIsAdding = -1);
     }
 
-    return Scaffold(
-      appBar: AppBar(),
-      body: CenteredHint(
-        'A listák hamarosan visszatérnek...',
-        Icons.construction,
-      ),
-    );
-    /*
     return LayoutBuilder(
       builder: (context, constraints) {
         return SafeArea(
@@ -307,7 +299,10 @@ class _CuePageState extends ConsumerState<CuePage> {
                         Expanded(
                           child: switch (slides
                               .requireValue[selectedSlideOrIsAdding!]) {
-                            (SongSlide songSlide) => SongSlideView(songSlide),
+                            (SongSlide songSlide) => SongSlideView(
+                              songSlide,
+                              widget.uuid,
+                            ),
                             (UnknownTypeSlide unknownSlide) => LErrorCard(
                               type: LErrorType.warning,
                               title:
@@ -331,7 +326,7 @@ class _CuePageState extends ConsumerState<CuePage> {
           ),
         );
       },
-    );*/
+    );
   }
 }
 

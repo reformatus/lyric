@@ -15,7 +15,7 @@ enum SongViewType { svg, pdf, lyrics }
 @Riverpod(keepAlive: true)
 class ViewTypeFor extends _$ViewTypeFor {
   @override
-  SongViewType? build(String uuid) {
+  SongViewType? build(String songId, String? cueId) {
     return null;
   }
 

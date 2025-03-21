@@ -5,6 +5,7 @@ class SongSlide implements Slide {
   Song song;
   SongViewType viewType;
   SongTranspose? transpose;
+  Cue parentCue;
   // future: List<Verse> verses override
 
   bool contentDifferentFlag = false;
@@ -25,11 +26,12 @@ class SongSlide implements Slide {
     );*/
   }
 
-  static Future<SongSlide> reviveFromJson(Map json) async {
+  static Future<SongSlide> reviveFromJson(Map json, Cue parent) async {
     var songResult = await getSongForSlideJson(json['song']);
 
     return SongSlide(
       songResult.song,
+      parent,
       viewType: json['viewType'],
       transpose: json['transpose'],
       comment: json['comment'],
@@ -47,7 +49,13 @@ class SongSlide implements Slide {
     };
   }
 
-  SongSlide(this.song, {required this.viewType, this.transpose, this.comment});
+  SongSlide(
+    this.song,
+    this.parentCue, {
+    required this.viewType,
+    this.transpose,
+    this.comment,
+  });
 }
 
 Future<({Song song, bool contentDifferentFlag})> getSongForSlideJson(

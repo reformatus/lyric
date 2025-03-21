@@ -46,16 +46,31 @@ class LFilterChipsState extends ConsumerState<MultiselectFilterCard> {
       multiselectTagsFilterStateProvider.notifier,
     );
 
-    final active = filterState.containsKey(widget.field);
+    final isActive = filterState.containsKey(widget.field);
 
     return Card(
-      elevation: active ? 3 : 0,
-      color: active ? Theme.of(context).colorScheme.secondaryContainer : null,
+      elevation: isActive ? 3 : 0,
+      color: isActive ? Theme.of(context).colorScheme.secondaryContainer : null,
       child: ListTile(
-        contentPadding: const EdgeInsets.only(left: 15),
-        leading: Icon(
-          songFieldsMap[widget.field]!['icon'] ?? Icons.filter_list,
-        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+        leading:
+            !isActive
+                ? Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: Icon(
+                    songFieldsMap[widget.field]!['icon'] ?? Icons.filter_list,
+                  ),
+                )
+                : SizedBox(
+                  width: 32,
+                  child: IconButton(
+                    visualDensity: VisualDensity.compact,
+                    onPressed:
+                        () =>
+                            filterStateNotifier.resetFilterField(widget.field),
+                    icon: Icon(Icons.clear),
+                  ),
+                ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.max,
@@ -127,14 +142,6 @@ class LFilterChipsState extends ConsumerState<MultiselectFilterCard> {
                   ),
                 ),
         },
-        trailing:
-            active
-                ? IconButton(
-                  onPressed:
-                      () => filterStateNotifier.resetFilterField(widget.field),
-                  icon: Icon(Icons.clear),
-                )
-                : null,
       ),
     );
   }

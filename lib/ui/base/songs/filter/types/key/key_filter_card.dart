@@ -43,16 +43,23 @@ class _KeyFilterCardState extends ConsumerState<KeyFilterCard> {
       elevation: isActive ? 3 : 0,
       color: isActive ? Theme.of(context).colorScheme.secondaryContainer : null,
       child: ListTile(
-        contentPadding: const EdgeInsets.only(left: 15),
-        leading: Icon(Icons.piano),
-        trailing:
-            isActive
-                ? IconButton(
-                  icon: Icon(Icons.clear),
-                  onPressed:
-                      () => ref.read(keyFilterStateProvider.notifier).reset(),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+        leading:
+            !isActive
+                ? Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: Icon(Icons.piano),
                 )
-                : null,
+                : SizedBox(
+                  width: 32,
+                  child: IconButton(
+                    visualDensity: VisualDensity.compact,
+                    onPressed:
+                        () => ref.read(keyFilterStateProvider.notifier).reset(),
+                    icon: Icon(Icons.clear),
+                  ),
+                ),
+
         title: AnimatedSize(
           duration: Durations.medium1,
           child: Stack(

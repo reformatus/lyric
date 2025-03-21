@@ -36,7 +36,7 @@ class Cue extends Insertable<Cue> {
   //List<Slide>? slides;
 
   Future<List<Slide>> getRevivedSlides() async {
-    return await Future.wait(content.map((e) => Slide.reviveFromJson(e)));
+    return await Future.wait(content.map((e) => Slide.reviveFromJson(e, this)));
   }
 
   static List<Map> getContentMapFromSlides(List<Slide> slides) {
