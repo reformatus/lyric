@@ -11,6 +11,6 @@ class SongTranspose {
   }
 
   factory SongTranspose.fromJson(Map<String, dynamic> json) {
-    return SongTranspose(semitones: ['semitones'] as int, capo: json['capo'] as int);
+    return SongTranspose(semitones: json['semitones'], capo: json['capo']);
   }
 }

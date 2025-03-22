@@ -5,7 +5,17 @@ import '../../data/song/song.dart';
 
 part 'state.g.dart';
 
-enum SongViewType { svg, pdf, lyrics }
+enum SongViewType {
+  svg('svg'),
+  pdf('pdf'),
+  lyrics('lyrics');
+
+  final String type;
+  const SongViewType(this.type);
+  factory SongViewType.fromString(String type) {
+    return SongViewType.values.firstWhere((e) => e.type == type);
+  }
+}
 
 // TODO refactor
 //* maybe make list uuid part of family definition?

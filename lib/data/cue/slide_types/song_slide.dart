@@ -32,8 +32,8 @@ class SongSlide implements Slide {
     return SongSlide(
       songResult.song,
       parent,
-      viewType: json['viewType'],
-      transpose: json['transpose'],
+      viewType: SongViewType.fromString(json['viewType']),
+      transpose: SongTranspose.fromJson(json['transpose']),
       comment: json['comment'],
     )..contentDifferentFlag = songResult.contentDifferentFlag;
   }
