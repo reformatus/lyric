@@ -1,6 +1,7 @@
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/ui/common/centered_hint.dart';
 
 import '../../../data/cue/cue.dart';
 import '../../../main.dart';
@@ -261,7 +262,6 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                                     itemBuilder: (BuildContext context, int i) {
                                       return LSongResultTile(
                                         value.elementAt(i),
-                                        addingToCue: widget.addingToCue,
                                       );
                                     },
                                     itemCount: value.length,
@@ -319,22 +319,6 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                   : HitTestBehavior.deferToChild,
         ),
       ],
-    );
-  }
-}
-
-class CenteredHint extends StatelessWidget {
-  const CenteredHint(this.title, this.iconData, {super.key});
-
-  final String title;
-  final IconData iconData;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: IntrinsicWidth(
-        child: ListTile(leading: Icon(iconData), title: Text(title)),
-      ),
     );
   }
 }

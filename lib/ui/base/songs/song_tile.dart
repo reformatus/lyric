@@ -2,17 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lyric/data/song/extensions.dart';
 
-import '../../../data/cue/cue.dart';
 import '../../../data/database.dart';
 import '../../../data/song/song.dart';
-import '../../../services/cue/slide/song_slide.dart';
 import '../../../services/songs/filter.dart';
 
 class LSongResultTile extends StatelessWidget {
-  const LSongResultTile(this.songResult, {this.addingToCue, super.key});
+  const LSongResultTile(this.songResult, {super.key});
 
   final SongResult songResult;
-  final Cue? addingToCue;
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +27,7 @@ class LSongResultTile extends StatelessWidget {
     }
     return ListTile(
       // far future todo dense on desktop (maybe even table?)
-      onTap:
-          addingToCue == null ? () => context.push('/song/${song.uuid}') : null,
+      onTap: () => context.push('/song/${song.uuid}'),
       title: RichText(
         text: TextSpan(
           children: spansFromSnippet(
@@ -44,17 +40,6 @@ class LSongResultTile extends StatelessWidget {
           ),
         ),
       ),
-      leading:
-          addingToCue != null
-              ? IconButton.filledTonal(
-                onPressed:
-                    () => addSongSlideToCueForSongWithUuid(
-                      cue: addingToCue!,
-                      songUuid: song.uuid,
-                    ),
-                icon: Icon(Icons.add),
-              )
-              : null,
       subtitle:
           result == null
               ? firstLine.startsWith(song.title) || firstLine.isEmpty

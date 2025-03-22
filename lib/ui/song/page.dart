@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/data/song/extensions.dart';
 import 'package:lyric/main.dart';
 import 'package:lyric/services/key/get_transposed.dart';
+import 'package:lyric/ui/song/add_to_cue_search.dart';
 import 'package:lyric/ui/song/transpose/widget.dart';
+import 'package:lyric/ui/song/view_chooser.dart';
 import 'transpose/state.dart';
 import 'lyrics/view.dart';
 import 'sheet/view.dart';
@@ -35,14 +37,16 @@ class SongPage extends ConsumerStatefulWidget {
 class _SongPageState extends ConsumerState<SongPage> {
   @override
   void initState() {
-    _detailsSheetScrollController = ScrollController();
-    _transposeOverlayPortalController = OverlayPortalController();
+    detailsSheetScrollController = ScrollController();
+    transposeOverlayPortalController = OverlayPortalController();
+    actionButtonsScrollController = ScrollController();
 
     super.initState();
   }
 
-  late final ScrollController _detailsSheetScrollController;
-  late final OverlayPortalController _transposeOverlayPortalController;
+  late final ScrollController detailsSheetScrollController;
+  late final ScrollController actionButtonsScrollController;
+  late final OverlayPortalController transposeOverlayPortalController;
 
   final _transposeOverlayLink = LayerLink();
 
@@ -139,6 +143,7 @@ class _SongPageState extends ConsumerState<SongPage> {
                 ),
                 if (isMobile)
                   detailsButton(summaryContent, context, detailsContent),
+                //! Sidebar for desktop
                 if (isDesktop)
                   SizedBox(
                     width: (constraints.maxWidth / 5).clamp(200, 350),
@@ -190,14 +195,21 @@ class _SongPageState extends ConsumerState<SongPage> {
                                   ),
                                 ),
                               ),
-                              Divider(),
                             ],
+                            AddToCueSearch(
+                              song: song,
+                              isDesktop: isDesktop,
+                              viewType: viewType,
+                              transpose: transpose,
+                            ),
+                            Divider(),
                             ...detailsContent,
                           ],
                         ),
                       ),
                     ),
                   ),
+                //! Bottom bar for mobile/tablet
                 if (!isDesktop)
                   SizedBox(
                     height: 50,
@@ -206,69 +218,105 @@ class _SongPageState extends ConsumerState<SongPage> {
                       color: Theme.of(context).scaffoldBackgroundColor,
                       child: Row(
                         children: [
-                          ViewChooser(
-                            viewType: viewType,
-                            song: song,
-                            listId: widget.cueId,
-                            useDropdown: constraints.maxWidth < 550,
-                          ),
-                          if (viewType == SongViewType.lyrics &&
-                              song.hasChords) ...[
-                            Spacer(),
-                            TransposeResetButton(
-                              song,
-                              cueId: widget.cueId,
-                              isHorizontal: isDesktop,
+                          Padding(
+                            padding: EdgeInsets.only(right: 8),
+                            child: ViewChooser(
+                              viewType: viewType,
+                              song: song,
+                              listId: widget.cueId,
+                              useDropdown: constraints.maxWidth < 550,
                             ),
-                            CompositedTransformTarget(
-                              link: _transposeOverlayLink,
-                              child: OverlayPortal(
-                                controller: _transposeOverlayPortalController,
-                                overlayChildBuilder:
-                                    (context) => CompositedTransformFollower(
-                                      link: _transposeOverlayLink,
-                                      followerAnchor: Alignment.bottomRight,
-                                      targetAnchor: Alignment.topRight,
-                                      child: Align(
-                                        alignment: Alignment.bottomRight,
-                                        child: Card(
-                                          child: Padding(
-                                            padding: EdgeInsets.all(10),
-                                            child: ConstrainedBox(
-                                              constraints: BoxConstraints(
-                                                maxWidth: 150,
+                          ),
+                          Flexible(
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: FadingEdgeScrollView.fromScrollView(
+                                child: ListView(
+                                  controller: actionButtonsScrollController,
+                                  scrollDirection: Axis.horizontal,
+                                  shrinkWrap: true,
+                                  children: [
+                                    AddToCueSearch(
+                                      song: song,
+                                      isDesktop: isDesktop,
+                                      viewType: viewType,
+                                      transpose: transpose,
+                                    ),
+                                    if (viewType == SongViewType.lyrics &&
+                                        song.hasChords) ...[
+                                      VerticalDivider(),
+                                      TransposeResetButton(
+                                        song,
+                                        cueId: widget.cueId,
+                                        isHorizontal: isDesktop,
+                                      ),
+                                      CompositedTransformTarget(
+                                        link: _transposeOverlayLink,
+                                        child: OverlayPortal(
+                                          controller:
+                                              transposeOverlayPortalController,
+                                          overlayChildBuilder:
+                                              (
+                                                context,
+                                              ) => CompositedTransformFollower(
+                                                link: _transposeOverlayLink,
+                                                followerAnchor:
+                                                    Alignment.bottomRight,
+                                                targetAnchor:
+                                                    Alignment.topRight,
+                                                child: Align(
+                                                  alignment:
+                                                      Alignment.bottomRight,
+                                                  child: Card(
+                                                    child: Padding(
+                                                      padding: EdgeInsets.all(
+                                                        10,
+                                                      ),
+                                                      child: ConstrainedBox(
+                                                        constraints:
+                                                            BoxConstraints(
+                                                              maxWidth: 150,
+                                                            ),
+                                                        child:
+                                                            TransposeControls(
+                                                              song,
+                                                              cueId:
+                                                                  widget.cueId,
+                                                            ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
                                               ),
-                                              child: TransposeControls(
-                                                song,
-                                                cueId: widget.cueId,
-                                              ),
+                                          child: FilledButton.tonalIcon(
+                                            onPressed: () {
+                                              transposeOverlayPortalController
+                                                  .toggle();
+                                              setState(() {});
+                                            },
+                                            label: Text(
+                                              song.keyField != null
+                                                  ? getTransposedKey(
+                                                    song.keyField!,
+                                                    transpose.semitones,
+                                                  ).toString()
+                                                  : 'Transzponálás',
+                                            ),
+                                            icon: Icon(
+                                              transposeOverlayPortalController
+                                                      .isShowing
+                                                  ? Icons.close
+                                                  : Icons.unfold_more,
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                child: FilledButton.tonalIcon(
-                                  onPressed: () {
-                                    _transposeOverlayPortalController.toggle();
-                                    setState(() {});
-                                  },
-                                  label: Text(
-                                    song.keyField != null
-                                        ? getTransposedKey(
-                                          song.keyField!,
-                                          transpose.semitones,
-                                        ).toString()
-                                        : 'Transzponálás',
-                                  ),
-                                  icon: Icon(
-                                    _transposeOverlayPortalController.isShowing
-                                        ? Icons.close
-                                        : Icons.unfold_more,
-                                  ),
+                                    ],
+                                  ],
                                 ),
                               ),
                             ),
-                          ],
+                          ),
                         ],
                       ),
                     ),
@@ -304,7 +352,7 @@ class _SongPageState extends ConsumerState<SongPage> {
         onPressed:
             () => showDetailsBottomSheet(
               context,
-              _detailsSheetScrollController,
+              detailsSheetScrollController,
               detailsContent,
             ),
       ),
@@ -401,112 +449,5 @@ class _SongPageState extends ConsumerState<SongPage> {
       }
     }
     return detailsContent;
-  }
-}
-
-class ViewChooser extends ConsumerWidget {
-  const ViewChooser({
-    super.key,
-    required this.viewType,
-    required this.song,
-    required this.listId,
-    required this.useDropdown,
-  });
-
-  final SongViewType viewType;
-  final Song song;
-  final String? listId;
-  final bool useDropdown;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final List<
-      ({SongViewType value, IconData icon, String label, bool enabled})
-    >
-    viewTypeEntries = [
-      (
-        value: SongViewType.svg,
-        icon: Icons.music_note_outlined,
-        label: 'Kotta',
-        enabled: song.hasSvg,
-      ),
-      (
-        value: SongViewType.pdf,
-        icon: Icons.audio_file_outlined,
-        label: 'PDF',
-        enabled: song.hasPdf,
-      ),
-      (
-        value: SongViewType.lyrics,
-        icon: song.hasChords ? Icons.tag_outlined : Icons.text_snippet_outlined,
-        label: song.hasChords ? 'Akkordok' : 'Dalszöveg',
-        enabled: song.hasLyrics,
-      ),
-    ];
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        if (!useDropdown) {
-          return SegmentedButton<SongViewType>(
-            selected: {viewType},
-            onSelectionChanged: (viewTypeSet) {
-              ref
-                  .read(ViewTypeForProvider(song.uuid, listId).notifier)
-                  .changeTo(viewTypeSet.first);
-            },
-            showSelectedIcon: false,
-            multiSelectionEnabled: false,
-            style: ButtonStyle(
-              shape: WidgetStatePropertyAll(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(9)),
-                ),
-              ),
-            ),
-            segments:
-                viewTypeEntries
-                    .map(
-                      (e) => ButtonSegment(
-                        value: e.value,
-                        label: Text(e.label),
-                        icon: Icon(e.icon),
-                        enabled: e.enabled,
-                        tooltip: !e.enabled ? 'Nem elérhető' : null,
-                      ),
-                    )
-                    .toList(),
-          );
-        } else {
-          return DropdownButtonHideUnderline(
-            child: DropdownButton<SongViewType>(
-              value: viewType,
-              onChanged:
-                  (viewType) => ref
-                      .read(ViewTypeForProvider(song.uuid, listId).notifier)
-                      .changeTo(viewType!),
-              items:
-                  viewTypeEntries
-                      .where((e) => e.enabled)
-                      .map(
-                        (e) => DropdownMenuItem(
-                          enabled: e.enabled,
-                          value: e.value,
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(right: 10),
-                                child: Icon(e.icon),
-                              ),
-                              Text(e.label),
-                            ],
-                          ),
-                        ),
-                      )
-                      .toList(),
-            ),
-          );
-        }
-      },
-    );
   }
 }

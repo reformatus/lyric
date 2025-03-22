@@ -9,7 +9,7 @@ part 'cues.g.dart';
 
 //! watchAllCues
 
-@riverpod
+@Riverpod(keepAlive: true)
 Stream<List<Cue>> watchAllCues(Ref ref) async* {
   yield* dbWatchAllCues();
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../data/cue/cue.dart';
 import '../../../data/cue/slide.dart';
 import '../../../main.dart';
 import '../../song/lyrics/view.dart';
