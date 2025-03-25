@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lyric/data/song/extensions.dart';
+import '../../../data/song/extensions.dart';
 
 import '../../../data/database.dart';
 import '../../../data/song/song.dart';

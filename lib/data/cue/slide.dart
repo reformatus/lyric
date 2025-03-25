@@ -1,4 +1,4 @@
-import 'package:lyric/data/song/transpose.dart';
+import '../song/transpose.dart';
 
 import '../../services/song/from_uuid.dart';
 import '../../ui/song/state.dart';

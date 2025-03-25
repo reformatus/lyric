@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:lyric/ui/song/state.dart';
 import 'package:pdfrx/pdfrx.dart';
 
 import '../../../data/song/song.dart';
 import '../../../services/assets/get_song_asset.dart';
 import '../../common/error/card.dart';
+import '../state.dart';
 
 class SheetView extends ConsumerWidget {
   const SheetView.svg(this.song, {super.key}) : _viewType = SongViewType.svg;

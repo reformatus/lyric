@@ -1,5 +1,5 @@
 import 'package:chord_transposer/chord_transposer.dart';
-import 'package:lyric/data/song/song.dart';
+import '../../data/song/song.dart';
 
 String? getTransposedChord(String? original, String? fromKey, int semitones) {
   if (original == null) return null;

@@ -1,11 +1,11 @@
 import 'package:drift/drift.dart';
-import 'package:lyric/ui/song/state.dart';
 
 import '../../../data/cue/cue.dart';
 import '../../../data/cue/slide.dart';
 import '../../../data/database.dart';
 import '../../../data/song/song.dart';
 import '../../../data/song/transpose.dart';
+import '../../../ui/song/state.dart';
 
 Future addSongSlideToCueForSong({
   required Cue cue,

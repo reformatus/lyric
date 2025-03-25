@@ -1,7 +1,7 @@
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/ui/common/centered_hint.dart';
+import '../../common/centered_hint.dart';
 
 import '../../../data/cue/cue.dart';
 import '../../../main.dart';

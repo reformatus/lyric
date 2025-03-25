@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/data/cue/cue.dart';
-import 'package:lyric/data/song/song.dart';
-import 'package:lyric/data/song/transpose.dart';
-import 'package:lyric/services/cue/cues.dart';
-import 'package:lyric/services/cue/slide/song_slide.dart';
-import 'package:lyric/ui/common/error/card.dart';
-import 'package:lyric/ui/song/state.dart';
 
+import '../../data/cue/cue.dart';
+import '../../data/song/song.dart';
+import '../../data/song/transpose.dart';
+import '../../services/cue/cues.dart';
+import '../../services/cue/slide/song_slide.dart';
 import '../base/cues/dialogs.dart';
+import '../common/error/card.dart';
+import 'state.dart';
 
 /// A reusable widget that provides search functionality for adding songs to cues
 class AddToCueSearch extends ConsumerStatefulWidget {

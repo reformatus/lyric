@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/ui/song/transpose/state.dart';
 
 import '../../../data/song/song.dart';
+import 'state.dart';
 
 class TransposeResetButton extends ConsumerWidget {
   const TransposeResetButton(

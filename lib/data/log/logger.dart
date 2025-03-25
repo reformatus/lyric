@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
-import 'package:lyric/data/log/provider.dart';
+import 'provider.dart';
 
 //* we need ref like this. do we never need to log before having a ref??
 Logger log = Logger.root;

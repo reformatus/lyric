@@ -1,4 +1,4 @@
-import 'package:lyric/data/song/song.dart';
+import 'song.dart';
 
 extension PropertyUtils on Song {
   bool get hasSvg => contentMap['svg']?.isNotEmpty ?? false;

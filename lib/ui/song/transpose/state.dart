@@ -1,5 +1,6 @@
-import 'package:lyric/data/song/transpose.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import '../../../data/song/transpose.dart';
 
 part 'state.g.dart';
 

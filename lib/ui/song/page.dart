@@ -1,21 +1,21 @@
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/data/song/extensions.dart';
-import 'package:lyric/main.dart';
-import 'package:lyric/services/key/get_transposed.dart';
-import 'package:lyric/ui/song/add_to_cue_search.dart';
-import 'package:lyric/ui/song/transpose/widget.dart';
-import 'package:lyric/ui/song/view_chooser.dart';
-import 'transpose/state.dart';
-import 'lyrics/view.dart';
-import 'sheet/view.dart';
 
+import '../../data/song/extensions.dart';
 import '../../data/song/song.dart';
+import '../../main.dart';
+import '../../services/key/get_transposed.dart';
 import '../../services/song/from_uuid.dart';
 import '../base/songs/filter/types/field_type.dart';
 import '../common/error/card.dart';
+import 'add_to_cue_search.dart';
+import 'lyrics/view.dart';
+import 'sheet/view.dart';
 import 'state.dart';
+import 'transpose/state.dart';
+import 'transpose/widget.dart';
+import 'view_chooser.dart';
 
 // far future read from songbank introduction
 const Set<String> fieldsToShowInDetailsSummary = {

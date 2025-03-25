@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/data/song/extensions.dart';
-import 'package:lyric/data/song/song.dart';
-import 'package:lyric/ui/song/state.dart';
+
+import '../../data/song/extensions.dart';
+import '../../data/song/song.dart';
+import 'state.dart';
 
 class ViewChooser extends ConsumerWidget {
   const ViewChooser({
