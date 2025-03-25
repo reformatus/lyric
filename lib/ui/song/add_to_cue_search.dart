@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:lyric/data/cue/cue.dart';
 import 'package:lyric/data/song/song.dart';
 import 'package:lyric/data/song/transpose.dart';
