@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lyric/data/cue/cue.dart';
 import 'package:lyric/data/song/song.dart';
 import 'package:lyric/data/song/transpose.dart';
@@ -7,6 +8,8 @@ import 'package:lyric/services/cue/cues.dart';
 import 'package:lyric/services/cue/slide/song_slide.dart';
 import 'package:lyric/ui/common/error/card.dart';
 import 'package:lyric/ui/song/state.dart';
+
+import '../base/cues/dialogs.dart';
 
 /// A reusable widget that provides search functionality for adding songs to cues
 class AddToCueSearch extends ConsumerStatefulWidget {
@@ -103,25 +106,64 @@ class _AddToCueSearchState extends ConsumerState<AddToCueSearch> {
         try {
           final filteredCues = await filterCues(controller.text);
 
-          return filteredCues.asMap().entries.map((cueEntry) {
-            final selected = cueEntry.key == 0 && controller.text.isNotEmpty;
-            return ListTile(
-              selected: selected,
-              selectedTileColor: Theme.of(context).cardColor,
-              title: Text(cueEntry.value.title),
-              subtitle:
-                  cueEntry.value.description.isNotEmpty
-                      ? Text(
-                        cueEntry.value.description.split('\n').first,
-                        maxLines: 1,
-                        softWrap: false,
-                        overflow: TextOverflow.fade,
-                      )
-                      : null,
-              trailing: selected ? Icon(Icons.keyboard_return) : null,
-              onTap: () => handleCueSelection(controller, cueEntry.value),
-            );
-          }).toList();
+          if (!mounted) return [];
+
+          return [
+                if (controller.text.isEmpty || filteredCues.isEmpty)
+                  ListTile(
+                    leading: Icon(Icons.add),
+                    title: Text(
+                      [
+                        'Hozzáadás új listához',
+                        if (filteredCues.isEmpty &&
+                            controller.text.isNotEmpty) ...[
+                          ': ',
+                          controller.text,
+                        ],
+                      ].join(),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize:
+                            // ignore: use_build_context_synchronously
+                            Theme.of(context).textTheme.bodyMedium?.fontSize,
+                      ),
+                    ),
+                    onTap:
+                        () => showAdaptiveDialog(
+                          context: context,
+                          builder:
+                              (context) => EditCueDialog(
+                                prefilledTitle: controller.text,
+                              ),
+                        ).then((createdCue) {
+                          createdCue as Cue;
+                          handleCueSelection(controller, createdCue);
+                        }),
+                  ),
+              ]
+              .followedBy(
+                filteredCues.asMap().entries.map((cueEntry) {
+                  final selected =
+                      cueEntry.key == 0 && controller.text.isNotEmpty;
+                  return ListTile(
+                    selected: selected,
+                    selectedTileColor: Theme.of(context).cardColor,
+                    title: Text(cueEntry.value.title),
+                    subtitle:
+                        cueEntry.value.description.isNotEmpty
+                            ? Text(
+                              cueEntry.value.description.split('\n').first,
+                              maxLines: 1,
+                              softWrap: false,
+                              overflow: TextOverflow.fade,
+                            )
+                            : null,
+                    trailing: selected ? Icon(Icons.keyboard_return) : null,
+                    onTap: () => handleCueSelection(controller, cueEntry.value),
+                  );
+                }),
+              )
+              .toList();
         } catch (e, s) {
           return [
             LErrorCard(

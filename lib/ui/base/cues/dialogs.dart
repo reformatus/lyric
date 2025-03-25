@@ -6,9 +6,10 @@ import '../../../services/cue/write_cue.dart';
 
 class EditCueDialog extends StatefulWidget {
   /// If cue is null, dialog adds new cue
-  const EditCueDialog({this.cue, super.key});
+  const EditCueDialog({this.cue, this.prefilledTitle, super.key});
 
   final Cue? cue;
+  final String? prefilledTitle;
 
   @override
   EditCueDialogState createState() => EditCueDialogState();
@@ -17,7 +18,7 @@ class EditCueDialog extends StatefulWidget {
 class EditCueDialogState extends State<EditCueDialog> {
   @override
   void initState() {
-    _titleController = TextEditingController(text: widget.cue?.title);
+    _titleController = TextEditingController(text: widget.cue?.title ?? widget.prefilledTitle);
     _descriptionController = TextEditingController(
       text: widget.cue?.description,
     );
@@ -57,9 +58,7 @@ class EditCueDialogState extends State<EditCueDialog> {
             description: _descriptionController.text,
           );
           // ignore: use_build_context_synchronously
-          context.pop();
-          // ignore: use_build_context_synchronously
-          context.push('/cue/${createdCue.uuid}?index=-1');
+          context.pop<Cue>(createdCue);
         }
       }
     }

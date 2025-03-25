@@ -27,7 +27,12 @@ class _SetsPageState extends ConsumerState<SetsPage> {
             () => showAdaptiveDialog(
               context: context,
               builder: (context) => EditCueDialog(),
-            ),
+            ).then((createdCue) {
+              createdCue as Cue;
+              if (!mounted) return;
+              // ignore: use_build_context_synchronously
+              context.push('/cue/${createdCue.uuid}?index=-1');
+            }),
         label: Text('Új lista'),
         icon: Icon(Icons.add_box_outlined),
       ),
