@@ -28,8 +28,9 @@ class _SetsPageState extends ConsumerState<SetsPage> {
               context: context,
               builder: (context) => EditCueDialog(),
             ).then((createdCue) {
-              createdCue as Cue;
               if (!mounted) return;
+              if (createdCue == null) return;
+              createdCue as Cue;
               // ignore: use_build_context_synchronously
               context.push('/cue/${createdCue.uuid}?index=-1');
             }),

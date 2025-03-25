@@ -135,6 +135,7 @@ class _AddToCueSearchState extends ConsumerState<AddToCueSearch> {
                                 prefilledTitle: controller.text,
                               ),
                         ).then((createdCue) {
+                          if (createdCue == null) return;
                           createdCue as Cue;
                           handleCueSelection(controller, createdCue);
                         }),
