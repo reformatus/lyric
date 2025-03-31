@@ -1,5 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../data/cue/slide.dart';
 import '../../../data/song/transpose.dart';
 
 part 'state.g.dart';
@@ -7,7 +8,7 @@ part 'state.g.dart';
 @Riverpod(keepAlive: true)
 class TransposeStateFor extends _$TransposeStateFor {
   @override
-  SongTranspose build(String songId, String? listId) {
+  SongTranspose build(String songId, SongSlide? songSlide) {
     return SongTranspose(semitones: 0, capo: 0);
   }
 

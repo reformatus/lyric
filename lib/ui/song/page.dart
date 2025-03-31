@@ -1,6 +1,7 @@
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/data/cue/slide.dart';
 
 import '../../data/song/extensions.dart';
 import '../../data/song/song.dart';
@@ -26,9 +27,9 @@ const Set<String> fieldsToShowInDetailsSummary = {
 const Set<String> fieldsToOmitFromDetails = {'tite', 'opensong', 'first_line'};
 
 class SongPage extends ConsumerStatefulWidget {
-  const SongPage(this.songId, {this.cueId, super.key});
+  const SongPage(this.songId, {this.songSlide, super.key});
   final String songId;
-  final String? cueId;
+  final SongSlide? songSlide;
 
   @override
   ConsumerState<SongPage> createState() => _SongPageState();
@@ -83,15 +84,15 @@ class _SongPageState extends ConsumerState<SongPage> {
           final List<Widget> detailsContent = getDetailsContent(song, context);
 
           final viewType = ref.watch(
-            ViewTypeForProvider(song.uuid, widget.cueId),
+            ViewTypeForProvider(song.uuid, widget.songSlide),
           );
           final transpose = ref.watch(
-            TransposeStateForProvider(song.uuid, widget.cueId),
+            TransposeStateForProvider(song.uuid, widget.songSlide),
           );
 
           if (viewType == null) {
             ref
-                .read(viewTypeForProvider(song.uuid, widget.cueId).notifier)
+                .read(viewTypeForProvider(song.uuid, widget.songSlide).notifier)
                 .setDefaultFor(song);
             return Center(child: CircularProgressIndicator());
           }
@@ -109,7 +110,7 @@ class _SongPageState extends ConsumerState<SongPage> {
                   ViewChooser(
                     viewType: viewType,
                     song: song,
-                    listId: widget.cueId,
+                    songSlide: widget.songSlide,
                     useDropdown: false,
                   ),
                 if ((detailsContent.isNotEmpty && !isDesktop) && !isMobile)
@@ -137,7 +138,7 @@ class _SongPageState extends ConsumerState<SongPage> {
                     SongViewType.pdf => SheetView.pdf(song),
                     SongViewType.lyrics => LyricsView(
                       song,
-                      cueId: widget.cueId,
+                      transposeOptional: transpose,
                     ),
                   },
                 ),
@@ -180,7 +181,7 @@ class _SongPageState extends ConsumerState<SongPage> {
                                                 ),
                                               TransposeResetButton(
                                                 song,
-                                                cueId: widget.cueId,
+                                                songSlide: widget.songSlide,
                                                 isHorizontal: isDesktop,
                                               ),
                                             ],
@@ -188,7 +189,7 @@ class _SongPageState extends ConsumerState<SongPage> {
                                         ),
                                         TransposeControls(
                                           song,
-                                          cueId: widget.cueId,
+                                          songSlide: widget.songSlide,
                                         ),
                                       ],
                                     ),
@@ -223,7 +224,7 @@ class _SongPageState extends ConsumerState<SongPage> {
                             child: ViewChooser(
                               viewType: viewType,
                               song: song,
-                              listId: widget.cueId,
+                              songSlide: widget.songSlide,
                               useDropdown: constraints.maxWidth < 550,
                             ),
                           ),
@@ -247,7 +248,7 @@ class _SongPageState extends ConsumerState<SongPage> {
                                       VerticalDivider(),
                                       TransposeResetButton(
                                         song,
-                                        cueId: widget.cueId,
+                                        songSlide: widget.songSlide,
                                         isHorizontal: isDesktop,
                                       ),
                                       CompositedTransformTarget(
@@ -277,12 +278,11 @@ class _SongPageState extends ConsumerState<SongPage> {
                                                             BoxConstraints(
                                                               maxWidth: 150,
                                                             ),
-                                                        child:
-                                                            TransposeControls(
-                                                              song,
-                                                              cueId:
-                                                                  widget.cueId,
-                                                            ),
+                                                        child: TransposeControls(
+                                                          song,
+                                                          songSlide:
+                                                              widget.songSlide,
+                                                        ),
                                                       ),
                                                     ),
                                                   ),

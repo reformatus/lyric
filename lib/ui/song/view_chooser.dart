@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/data/cue/slide.dart';
 
 import '../../data/song/extensions.dart';
 import '../../data/song/song.dart';
@@ -10,14 +11,14 @@ class ViewChooser extends ConsumerWidget {
     super.key,
     required this.viewType,
     required this.song,
-    required this.listId,
+    this.songSlide,
     required this.useDropdown,
   });
 
   final SongViewType viewType;
   final Song song;
-  final String? listId;
   final bool useDropdown;
+  final SongSlide? songSlide;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -52,7 +53,7 @@ class ViewChooser extends ConsumerWidget {
             selected: {viewType},
             onSelectionChanged: (viewTypeSet) {
               ref
-                  .read(ViewTypeForProvider(song.uuid, listId).notifier)
+                  .read(ViewTypeForProvider(song.uuid, songSlide).notifier)
                   .changeTo(viewTypeSet.first);
             },
             showSelectedIcon: false,
@@ -83,7 +84,7 @@ class ViewChooser extends ConsumerWidget {
               value: viewType,
               onChanged:
                   (viewType) => ref
-                      .read(ViewTypeForProvider(song.uuid, listId).notifier)
+                      .read(ViewTypeForProvider(song.uuid, songSlide).notifier)
                       .changeTo(viewType!),
               items:
                   viewTypeEntries

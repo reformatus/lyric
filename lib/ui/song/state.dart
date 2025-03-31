@@ -1,3 +1,5 @@
+import 'package:lyric/data/cue/slide.dart';
+
 import '../../data/song/extensions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -25,7 +27,7 @@ enum SongViewType {
 @Riverpod(keepAlive: true)
 class ViewTypeFor extends _$ViewTypeFor {
   @override
-  SongViewType? build(String songId, String? cueId) {
+  SongViewType? build(String songId, SongSlide? songSlide) {
     return null;
   }
 

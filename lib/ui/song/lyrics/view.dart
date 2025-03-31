@@ -1,26 +1,32 @@
 import 'package:dart_opensong/dart_opensong.dart' as os;
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/data/song/transpose.dart';
 import '../../../services/key/get_transposed.dart';
 import '../../../services/song/verse_tag_pretty.dart';
 import '../../common/error/card.dart';
 import 'package:chord_transposer/chord_transposer.dart';
 
 import '../../../data/song/song.dart';
-import '../transpose/state.dart';
 
-class LyricsView extends ConsumerWidget {
-  LyricsView(this.song, {required this.cueId, super.key});
+class LyricsView extends StatelessWidget {
+  LyricsView(this.song, {this.transposeOptional, super.key});
 
   final Song song;
-  final String? cueId;
+  final SongTranspose? transposeOptional;
+  late final SongTranspose transpose;
 
   final ChordTransposer transposer = ChordTransposer(
     notation: NoteNotation.germanWithAccidentals, // TODO configurable
   );
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
+    if (transposeOptional == null) {
+      transpose = SongTranspose();
+    } else {
+      transpose = transposeOptional!;
+    }
+
     return LayoutBuilder(
       builder: (context, constraints) {
         //! Calculate layout
@@ -43,10 +49,6 @@ class LyricsView extends ConsumerWidget {
         }
         var verses = os.getVersesFromString(openSongContent);
 
-        final transpose = ref.watch(
-          transposeStateForProvider(song.uuid, cueId),
-        );
-
         // far future todo Parse ChordPro
 
         return SingleChildScrollView(
@@ -64,7 +66,7 @@ class LyricsView extends ConsumerWidget {
                 ...verses.map(
                   (e) => SizedBox(
                     width: cardWidth,
-                    child: VerseCard(song, cueId, e),
+                    child: VerseCard(song, e, transpose: transpose),
                   ),
                 ),
               ],
@@ -77,11 +79,11 @@ class LyricsView extends ConsumerWidget {
 }
 
 class VerseCard extends StatelessWidget {
-  const VerseCard(this.song, this.cueId, this.verse, {super.key});
+  const VerseCard(this.song, this.verse, {required this.transpose, super.key});
 
   final os.Verse verse;
   final Song song;
-  final String? cueId;
+  final SongTranspose transpose;
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +127,7 @@ class VerseCard extends StatelessWidget {
                                       .map(
                                         (e) => LyricsSegment(
                                           song: song,
-                                          cueId: cueId,
+                                          transpose: transpose,
                                           segments: segments,
                                           e: e,
                                         ),
@@ -156,11 +158,11 @@ class VerseCard extends StatelessWidget {
   }
 }
 
-class LyricsSegment extends ConsumerWidget {
+class LyricsSegment extends StatelessWidget {
   const LyricsSegment({
     super.key,
     required this.song,
-    required this.cueId,
+    required this.transpose,
     required this.segments,
     required this.e,
   });
@@ -168,12 +170,11 @@ class LyricsSegment extends ConsumerWidget {
   final List<os.VerseLineSegment> segments;
   final os.VerseLineSegment e;
   final Song song;
-  final String? cueId;
+  final SongTranspose transpose;
 
   // TODO transpose whole song at once, avoid watching transpose at all segments duh...
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final transpose = ref.watch(TransposeStateForProvider(song.uuid, cueId));
+  Widget build(BuildContext context) {
     final chord = getTransposedChord(
       e.chord,
       song.keyField?.pitch,

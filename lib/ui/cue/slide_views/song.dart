@@ -51,7 +51,10 @@ class SongSlideView extends StatelessWidget {
     return switch (songSlide.viewType) {
       SongViewType.svg => SheetView.svg(songSlide.song),
       SongViewType.pdf => SheetView.pdf(songSlide.song),
-      SongViewType.lyrics => LyricsView(songSlide.song, cueId: cueId),
+      SongViewType.lyrics => LyricsView(
+        songSlide.song,
+        transposeOptional: songSlide.transpose,
+      ),
     };
   }
 }

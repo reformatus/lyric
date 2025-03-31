@@ -4,7 +4,7 @@ class SongTranspose {
 
   int get finalTransposeBy => semitones - capo;
 
-  SongTranspose({required this.semitones, required this.capo});
+  SongTranspose({this.semitones = 0, this.capo = 0});
 
   Map<String, dynamic> toJson() {
     return {'semitones': semitones, 'capo': capo};
