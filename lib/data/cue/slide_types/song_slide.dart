@@ -1,6 +1,6 @@
 part of '../slide.dart';
 
-class SongSlide implements Slide {
+class SongSlide extends Slide {
   static String slideType = 'song';
   Song song;
   SongViewType viewType;
@@ -11,10 +11,6 @@ class SongSlide implements Slide {
   bool contentDifferentFlag = false;
 
   //? Overrides
-
-  @override
-  String? comment;
-  // TODO implement saving wheter sheet music or lyrics were opened
 
   @override
   String getPreview() {
@@ -30,17 +26,19 @@ class SongSlide implements Slide {
     var songResult = await getSongForSlideJson(json['song']);
 
     return SongSlide(
+      json['uuid'],
       songResult.song,
       parent,
+      json['comment'],
       viewType: SongViewType.fromString(json['viewType']),
       transpose: SongTranspose.fromJson(json['transpose']),
-      comment: json['comment'],
     )..contentDifferentFlag = songResult.contentDifferentFlag;
   }
 
   @override
   Map toJson() {
     return {
+      'uuid': uuid,
       'slideType': slideType,
       'song': songOfSlideToJson(song),
       'viewType': viewType.name,
@@ -50,11 +48,12 @@ class SongSlide implements Slide {
   }
 
   SongSlide(
+    super.uuid,
     this.song,
-    this.parentCue, {
+    this.parentCue,
+    super.comment, {
     required this.viewType,
     this.transpose,
-    this.comment,
   });
 }
 

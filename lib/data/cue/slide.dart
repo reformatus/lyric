@@ -10,14 +10,17 @@ part 'slide_types/song_slide.dart';
 sealed class Slide {
   String getPreview();
   // todo have interfaces for title, subtitle, etc
+  String uuid;
   String? comment;
+
+  Slide(this.uuid, this.comment);
 
   static Future<Slide> reviveFromJson(Map json, Cue parent) {
     switch (json['slideType']) {
       case 'song':
         return SongSlide.reviveFromJson(json, parent);
       default:
-        return Future.sync(() => UnknownTypeSlide(json));
+        return Future.sync(() => UnknownTypeSlide(json, json['uuid'], json['comment']));
     }
   }
 
@@ -33,5 +36,5 @@ class UnknownTypeSlide extends Slide {
   @override
   Map toJson() => json;
 
-  UnknownTypeSlide(this.json);
+  UnknownTypeSlide(this.json, super.uuid, super.comment);
 }
