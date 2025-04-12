@@ -1,0 +1,2 @@
+C:/GitHub/lyric/android/app/.cxx/Debug/341t5e36/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/GitHub/lyric/android/app/.cxx/Debug/341t5e36/armeabi-v7a/CMakeFiles/rebuild_cache.dir
