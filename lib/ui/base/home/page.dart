@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/data/log/provider.dart';
+import 'package:lyric/ui/common/log/dialog.dart';
 
 import 'button.dart';
 import 'parts/about.dart';
 import 'parts/feedback/send_mail.dart';
 import 'parts/new_version_widget.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(title: const Text('Sófár DalApp Béta')),
       body: Column(
@@ -46,7 +49,7 @@ class HomePage extends StatelessWidget {
                         Tooltip(
                           message: 'Hamarosan...',
                           child: HomePageButton(
-                            icon: Icons.library_music,
+                            icon: Icon(Icons.library_music),
                             title: 'Daltárak',
                             subtitle: 'Hozzáadás, letiltás',
                             onPressed: null, // Disable button
@@ -55,7 +58,7 @@ class HomePage extends StatelessWidget {
                         Tooltip(
                           message: 'Hamarosan...',
                           child: HomePageButton(
-                            icon: Icons.settings,
+                            icon: Icon(Icons.settings),
                             title: 'Beállítások',
                             subtitle: 'Téma, nyelv, stb.',
                             onPressed: null, // Disable button
@@ -64,19 +67,31 @@ class HomePage extends StatelessWidget {
                         Tooltip(
                           message: 'E-mail küldése',
                           child: HomePageButton(
-                            icon: Icons.feedback,
+                            icon: Icon(Icons.feedback),
                             title: 'Visszajelzés',
                             subtitle: 'Hibajelentés, javaslat küldése',
                             onPressed: launchFeedbackEmail,
                           ),
                         ),
                         HomePageButton(
-                          icon: Icons.info_outline,
+                          icon: Icon(Icons.info_outline),
                           title: 'Névjegy',
                           subtitle: 'Verzió, licencek',
+                          onPressed: () => showLyricAboutDialog(context),
+                        ),
+                        HomePageButton(
+                          icon: Badge(
+                            isLabelVisible:
+                                ref.watch(unreadLogCountProvider) > 0,
+                            child: Icon(Icons.notification_important),
+                          ),
+                          title: 'Napló',
+                          subtitle: 'Háttérfolyamatok üzenetei',
                           onPressed:
-                              () =>
-                                  showLyricAboutDialog(context), // Keep enabled
+                              () => showDialog(
+                                context: context,
+                                builder: (context) => LogViewDialog(),
+                              ),
                         ),
                       ],
                     );

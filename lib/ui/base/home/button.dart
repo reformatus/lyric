@@ -9,7 +9,7 @@ class HomePageButton extends StatelessWidget {
     super.key,
   });
 
-  final IconData icon;
+  final Widget icon;
   final String title;
   final String subtitle;
   final VoidCallback? onPressed; // Make onPressed nullable
@@ -30,7 +30,7 @@ class HomePageButton extends StatelessWidget {
           onPressed: onPressed, // Accept null to disable button
           child: ListTile(
             visualDensity: VisualDensity.comfortable,
-            leading: Icon(icon),
+            leading: icon,
             title: Text(title, softWrap: false, overflow: TextOverflow.fade),
             subtitle: Text(
               subtitle,
