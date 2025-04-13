@@ -3,7 +3,7 @@ description: "Your Open Worship Superapp"
 
 publish_to: 'none'
 
-version: 0.3.6+30
+version: 0.3.6+31
 
 environment:
   sdk: '>=3.7.0 <4.0.0'
