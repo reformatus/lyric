@@ -1,367 +1,197 @@
-// TODO remove ignore
-// ignore_for_file: unused_import, unused_element
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/services/cue/slide/revived_slides.dart';
 
+import '../../data/cue/cue.dart';
 import '../../data/cue/slide.dart';
 import '../../main.dart';
-import '../../services/cue/from_uuid.dart';
-import '../../services/cue/slide/watch_revived.dart';
-import '../../services/cue/write_cue.dart';
-import '../base/songs/page.dart';
 import '../common/error/card.dart';
-import 'slide_views/song.dart';
+import 'widgets/slide_drawer.dart';
+import 'widgets/slide_view.dart';
+import 'widgets/fullscreen_dialog.dart';
 
-/* // todo improve cue page:
- * move state management to riverpod
- * move slide list to left drawer on mobile
- * make close search consistent with closing slide preview button (using proper state management)
- * factor out repeated code, ternaries, and in-line callback definitions
- * prevent unnecessary ui updates and db reads
- * implement proper presentation view with tap controls
- * implement tap to fullscreen
- * save last selected cue index to db (maybe?)
- */
+import 'state.dart';
 
-class CuePage extends ConsumerStatefulWidget {
-  const CuePage(this.uuid, {this.initialSlideIndex, super.key});
+class CuePage extends ConsumerWidget {
+  const CuePage(this.uuid, {this.initialSlideUuid, super.key});
 
   final String uuid;
-  final int? initialSlideIndex;
+  final String? initialSlideUuid;
 
   @override
-  ConsumerState<CuePage> createState() => _CuePageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+    Cue cue = ref.watch(currentCueProvider)!;
+    var slides = ref.watch(revivedSlidesForCueProvider(cue));
 
-class _CuePageState extends ConsumerState<CuePage> {
-  @override
-  void initState() {
-    selectedSlideOrIsAdding = widget.initialSlideIndex;
-    super.initState();
-  }
+    final currentSlide = ref.watch(currentSlideProvider);
+    final isTabletOrLarger =
+        MediaQuery.of(context).size.width >= globals.tabletFromWidth;
 
-  /// -1 means song adding mode
-  /// null means neither song selected nor adding mode
-  int? selectedSlideOrIsAdding = 0;
-  bool get isSongAddingMode => selectedSlideOrIsAdding == -1;
-  bool isSlideViewExpanded = false;
+    final bool drawerPermanentlyOpen = isTabletOrLarger;
 
-  List<Slide>? localSlides;
+    // far future todo Update URL when slide changes
 
-  @override
-  Widget build(BuildContext context) {
-    final cue = ref.watch(watchCueWithUuidProvider(widget.uuid));
-    final slides = ref.watch(
-      watchRevivedSlidesForCueWithUuidProvider(widget.uuid),
-    );
+    void selectSlide(Slide slide) {
+      ref.read(currentSlideProvider.notifier).setCurrent(slide);
 
-    slides.whenData((revivedSlides) {
-      if (localSlides == null || !cue.isLoading) {
-        setState(() {
-          localSlides = revivedSlides;
-        });
+      // Close drawer on mobile when a slide is selected
+      if (MediaQuery.of(context).size.width < globals.tabletFromWidth) {
+        scaffoldKey.currentState?.closeDrawer();
       }
-    });
-
-    addSongsModeCallback() {
-      setState(() => selectedSlideOrIsAdding = -1);
     }
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return SafeArea(
-          child: Flex(
-            direction:
-                constraints.maxWidth > globals.tabletFromWidth
-                    ? Axis.horizontal
-                    : Axis.vertical,
-            children: [
-              if (!(isSlideViewExpanded &&
-                  selectedSlideOrIsAdding != null &&
-                  selectedSlideOrIsAdding != -1))
-                Expanded(
-                  child: Scaffold(
-                    appBar: AppBar(title: Text(cue.value?.title ?? '')),
-                    // todo show error message when cue provider returns error
-                    body: switch (slides) {
-                      AsyncError(:final error, :final stackTrace) => LErrorCard(
-                        type: LErrorType.error,
-                        title: 'Nem sikerült betölteni a lista diáit!',
-                        icon: Icons.error,
-                        message: error.toString(),
-                        stack: stackTrace.toString(),
-                      ),
-                      AsyncValue(:final value) =>
-                        value != null
-                            ? ListTileTheme(
-                              selectedTileColor:
-                                  Theme.of(context).colorScheme.surface,
-                              child: ReorderableListView(
-                                onReorder: (from, to) {
-                                  setState(() {
-                                    final item = localSlides!.removeAt(from);
-                                    localSlides!.insert(
-                                      to > from ? to - 1 : to,
-                                      item,
-                                    );
-                                    reorderCueSlides(
-                                      cue.requireValue,
-                                      from,
-                                      to,
-                                    );
-                                    if (selectedSlideOrIsAdding == from) {
-                                      selectedSlideOrIsAdding =
-                                          to > from ? to - 1 : to;
-                                    } else if (selectedSlideOrIsAdding !=
-                                            null &&
-                                        from <= selectedSlideOrIsAdding! &&
-                                        to > selectedSlideOrIsAdding!) {
-                                      selectedSlideOrIsAdding =
-                                          selectedSlideOrIsAdding! - 1;
-                                    }
-                                  });
-                                },
-                                footer: SizedBox(height: 60),
-                                children:
-                                    localSlides!.asMap().entries.map((
-                                      indexedEntry,
-                                    ) {
-                                      selectCallback() {
-                                        setState(() {
-                                          if (selectedSlideOrIsAdding ==
-                                              indexedEntry.key) {
-                                            selectedSlideOrIsAdding = null;
-                                          } else {
-                                            selectedSlideOrIsAdding =
-                                                indexedEntry.key;
-                                          }
-                                        });
-                                        // todo update query parameter with selected slide
-                                      }
+    void showFullscreenDialog(Slide slide, int currentIndex, int totalSlides) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        barrierColor: Colors.black,
+        builder:
+            (context) => FullscreenSlideDialog(
+              slide: slide,
+              cueUuid: uuid,
+              currentIndex: currentIndex,
+              totalSlides: totalSlides,
+              onClose: () => Navigator.of(context).pop(),
+            ),
+      );
+    }
 
-                                      removeCallback() {
-                                        if (selectedSlideOrIsAdding ==
-                                            indexedEntry.key) {
-                                          setState(
-                                            () =>
-                                                selectedSlideOrIsAdding = null,
-                                          );
-                                        }
-                                        if (!isSongAddingMode &&
-                                            selectedSlideOrIsAdding != null &&
-                                            selectedSlideOrIsAdding! >
-                                                indexedEntry.key) {
-                                          setState(() {
-                                            selectedSlideOrIsAdding =
-                                                selectedSlideOrIsAdding! - 1;
-                                          });
-                                        }
-                                        removeSlideAtIndexFromCue(
-                                          indexedEntry.key,
-                                          cue.requireValue,
-                                        );
-                                      }
+    void showAddSongDialog() {
+      showDialog(
+        context: context,
+        builder: (context) => AddSongDialog(cueUuid: uuid),
+      );
+    }
 
-                                      switch (indexedEntry.value) {
-                                        case SongSlide songSlide:
-                                          return SongSlideTile(
-                                            key: Key(
-                                              '${indexedEntry.value}-${songSlide.hashCode}',
-                                            ),
-                                            songSlide,
-                                            selectCallback: selectCallback,
-                                            removeCallback: removeCallback,
-                                            selected:
-                                                indexedEntry.key ==
-                                                selectedSlideOrIsAdding,
-                                          );
-                                        case UnknownTypeSlide unknownTypeSlide:
-                                          return UnknownTypeSlideTile(
-                                            key: Key(
-                                              '${indexedEntry.value}-${unknownTypeSlide.hashCode}',
-                                            ),
-                                            unknownTypeSlide,
-                                            selectCallback: selectCallback,
-                                            removeCallback: removeCallback,
-                                            selected:
-                                                indexedEntry.key ==
-                                                selectedSlideOrIsAdding,
-                                          );
-                                      }
-                                    }).toList(),
-                              ),
-                            )
-                            : const Center(child: CircularProgressIndicator()),
-                    },
-                    floatingActionButton:
-                        isSongAddingMode
-                            ? (constraints.maxWidth <= globals.tabletFromWidth)
-                                ? FloatingActionButton.small(
-                                  onPressed:
-                                      () => setState(() {
-                                        selectedSlideOrIsAdding = null;
-                                      }),
-                                  tooltip: 'Kereső bezárása',
-                                  child: Icon(Icons.keyboard_arrow_down),
-                                )
-                                : null
-                            : (constraints.maxWidth > globals.tabletFromWidth ||
-                                selectedSlideOrIsAdding == null)
-                            ? FloatingActionButton.extended(
-                              onPressed: addSongsModeCallback,
-                              label: Text('Énekek hozzáadása'),
-                              icon: Icon(Icons.playlist_add),
-                            )
-                            : FloatingActionButton.small(
-                              onPressed: addSongsModeCallback,
-                              tooltip: 'Énekek hozzáadása',
-                              child: Icon(Icons.playlist_add),
-                            ),
-                  ),
-                ),
-              if (selectedSlideOrIsAdding != null &&
-                  selectedSlideOrIsAdding != -1 &&
-                  cue.hasValue)
-                Expanded(
-                  flex: 2,
-                  child: Container(
-                    color: Theme.of(context).colorScheme.surface,
-                    child: Column(
-                      children: [
-                        Container(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          height: 56,
-                          child: Row(
-                            children: [
-                              SizedBox(width: 5),
-                              IconButton.filledTonal(
-                                onPressed:
-                                    selectedSlideOrIsAdding! > 0
-                                        ? () {
-                                          setState(() {
-                                            selectedSlideOrIsAdding =
-                                                selectedSlideOrIsAdding! - 1;
-                                          });
-                                        }
-                                        : null,
-                                icon: Icon(Icons.navigate_before),
-                              ),
-                              SizedBox(width: 5),
-                              IconButton.filledTonal(
-                                onPressed:
-                                    selectedSlideOrIsAdding! <
-                                            cue.requireValue.content.length - 1
-                                        ? () {
-                                          setState(() {
-                                            selectedSlideOrIsAdding =
-                                                selectedSlideOrIsAdding! + 1;
-                                          });
-                                        }
-                                        : null,
-                                icon: Icon(Icons.navigate_next),
-                              ),
-                              Text(
-                                slides
-                                        .requireValue[selectedSlideOrIsAdding!]
-                                        .comment ??
-                                    '',
-                              ),
-                              Spacer(),
-                              IconButton(
-                                onPressed:
-                                    () => setState(() {
-                                      isSlideViewExpanded =
-                                          !isSlideViewExpanded;
-                                    }),
-                                tooltip:
-                                    isSlideViewExpanded
-                                        ? 'Előnézet'
-                                        : 'Teljes képernyő',
-                                icon: Icon(
-                                  isSlideViewExpanded
-                                      ? Icons.fullscreen_exit
-                                      : Icons.fullscreen,
-                                ),
-                              ),
-                              IconButton(
-                                onPressed:
-                                    () => setState(() {
-                                      selectedSlideOrIsAdding = null;
-                                    }),
-                                tooltip: 'Előnézet bezárása',
-                                icon: Icon(Icons.close),
-                              ),
-                              SizedBox(width: 5),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: switch (slides
-                              .requireValue[selectedSlideOrIsAdding!]) {
-                            (SongSlide songSlide) => SongSlideView(
-                              songSlide,
-                              widget.uuid,
-                            ),
-                            (UnknownTypeSlide unknownSlide) => LErrorCard(
-                              type: LErrorType.warning,
-                              title:
-                                  'Ismeretlen diatípus. Talán újabb verzióban készítették a listát?',
-                              icon: Icons.question_mark,
-                              message: unknownSlide.getPreview(),
-                              stack: unknownSlide.json.toString(),
-                            ),
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              if (cue.hasValue && isSongAddingMode)
-                Expanded(
-                  flex: 2,
-                  child: SongsPage(addingToCue: cue.requireValue),
-                ),
-            ],
+    return Scaffold(
+      key: scaffoldKey,
+      appBar: AppBar(
+        title: Text(cue.title),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            tooltip: 'Ének hozzáadása',
+            onPressed: showAddSongDialog,
           ),
-        );
-      },
+        ],
+      ),
+      drawer: !drawerPermanentlyOpen ? SlideDrawer(cue: cue) : null,
+      body: SafeArea(
+        child: Row(
+          children: [
+            if (drawerPermanentlyOpen)
+              SizedBox(width: 300, child: SlideDrawer(cue: cue)),
+
+            // Main content area
+            Expanded(
+              child: _buildMainContent(
+                slides,
+                currentSlide,
+                showFullscreenDialog,
+                selectSlide,
+                uuid,
+              ),
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton:
+          !drawerPermanentlyOpen && currentSlide == null
+              ? FloatingActionButton.extended(
+                onPressed: () => scaffoldKey.currentState?.openDrawer(),
+                label: const Text('Show Slides'),
+                icon: const Icon(Icons.menu),
+              )
+              : null,
+    );
+  }
+
+  Widget _buildMainContent(
+    AsyncValue<List<Slide>?> slides,
+    Slide? currentSlide,
+    Function(Slide, int, int) showFullscreenDialog,
+    Function(Slide) selectSlide,
+    String cueUuid,
+  ) {
+    if (slides is AsyncError) {
+      return Center(
+        child: LErrorCard(
+          type: LErrorType.error,
+          title: 'Failed to load slides',
+          icon: Icons.error,
+          message: slides.error.toString(),
+          stack: slides.stackTrace.toString(),
+        ),
+      );
+    }
+
+    if (slides is AsyncLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    final slidesValue = slides.value ?? [];
+
+    if (currentSlide == null || slidesValue.isEmpty) {
+      return const Center(
+        child: Text('Select a slide or add new slides to start'),
+      );
+    }
+
+    // Find the current slide index (for navigation)
+    final currentIndex = slidesValue.indexWhere(
+      (s) => s.uuid == currentSlide.uuid,
+    );
+    if (currentIndex == -1) {
+      // If selected slide isn't found, select the first slide
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (slidesValue.isNotEmpty) {
+          selectSlide(slidesValue[0]);
+        }
+      });
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return SlideView(
+      slide: currentSlide,
+      cueUuid: cueUuid,
+      currentIndex: currentIndex,
+      totalSlides: slidesValue.length,
+      onTap:
+          () => showFullscreenDialog(
+            currentSlide,
+            currentIndex,
+            slidesValue.length,
+          ),
     );
   }
 }
 
-class UnknownTypeSlideTile extends StatelessWidget {
-  const UnknownTypeSlideTile(
-    this.slide, {
-    required this.selectCallback,
-    required this.removeCallback,
-    required this.selected,
-    super.key,
-  });
+/// Dialog for adding songs to the cue
+/// This is a placeholder - you'll implement proper song adding later
+class AddSongDialog extends StatelessWidget {
+  const AddSongDialog({required this.cueUuid, super.key});
 
-  final GestureTapCallback selectCallback;
-  final GestureTapCallback removeCallback;
-  final bool selected;
-  final Slide slide;
+  final String cueUuid;
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text('Ismeretlen diatípus'),
-      onTap: selectCallback,
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            onPressed: removeCallback,
-            icon: Icon(Icons.delete_outline),
+    return Dialog.fullscreen(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Add Songs'),
+          leading: IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () => Navigator.of(context).pop(),
           ),
-          if (globals.isMobile) Icon(Icons.drag_handle),
-        ],
+        ),
+        body: Center(
+          child: Text(
+            'Song adding will be implemented later',
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
+        ),
       ),
-      selected: selected,
-      tileColor: Theme.of(context).colorScheme.errorContainer,
-      textColor: Theme.of(context).colorScheme.onErrorContainer,
     );
   }
 }

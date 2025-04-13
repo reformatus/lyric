@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../data/log/provider.dart';
-import '../common/log/dialog.dart';
 
+import '../../data/log/provider.dart';
 import '../../main.dart';
 import '../../services/app_version/check_new_version.dart';
+import '../common/log/dialog.dart';
 
 typedef GeneralNavigationDestination =
     ({Widget icon, Widget? selectedIcon, String label});

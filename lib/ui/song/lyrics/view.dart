@@ -1,6 +1,6 @@
 import 'package:dart_opensong/dart_opensong.dart' as os;
 import 'package:flutter/material.dart';
-import 'package:lyric/data/song/transpose.dart';
+import '../../../data/song/transpose.dart';
 import '../../../services/key/get_transposed.dart';
 import '../../../services/song/verse_tag_pretty.dart';
 import '../../common/error/card.dart';

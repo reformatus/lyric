@@ -43,7 +43,7 @@ class _AddToCueSearchState extends ConsumerState<AddToCueSearch> {
       SearchController controller,
       Cue cue,
     ) async {
-      addSongSlideToCueForSong(
+      addNewSlideOfSongToCue(
         cue: cue,
         song: widget.song,
         viewType: widget.viewType,

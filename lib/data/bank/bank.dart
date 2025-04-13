@@ -36,7 +36,7 @@ final List<Bank> defaultBanks = [
     true,
     null,
     'Sófár Kottatár',
-    Uri.parse('https://sofarkotta.csecsy.hu/api/'),
+    Uri.parse('https://sofarkotta.hu/api/'),
   ),
   /*Bank(1, true, null, 'Református Énekeskönyv (1948)',
       Uri.parse('https://banks.lyricapp.org/reformatus-enekeskonyv/48/')),

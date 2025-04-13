@@ -46,6 +46,7 @@ dependencies:
   pdfrx: ^1.1.11
   music_notes: ^0.21.0
   logging: ^1.3.0
+  flutter_fullscreen: ^1.0.5
 
 dev_dependencies:
   flutter_lints: ^5.0.0

@@ -1,4 +1,4 @@
-import 'package:lyric/data/cue/slide.dart';
+import '../../data/cue/slide.dart';
 
 import '../../data/song/extensions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

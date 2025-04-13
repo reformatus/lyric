@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../../../data/cue/slide.dart';
 import '../../../main.dart';
-import '../../song/lyrics/view.dart';
-import '../../song/sheet/view.dart';
-import '../../song/state.dart';
+import '../../common/error/card.dart';
 
-class SongSlideTile extends StatelessWidget {
-  const SongSlideTile(
+class UnknownTypeSlideTile extends StatelessWidget {
+  const UnknownTypeSlideTile(
     this.slide, {
     required this.selectCallback,
     required this.removeCallback,
@@ -18,12 +16,12 @@ class SongSlideTile extends StatelessWidget {
   final GestureTapCallback selectCallback;
   final GestureTapCallback removeCallback;
   final bool isCurrent;
-  final SongSlide slide;
+  final Slide slide;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(slide.song.title),
+      title: Text('Ismeretlen diatípus'),
       onTap: selectCallback,
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
@@ -36,25 +34,25 @@ class SongSlideTile extends StatelessWidget {
         ],
       ),
       selected: isCurrent,
+      tileColor: Theme.of(context).colorScheme.errorContainer,
+      textColor: Theme.of(context).colorScheme.onErrorContainer,
     );
   }
 }
 
-class SongSlideView extends StatelessWidget {
-  const SongSlideView(this.songSlide, this.cueId, {super.key});
+class UnknownTypeSlideView extends StatelessWidget {
+  const UnknownTypeSlideView(this.slide, {super.key});
 
-  final SongSlide songSlide;
-  final String? cueId;
+  final UnknownTypeSlide slide;
 
   @override
   Widget build(BuildContext context) {
-    return switch (songSlide.viewType) {
-      SongViewType.svg => SheetView.svg(songSlide.song),
-      SongViewType.pdf => SheetView.pdf(songSlide.song),
-      SongViewType.lyrics => LyricsView(
-        songSlide.song,
-        transposeOptional: songSlide.transpose,
-      ),
-    };
+    return LErrorCard(
+      type: LErrorType.warning,
+      title: 'Ismeretlen diatípus. Talán újabb verzióban készítették a listát?',
+      icon: Icons.question_mark,
+      message: slide.getPreview(),
+      stack: slide.json.toString(),
+    );
   }
 }

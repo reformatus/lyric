@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/data/cue/slide.dart';
+import '../../../data/cue/slide.dart';
 
 import '../../../data/song/song.dart';
 import 'state.dart';

@@ -8,7 +8,7 @@ import '../../../data/song/song.dart';
 import '../../../data/song/transpose.dart';
 import '../../../ui/song/state.dart';
 
-Future addSongSlideToCueForSong({
+Future addNewSlideOfSongToCue({
   required Cue cue,
   required Song song,
   required SongViewType viewType,

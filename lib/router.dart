@@ -42,9 +42,8 @@ final _router = GoRouter(
         GoRoute(
           path: '/song/:uuid',
           pageBuilder:
-              (context, state) => MaterialPage(
-                child: SongPage(state.pathParameters['uuid']!),
-              ),
+              (context, state) =>
+                  MaterialPage(child: SongPage(state.pathParameters['uuid']!)),
           /*routes: [ // far future todo direct links to pages
             ShellRoute(
               pageBuilder:
@@ -78,11 +77,12 @@ final _router = GoRouter(
           path: '/cue/:uuid',
           pageBuilder: (context, state) {
             final cueUuid = state.pathParameters['uuid']!;
-            int? slideIndex = int.tryParse(
-              state.uri.queryParameters['index'] ?? 'return null',
-            );
+
+            // Only use slide parameter for UUID-based navigation
+            final slideUuid = state.uri.queryParameters['slide'];
+
             return MaterialPage(
-              child: CuePage(cueUuid, initialSlideIndex: slideIndex),
+              child: CuePageLoader(cueUuid, initialSlideUuid: slideUuid),
             );
           },
         ),

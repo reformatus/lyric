@@ -11,7 +11,6 @@ part 'from_uuid.g.dart';
 Stream<Cue> watchCueWithUuid(Ref ref, String uuid) async* {
   await for (Cue cue
       in (db.cues.select()..where((c) => c.uuid.equals(uuid))).watchSingle()) {
-    await cue.getRevivedSlides();
     yield cue;
   }
 }
