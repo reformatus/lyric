@@ -30,7 +30,13 @@ Future<VersionInfo?> checkNewVersion(Ref ref) async {
     final packageInfo = await PackageInfo.fromPlatform();
     final currentVersion = packageInfo.version;
 
-    final latest = latestVersion.split('.').map((e) => int.parse(e)).toList();
+    final latest =
+        latestVersion
+            .split('+')
+            .first
+            .split('.')
+            .map((e) => int.parse(e))
+            .toList();
     final current = currentVersion.split('.').map((e) => int.parse(e)).toList();
 
     if (!latest.isNeverVersionThan(current)) return null;
