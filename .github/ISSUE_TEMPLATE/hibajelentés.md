@@ -4,6 +4,7 @@ about: Ha valami úgy tűnik, elromott, itt jelezheted
 title: ''
 labels: ''
 assignees: ''
+type: 'Bug'
 
 ---
 
