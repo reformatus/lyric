@@ -4,6 +4,7 @@ about: Ha eszedbe jutott egy szuper funkció, itt megírhatod
 title: ''
 labels: ''
 assignees: ''
+type: 'Feature'
 
 ---
 
