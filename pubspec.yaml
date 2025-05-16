@@ -15,7 +15,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   localization: ^2.1.1
-  go_router: ^14.2.0
+  go_router: ^15.1.2
   fading_edge_scrollview: ^4.1.1
   json_annotation: ^4.9.0
   flutter_riverpod: ^2.5.1
@@ -25,7 +25,7 @@ dependencies:
   path_provider: ^2.1.3
   path: ^1.9.0
   queue: ^3.1.0+2
-  drift: ^2.20.3
+  drift: ^2.26.1
   drift_flutter: ^0.2.1
   sqlite3_flutter_libs: ^0.5.26
   sqlite3: ^2.4.7
@@ -34,7 +34,7 @@ dependencies:
   uuid: ^4.5.1
   url_launcher: ^6.3.1
   mailto: ^2.0.0
-  flutter_markdown: ^0.7.4+2
+  flutter_markdown: ^0.7.7+1
   dart_opensong:
     git:
       url: https://github.com/reformatus/dart_opensong.git
@@ -55,9 +55,9 @@ dev_dependencies:
   json_serializable: ^6.8.0
   riverpod_generator: ^2.3.0
   riverpod_lint: ^2.1.0
-  drift_dev: ^2.20.3
+  drift_dev: ^2.26.1
   flutter_launcher_icons: ^0.14.1
-  rename_app: ^1.6.1
+  rename_app: ^1.6.3
 
 flutter:
   uses-material-design: true
