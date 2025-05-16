@@ -22,6 +22,8 @@ class CuePage extends ConsumerWidget {
       title: cue.title,
       body: SlideView(cue),
       leftDrawer: SlideList(cue: cue),
+      leftDrawerIcon: Icons.list,
+      leftDrawerTooltip: 'Lista',
       actionBarChildren: [
         const SizedBox(width: 8),
         IconButton.filledTonal(

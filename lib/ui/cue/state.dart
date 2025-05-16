@@ -96,10 +96,14 @@ class CurrentSlideListOf extends _$CurrentSlideListOf {
   }
 
   void removeSlide(Slide slide) {
-    if (ref.read(currentSlideOfProvider(cue).notifier).changeSlide(1)) {
-    } else if (ref.read(currentSlideOfProvider(cue).notifier).changeSlide(-1)) {
-    } else {
-      ref.read(currentSlideOfProvider(cue).notifier).setCurrent(null);
+    if (slide == ref.read(currentSlideOfProvider(cue))) {
+      if (ref.read(currentSlideOfProvider(cue).notifier).changeSlide(1)) {
+      } else if (ref
+          .read(currentSlideOfProvider(cue).notifier)
+          .changeSlide(-1)) {
+      } else {
+        ref.read(currentSlideOfProvider(cue).notifier).setCurrent(null);
+      }
     }
 
     final newState = [...state];
