@@ -79,7 +79,7 @@ class LSongResultTile extends StatelessWidget {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(song.keyField.toString()),
+          Text(song.keyField?.toString() ?? ''),
           SizedBox(width: 10),
           SongFeatures(song),
         ],
