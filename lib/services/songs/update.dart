@@ -68,7 +68,7 @@ Stream<({int toUpdateCount, int updatedCount})> updateBank(Bank bank) async* {
                 .insert(
                   song,
                   mode: InsertMode.insertOrReplace,
-                ); // todo handle user modified data, etc
+                ); // todo handle user modified data, etc, // todo invalidate song asset cache
           } catch (f, t) {
             hadErrors = true;
             log.severe(
