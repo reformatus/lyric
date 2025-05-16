@@ -135,10 +135,12 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
           body:
               !showBottomNavBar
                   ? Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Container(
                         color: Theme.of(context).colorScheme.surfaceContainer,
                         child: AnimatedSize(
+                          clipBehavior: Clip.none,
                           duration: Duration(milliseconds: 300),
                           curve: Curves.easeInOutCubicEmphasized,
                           child: SizedBox(
@@ -146,31 +148,37 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                IntrinsicHeight(
-                                  child: NavigationRail(
-                                    extended: extendedNavRail,
-                                    labelType:
-                                        extendedNavRail
-                                            ? NavigationRailLabelType.none
-                                            : NavigationRailLabelType.selected,
-                                    destinations:
-                                        destinations
-                                            .map(
-                                              (d) =>
-                                                  railDestinationFromGeneral(d),
-                                            )
-                                            .toList(),
-                                    selectedIndex:
-                                        BaseScaffold._calculateSelectedIndex(
-                                          context,
-                                        ),
-                                    onDestinationSelected:
-                                        (int index) => _onDestinationSelected(
-                                          index,
-                                          context,
-                                        ),
-                                    backgroundColor: Colors.transparent,
-                                    minExtendedWidth: 160,
+                                Align(
+                                  alignment: Alignment.topRight,
+                                  child: IntrinsicHeight(
+                                    child: NavigationRail(
+                                      extended: extendedNavRail,
+                                      labelType:
+                                          extendedNavRail
+                                              ? NavigationRailLabelType.none
+                                              : NavigationRailLabelType
+                                                  .selected,
+                                      destinations:
+                                          destinations
+                                              .map(
+                                                (d) =>
+                                                    railDestinationFromGeneral(
+                                                      d,
+                                                    ),
+                                              )
+                                              .toList(),
+                                      selectedIndex:
+                                          BaseScaffold._calculateSelectedIndex(
+                                            context,
+                                          ),
+                                      onDestinationSelected:
+                                          (int index) => _onDestinationSelected(
+                                            index,
+                                            context,
+                                          ),
+                                      backgroundColor: Colors.transparent,
+                                      minExtendedWidth: 160,
+                                    ),
                                   ),
                                 ),
                                 Spacer(),
