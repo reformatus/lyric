@@ -123,15 +123,54 @@ class SongFeatures extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 36,
-      child: Wrap(
+    return Tooltip(
+      richMessage: TextSpan(
         children: [
-          indicatorIcon(context, Icons.music_note_outlined, song.hasSvg),
-          indicatorIcon(context, Icons.audio_file_outlined, song.hasPdf),
-          indicatorIcon(context, Icons.text_snippet_outlined, song.hasLyrics),
-          indicatorIcon(context, Icons.tag_outlined, song.hasChords),
+          TextSpan(text: 'Tartalom: '),
+          WidgetSpan(
+            child: Icon(
+              Icons.music_note_outlined,
+              size: 18,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
+          TextSpan(text: 'Kotta, '),
+          WidgetSpan(
+            child: Icon(
+              Icons.audio_file_outlined,
+              size: 18,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
+          TextSpan(text: 'PDF, '),
+          WidgetSpan(
+            child: Icon(
+              Icons.text_snippet_outlined,
+              size: 18,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
+          TextSpan(text: 'Dalszöveg, '),
+          WidgetSpan(
+            child: Icon(
+              Icons.tag_outlined,
+              size: 18,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
+          TextSpan(text: 'Akkord'),
         ],
+      ),
+      child: SizedBox(
+        width: 36,
+        child: Wrap(
+          children: [
+            indicatorIcon(context, Icons.music_note_outlined, song.hasSvg),
+            indicatorIcon(context, Icons.audio_file_outlined, song.hasPdf),
+            indicatorIcon(context, Icons.text_snippet_outlined, song.hasLyrics),
+            indicatorIcon(context, Icons.tag_outlined, song.hasChords),
+          ],
+        ),
       ),
     );
   }
@@ -139,7 +178,7 @@ class SongFeatures extends StatelessWidget {
   Widget indicatorIcon(BuildContext context, IconData iconData, bool active) {
     return Icon(
       iconData,
-      color: active ? null : Theme.of(context).disabledColor,
+      color: active ? null : Theme.of(context).disabledColor.withAlpha(60),
       size: 18,
     );
   }
