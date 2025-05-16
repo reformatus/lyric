@@ -18,7 +18,9 @@ class EditCueDialog extends StatefulWidget {
 class EditCueDialogState extends State<EditCueDialog> {
   @override
   void initState() {
-    _titleController = TextEditingController(text: widget.cue?.title ?? widget.prefilledTitle);
+    _titleController = TextEditingController(
+      text: widget.cue?.title ?? widget.prefilledTitle,
+    );
     _descriptionController = TextEditingController(
       text: widget.cue?.description,
     );
@@ -45,8 +47,8 @@ class EditCueDialogState extends State<EditCueDialog> {
         setState(() => isSaving = true);
 
         if (widget.cue != null) {
-          updateCueMetadataFor(
-            widget.cue!.id,
+          updateCueMetadata(
+            widget.cue!,
             title: _titleController.text,
             description: _descriptionController.text,
           );

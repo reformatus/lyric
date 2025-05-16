@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../data/cue/cue.dart';
 import '../../data/song/song.dart';
@@ -43,7 +44,7 @@ class _AddToCueSearchState extends ConsumerState<AddToCueSearch> {
       SearchController controller,
       Cue cue,
     ) async {
-      addNewSlideOfSongToCue(
+      String slideUuid = await addNewSlideOfSongToCue(
         cue: cue,
         song: widget.song,
         viewType: widget.viewType,
@@ -54,6 +55,10 @@ class _AddToCueSearchState extends ConsumerState<AddToCueSearch> {
         SnackBar(
           content: Text(
             '${widget.song.title} hozzáadva a listához: ${cue.title}',
+          ),
+          action: SnackBarAction(
+            label: 'Ugrás',
+            onPressed: () => context.push('/cue/${cue.uuid}?slide=$slideUuid'),
           ),
           duration: const Duration(seconds: 2),
         ),

@@ -87,8 +87,14 @@ class _AdaptivePageState extends State<AdaptivePage>
               if (!wideLayout) ...widget.actionBarTrailingChildren ?? [],
             ],
           ),
-          drawer: wideLayout ? null : Drawer(child: widget.leftDrawer),
-          endDrawer: wideLayout ? null : Drawer(child: widget.rightDrawer),
+          drawer:
+              wideLayout || widget.leftDrawer == null
+                  ? null
+                  : Drawer(child: SafeArea(child: widget.leftDrawer!)),
+          endDrawer:
+              wideLayout || widget.rightDrawer == null
+                  ? null
+                  : Drawer(child: SafeArea(child: widget.rightDrawer!)),
           body: Builder(
             builder: (context) {
               return Container(

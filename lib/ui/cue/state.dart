@@ -1,63 +1,50 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../services/cue/slide/revived_slides.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/cue/slide.dart';
 import '../../data/cue/cue.dart';
+import '../../services/cue/write_cue.dart';
 
 part "state.g.dart";
 
 @Riverpod(keepAlive: true)
-class CurrentSlide extends _$CurrentSlide {
+class CurrentSlideOf extends _$CurrentSlideOf {
   @override
-  Slide? build() {
+  Slide? build(Cue cue) {
     return null;
   }
 
-  void setCurrent(Slide slide) {
+  void setCurrent(Slide? slide) {
     state = slide;
   }
 
   Future setCurrentWithUuid(String uuid) async {
-    Cue? cue = ref.read(currentCueProvider);
-    List<Slide> slides = await ref.read(
-      revivedSlidesForCueProvider(cue).future,
-    );
+    List<Slide> slides = await ref.read(currentSlideListOfProvider(cue));
 
-    state = (slides as List<Slide?>).firstWhere(
-      (slide) => slide?.uuid == uuid,
-      orElse: () => null,
-    );
+    try {
+      state = slides.firstWhere((slide) => slide.uuid == uuid);
+    } catch (_) {
+      state = null;
+    }
   }
 
   Future setFirst() async {
-    Cue? cue = ref.read(currentCueProvider);
+    List<Slide> slides = await ref.read(currentSlideListOfProvider(cue));
 
-    if (cue != null) {
-      List<Slide> slides = await ref.read(
-        revivedSlidesForCueProvider(cue).future,
-      );
-
-      if (slides.isNotEmpty) {
-        state = slides.first;
-      } else {
-        state = null;
-      }
+    if (slides.isNotEmpty) {
+      state = slides.first;
+    } else {
+      state = null;
     }
   }
 
   /// Navigate to the slide with offset if available (e.g. 1 for next slide, -1 for previous slide)
   /// Returns true if navigation was successful, false if offset invalid
-  Future<bool> changeSlide(int offset) async {
+  bool changeSlide(int offset) {
     if (state == null) return false;
 
-    Cue? cue = ref.read(currentCueProvider);
-    if (cue == null) return false;
-
-    List<Slide> slides =
-        await ref.read(revivedSlidesForCueProvider(cue).future) ?? [];
-
+    List<Slide> slides = ref.read(currentSlideListOfProvider(cue));
     final currentIndex = slides.indexWhere(
       (slide) => slide.uuid == state!.uuid,
     );
@@ -73,13 +60,13 @@ class CurrentSlide extends _$CurrentSlide {
 }
 
 @Riverpod(keepAlive: true)
-Stream<({int index, int total})?> watchSlideIndex(Ref ref) async* {
-  Cue? cue = ref.read(currentCueProvider);
-  if (cue == null) yield null;
+Stream<({int index, int total})?> watchSlideIndexOfCue(
+  Ref ref,
+  Cue cue,
+) async* {
+  List<Slide> slides = ref.watch(currentSlideListOfProvider(cue));
 
-  List<Slide> slides = await ref.read(revivedSlidesForCueProvider(cue).future);
-
-  final slide = ref.watch(currentSlideProvider);
+  final slide = ref.watch(currentSlideOfProvider(cue));
 
   final currentIndex = slides.indexWhere((s) => s.uuid == slide?.uuid);
   if (currentIndex == -1) yield null;
@@ -88,13 +75,37 @@ Stream<({int index, int total})?> watchSlideIndex(Ref ref) async* {
 }
 
 @Riverpod(keepAlive: true)
-class CurrentCue extends _$CurrentCue {
+class CurrentSlideListOf extends _$CurrentSlideListOf {
   @override
-  Cue? build() {
-    return null;
+  List<Slide> build(Cue cue) {
+    return [];
   }
 
-  void setCurrent(Cue cue) {
-    state = cue;
+  Future loadSlides() async {
+    state = await cue.getRevivedSlides();
+  }
+
+  void reorderSlides(int from, int to) {
+    List<Slide> newState = [...state];
+    final item = newState.removeAt(from);
+    newState.insert(to > from ? to - 1 : to, item);
+
+    state = newState;
+
+    updateCueSlides(cue, state);
+  }
+
+  void removeSlide(Slide slide) {
+    if (ref.read(currentSlideOfProvider(cue).notifier).changeSlide(1)) {
+    } else if (ref.read(currentSlideOfProvider(cue).notifier).changeSlide(-1)) {
+    } else {
+      ref.read(currentSlideOfProvider(cue).notifier).setCurrent(null);
+    }
+
+    final newState = [...state];
+    newState.removeWhere((s) => s == slide);
+    state = newState;
+
+    updateCueSlides(cue, state);
   }
 }

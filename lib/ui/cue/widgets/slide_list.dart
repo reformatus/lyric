@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/services/cue/write_cue.dart';
 import 'package:lyric/ui/cue/slide_views/unknown.dart';
 
 import '../../../data/cue/cue.dart';
 import '../../../data/cue/slide.dart';
-import '../../../services/cue/slide/revived_slides.dart';
 import '../slide_views/song.dart';
 import '../state.dart';
 
@@ -18,16 +16,15 @@ class SlideList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Slide? currentSlide = ref.watch(currentSlideProvider);
-    List<Slide> slides =
-        ref.watch(revivedSlidesForCueProvider(cue)).valueOrNull ?? [];
+    Slide? currentSlide = ref.watch(currentSlideOfProvider(cue));
+    List<Slide> slides = ref.watch(currentSlideListOfProvider(cue));
 
     return ReorderableListView.builder(
       itemCount: slides.length,
       onReorder: (int from, int to) {
-        reorderCueSlides(cue, from, to);
-        slides =
-            ref.refresh(revivedSlidesForCueProvider(cue)).valueOrNull ?? [];
+        ref
+            .read(currentSlideListOfProvider(cue).notifier)
+            .reorderSlides(from, to);
       },
       itemBuilder: (context, index) {
         final slide = slides[index];
@@ -37,9 +34,13 @@ class SlideList extends ConsumerWidget {
             songSlide,
             key: ValueKey(songSlide.hashCode),
             selectCallback:
-                () => ref.read(currentSlideProvider.notifier).setCurrent(slide),
+                () => ref
+                    .read(currentSlideOfProvider(cue).notifier)
+                    .setCurrent(slide),
             removeCallback:
-                () => ref.read(removeSlideFromCueProvider(slide, cue)),
+                () => ref
+                    .read(currentSlideListOfProvider(cue).notifier)
+                    .removeSlide(slide),
             isCurrent: currentSlide == slide,
           ),
           UnknownTypeSlide unknownSlide => UnknownTypeSlideTile(
@@ -47,10 +48,12 @@ class SlideList extends ConsumerWidget {
             key: ValueKey(unknownSlide.hashCode),
             selectCallback:
                 () => ref
-                    .read(currentSlideProvider.notifier)
-                    .setCurrent(unknownSlide),
+                    .read(currentSlideOfProvider(cue).notifier)
+                    .setCurrent(slide),
             removeCallback:
-                () => ref.read(removeSlideFromCueProvider(slide, cue)),
+                () => ref
+                    .read(currentSlideListOfProvider(cue).notifier)
+                    .removeSlide(slide),
             isCurrent: currentSlide == slide,
           ),
         };

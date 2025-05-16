@@ -8,7 +8,7 @@ import '../../../data/song/song.dart';
 import '../../../data/song/transpose.dart';
 import '../../../ui/song/state.dart';
 
-Future addNewSlideOfSongToCue({
+Future<String> addNewSlideOfSongToCue({
   required Cue cue,
   required Song song,
   required SongViewType viewType,
@@ -33,4 +33,6 @@ Future addNewSlideOfSongToCue({
       ]),
     ),
   );
+
+  return slideUuid;
 }

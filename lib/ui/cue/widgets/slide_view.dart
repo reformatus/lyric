@@ -8,18 +8,19 @@ import '../slide_views/song.dart';
 import '../slide_views/unknown.dart';
 import '../state.dart';
 
-/// A widget that displays the content of a slide with navigation controls
+// TODO make into tabview
 class SlideView extends ConsumerWidget {
-  const SlideView({super.key});
+  const SlideView(this.cue, {super.key});
+
+  final Cue cue;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Slide? slide = ref.watch(currentSlideProvider);
-    Cue? cue = ref.watch(currentCueProvider);
+    Slide? slide = ref.watch(currentSlideOfProvider(cue));
 
     switch (slide) {
       case SongSlide songSlide:
-        return SongSlideView(songSlide, cue?.uuid);
+        return SongSlideView(songSlide, cue.uuid);
 
       case UnknownTypeSlide unknownSlide:
         return UnknownTypeSlideView(unknownSlide);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../data/cue/cue.dart';
 import '../../services/cue/from_uuid.dart';
 import '../common/error/card.dart';
 import 'page.dart';
@@ -23,11 +24,11 @@ class CuePageLoader extends ConsumerWidget {
           );
         } else if (snapshot.hasError) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Error')),
+            appBar: AppBar(title: const Text('Hiba')),
             body: Center(
               child: LErrorCard(
                 type: LErrorType.error,
-                title: 'Failed to load cue',
+                title: 'Nem sikerült betölteni a listát',
                 icon: Icons.error,
                 message: snapshot.error.toString(),
                 stack: snapshot.stackTrace?.toString() ?? '',
@@ -35,25 +36,29 @@ class CuePageLoader extends ConsumerWidget {
             ),
           );
         } else {
-          // State is initialized, render the actual page
-          return CuePage(uuid, initialSlideUuid: initialSlideUuid);
+          return CuePage(
+            snapshot.requireData,
+            initialSlideUuid: initialSlideUuid,
+          );
         }
       },
     );
   }
 
-  Future<void> _initializeState(WidgetRef ref) async {
-    // Load the cue into the state
+  Future<Cue> _initializeState(WidgetRef ref) async {
     final cue = await ref.read(watchCueWithUuidProvider(uuid).future);
-    ref.read(currentCueProvider.notifier).setCurrent(cue);
+
+    await ref.read(currentSlideListOfProvider(cue).notifier).loadSlides();
 
     // Set current slide based on initialSlideUuid or default to first slide
     if (initialSlideUuid != null) {
       await ref
-          .read(currentSlideProvider.notifier)
+          .read(currentSlideOfProvider(cue).notifier)
           .setCurrentWithUuid(initialSlideUuid!);
     } else {
-      await ref.read(currentSlideProvider.notifier).setFirst();
+      await ref.read(currentSlideOfProvider(cue).notifier).setFirst();
     }
+
+    return cue;
   }
 }
