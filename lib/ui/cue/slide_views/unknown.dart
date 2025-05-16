@@ -35,6 +35,7 @@ class UnknownTypeSlideTile extends StatelessWidget {
       ),
       selected: isCurrent,
       tileColor: Theme.of(context).colorScheme.errorContainer,
+      selectedTileColor: Theme.of(context).cardColor,
       textColor: Theme.of(context).colorScheme.onErrorContainer,
     );
   }

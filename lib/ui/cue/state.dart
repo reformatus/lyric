@@ -72,6 +72,7 @@ class CurrentSlide extends _$CurrentSlide {
   }
 }
 
+@Riverpod(keepAlive: true)
 Stream<({int index, int total})?> watchSlideIndex(Ref ref) async* {
   Cue? cue = ref.read(currentCueProvider);
   if (cue == null) yield null;
