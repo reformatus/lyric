@@ -1183,6 +1183,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.4.3"
+  wtf_sliding_sheet:
+    dependency: "direct main"
+    description:
+      name: wtf_sliding_sheet
+      sha256: eb2f844a03fc64b9b904dc441bbb2283ee4dcf5244fe64bd91063bfbad70e89c
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.5"
   xdg_directories:
     dependency: transitive
     description:

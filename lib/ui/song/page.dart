@@ -1,6 +1,7 @@
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
 import '../../data/cue/slide.dart';
 
 import '../../data/song/extensions.dart';
@@ -364,33 +365,37 @@ class _SongPageState extends ConsumerState<SongPage> {
     ScrollController detailsSheetScrollController,
     List<Widget> detailsContent,
   ) {
-    return showModalBottomSheet(
-      // todo factor out to general bottom sheet that can be used troughout the app
-      // todo use https://pub.dev/packages/wtf_sliding_sheet or similar
-      // far future todo consider other view type for desktop
-      context: context,
+    return showSlidingBottomSheet(
+      context,
       builder:
-          (_) => FadingEdgeScrollView.fromScrollView(
-            child: ListView(
-              controller: detailsSheetScrollController,
-              children: [
-                Align(
-                  alignment: Alignment.topRight,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: IconButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      icon: Icon(Icons.close),
-                    ),
+          (context) => SlidingSheetDialog(
+            avoidStatusBar: true,
+            maxWidth: 600,
+            cornerRadius: 20,
+            dismissOnBackdropTap: true,
+            duration: Durations.medium2,
+            headerBuilder:
+                (context, state) => Padding(
+                  padding: EdgeInsets.only(left: 16, right: 8, top: 8),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Részletek',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      Spacer(),
+                      IconButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: Icon(Icons.close),
+                      ),
+                    ],
                   ),
                 ),
-                ...detailsContent,
-              ],
-            ),
+            builder: (context, state) {
+              return Column(children: detailsContent);
+            },
           ),
-      isScrollControlled: true,
       useRootNavigator: false,
-      scrollControlDisabledMaxHeightRatio: 0.5,
     );
   }
 
