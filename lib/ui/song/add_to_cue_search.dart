@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lyric/main.dart';
 
 import '../../data/cue/cue.dart';
 import '../../data/song/song.dart';
@@ -44,14 +45,15 @@ class _AddToCueSearchState extends ConsumerState<AddToCueSearch> {
       SearchController controller,
       Cue cue,
     ) async {
+      controller.closeView('');
+
       String slideUuid = await addNewSlideOfSongToCue(
         cue: cue,
         song: widget.song,
         viewType: widget.viewType,
         transpose: widget.transpose,
       );
-      controller.closeView('');
-      ScaffoldMessenger.of(context).showSnackBar(
+      globals.scaffoldKey.currentState?.showSnackBar(
         SnackBar(
           content: Text(
             '${widget.song.title} hozzáadva a listához: ${cue.title}',
