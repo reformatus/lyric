@@ -1,5 +1,4 @@
 import 'package:drift/drift.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/v4.dart';
 
 import '../../data/cue/cue.dart';
