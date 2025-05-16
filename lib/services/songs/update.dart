@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/services/songs/delete_for_song.dart';
 import '../../data/log/logger.dart';
 import 'package:queue/queue.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -61,14 +62,31 @@ Stream<({int toUpdateCount, int updatedCount})> updateBank(Bank bank) async* {
     for (var protoSong in toUpdate) {
       queue.add(() async {
         try {
-          Song song = await bank.getSongDetails(protoSong.uuid);
+          Song? song;
+          int i = 0;
+          do {
+            try {
+              song = await bank.getSongDetails(protoSong.uuid);
+            } catch (e) {
+              if (i > 5) {
+                // Give up after 5 attempts
+                rethrow;
+              }
+              log.info(
+                'Error while fetching details for song ${protoSong.uuid}, retrying.',
+              );
+              i++;
+              await Future.delayed(const Duration(milliseconds: 500));
+            }
+          } while (song == null);
           try {
             db
                 .into(db.songs)
                 .insert(
                   song,
                   mode: InsertMode.insertOrReplace,
-                ); // todo handle user modified data, etc, // todo invalidate song asset cache
+                ); // todo handle user modified data, etc
+            deleteAssetsForSong(song);
           } catch (f, t) {
             hadErrors = true;
             log.severe(
