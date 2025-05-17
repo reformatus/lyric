@@ -9,6 +9,14 @@ import 'package:lyric/ui/cue/widgets/slide_view.dart';
 
 import '../../../../data/cue/cue.dart';
 
+/*
+ * // TODO finish
+ * 
+ * Diaszám jelző dizájn
+ * Nagyíthatóság és görgethetőség
+ * Váltás koppintással
+ */
+
 class CuePresentMusicianPage extends ConsumerStatefulWidget {
   const CuePresentMusicianPage(this.cue, {super.key});
 
