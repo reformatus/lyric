@@ -34,6 +34,8 @@ final List<Bank> defaultBanks = [
   Bank(
     0,
     true,
+    2,
+    10,
     null,
     'Sófár Kottatár',
     Uri.parse('https://sofarkotta.hu/api/'),
@@ -48,6 +50,8 @@ class Bank extends Insertable<Bank> {
   final int id;
   // todo add global uuid (to support banks changing urls)
   bool isEnabled;
+  int parallelUpdateJobs;
+  int amountOfSongsInRequest;
   DateTime? lastUpdated;
   // todo support static banks where lastUpdated is not used, only new songs are downloaded
   final Uri baseUrl;
@@ -58,7 +62,15 @@ class Bank extends Insertable<Bank> {
   @deprecated
   List<Song> songs = [];
 
-  Bank(this.id, this.isEnabled, this.lastUpdated, this.name, this.baseUrl);
+  Bank(
+    this.id,
+    this.isEnabled,
+    this.parallelUpdateJobs,
+    this.amountOfSongsInRequest,
+    this.lastUpdated,
+    this.name,
+    this.baseUrl,
+  );
 
   Future<List<ProtoSong>> getProtoSongs({DateTime? since}) async {
     String url = '$baseUrl/songs';
@@ -74,22 +86,32 @@ class Bank extends Insertable<Bank> {
         .toList();
   }
 
-  Future<Song> getSongDetails(String uuid) async {
-    // todo handle unresponsive server/network and retries
-    Uri source = Uri.parse('$baseUrl/song/$uuid');
+  Future<List<Song>> getDetailsForSongs(List<String> uuids) async {
+    Uri source = Uri.parse('$baseUrl/song/${uuids.join(',')}');
+
     final resp = await dio.getUri<String>(source);
     try {
-      var songJson = jsonDecode(resp.data!);
-      if (songJson is List) {
-        songJson = songJson.first; //make compatible with sófár kottatár quirk
+      var songsJson = jsonDecode(resp.data!);
+      if (songsJson is List) {
+        List<Song> songs = [];
+        for (Map songJson in songsJson) {
+          songs.add(
+            Song.fromBankApiJson(
+              songJson as Map<String, dynamic>,
+              sourceBank: this,
+            ),
+          );
+        }
+        return songs;
+      } else {
+        var song = Song.fromBankApiJson(
+          songsJson as Map<String, dynamic>,
+          sourceBank: this,
+        );
+        return [song];
       }
-      var song = Song.fromBankApiJson(
-        songJson as Map<String, dynamic>,
-        sourceBank: this,
-      );
-      return song;
     } catch (e) {
-      throw Exception('Error while parsing song details for $uuid\n$e');
+      throw Exception('Error while updating songs with uuids $uuids\n$e');
     }
   }
 
@@ -98,6 +120,8 @@ class Bank extends Insertable<Bank> {
     return BanksCompanion(
       id: Value.absent(),
       isEnabled: Value(isEnabled),
+      parallelUpdateJobs: Value(parallelUpdateJobs),
+      amountOfSongsInRequest: Value(amountOfSongsInRequest),
       lastUpdated: Value(lastUpdated),
       name: Value(name),
       baseUrl: Value(baseUrl),
@@ -109,6 +133,8 @@ class Bank extends Insertable<Bank> {
 class Banks extends Table {
   IntColumn get id => integer().autoIncrement()();
   BoolColumn get isEnabled => boolean()();
+  IntColumn get parallelUpdateJobs => integer()();
+  IntColumn get amountOfSongsInRequest => integer()();
   DateTimeColumn get lastUpdated => dateTime().nullable()();
   TextColumn get name => text()();
   TextColumn get baseUrl => text().map(const UriConverter())();
@@ -122,4 +148,7 @@ class ProtoSong {
 
   factory ProtoSong.fromJson(Map<String, dynamic> json) =>
       ProtoSong(json['uuid'] as String, json['title'] as String);
+
+  @override
+  String toString() => '$title [$uuid]';
 }

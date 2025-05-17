@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/services/songs/delete_for_song.dart';
@@ -58,47 +60,62 @@ Stream<({int toUpdateCount, int updatedCount})> updateBank(Bank bank) async* {
   yield (toUpdateCount: toUpdate.length, updatedCount: 0);
 
   if (toUpdate.isNotEmpty) {
-    final Queue queue = Queue(parallel: 10);
-    for (var protoSong in toUpdate) {
+    final Queue queue = Queue(parallel: bank.parallelUpdateJobs);
+
+    List<List<ProtoSong>> toUpdateBatches = [];
+    for (var i = 0; i < toUpdate.length / bank.amountOfSongsInRequest; i++) {
+      int startIndex = i * bank.amountOfSongsInRequest;
+      int endIndex = min(
+        (i + 1) * bank.amountOfSongsInRequest,
+        toUpdate.length,
+      );
+      toUpdateBatches.add(toUpdate.sublist(startIndex, endIndex));
+    }
+
+    for (List<ProtoSong> protoSongs in toUpdateBatches) {
       queue.add(() async {
         try {
-          Song? song;
+          List<Song>? songs;
           int i = 0;
           do {
             try {
-              song = await bank.getSongDetails(protoSong.uuid);
+              songs = await bank.getDetailsForSongs(
+                protoSongs.map((e) => e.uuid).toList(),
+              );
             } catch (e) {
               if (i > 5) {
                 // Give up after 5 attempts
                 rethrow;
               }
-              log.info(
-                'Error while fetching details for song ${protoSong.uuid}, retrying.',
-              );
               i++;
+              log.info(
+                'Error while fetching details for songs $protoSongs, retrying ($i / 5)',
+              );
               await Future.delayed(const Duration(milliseconds: 500));
             }
-          } while (song == null);
-          try {
-            db
-                .into(db.songs)
-                .insert(
-                  song,
-                  mode: InsertMode.insertOrReplace,
-                ); // todo handle user modified data, etc
-            deleteAssetsForSong(song);
-          } catch (f, t) {
-            hadErrors = true;
-            log.severe(
-              'Error while writing song ${protoSong.uuid} to database:',
-              f,
-              t,
-            );
+          } while (songs == null);
+          for (Song song in songs) {
+            try {
+              db
+                  .into(db.songs)
+                  .insert(
+                    song,
+                    mode: InsertMode.insertOrReplace,
+                  ); // todo handle user modified data, etc
+              deleteAssetsForSong(song);
+            } catch (f, t) {
+              hadErrors = true;
+              log.severe(
+                'Error while writing song ${song.uuid} to database:',
+                f,
+                t,
+              );
+            }
           }
         } catch (e, s) {
           hadErrors = true;
           log.severe(
-            'Error while fetching details for song ${protoSong.uuid}:',
+            'Multiple errors while fetching details for songs $protoSongs, giving up:',
             e,
             s,
           );
