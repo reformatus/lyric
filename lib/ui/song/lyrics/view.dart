@@ -91,6 +91,7 @@ class VerseCard extends StatelessWidget {
       padding: EdgeInsets.only(top: 5, left: 5, right: 5),
       child: Card(
         elevation: 0,
+        color: Theme.of(context).colorScheme.onPrimary,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,

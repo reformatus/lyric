@@ -26,7 +26,7 @@ class LoadingPage extends ConsumerWidget {
     if (hasEverUpdatedProvider.valueOrNull == true ||
         bankStates.hasValue && bankStates.value!.values.every(isDone)) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.pushReplacement('/bank');
+        context.pushReplacement('/home');
       });
     }
 

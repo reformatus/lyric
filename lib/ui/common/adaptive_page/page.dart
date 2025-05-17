@@ -16,6 +16,7 @@ class AdaptivePage extends StatefulWidget {
     this.rightDrawerTooltip,
     this.actionBarChildren,
     this.actionBarTrailingChildren,
+    this.bodyHeroTag,
     super.key,
   });
 
@@ -29,6 +30,7 @@ class AdaptivePage extends StatefulWidget {
   final List<Widget>? actionBarChildren;
   final List<Widget>? actionBarTrailingChildren;
   final Widget body;
+  final String? bodyHeroTag;
 
   @override
   State<AdaptivePage> createState() => _AdaptivePageState();
@@ -141,7 +143,7 @@ class _AdaptivePageState extends State<AdaptivePage>
                         Expanded(
                           child: Column(
                             children: [
-                              if (!tabletOrBigger) Expanded(child: widget.body),
+                              if (!tabletOrBigger) _buildBody(),
                               Container(
                                 height: 50,
                                 padding: EdgeInsets.symmetric(vertical: 4),
@@ -159,11 +161,23 @@ class _AdaptivePageState extends State<AdaptivePage>
                                         drawerIcon: widget.leftDrawerIcon,
                                         tooltip: widget.leftDrawerTooltip,
                                       ),
-                                    ...widget.actionBarChildren ?? [],
-                                    Spacer(),
-                                    if (tabletOrBigger)
-                                      ...widget.actionBarTrailingChildren ?? [],
-
+                                    Expanded(
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 5,
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            ...widget.actionBarChildren ?? [],
+                                            Spacer(),
+                                            if (tabletOrBigger)
+                                              ...widget
+                                                      .actionBarTrailingChildren ??
+                                                  [],
+                                          ],
+                                        ),
+                                      ),
+                                    ),
                                     if (widget.rightDrawer != null)
                                       AdaptivePageDrawerButton(
                                         onPressed:
@@ -180,7 +194,7 @@ class _AdaptivePageState extends State<AdaptivePage>
                                   ],
                                 ),
                               ),
-                              if (tabletOrBigger) Expanded(child: widget.body),
+                              if (tabletOrBigger) _buildBody(),
                             ],
                           ),
                         ),
@@ -259,6 +273,15 @@ class _AdaptivePageState extends State<AdaptivePage>
           ),
         );
       },
+    );
+  }
+
+  Expanded _buildBody() {
+    return Expanded(
+      child:
+          widget.bodyHeroTag != null
+              ? Hero(tag: widget.bodyHeroTag!, child: widget.body)
+              : widget.body,
     );
   }
 }

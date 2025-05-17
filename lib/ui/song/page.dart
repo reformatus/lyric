@@ -237,85 +237,91 @@ class _SongPageState extends ConsumerState<SongPage> {
                                   child: ListView(
                                     controller: actionButtonsScrollController,
                                     scrollDirection: Axis.horizontal,
+                                    reverse: true,
                                     shrinkWrap: true,
-                                    children: [
-                                      AddToCueSearch(
-                                        song: song,
-                                        isDesktop: isDesktop,
-                                        viewType: viewType,
-                                        transpose: transpose,
-                                      ),
-                                      if (viewType == SongViewType.lyrics &&
-                                          song.hasChords) ...[
-                                        VerticalDivider(),
-                                        TransposeResetButton(
-                                          song,
-                                          songSlide: widget.songSlide,
-                                          isHorizontal: isDesktop,
-                                        ),
-                                        CompositedTransformTarget(
-                                          link: _transposeOverlayLink,
-                                          child: OverlayPortal(
-                                            controller:
-                                                transposeOverlayPortalController,
-                                            overlayChildBuilder:
-                                                (
-                                                  context,
-                                                ) => CompositedTransformFollower(
-                                                  link: _transposeOverlayLink,
-                                                  followerAnchor:
-                                                      Alignment.bottomRight,
-                                                  targetAnchor:
-                                                      Alignment.topRight,
-                                                  child: Align(
-                                                    alignment:
-                                                        Alignment.bottomRight,
-                                                    child: Card(
-                                                      child: Padding(
-                                                        padding: EdgeInsets.all(
-                                                          10,
-                                                        ),
-                                                        child: ConstrainedBox(
-                                                          constraints:
-                                                              BoxConstraints(
-                                                                maxWidth: 150,
+                                    children:
+                                        [
+                                          AddToCueSearch(
+                                            song: song,
+                                            isDesktop: isDesktop,
+                                            viewType: viewType,
+                                            transpose: transpose,
+                                          ),
+                                          if (viewType == SongViewType.lyrics &&
+                                              song.hasChords) ...[
+                                            VerticalDivider(),
+                                            TransposeResetButton(
+                                              song,
+                                              songSlide: widget.songSlide,
+                                              isHorizontal: isDesktop,
+                                            ),
+                                            CompositedTransformTarget(
+                                              link: _transposeOverlayLink,
+                                              child: OverlayPortal(
+                                                controller:
+                                                    transposeOverlayPortalController,
+                                                overlayChildBuilder:
+                                                    (
+                                                      context,
+                                                    ) => CompositedTransformFollower(
+                                                      link:
+                                                          _transposeOverlayLink,
+                                                      followerAnchor:
+                                                          Alignment.bottomRight,
+                                                      targetAnchor:
+                                                          Alignment.topRight,
+                                                      child: Align(
+                                                        alignment:
+                                                            Alignment
+                                                                .bottomRight,
+                                                        child: Card(
+                                                          child: Padding(
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                                  10,
+                                                                ),
+                                                            child: ConstrainedBox(
+                                                              constraints:
+                                                                  BoxConstraints(
+                                                                    maxWidth:
+                                                                        150,
+                                                                  ),
+                                                              child: TransposeControls(
+                                                                song,
+                                                                songSlide:
+                                                                    widget
+                                                                        .songSlide,
                                                               ),
-                                                          child: TransposeControls(
-                                                            song,
-                                                            songSlide:
-                                                                widget
-                                                                    .songSlide,
+                                                            ),
                                                           ),
                                                         ),
                                                       ),
                                                     ),
+                                                child: FilledButton.tonalIcon(
+                                                  onPressed: () {
+                                                    transposeOverlayPortalController
+                                                        .toggle();
+                                                    setState(() {});
+                                                  },
+                                                  label: Text(
+                                                    song.keyField != null
+                                                        ? getTransposedKey(
+                                                          song.keyField!,
+                                                          transpose.semitones,
+                                                        ).toString()
+                                                        : 'Transzponálás',
+                                                  ),
+                                                  icon: Icon(
+                                                    transposeOverlayPortalController
+                                                            .isShowing
+                                                        ? Icons.close
+                                                        : Icons.unfold_more,
                                                   ),
                                                 ),
-                                            child: FilledButton.tonalIcon(
-                                              onPressed: () {
-                                                transposeOverlayPortalController
-                                                    .toggle();
-                                                setState(() {});
-                                              },
-                                              label: Text(
-                                                song.keyField != null
-                                                    ? getTransposedKey(
-                                                      song.keyField!,
-                                                      transpose.semitones,
-                                                    ).toString()
-                                                    : 'Transzponálás',
-                                              ),
-                                              icon: Icon(
-                                                transposeOverlayPortalController
-                                                        .isShowing
-                                                    ? Icons.close
-                                                    : Icons.unfold_more,
                                               ),
                                             ),
-                                          ),
-                                        ),
-                                      ],
-                                    ],
+                                          ],
+                                        ].reversed.toList(),
                                   ),
                                 ),
                               ),

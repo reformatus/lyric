@@ -1,22 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/ui/cue/present/musician/page.dart';
 import '../../data/cue/cue.dart';
-import '../../services/cue/from_uuid.dart';
 import '../common/error/card.dart';
-import 'page.dart';
+import 'edit/page.dart';
 import 'state.dart';
 
-/// Loader widget that initializes the cue and slide state before rendering the CuePage
-class CuePageLoader extends ConsumerWidget {
-  const CuePageLoader(this.uuid, {this.initialSlideUuid, super.key});
+/// Loader widget that initializes the cue and slide state before rendering any CuePage
+class CueLoaderPage extends ConsumerWidget {
+  const CueLoaderPage(
+    this.uuid,
+    this.pageType, {
+    this.initialSlideUuid,
+    super.key,
+  });
 
   final String uuid;
+  final CuePageType pageType;
   final String? initialSlideUuid;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return FutureBuilder(
-      future: _initializeState(ref),
+      future: ref
+          .read(currentCueProvider.notifier)
+          .load(uuid, initialSlideUuid: initialSlideUuid),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
@@ -36,29 +44,15 @@ class CuePageLoader extends ConsumerWidget {
             ),
           );
         } else {
-          return CuePage(
-            snapshot.requireData,
-            initialSlideUuid: initialSlideUuid,
-          );
+          Cue cue = snapshot.requireData;
+          switch (pageType) {
+            case CuePageType.edit:
+              return CueEditPage(cue);
+            case CuePageType.musician:
+              return CuePresentMusicianPage(cue);
+          }
         }
       },
     );
-  }
-
-  Future<Cue> _initializeState(WidgetRef ref) async {
-    final cue = await ref.read(watchCueWithUuidProvider(uuid).future);
-
-    await ref.read(currentSlideListOfProvider(cue).notifier).loadSlides();
-
-    // Set current slide based on initialSlideUuid or default to first slide
-    if (initialSlideUuid != null) {
-      await ref
-          .read(currentSlideOfProvider(cue).notifier)
-          .setCurrentWithUuid(initialSlideUuid!);
-    } else {
-      await ref.read(currentSlideOfProvider(cue).notifier).setFirst();
-    }
-
-    return cue;
   }
 }

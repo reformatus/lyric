@@ -32,7 +32,7 @@ class _SetsPageState extends ConsumerState<SetsPage> {
               if (createdCue == null) return;
               createdCue as Cue;
               // ignore: use_build_context_synchronously
-              context.push('/cue/${createdCue.uuid}?index=-1');
+              context.push('/cue/${createdCue.uuid}/edit');
             }),
         label: Text('Új lista'),
         icon: Icon(Icons.add_box_outlined),
@@ -72,7 +72,7 @@ class CueTile extends StatelessWidget {
     return ListTile(
       title: Text(cue.title),
       subtitle: cue.description.isNotEmpty ? Text(cue.description) : null,
-      onTap: () => context.push('/cue/${cue.uuid}'),
+      onTap: () => context.push('/cue/${cue.uuid}/edit'),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [

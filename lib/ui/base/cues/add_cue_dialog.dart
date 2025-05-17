@@ -36,7 +36,7 @@ class EditCueDialogState extends State<EditCueDialog> {
           // ignore: use_build_context_synchronously
           context.pop();
           // ignore: use_build_context_synchronously
-          context.push('/cue/${cue.uuid}');
+          context.push('/cue/${cue.uuid}/edit');
         });
       }
     }

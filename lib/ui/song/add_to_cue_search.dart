@@ -60,7 +60,8 @@ class _AddToCueSearchState extends ConsumerState<AddToCueSearch> {
           ),
           action: SnackBarAction(
             label: 'Ugrás',
-            onPressed: () => context.push('/cue/${cue.uuid}?slide=$slideUuid'),
+            onPressed:
+                () => context.push('/cue/${cue.uuid}/edit?slide=$slideUuid'),
           ),
           duration: const Duration(seconds: 2),
         ),
@@ -154,7 +155,7 @@ class _AddToCueSearchState extends ConsumerState<AddToCueSearch> {
                       cueEntry.key == 0 && controller.text.isNotEmpty;
                   return ListTile(
                     selected: selected,
-                    selectedTileColor: Theme.of(context).cardColor,
+                    selectedTileColor: Theme.of(context).colorScheme.onPrimary,
                     title: Text(cueEntry.value.title),
                     subtitle:
                         cueEntry.value.description.isNotEmpty

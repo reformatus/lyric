@@ -36,7 +36,7 @@ class SongSlideTile extends StatelessWidget {
         ],
       ),
       selected: isCurrent,
-      selectedTileColor: Theme.of(context).cardColor,
+      selectedTileColor: Theme.of(context).colorScheme.onPrimary,
     );
   }
 }

@@ -23,6 +23,7 @@ showOnlineBanksUpdatingBanner() {
   );
 }
 
+// far future todo: show banks in scrollview, animate scroll to current, use fadingEdgeScrollView
 class UpdatingBanner extends ConsumerWidget {
   const UpdatingBanner({super.key});
 

@@ -41,17 +41,20 @@ class SheetView extends ConsumerWidget {
         if (assetResult.data != null) {
           switch (_viewType) {
             case SongViewType.svg:
-              return InteractiveViewer(
-                maxScale: double.infinity,
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: SvgPicture.memory(
-                    assetResult.data!,
-                    // todo make this color configurable
-                    /*colorFilter: ColorFilter.mode(
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                      BlendMode.src,
-                    ),*/
+              return Container(
+                color: Theme.of(context).colorScheme.onPrimary,
+                child: InteractiveViewer(
+                  maxScale: double.infinity,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: SvgPicture.memory(
+                      assetResult.data!,
+                      // todo make this color configurable
+                      /*colorFilter: ColorFilter.mode(
+                        Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                        BlendMode.src,
+                      ),*/
+                    ),
                   ),
                 ),
               );

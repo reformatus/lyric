@@ -41,7 +41,7 @@ class BaseScaffold extends ConsumerStatefulWidget {
     if (location.startsWith('/bank')) {
       return 1;
     }
-    if (location.startsWith('/sets')) {
+    if (location.startsWith('/cues')) {
       return 2;
     }
     if (location.startsWith('/song')) {
@@ -94,13 +94,13 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
         selectedIcon: Icon(Icons.view_list),
         label: 'Listáim',
       ),
-      if (GoRouterState.of(context).uri.path.startsWith('/song'))
+      if (GoRouterState.of(context).uri.path.startsWith('/song/'))
         (
           icon: Icon(Icons.music_note_outlined),
           selectedIcon: Icon(Icons.music_note),
           label: 'Dal',
         ),
-      if (GoRouterState.of(context).uri.path.startsWith('/cue'))
+      if (GoRouterState.of(context).uri.path.startsWith('/cue/'))
         (
           icon: Icon(Icons.list),
           selectedIcon: Icon(Icons.list),
@@ -249,7 +249,7 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
       case 1:
         GoRouter.of(context).go('/bank');
       case 2:
-        GoRouter.of(context).go('/sets');
+        GoRouter.of(context).go('/cues');
       default:
         return;
     }

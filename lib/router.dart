@@ -34,7 +34,7 @@ final _router = GoRouter(
           },
         ),
         GoRoute(
-          path: '/sets',
+          path: '/cues',
           pageBuilder: (context, state) {
             return const MaterialPage(child: SetsPage());
           },
@@ -74,19 +74,49 @@ final _router = GoRouter(
           ],*/
         ),
         GoRoute(
-          path: '/cue/:uuid',
+          path: '/cue/:uuid/edit',
           pageBuilder: (context, state) {
             final cueUuid = state.pathParameters['uuid']!;
-
-            // Only use slide parameter for UUID-based navigation
             final slideUuid = state.uri.queryParameters['slide'];
-
             return MaterialPage(
-              child: CuePageLoader(cueUuid, initialSlideUuid: slideUuid),
+              child: CueLoaderPage(
+                cueUuid,
+                CuePageType.edit,
+                initialSlideUuid: slideUuid,
+              ),
             );
           },
         ),
       ],
     ),
+    GoRoute(
+      path: '/cue/:uuid/present',
+      //redirect: (context, state) => '/cues',
+      builder:
+          (context, state) =>
+              Scaffold(body: Center(child: Text('Nincs megadva nézet'))),
+      routes: [
+        GoRoute(
+          path: 'musician',
+
+          pageBuilder: (context, state) {
+            final cueUuid = state.pathParameters['uuid']!;
+            final slideUuid = state.uri.queryParameters['slide'];
+            return MaterialPage(
+              child: CueLoaderPage(
+                cueUuid,
+                CuePageType.musician,
+                initialSlideUuid: slideUuid,
+              ),
+            );
+          },
+        ),
+        // far future todo
+        // GoRoute(path: 'stage'),
+        // GoRoute(path: 'projector'),
+      ],
+    ),
+    // far future todo
+    //GoRoute(path: '/cue/:uuid/control'),
   ],
 );

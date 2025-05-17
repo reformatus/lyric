@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_fullscreen/flutter_fullscreen.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lyric/ui/cue/state.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'data/database.dart';

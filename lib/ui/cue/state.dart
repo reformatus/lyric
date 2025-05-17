@@ -4,9 +4,46 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/cue/slide.dart';
 import '../../data/cue/cue.dart';
+import '../../services/cue/from_uuid.dart';
 import '../../services/cue/write_cue.dart';
 
 part "state.g.dart";
+
+enum CuePageType {
+  edit,
+  musician,
+  //stage, present, control
+}
+
+@Riverpod(keepAlive: true)
+class CurrentCue extends _$CurrentCue {
+  @override
+  Cue? build() {
+    return null;
+  }
+
+  Future<Cue> load(String uuid, {String? initialSlideUuid}) async {
+    if (state != null && state!.uuid == uuid) return state!;
+
+    final cue = await ref.watch(watchCueWithUuidProvider(uuid).future);
+
+    if (ref.read(currentSlideListOfProvider(cue)).isEmpty) {
+      await ref.read(currentSlideListOfProvider(cue).notifier).loadSlides();
+    }
+
+    // Set current slide based on initialSlideUuid or default to first slide
+    if (initialSlideUuid != null) {
+      await ref
+          .read(currentSlideOfProvider(cue).notifier)
+          .setCurrentWithUuid(initialSlideUuid);
+    } else if (ref.read(currentSlideOfProvider(cue)) == null) {
+      await ref.read(currentSlideOfProvider(cue).notifier).setFirst();
+    }
+
+    state = cue;
+    return cue;
+  }
+}
 
 @Riverpod(keepAlive: true)
 class CurrentSlideOf extends _$CurrentSlideOf {
@@ -73,6 +110,11 @@ Stream<({int index, int total})?> watchSlideIndexOfCue(
 
   yield (index: currentIndex, total: slides.length);
 }
+
+bool hasPreviousSlide(({int index, int total})? slideIndex) =>
+    slideIndex?.index != 0 && slideIndex != null;
+bool hasNextSlide(({int index, int total})? slideIndex) =>
+    slideIndex != null && slideIndex.index < slideIndex.total - 1;
 
 @Riverpod(keepAlive: true)
 class CurrentSlideListOf extends _$CurrentSlideListOf {
