@@ -55,6 +55,7 @@ Stream<({int toUpdateCount, int updatedCount})> updateBank(Bank bank) async* {
   // stay in indefinite loading state until we know protosong count
   // return protosong count for display
   List<ProtoSong> toUpdate = await bank.getProtoSongs(since: bank.lastUpdated);
+  int updatedCount = 0;
   bool hadErrors = false;
 
   yield (toUpdateCount: toUpdate.length, updatedCount: 0);
@@ -76,32 +77,33 @@ Stream<({int toUpdateCount, int updatedCount})> updateBank(Bank bank) async* {
       queue.add(() async {
         try {
           List<Song>? songs;
-          int i = 0;
+          int retries = 0;
           do {
             try {
               songs = await bank.getDetailsForSongs(
                 protoSongs.map((e) => e.uuid).toList(),
               );
             } catch (e) {
-              if (i > 5) {
+              if (retries > 5) {
                 // Give up after 5 attempts
                 rethrow;
               }
-              i++;
+              retries++;
               log.info(
-                'Error while fetching details for songs $protoSongs, retrying ($i / 5)',
+                'Error while fetching details for songs $protoSongs, retrying ($retries / 5)',
               );
               await Future.delayed(const Duration(milliseconds: 500));
             }
           } while (songs == null);
           for (Song song in songs) {
             try {
-              db
+              await db
                   .into(db.songs)
                   .insert(
                     song,
                     mode: InsertMode.insertOrReplace,
                   ); // todo handle user modified data, etc
+              updatedCount++;
               deleteAssetsForSong(song);
             } catch (f, t) {
               hadErrors = true;
@@ -124,10 +126,7 @@ Stream<({int toUpdateCount, int updatedCount})> updateBank(Bank bank) async* {
     }
 
     await for (int remaining in queue.remainingItems) {
-      yield (
-        toUpdateCount: toUpdate.length,
-        updatedCount: toUpdate.length - remaining,
-      );
+      yield (toUpdateCount: toUpdate.length, updatedCount: updatedCount);
       if (remaining == 0) break;
     }
   }
