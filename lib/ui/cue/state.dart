@@ -22,8 +22,12 @@ class CurrentCue extends _$CurrentCue {
     return null;
   }
 
+  bool needsLoadFor(String uuid) {
+    return (state == null || state!.uuid != uuid);
+  }
+
   Future<Cue> load(String uuid, {String? initialSlideUuid}) async {
-    if (state != null && state!.uuid == uuid) return state!;
+    if (!needsLoadFor(uuid)) return state!;
 
     final cue = await ref.watch(watchCueWithUuidProvider(uuid).future);
 

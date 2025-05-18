@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/ui/common/centered_hint.dart';
 
 import '../../../data/cue/cue.dart';
 import '../../../data/cue/slide.dart';
-import '../../common/error/card.dart';
 import '../slide_views/song.dart';
 import '../slide_views/unknown.dart';
 import '../state.dart';
@@ -17,6 +17,7 @@ class SlideView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     Slide? slide = ref.watch(currentSlideOfProvider(cue));
+    ref.watch(currentSlideListOfProvider(cue));
 
     switch (slide) {
       case SongSlide songSlide:
@@ -26,13 +27,7 @@ class SlideView extends ConsumerWidget {
         return UnknownTypeSlideView(unknownSlide);
 
       default:
-        return Center(
-          child: LErrorCard(
-            icon: Icons.question_mark,
-            title: 'Nincs kiválasztott dia',
-            type: LErrorType.info,
-          ),
-        );
+        return CenteredHint('Nincs kiválasztott dia', Icons.question_mark);
     }
   }
 }

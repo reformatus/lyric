@@ -21,6 +21,9 @@ class CueLoaderPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (!ref.read(currentCueProvider.notifier).needsLoadFor(uuid)) {
+      return buildPage(ref.read(currentCueProvider)!);
+    }
     return FutureBuilder(
       future: ref
           .read(currentCueProvider.notifier)
@@ -45,14 +48,18 @@ class CueLoaderPage extends ConsumerWidget {
           );
         } else {
           Cue cue = snapshot.requireData;
-          switch (pageType) {
-            case CuePageType.edit:
-              return CueEditPage(cue);
-            case CuePageType.musician:
-              return CuePresentMusicianPage(cue);
-          }
+          return buildPage(cue);
         }
       },
     );
+  }
+
+  Widget buildPage(Cue cue) {
+    switch (pageType) {
+      case CuePageType.edit:
+        return CueEditPage(cue);
+      case CuePageType.musician:
+        return CuePresentMusicianPage(cue);
+    }
   }
 }
