@@ -58,6 +58,7 @@ class CueEditPage extends ConsumerWidget {
         IconButton.filled(
           onPressed: () => context.push('/cue/${cue.uuid}/present/musician'),
           icon: Icon(Icons.fullscreen),
+          color: Theme.of(context).colorScheme.onPrimary,
         ),
       ],
     );

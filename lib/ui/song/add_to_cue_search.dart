@@ -55,6 +55,7 @@ class _AddToCueSearchState extends ConsumerState<AddToCueSearch> {
       );
       globals.scaffoldKey.currentState?.showSnackBar(
         SnackBar(
+          showCloseIcon: true,
           content: Text(
             '${widget.song.title} hozzáadva a listához: ${cue.title}',
           ),
@@ -63,7 +64,7 @@ class _AddToCueSearchState extends ConsumerState<AddToCueSearch> {
             onPressed:
                 () => context.push('/cue/${cue.uuid}/edit?slide=$slideUuid'),
           ),
-          duration: const Duration(seconds: 2),
+          duration: const Duration(seconds: 5),
         ),
       );
     }
