@@ -52,7 +52,7 @@ class LErrorCard extends StatelessWidget {
               trailing: FilledButton.icon(
                 onPressed:
                     () => launchFeedbackEmail(
-                      errorMessage: message,
+                      errorMessage: '$title ($message)',
                       stackTrace: stack,
                     ),
                 icon: Icon(Icons.feedback_outlined),

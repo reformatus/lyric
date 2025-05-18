@@ -21,7 +21,6 @@ class CueEditPage extends ConsumerWidget {
     return AdaptivePage(
       title: cue.title,
       body: SlideView(cue),
-      bodyHeroTag: 'CueSlideView',
       leftDrawer: SlideList(cue: cue),
       leftDrawerIcon: Icons.list,
       leftDrawerTooltip: 'Lista',

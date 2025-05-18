@@ -10,12 +10,6 @@ import 'package:lyric/ui/cue/widgets/slide_view.dart';
 
 import '../../../../data/cue/cue.dart';
 
-/*
- * // TODO finish
- * 
- * Váltás koppintással
- */
-
 class CuePresentMusicianPage extends ConsumerStatefulWidget {
   const CuePresentMusicianPage(this.cue, {super.key});
 
@@ -143,6 +137,7 @@ class _CuePresentMusicianPageState extends ConsumerState<CuePresentMusicianPage>
                           height: 90,
                           width: 50,
                           child: Material(
+                            clipBehavior: Clip.antiAlias,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.only(
                                 topRight: Radius.circular(10),
@@ -184,6 +179,7 @@ class _CuePresentMusicianPageState extends ConsumerState<CuePresentMusicianPage>
                           height: 90,
                           width: 50,
                           child: Material(
+                            clipBehavior: Clip.antiAlias,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(10),
@@ -241,7 +237,7 @@ class _CuePresentMusicianPageState extends ConsumerState<CuePresentMusicianPage>
                 ],
               );
             },
-            child: Hero(tag: 'CueSlideView', child: SlideView(widget.cue)),
+            child: SlideView(widget.cue),
           ),
         ),
       ),

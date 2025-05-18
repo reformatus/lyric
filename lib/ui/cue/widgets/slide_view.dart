@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/ui/common/centered_hint.dart';
 
 import '../../../data/cue/cue.dart';
 import '../../../data/cue/slide.dart';
@@ -8,7 +7,6 @@ import '../slide_views/song.dart';
 import '../slide_views/unknown.dart';
 import '../state.dart';
 
-// TODO make into tabview
 class SlideView extends ConsumerStatefulWidget {
   const SlideView(this.cue, {super.key});
 
@@ -20,7 +18,7 @@ class SlideView extends ConsumerStatefulWidget {
 
 class _SlideViewState extends ConsumerState<SlideView>
     with TickerProviderStateMixin {
-  late final TabController tabController;
+  TabController? tabController;
 
   @override
   void initState() {
@@ -29,18 +27,18 @@ class _SlideViewState extends ConsumerState<SlideView>
       ref.read(currentSlideOfProvider(widget.cue)),
       ref.read(currentSlideListOfProvider(widget.cue)),
     );
-    /*
-    tabController.addListener(
+
+    tabController!.addListener(
       () => ref
           .read(currentSlideOfProvider(widget.cue).notifier)
           .setCurrent(
-            ref.read(currentSlideListOfProvider(widget.cue))[tabController
+            ref.read(currentSlideListOfProvider(widget.cue))[tabController!
                 .index],
           ),
-    );*/
+    );
     ref.listenManual(
       currentSlideOfProvider(widget.cue),
-      (_, newSlide) => tabController.animateTo(
+      (_, newSlide) => tabController!.animateTo(
         ref.read(currentSlideListOfProvider(widget.cue)).indexOf(newSlide!),
       ),
     );
@@ -54,20 +52,32 @@ class _SlideViewState extends ConsumerState<SlideView>
   }
 
   void initializeTabController(Slide? slide, List<Slide> slides) {
-    tabController = TabController(
-      length: slides.length,
-      initialIndex: slide != null ? slides.indexOf(slide) : 0,
-      vsync: this,
-    );
+    setState(() {
+      if (tabController != null) {
+        tabController!.dispose();
+      }
+      tabController = TabController(
+        length: slides.length,
+        initialIndex:
+            slide != null ? slides.indexOf(slide).clamp(0, slides.length) : 0,
+        vsync: this,
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     List<Slide> slides = ref.watch(currentSlideListOfProvider(widget.cue));
 
-    return TabBarView(
-      controller: tabController,
-      children: slides.map((s) => renderSlide(s)).toList(),
+    return Theme(
+      data: Theme.of(context),
+      child: Hero(
+        tag: 'SlideView',
+        child: TabBarView(
+          controller: tabController,
+          children: slides.map((s) => renderSlide(s)).toList(),
+        ),
+      ),
     );
   }
 
