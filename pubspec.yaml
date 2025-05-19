@@ -49,6 +49,7 @@ dependencies:
   wtf_sliding_sheet: ^1.1.5
 
 dev_dependencies:
+  msix: ^3.16.9
   flutter_lints: ^5.0.0
   build_runner: ^2.4.12
   json_serializable: ^6.9.5
@@ -80,10 +81,16 @@ flutter_launcher_icons:
 
   # TODO create a multi-size .ico file (may need be placed directly to windows\runner\resources\app_icon.ico)
   windows:
-    generate: true
-    image_path: "assets/icon/sofar_dalapp_windows_48.png"
-    icon_size: 48
+    generate: false
 
   macos:
     generate: true
     image_path: "assets/icon/sofar_dalapp_rounded_1000.png"
+
+msix_config:
+  display_name: Sófár DalApp
+  publisher_display_name: RefLabs
+  identity_name: org.lyricapp.sofar
+  msix_version: 1.0.3.12
+  logo_path: assets/icon/sofar_dalapp_windows.ico
+  capabilities: internetClient
