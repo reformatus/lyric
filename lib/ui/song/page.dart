@@ -1,9 +1,7 @@
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/data/song/transpose.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
-import '../../data/cue/slide.dart';
 
 import '../../data/song/extensions.dart';
 import '../../data/song/song.dart';

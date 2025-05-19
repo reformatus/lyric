@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lyric/ui/base/songs/page.dart';
 import 'package:lyric/ui/common/adaptive_page/page.dart';
 import 'package:lyric/ui/cue/widgets/actions_drawer.dart';
-import 'package:lyric/ui/song/transpose/widget.dart';
 
 import '../../../data/cue/cue.dart';
 import '../widgets/slide_list.dart';
