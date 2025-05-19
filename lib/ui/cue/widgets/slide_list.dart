@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/ui/common/centered_hint.dart';
+import 'package:lyric/ui/common/confirm_dialog.dart';
 import 'package:lyric/ui/cue/slide_views/unknown.dart';
 
 import '../../../data/cue/cue.dart';
@@ -18,6 +20,8 @@ class SlideList extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     Slide? currentSlide = ref.watch(currentSlideOfProvider(cue));
     List<Slide> slides = ref.watch(currentSlideListOfProvider(cue));
+
+    if (slides.isEmpty) return CenteredHint('Üres lista');
 
     return ReorderableListView.builder(
       itemCount: slides.length,
@@ -38,9 +42,18 @@ class SlideList extends ConsumerWidget {
                     .read(currentSlideOfProvider(cue).notifier)
                     .setCurrent(slide),
             removeCallback:
-                () => ref
-                    .read(currentSlideListOfProvider(cue).notifier)
-                    .removeSlide(slide),
+                () => showConfirmDialog(
+                  context,
+                  title:
+                      '${songSlide.song.title} - biztos eltávolítod a listából?',
+                  actionIcon: Icons.delete_outline,
+                  actionLabel: 'Eltávolítás',
+                  actionOnPressed: () async {
+                    await ref
+                        .read(currentSlideListOfProvider(cue).notifier)
+                        .removeSlide(slide);
+                  },
+                ),
             isCurrent: currentSlide == slide,
           ),
           UnknownTypeSlide unknownSlide => UnknownTypeSlideTile(

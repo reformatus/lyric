@@ -10,6 +10,7 @@ class LErrorCard extends StatelessWidget {
     this.message,
     this.stack,
     required this.icon,
+    this.showReportButton = true,
   });
 
   final LErrorType type;
@@ -17,6 +18,7 @@ class LErrorCard extends StatelessWidget {
   final String? message;
   final String? stack;
   final IconData icon;
+  final bool showReportButton;
 
   @override
   Widget build(BuildContext context) {
@@ -49,15 +51,18 @@ class LErrorCard extends StatelessWidget {
                 title,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
-              trailing: FilledButton.icon(
-                onPressed:
-                    () => launchFeedbackEmail(
-                      errorMessage: '$title ($message)',
-                      stackTrace: stack,
-                    ),
-                icon: Icon(Icons.feedback_outlined),
-                label: Text('Hibajelentés'),
-              ),
+              trailing:
+                  showReportButton
+                      ? FilledButton.icon(
+                        onPressed:
+                            () => launchFeedbackEmail(
+                              errorMessage: '$title ($message)',
+                              stackTrace: stack,
+                            ),
+                        icon: Icon(Icons.feedback_outlined),
+                        label: Text('Hibajelentés'),
+                      )
+                      : null,
               contentPadding: EdgeInsets.only(left: 13, right: 8),
             ),
             if (message != null || stack != null)

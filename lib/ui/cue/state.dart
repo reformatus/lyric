@@ -1,4 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/ui/song/state.dart';
+import 'package:lyric/ui/song/transpose/state.dart';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -22,12 +24,12 @@ class CurrentCue extends _$CurrentCue {
     return null;
   }
 
-  bool needsLoadFor(String uuid) {
+  bool isCurrent(String uuid) {
     return (state == null || state!.uuid != uuid);
   }
 
   Future<Cue> load(String uuid, {String? initialSlideUuid}) async {
-    if (!needsLoadFor(uuid)) return state!;
+    if (!isCurrent(uuid)) return state!;
 
     final cue = await ref.watch(watchCueWithUuidProvider(uuid).future);
 
@@ -128,7 +130,22 @@ class CurrentSlideListOf extends _$CurrentSlideListOf {
   }
 
   Future loadSlides() async {
-    state = await cue.getRevivedSlides();
+    state = await cue.getRevivedSlides(ref);
+    for (Slide slide in state) {
+      switch (slide) {
+        case SongSlide songSlide:
+          ref.listen(
+            viewTypeForProvider(songSlide.song, songSlide),
+            (_, _) => updateCueSlides(cue, state),
+          );
+          ref.listen(
+            transposeStateForProvider(songSlide.song, songSlide),
+            (_, _) => updateCueSlides(cue, state),
+          );
+        default:
+          break;
+      }
+    }
   }
 
   void reorderSlides(int from, int to) {
@@ -141,7 +158,7 @@ class CurrentSlideListOf extends _$CurrentSlideListOf {
     updateCueSlides(cue, state);
   }
 
-  void removeSlide(Slide slide) {
+  Future removeSlide(Slide slide) async {
     if (slide == ref.read(currentSlideOfProvider(cue))) {
       if (ref.read(currentSlideOfProvider(cue).notifier).changeSlide(1)) {
       } else if (ref
@@ -156,6 +173,7 @@ class CurrentSlideListOf extends _$CurrentSlideListOf {
     newState.removeWhere((s) => s == slide);
     state = newState;
 
-    updateCueSlides(cue, state);
+    await updateCueSlides(cue, state);
+    return;
   }
 }

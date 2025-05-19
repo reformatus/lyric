@@ -18,21 +18,40 @@ class SongSlide extends Slide {
     // TODO
     /*return song.lyrics.substring(
       0,
-      song.lyrics.indexOf('\n'), // todo proper bounds checking
+      song.lyrics.indexOf('\n'), // TODO proper bounds checking
     );*/
   }
 
-  static Future<SongSlide> reviveFromJson(Map json, Cue parent) async {
+  static Future<SongSlide> reviveFromJson(
+    Map json,
+    Cue parent, [
+    Ref? ref,
+  ]) async {
     var songResult = await getSongForSlideJson(json['song']);
 
-    return SongSlide(
+    SongViewType viewType = SongViewType.fromString(json['viewType']);
+    SongTranspose transpose = SongTranspose.fromJson(json['transpose']);
+
+    SongSlide songSlide = SongSlide(
       json['uuid'],
       songResult.song,
       parent,
       json['comment'],
-      viewType: SongViewType.fromString(json['viewType']),
-      transpose: SongTranspose.fromJson(json['transpose']),
+      viewType: viewType,
+      transpose: transpose,
     )..contentDifferentFlag = songResult.contentDifferentFlag;
+
+    // Initialize states for UI
+    if (ref != null) {
+      ref
+          .read(viewTypeForProvider(songResult.song, songSlide).notifier)
+          .set(viewType);
+      ref
+          .read(transposeStateForProvider(songResult.song, songSlide).notifier)
+          .set(transpose);
+    }
+
+    return songSlide;
   }
 
   @override
@@ -62,9 +81,10 @@ Future<({Song song, bool contentDifferentFlag})> getSongForSlideJson(
 ) async {
   Song song = await dbSongFromUuid(json['uuid']);
   // far future todo: handle edge cases; reading from list file, from network, from bank, from local etc
+  // TODO fix
   return (
     song: song,
-    contentDifferentFlag: song.contentHash == json['contentHash'],
+    contentDifferentFlag: false, //song.contentHash == json['contentHash'],
   );
 }
 

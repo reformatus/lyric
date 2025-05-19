@@ -54,7 +54,7 @@ class _SetsPageState extends ConsumerState<SetsPage> {
               : Center(
                 child: CenteredHint(
                   'Adj hozzá egy listát a jobb alsó sarokban!',
-                  Icons.add_box_outlined,
+                  iconData: Icons.add_box_outlined,
                 ),
               ),
       },
@@ -86,6 +86,7 @@ class CueTile extends StatelessWidget {
           ),
           IconButton(
             icon: Icon(Icons.delete_outline),
+            // TODO refactor with showConfirmDialog
             onPressed:
                 () => showAdaptiveDialog(
                   context: context,

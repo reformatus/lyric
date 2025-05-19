@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../database.dart';
 import 'slide.dart';
@@ -33,8 +34,10 @@ class Cue extends Insertable<Cue> {
 
   List<Map> content;
 
-  Future<List<Slide>> getRevivedSlides() async {
-    return await Future.wait(content.map((e) => Slide.reviveFromJson(e, this)));
+  Future<List<Slide>> getRevivedSlides([Ref? ref]) async {
+    return await Future.wait(
+      content.map((e) => Slide.reviveFromJson(e, this, ref)),
+    );
   }
 
   static List<Map> getContentMapFromSlides(List<Slide> slides) {

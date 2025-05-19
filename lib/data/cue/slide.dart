@@ -1,3 +1,6 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/ui/song/transpose/state.dart';
+
 import '../song/transpose.dart';
 
 import '../../services/song/from_uuid.dart';
@@ -15,12 +18,14 @@ sealed class Slide {
 
   Slide(this.uuid, this.comment);
 
-  static Future<Slide> reviveFromJson(Map json, Cue parent) {
+  static Future<Slide> reviveFromJson(Map json, Cue parent, [Ref? ref]) {
     switch (json['slideType']) {
       case 'song':
-        return SongSlide.reviveFromJson(json, parent);
+        return SongSlide.reviveFromJson(json, parent, ref);
       default:
-        return Future.sync(() => UnknownTypeSlide(json, json['uuid'], json['comment']));
+        return Future.sync(
+          () => UnknownTypeSlide(json, json['uuid'], json['comment']),
+        );
     }
   }
 

@@ -19,32 +19,27 @@ enum SongViewType {
   }
 }
 
-// TODO refactor
-//* maybe make list uuid part of family definition?
-//* needs to be separated - maybe song page can store state locally without provider
-//* song page needs to be used in lists as well for editing transpose and view - how are these separated?
-
 @Riverpod(keepAlive: true)
 class ViewTypeFor extends _$ViewTypeFor {
   @override
-  SongViewType? build(String songId, SongSlide? songSlide) {
-    return null;
-  }
-
-  void changeTo(SongViewType viewType) {
-    state = viewType;
-  }
-
-  Future setDefaultFor(Song song) async {
-    // TODO watch and read previous preference for song/in general
-    await Future.delayed(Duration.zero);
+  SongViewType build(Song song, SongSlide? songSlide) {
     if (song.hasSvg) {
-      state = SongViewType.svg;
+      return SongViewType.svg;
     } else if (song.hasPdf) {
-      state = SongViewType.pdf;
+      return SongViewType.pdf;
     } else {
-      state = SongViewType.lyrics;
+      return SongViewType.lyrics;
     }
-    return;
+  }
+
+  @override
+  bool updateShouldNotify(SongViewType previous, SongViewType next) {
+    songSlide?.viewType = state;
+    return super.updateShouldNotify(previous, next);
+  }
+
+  void set(SongViewType viewType) {
+    state = viewType;
+    // TODO update songSlide
   }
 }

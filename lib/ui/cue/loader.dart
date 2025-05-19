@@ -21,7 +21,7 @@ class CueLoaderPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (!ref.read(currentCueProvider.notifier).needsLoadFor(uuid)) {
+    if (!ref.read(currentCueProvider.notifier).isCurrent(uuid)) {
       return buildPage(ref.read(currentCueProvider)!);
     }
     return FutureBuilder(

@@ -111,6 +111,7 @@ class _AdaptivePageState extends State<AdaptivePage>
             actions: [
               SizedBox.shrink(),
               if (!tabletOrBigger) ...widget.actionBarTrailingChildren ?? [],
+              SizedBox(width: 8),
             ],
           ),
           drawer:

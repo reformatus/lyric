@@ -51,7 +51,7 @@ class _LogViewDialogState extends ConsumerState<LogViewDialog> {
                   ? Center(
                     child: CenteredHint(
                       'Nincs naplóüzenet',
-                      Icons.mark_chat_read_outlined,
+                      iconData: Icons.mark_chat_read_outlined,
                     ),
                   )
                   : Padding(

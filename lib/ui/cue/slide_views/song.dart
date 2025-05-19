@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../data/cue/slide.dart';
 import '../../../main.dart';
@@ -41,21 +42,25 @@ class SongSlideTile extends StatelessWidget {
   }
 }
 
-class SongSlideView extends StatelessWidget {
+class SongSlideView extends ConsumerWidget {
   const SongSlideView(this.songSlide, this.cueId, {super.key});
 
   final SongSlide songSlide;
   final String? cueId;
 
   @override
-  Widget build(BuildContext context) {
-    return switch (songSlide.viewType) {
-      SongViewType.svg => SheetView.svg(songSlide.song),
-      SongViewType.pdf => SheetView.pdf(songSlide.song),
-      SongViewType.lyrics => LyricsView(
-        songSlide.song,
-        transposeOptional: songSlide.transpose,
-      ),
-    };
+  Widget build(BuildContext context, WidgetRef ref) {
+    SongViewType viewType = ref.watch(
+      viewTypeForProvider(songSlide.song, songSlide),
+    );
+
+    switch (viewType) {
+      case SongViewType.svg:
+        return SheetView.svg(songSlide.song);
+      case SongViewType.pdf:
+        return SheetView.pdf(songSlide.song);
+      case SongViewType.lyrics:
+        return LyricsView(songSlide.song, songSlide: songSlide);
+    }
   }
 }

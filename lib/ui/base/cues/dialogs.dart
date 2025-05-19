@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lyric/ui/common/confirm_dialog.dart';
 
 import '../../../data/cue/cue.dart';
 import '../../../services/cue/write_cue.dart';
@@ -124,27 +125,14 @@ class DeleteCueDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog.adaptive(
-      title: Text('${cue.title} törlése - biztos vagy benne?'),
-      actions: [
-        TextButton.icon(
-          label: Text(
-            'Törlés',
-            style: TextStyle(
-              color: Theme.of(context).textTheme.bodySmall!.color,
-            ),
-          ),
-          icon: IconTheme(
-            data: IconThemeData(color: Colors.red),
-            child: Icon(Icons.delete_forever),
-          ),
-          onPressed: () {
-            deleteCueWithUuid(cue.uuid);
-            context.pop();
-          },
-        ),
-        FilledButton(onPressed: () => context.pop(), child: Text('Mégse')),
-      ],
+    return ConfirmDialog(
+      title: '${cue.title} törlése - biztos vagy benne?',
+      actionLabel: 'Törlés',
+      actionIcon: Icons.delete_forever,
+      actionOnPressed: () async {
+        await deleteCueWithUuid(cue.uuid);
+      },
+      dangerousAction: true,
     );
   }
 }

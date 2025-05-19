@@ -1,5 +1,8 @@
 import 'package:dart_opensong/dart_opensong.dart' as os;
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/ui/song/transpose/state.dart';
+import '../../../data/cue/slide.dart';
 import '../../../data/song/transpose.dart';
 import '../../../services/key/get_transposed.dart';
 import '../../../services/song/verse_tag_pretty.dart';
@@ -8,24 +11,21 @@ import 'package:chord_transposer/chord_transposer.dart';
 
 import '../../../data/song/song.dart';
 
-class LyricsView extends StatelessWidget {
-  LyricsView(this.song, {this.transposeOptional, super.key});
+class LyricsView extends ConsumerWidget {
+  LyricsView(this.song, {this.songSlide, super.key});
 
   final Song song;
-  final SongTranspose? transposeOptional;
-  late final SongTranspose transpose;
+  final SongSlide? songSlide;
 
   final ChordTransposer transposer = ChordTransposer(
     notation: NoteNotation.germanWithAccidentals, // TODO configurable
   );
 
   @override
-  Widget build(BuildContext context) {
-    if (transposeOptional == null) {
-      transpose = SongTranspose();
-    } else {
-      transpose = transposeOptional!;
-    }
+  Widget build(BuildContext context, WidgetRef ref) {
+    SongTranspose transpose = ref.watch(
+      transposeStateForProvider(song, songSlide),
+    );
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -173,7 +173,6 @@ class LyricsSegment extends StatelessWidget {
   final Song song;
   final SongTranspose transpose;
 
-  // TODO transpose whole song at once, avoid watching transpose at all segments duh...
   @override
   Widget build(BuildContext context) {
     final chord = getTransposedChord(

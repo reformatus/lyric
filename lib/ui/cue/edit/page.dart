@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lyric/ui/base/songs/page.dart';
 import 'package:lyric/ui/common/adaptive_page/page.dart';
+import 'package:lyric/ui/cue/widgets/actions_drawer.dart';
+import 'package:lyric/ui/song/transpose/widget.dart';
 
 import '../../../data/cue/cue.dart';
 import '../widgets/slide_list.dart';
@@ -24,6 +27,9 @@ class CueEditPage extends ConsumerWidget {
       leftDrawer: SlideList(cue: cue),
       leftDrawerIcon: Icons.list,
       leftDrawerTooltip: 'Lista',
+      rightDrawer: ActionsDrawer(cue),
+      rightDrawerIcon: Icons.more_vert,
+      rightDrawerTooltip: 'Opciók',
       actionBarChildren: [
         const SizedBox(width: 8),
         IconButton.filledTonal(
@@ -54,7 +60,9 @@ class CueEditPage extends ConsumerWidget {
         ),
       ],
       actionBarTrailingChildren: [
+        // far future todo: dropdown for different projection modes
         IconButton.filled(
+          tooltip: 'Teljes képernyő',
           onPressed: () => context.push('/cue/${cue.uuid}/present/musician'),
           icon: Icon(Icons.fullscreen),
           color: Theme.of(context).colorScheme.onPrimary,

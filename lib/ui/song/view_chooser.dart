@@ -9,13 +9,11 @@ import 'state.dart';
 class ViewChooser extends ConsumerWidget {
   const ViewChooser({
     super.key,
-    required this.viewType,
     required this.song,
     this.songSlide,
     required this.useDropdown,
   });
 
-  final SongViewType viewType;
   final Song song;
   final bool useDropdown;
   final SongSlide? songSlide;
@@ -46,6 +44,8 @@ class ViewChooser extends ConsumerWidget {
       ),
     ];
 
+    SongViewType viewType = ref.watch(viewTypeForProvider(song, songSlide));
+
     return LayoutBuilder(
       builder: (context, constraints) {
         if (!useDropdown) {
@@ -53,8 +53,8 @@ class ViewChooser extends ConsumerWidget {
             selected: {viewType},
             onSelectionChanged: (viewTypeSet) {
               ref
-                  .read(ViewTypeForProvider(song.uuid, songSlide).notifier)
-                  .changeTo(viewTypeSet.first);
+                  .read(ViewTypeForProvider(song, songSlide).notifier)
+                  .set(viewTypeSet.first);
             },
             showSelectedIcon: false,
             multiSelectionEnabled: false,
@@ -79,13 +79,25 @@ class ViewChooser extends ConsumerWidget {
                     .toList(),
           );
         } else {
-          return DropdownButtonHideUnderline(
+          return FilledButton.tonal(
+            style: ButtonStyle(
+              padding: WidgetStatePropertyAll(EdgeInsets.zero),
+              enableFeedback: false,
+              splashFactory: NoSplash.splashFactory,
+              overlayColor: WidgetStatePropertyAll(Colors.transparent),
+            ),
+            onPressed: () {},
             child: DropdownButton<SongViewType>(
+              borderRadius: BorderRadius.circular(15),
+              isDense: true,
+              padding: EdgeInsets.only(top: 5, bottom: 5, left: 15, right: 5),
+              underline: SizedBox.shrink(),
+              autofocus: false,
               value: viewType,
               onChanged:
                   (viewType) => ref
-                      .read(ViewTypeForProvider(song.uuid, songSlide).notifier)
-                      .changeTo(viewType!),
+                      .read(ViewTypeForProvider(song, songSlide).notifier)
+                      .set(viewType!),
               items:
                   viewTypeEntries
                       .where((e) => e.enabled)

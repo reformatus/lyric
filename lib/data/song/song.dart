@@ -57,8 +57,7 @@ class Song extends Insertable<Song> {
     this.userNote,
   });
 
-  int get contentHash =>
-      Object.hash(jsonEncode(contentMap), sourceBankId, userNote);
+  int get contentHash => Object.hash(jsonEncode(contentMap), sourceBankId);
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {

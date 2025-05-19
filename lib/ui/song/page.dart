@@ -1,6 +1,7 @@
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/data/song/transpose.dart';
 import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
 import '../../data/cue/slide.dart';
 
@@ -27,10 +28,11 @@ const Set<String> fieldsToShowInDetailsSummary = {
 };
 const Set<String> fieldsToOmitFromDetails = {'tite', 'opensong', 'first_line'};
 
+// TODO refactor into adaptive_page
+
 class SongPage extends ConsumerStatefulWidget {
-  const SongPage(this.songId, {this.songSlide, super.key});
+  const SongPage(this.songId, {super.key});
   final String songId;
-  final SongSlide? songSlide;
 
   @override
   ConsumerState<SongPage> createState() => _SongPageState();
@@ -84,19 +86,8 @@ class _SongPageState extends ConsumerState<SongPage> {
           final List<Widget> summaryContent = getDetailsSummaryContent(song);
           final List<Widget> detailsContent = getDetailsContent(song, context);
 
-          final viewType = ref.watch(
-            ViewTypeForProvider(song.uuid, widget.songSlide),
-          );
-          final transpose = ref.watch(
-            TransposeStateForProvider(song.uuid, widget.songSlide),
-          );
-
-          if (viewType == null) {
-            ref
-                .read(viewTypeForProvider(song.uuid, widget.songSlide).notifier)
-                .setDefaultFor(song);
-            return Center(child: CircularProgressIndicator());
-          }
+          final viewType = ref.watch(ViewTypeForProvider(song, null));
+          final transpose = ref.watch(transposeStateForProvider(song, null));
 
           return Scaffold(
             backgroundColor: Theme.of(context).colorScheme.surface,
@@ -108,12 +99,7 @@ class _SongPageState extends ConsumerState<SongPage> {
               title: Text(song.contentMap['title'] ?? ''),
               actions: [
                 if (isDesktop)
-                  ViewChooser(
-                    viewType: viewType,
-                    song: song,
-                    songSlide: widget.songSlide,
-                    useDropdown: false,
-                  ),
+                  ViewChooser(song: song, songSlide: null, useDropdown: false),
                 if ((detailsContent.isNotEmpty && !isDesktop) && !isMobile)
                   ConstrainedBox(
                     constraints: BoxConstraints(
@@ -137,10 +123,7 @@ class _SongPageState extends ConsumerState<SongPage> {
                   child: switch (viewType) {
                     SongViewType.svg => SheetView.svg(song),
                     SongViewType.pdf => SheetView.pdf(song),
-                    SongViewType.lyrics => LyricsView(
-                      song,
-                      transposeOptional: transpose,
-                    ),
+                    SongViewType.lyrics => LyricsView(song),
                   },
                 ),
                 if (isMobile)
@@ -158,46 +141,7 @@ class _SongPageState extends ConsumerState<SongPage> {
                           children: [
                             if (viewType == SongViewType.lyrics &&
                                 song.hasChords) ...[
-                              ConstrainedBox(
-                                constraints: BoxConstraints(maxWidth: 200),
-                                child: Card(
-                                  child: Padding(
-                                    padding: EdgeInsets.all(8),
-                                    child: Column(
-                                      children: [
-                                        SizedBox(
-                                          height: 30,
-                                          child: Row(
-                                            children: [
-                                              Text(
-                                                song.keyField != null
-                                                    ? getTransposedKey(
-                                                      song.keyField!,
-                                                      transpose.semitones,
-                                                    ).toString()
-                                                    : 'Hangnem',
-                                                style:
-                                                    Theme.of(
-                                                      context,
-                                                    ).textTheme.bodyLarge,
-                                              ),
-                                              TransposeResetButton(
-                                                song,
-                                                songSlide: widget.songSlide,
-                                                isHorizontal: isDesktop,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        TransposeControls(
-                                          song,
-                                          songSlide: widget.songSlide,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              TransposeCard(song: song),
                             ],
                             AddToCueSearch(
                               song: song,
@@ -223,11 +167,11 @@ class _SongPageState extends ConsumerState<SongPage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           ViewChooser(
-                            viewType: viewType,
                             song: song,
-                            songSlide: widget.songSlide,
+                            songSlide: null,
                             useDropdown: constraints.maxWidth < 550,
                           ),
+                          SizedBox(width: 5),
                           Flexible(
                             child: Padding(
                               padding: EdgeInsets.symmetric(vertical: 8),
@@ -252,8 +196,8 @@ class _SongPageState extends ConsumerState<SongPage> {
                                             VerticalDivider(),
                                             TransposeResetButton(
                                               song,
-                                              songSlide: widget.songSlide,
-                                              isHorizontal: isDesktop,
+                                              songSlide: null,
+                                              isCompact: isDesktop,
                                             ),
                                             CompositedTransformTarget(
                                               link: _transposeOverlayLink,
@@ -286,12 +230,12 @@ class _SongPageState extends ConsumerState<SongPage> {
                                                                     maxWidth:
                                                                         150,
                                                                   ),
-                                                              child: TransposeControls(
-                                                                song,
-                                                                songSlide:
-                                                                    widget
-                                                                        .songSlide,
-                                                              ),
+                                                              child:
+                                                                  TransposeControls(
+                                                                    song,
+                                                                    songSlide:
+                                                                        null,
+                                                                  ),
                                                             ),
                                                           ),
                                                         ),

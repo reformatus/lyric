@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../data/cue/slide.dart';
+import '../../../data/song/song.dart';
 import '../../../data/song/transpose.dart';
 
 part 'state.g.dart';
@@ -8,35 +9,45 @@ part 'state.g.dart';
 @Riverpod(keepAlive: true)
 class TransposeStateFor extends _$TransposeStateFor {
   @override
-  SongTranspose build(String songId, SongSlide? songSlide) {
+  SongTranspose build(Song song, SongSlide? songSlide) {
     return SongTranspose(semitones: 0, capo: 0);
   }
 
-  up() {
+  @override
+  bool updateShouldNotify(SongTranspose previous, SongTranspose next) {
+    songSlide?.transpose = state;
+    return super.updateShouldNotify(previous, next);
+  }
+
+  void set(SongTranspose transpose) {
+    state = transpose;
+  }
+
+  void up() {
     state.semitones += 1;
     if (state.semitones > 11) state.semitones = 0;
     ref.notifyListeners();
   }
 
-  down() {
+  void down() {
     state.semitones -= 1;
     if (state.semitones < -11) state.semitones = 0;
     ref.notifyListeners();
   }
 
-  addCapo() {
+  void addCapo() {
     state.capo += 1;
     if (state.capo > 11) state.capo = 0;
     ref.notifyListeners();
   }
 
-  removeCapo() {
+  void removeCapo() {
     state.capo -= 1;
     if (state.capo < 0) state.capo = 11;
     ref.notifyListeners();
   }
 
-  reset() {
+  void reset() {
     state = SongTranspose(semitones: 0, capo: 0);
     ref.notifyListeners();
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/ui/common/centered_hint.dart';
 
 import '../../../data/cue/cue.dart';
 import '../../../data/cue/slide.dart';
@@ -73,10 +74,16 @@ class _SlideViewState extends ConsumerState<SlideView>
       data: Theme.of(context),
       child: Hero(
         tag: 'SlideView',
-        child: TabBarView(
-          controller: tabController,
-          children: slides.map((s) => renderSlide(s)).toList(),
-        ),
+        child:
+            slides.isEmpty
+                ? CenteredHint(
+                  'Keress és adj hozzá dalokat a listához a Daltár oldalon',
+                  iconData: Icons.library_music,
+                )
+                : TabBarView(
+                  controller: tabController,
+                  children: slides.map((s) => renderSlide(s)).toList(),
+                ),
       ),
     );
   }
