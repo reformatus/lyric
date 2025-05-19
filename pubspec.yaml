@@ -91,6 +91,10 @@ msix_config:
   display_name: Sófár DalApp
   publisher_display_name: RefLabs
   identity_name: org.lyricapp.sofar
-  msix_version: 1.0.3.12
+# MSIX version created like so:
+# 1.2.3 - Semantic version
+# [major+10].[minor].[patch].0
+# 11.2.3.0 - MSIX version
+  msix_version: 10.3.12.0
   logo_path: assets/icon/sofar_dalapp_windows.ico
   capabilities: internetClient
