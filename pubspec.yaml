@@ -89,8 +89,9 @@ flutter_launcher_icons:
 
 msix_config:
   display_name: Sófár DalApp
+  identity_name: RefLabs.SfrDalApp
   publisher_display_name: RefLabs
-  identity_name: org.lyricapp.sofar
+  publisher: CN=89EEEB6C-58E0-4995-BBFE-64F0DFAC94F4
 # MSIX version created like so:
 # 1.2.3 - Semantic version
 # [major+10].[minor].[patch].0
@@ -98,3 +99,4 @@ msix_config:
   msix_version: 10.3.12.0
   logo_path: assets/icon/sofar_dalapp_windows.ico
   capabilities: internetClient
+  store: true
