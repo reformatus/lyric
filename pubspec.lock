@@ -694,10 +694,10 @@ packages:
     dependency: "direct main"
     description:
       name: pdfrx
-      sha256: "0373670efd3d6a79b2c725558d2cceb9d778164f5d7e2d66801d8cc1695b9aac"
+      sha256: "90747e916a64366b8beb69e9ac175e9134df520110543ab284b839102bf4b7e1"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.17"
+    version: "1.1.29"
   petitparser:
     dependency: transitive
     description:
