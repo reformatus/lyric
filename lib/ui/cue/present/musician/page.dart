@@ -40,7 +40,7 @@ class _CuePresentMusicianPageState extends ConsumerState<CuePresentMusicianPage>
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       overlayController.forward();
-      await Future.delayed(Duration(milliseconds: 500));
+      await Future.delayed(Duration(milliseconds: 1000));
       overlayController.reverse();
     });
 
@@ -81,7 +81,7 @@ class _CuePresentMusicianPageState extends ConsumerState<CuePresentMusicianPage>
                   child!,
                   GestureDetector(
                     behavior: HitTestBehavior.translucent,
-                    onTap: () {
+                    onTapDown: (_) {
                       if (overlayController.isCompleted) {
                         overlayController.reverse();
                       } else if (overlayController.isDismissed) {
