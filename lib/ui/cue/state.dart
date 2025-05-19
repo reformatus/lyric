@@ -118,7 +118,7 @@ Stream<({int index, int total})?> watchSlideIndexOfCue(
 }
 
 bool hasPreviousSlide(({int index, int total})? slideIndex) =>
-    slideIndex?.index != 0 && slideIndex != null;
+    slideIndex != null && slideIndex.index > 0;
 bool hasNextSlide(({int index, int total})? slideIndex) =>
     slideIndex != null && slideIndex.index < slideIndex.total - 1;
 
