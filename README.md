@@ -1,4 +1,4 @@
-# Lyric
+# Sófár DalApp
 
 ## [Homepage](https://app.sofarkotta.hu/)
 
@@ -15,3 +15,7 @@
 
 As the project and the architecture is still in the early stages, please contact us before starting any contrubutions.
 We'd like to make sure you're going in the right direction before you invest time in a PR.
+
+---
+
+**Powered by [Lyric](https://lyricapp.org)**
