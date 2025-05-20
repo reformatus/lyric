@@ -1,20 +1,6 @@
 # Lyric
 
-## Downloads
-
-You can now download a test version for Android here: https://github.com/reformatus/lyric/releases 
-Coming soon to beta programs on Play Store and App Store.
-
-## Your Open Worship Superapp
-
-[![On Commit or PR](https://github.com/reformatus/lyric/actions/workflows/on-commit.yml/badge.svg)](https://github.com/reformatus/lyric/actions/workflows/on-commit.yml)
-[![On Release](https://github.com/reformatus/lyric/actions/workflows/on-release.yml/badge.svg)](https://github.com/reformatus/lyric/actions/workflows/on-release.yml)
-
-**Lyric** will be your one-stop-shop for making the best setlists, performing from sheet music with your band, and projecting lyrics with sheet music.
-It will have an open and growing ecosystem of song libraries.
-
-We are yet far from this future, but please enjoy the beginnings of the app as-is.
-Currently our only song library is the one of **Sófár**, which is an association aiding the reformed church of Hungary in all things worship.
+## [Homepage](https://app.sofarkotta.hu/)
 
 #### How to build
 
