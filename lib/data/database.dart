@@ -49,7 +49,7 @@ class LyricDatabase extends _$LyricDatabase {
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dbFolder.path, 'lyric.sqlite'));
+    final file = File(p.join(dbFolder.path, 'Sófár DalApp', 'lyric.sqlite'));
 
     if (Platform.isAndroid) {
       await applyWorkaroundToOpenSqlite3OnOldAndroidVersions();
