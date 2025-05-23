@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lyric/services/app_links/app_links.dart';
 
 import '../../data/log/provider.dart';
 import '../../main.dart';
@@ -64,8 +65,26 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
         extendedNavRail =
             MediaQuery.of(context).size.width > globals.desktopFromWidth;
       });
+
+      // Handle deep links (only when app is in normal state, showing base scaffold)
+      String? currentShouldNavigate = ref.read(shouldNavigateProvider).value;
+      if (currentShouldNavigate != null) {
+        context.go(currentShouldNavigate);
+      }
     });
+    shouldNavigateListener = ref.listenManual(
+      shouldNavigateProvider,
+      (_, path) => context.go(path),
+    );
   }
+
+  @override
+  void dispose() {
+    shouldNavigateListener.close();
+    super.dispose();
+  }
+
+  late ProviderSubscription shouldNavigateListener;
 
   bool extendedNavRail = true;
 

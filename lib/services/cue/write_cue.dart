@@ -20,6 +20,21 @@ Future<Cue> insertNewCue({required String title, required String description}) {
       );
 }
 
+Future<Cue> insertCueFromJson({required Map json}) {
+  return db
+      .into(db.cues)
+      .insertReturning(
+        CuesCompanion(
+          id: Value.absent(),
+          uuid: json["uuid"],
+          title: json["title"],
+          description: json["description"],
+          cueVersion: json["cueVersion"],
+          content: json["content"],
+        ),
+      );
+}
+
 Future updateCueMetadata(Cue cue, {String? title, String? description}) {
   return (db.update(db.cues)..where((c) => c.id.equals(cue.id))).write(
     CuesCompanion(

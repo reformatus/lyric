@@ -64,6 +64,16 @@ class Cue extends Insertable<Cue> {
       content: Value(content),
     ).toColumns(nullToAbsent);
   }
+
+  Map toJson() {
+    return {
+      "uuid": uuid,
+      "title": title,
+      "description": description,
+      "cueVersion": cueVersion,
+      "content": content,
+    };
+  }
 }
 
 class CueContentConverter extends TypeConverter<List<Map>, String> {
