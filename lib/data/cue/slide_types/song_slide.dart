@@ -79,7 +79,7 @@ class SongSlide extends Slide {
 Future<({Song song, bool contentDifferentFlag})> getSongForSlideJson(
   Map json,
 ) async {
-  Song song = await dbSongFromUuid(json['uuid']);
+  Song song = (await dbSongFromUuid(json['uuid']))!;
   // far future todo: handle edge cases; reading from list file, from network, from bank, from local etc
   // TODO fix
   return (

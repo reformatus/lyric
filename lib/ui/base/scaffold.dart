@@ -69,7 +69,7 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
       // Handle deep links (only when app is in normal state, showing base scaffold)
       String? currentShouldNavigate = ref.read(shouldNavigateProvider).value;
       if (currentShouldNavigate != null) {
-        context.push('/$currentShouldNavigate');
+        context.go('/$currentShouldNavigate');
       }
     });
   }
@@ -92,7 +92,7 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
     ref.listen(shouldNavigateProvider, (_, path) {
       String? pathString = path.value;
       if (pathString != null) {
-        context.push('/$pathString');
+        context.go('/$pathString');
       }
     });
 
