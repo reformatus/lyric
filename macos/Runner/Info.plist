@@ -28,5 +28,17 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<!--! DEEP LINKING -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>launch.org.lyricapp</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+					<string>lyric</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

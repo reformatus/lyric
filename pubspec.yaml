@@ -93,11 +93,13 @@ msix_config:
   identity_name: RefLabs.SfrDalApp
   publisher_display_name: RefLabs
   publisher: CN=89EEEB6C-58E0-4995-BBFE-64F0DFAC94F4
-# MSIX version created like so:
-# 1.2.3 - Semantic version
-# [major+10].[minor].[patch].0
-# 11.2.3.0 - MSIX version
+    # MSIX version created like so:
+    # 1.2.3 - Semantic version
+    # [major+10].[minor].[patch].0
+    # 11.2.3.0 - MSIX version
   msix_version: 10.3.12.0
   logo_path: assets/icon/sofar_dalapp_windows.ico
   capabilities: internetClient
   store: true
+  protocol_activation: https, lyric
+  app_uri_handler_hosts: app.sofarkotta.hu
