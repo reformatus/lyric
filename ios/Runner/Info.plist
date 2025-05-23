@@ -47,5 +47,19 @@
     <true/>
     <key>ITSAppUsesNonExemptEncryption</key>
     <false/>
+    <!--! DEEP LINKING -->
+    <key>FlutterDeepLinkingEnabled</key>
+    <false/>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>lyric</string>
+            </array>
+            <key>CFBundleURLName</key>
+            <string>launch.org.lyricapp</string>
+        </dict>
+    </array>
   </dict>
 </plist>
