@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/main.dart';
 import 'package:lyric/services/cue/write_cue.dart';
+import 'package:lyric/ui/common/confirm_dialog.dart';
 import 'package:lyric/ui/common/error/card.dart';
 import 'package:lyric/ui/common/error/dialog.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/cue/cue.dart';
+import '../cue/from_uuid.dart';
 
 part 'app_links.g.dart';
 
@@ -24,26 +26,54 @@ Stream<String> shouldNavigate(Ref ref) async* {
       }
       switch (uri.pathSegments[0]) {
         case 'launch':
+          if (uri.pathSegments.length < 2) continue;
           switch (uri.pathSegments[1]) {
+            // TODO factor out to a cue service or similar
             case 'cueJson':
-              String? jsonString = uri.queryParameters['data'];
-              if (jsonString == null) continue;
+              try {
+                String? jsonString = uri.queryParameters['data'];
+                if (jsonString == null) continue;
+                Map json = jsonDecode(jsonString);
 
-              Cue cue = await insertCueFromJson(json: jsonDecode(jsonString));
+                Cue? existingCue = await dbWatchCueWithUuid(json['uuid']).first;
+                Cue cue;
+                if (existingCue == null) {
+                  cue = await insertCueFromJson(json: jsonDecode(jsonString));
+                } else {
+                  cue = existingCue;
+                  final NavigatorState? navigator =
+                      globals.router.routerDelegate.navigatorKey.currentState;
+                  if (navigator != null) {
+                    await showConfirmDialog(
+                      // ignore: use_build_context_synchronously
+                      navigator.context,
+                      title:
+                          'A linkben megnyitott lista már létezik. Felülírod?',
+                      actionLabel: 'Felülírás',
+                      actionIcon: Icons.edit_note,
+                      actionOnPressed: () async {
+                        cue = await updateCueFromJson(json: json);
+                      },
+                    );
+                  }
+                }
 
-              String? slideUuid = uri.queryParameters['slide'];
+                String? slideUuid = uri.queryParameters['slide'];
 
-              yield Uri(
-                pathSegments: ['cue', cue.uuid, 'edit'],
-                queryParameters: Map.fromEntries([
-                  if (slideUuid != null) MapEntry('slide', slideUuid),
-                ]),
-              ).toString();
+                yield Uri(
+                  pathSegments: ['cue', cue.uuid, 'edit'],
+                  queryParameters: Map.fromEntries([
+                    if (slideUuid != null) MapEntry('slide', slideUuid),
+                  ]),
+                ).toString();
+              } catch (e) {
+                throw Exception('Hibás lista a linkben:\n$e');
+              }
             default:
               yield Uri(
                 pathSegments: uri.pathSegments.skip(1),
                 query: uri.query,
-                fragment: uri.fragment,
+                fragment: uri.fragment.isEmpty ? null : uri.fragment,
               ).toString();
           }
           break;
@@ -57,8 +87,7 @@ Stream<String> shouldNavigate(Ref ref) async* {
           continue;
       }
     } catch (e, s) {
-      if (globals.scaffoldKey.currentState == null ||
-          globals.scaffoldKey.currentContext == null) {
+      if (globals.scaffoldKey.currentState == null) {
         rethrow;
       }
       globals.scaffoldKey.currentState!.showSnackBar(
@@ -69,9 +98,12 @@ Stream<String> shouldNavigate(Ref ref) async* {
           backgroundColor: Colors.red,
           action: SnackBarAction(
             label: 'Részletek',
-            onPressed:
-                () => showAdaptiveDialog(
-                  context: globals.scaffoldKey.currentContext!,
+            onPressed: () {
+              final NavigatorState? navigator =
+                  globals.router.routerDelegate.navigatorKey.currentState;
+              if (navigator != null) {
+                showAdaptiveDialog(
+                  context: navigator.context,
                   builder:
                       (context) => AdaptiveErrorDialog(
                         type: LErrorType.error,
@@ -80,7 +112,9 @@ Stream<String> shouldNavigate(Ref ref) async* {
                         message: e.toString(),
                         stack: s.toString(),
                       ),
-                ),
+                );
+              }
+            },
           ),
         ),
       );

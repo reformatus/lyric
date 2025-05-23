@@ -11,6 +11,7 @@ final _router = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: '/loading',
   routes: [
+    GoRoute(path: '/', redirect: (context, state) => '/loading'),
     GoRoute(
       path: '/loading',
       pageBuilder: (context, state) => const MaterialPage(child: LoadingPage()),

@@ -26,14 +26,13 @@ class AdaptiveErrorDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog.adaptive(
-      content: Padding(
-        padding: EdgeInsets.all(8),
-        child: LErrorCard(
-          type: type,
-          title: title,
-          icon: icon,
-          showReportButton: false,
-        ),
+      content: LErrorCard(
+        type: type,
+        title: title,
+        message: message,
+        stack: stack,
+        icon: icon,
+        showReportButton: false,
       ),
       actions: [
         FilledButton.tonalIcon(

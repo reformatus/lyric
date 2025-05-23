@@ -69,13 +69,9 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
       // Handle deep links (only when app is in normal state, showing base scaffold)
       String? currentShouldNavigate = ref.read(shouldNavigateProvider).value;
       if (currentShouldNavigate != null) {
-        context.go(currentShouldNavigate);
+        context.push('/$currentShouldNavigate');
       }
     });
-    shouldNavigateListener = ref.listenManual(
-      shouldNavigateProvider,
-      (_, path) => context.go(path),
-    );
   }
 
   @override
@@ -92,6 +88,13 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
   Widget build(BuildContext context) {
     final newVersion = ref.watch(checkNewVersionProvider);
     final unreadLogCount = ref.watch(unreadLogCountProvider);
+
+    ref.listen(shouldNavigateProvider, (_, path) {
+      String? pathString = path.value;
+      if (pathString != null) {
+        context.push('/$pathString');
+      }
+    });
 
     final List<GeneralNavigationDestination> destinations = [
       (

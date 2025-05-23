@@ -26,13 +26,27 @@ Future<Cue> insertCueFromJson({required Map json}) {
       .insertReturning(
         CuesCompanion(
           id: Value.absent(),
-          uuid: json["uuid"],
-          title: json["title"],
-          description: json["description"],
-          cueVersion: json["cueVersion"],
-          content: json["content"],
+          uuid: Value(json["uuid"]),
+          title: Value(json["title"]),
+          description: Value(json["description"]),
+          cueVersion: Value(json["cueVersion"]),
+          content: Value(
+            (json["content"] as List).map((e) => e as Map).toList(),
+          ),
         ),
       );
+}
+
+Future<Cue> updateCueFromJson({required Map json}) async {
+  return (await (db.update(db.cues)
+    ..where((c) => c.uuid.equals(json["uuid"]))).writeReturning(
+    CuesCompanion(
+      title: Value(json["title"]),
+      description: Value(json["description"]),
+      cueVersion: Value(json["cueVersion"]),
+      content: Value((json["content"] as List).map((e) => e as Map).toList()),
+    ),
+  )).first;
 }
 
 Future updateCueMetadata(Cue cue, {String? title, String? description}) {
