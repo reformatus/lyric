@@ -80,6 +80,9 @@ class _ShareDialogState extends State<ShareDialog> {
         ],
       ),
       scrollable: true,
+      contentPadding: EdgeInsets.zero,
+      clipBehavior: Clip.antiAlias,
+      backgroundColor: colorScheme.surfaceContainerHighest,
       content: SizedBox(
         width: 320,
         child: Column(
@@ -88,26 +91,24 @@ class _ShareDialogState extends State<ShareDialog> {
           children: [
             // Description if provided
             if (widget.description != null) ...[
-              Text(
-                widget.description!,
-                style: theme.textTheme.bodyMedium,
-                textAlign: TextAlign.center,
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+                child: Text(
+                  widget.description!,
+                  style: theme.textTheme.bodyMedium,
+                ),
               ),
-              const SizedBox(height: 20),
             ],
 
-            // Shared item info with visual connection
             Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(25),
               decoration: BoxDecoration(
-                color: colorScheme.surfaceContainerHighest.withValues(
-                  alpha: 0.3,
-                ),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: colorScheme.outline.withAlpha(60),
-                  width: 1,
+                color: colorScheme.surfaceContainer,
+                border: BoxBorder.fromLTRB(
+                  top: BorderSide(
+                    color: colorScheme.outline.withAlpha(60),
+                    width: 1,
+                  ),
                 ),
               ),
               child: Column(
@@ -153,35 +154,48 @@ class _ShareDialogState extends State<ShareDialog> {
                     ],
                   ),
 
-                  const SizedBox(
-                    height: 24,
-                  ), // QR Code with subtle border - tappable to open fullscreen
-                  GestureDetector(
-                    onTap: () => _showFullscreenQr(context),
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: colorScheme.outline.withAlpha(60),
-                          width: 1,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: colorScheme.shadow.withValues(alpha: 0.08),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
+                  const SizedBox(height: 24),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: colorScheme.outline.withAlpha(60),
+                        width: 1,
                       ),
-                      child: SizedBox.square(
-                        dimension: 200,
-                        child: QrImageView(
-                          data: widget.sharedLink,
-                          version: QrVersions.auto,
-                          gapless: true,
-                          errorCorrectionLevel: QrErrorCorrectLevel.L,
+                      boxShadow: [
+                        BoxShadow(
+                          color: colorScheme.shadow.withValues(alpha: 0.08),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Material(
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadiusGeometry.circular(12),
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      elevation: 0,
+                      child: Tooltip(
+                        message: 'Kód nagyítása',
+                        child: InkWell(
+                          onTap: () => _showFullscreenQr(context),
+                          child: Hero(
+                            tag: 'ShareDialogQr',
+                            child: Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: SizedBox.square(
+                                dimension: 200,
+                                child: QrImageView(
+                                  data: widget.sharedLink,
+                                  version: QrVersions.auto,
+                                  gapless: true,
+                                  errorCorrectionLevel: QrErrorCorrectLevel.L,
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),

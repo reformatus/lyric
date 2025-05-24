@@ -36,15 +36,18 @@ class FullscreenQrDialog extends StatelessWidget {
         title: Text(title),
       ),
       body: Center(
-        child: Container(
-          padding: EdgeInsets.all(10),
-          color: Colors.white,
-          child: QrImageView(
-            data: data,
-            version: QrVersions.auto,
-            gapless: true,
-            errorCorrectionLevel: QrErrorCorrectLevel.M,
-            backgroundColor: Colors.white,
+        child: Hero(
+          tag: 'ShareDialogQr',
+          child: Container(
+            padding: EdgeInsets.all(10),
+            color: Colors.white,
+            child: QrImageView(
+              data: data,
+              version: QrVersions.auto,
+              gapless: true,
+              errorCorrectionLevel: QrErrorCorrectLevel.M,
+              backgroundColor: Colors.white,
+            ),
           ),
         ),
       ),

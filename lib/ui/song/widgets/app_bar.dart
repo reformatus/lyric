@@ -58,6 +58,8 @@ class SongPageAppBar extends ConsumerWidget implements PreferredSizeWidget {
               () => showShareDialog(
                 context,
                 title: 'Dal megosztása',
+                description:
+                    'Mutasd meg a kódot vagy küldd el a linket valakinek. A megosztott ének megnyílik az eszközén.',
                 sharedTitle: song.title,
                 sharedLink: getShareableLinkFor(song),
                 sharedIcon: Icons.music_note,

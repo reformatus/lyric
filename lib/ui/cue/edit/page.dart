@@ -65,8 +65,11 @@ class CueEditPage extends ConsumerWidget {
               () => showShareDialog(
                 context,
                 title: 'Lista megosztása',
+                description:
+                    'Mutasd meg a kódot vagy küldd el a linket valakinek. A megosztott lista a listái közé kerül (vagy frissül, ha korábban már megnyitotta).',
                 sharedTitle: cue.title,
-                sharedDescription: cue.description,
+                sharedDescription:
+                    cue.description.isEmpty ? null : cue.description,
                 sharedLink: getShareableLinkFor(cue),
                 sharedIcon: Icons.list,
               ),
