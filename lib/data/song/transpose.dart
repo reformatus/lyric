@@ -3,6 +3,7 @@ class SongTranspose {
   int capo;
 
   int get finalTransposeBy => semitones - capo;
+  bool get isNotEmpty => semitones != 0 || capo != 0;
 
   SongTranspose({this.semitones = 0, this.capo = 0});
 

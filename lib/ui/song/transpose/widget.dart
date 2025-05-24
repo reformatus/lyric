@@ -160,8 +160,9 @@ class TransposeCard extends ConsumerWidget {
     }
 
     return ConstrainedBox(
-      constraints: BoxConstraints(maxWidth: 200),
+      constraints: BoxConstraints(maxWidth: 250),
       child: Card(
+        margin: EdgeInsets.zero,
         child: Padding(
           padding: EdgeInsets.all(8),
           child: Column(

@@ -100,13 +100,19 @@ class _AddToCueSearchState extends ConsumerState<AddToCueSearch> {
             onPressed: () => controller.openView(),
           );
         } else {
-          return SearchBar(
-            controller: controller,
-            leading: Icon(Icons.playlist_add),
-            hintText: 'Listához adás...',
-            elevation: WidgetStatePropertyAll(1),
-            onTap: () => controller.openView(),
-            onChanged: (_) => controller.openView(),
+          return ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: 250),
+            child: SearchBar(
+              controller: controller,
+              leading: Icon(Icons.playlist_add),
+              hintText: 'Listához adás...',
+              shape: WidgetStatePropertyAll(
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              elevation: WidgetStatePropertyAll(1),
+              onTap: () => controller.openView(),
+              onChanged: (_) => controller.openView(),
+            ),
           );
         }
       },
