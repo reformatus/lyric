@@ -10,8 +10,6 @@ class SongSlide extends Slide {
 
   bool contentDifferentFlag = false;
 
-  //? Overrides
-
   @override
   String getPreview() {
     return 'Dalszöveg';
@@ -30,13 +28,16 @@ class SongSlide extends Slide {
     var songResult = await getSongForSlideJson(json['song']);
 
     SongViewType viewType = SongViewType.fromString(json['viewType']);
-    SongTranspose transpose = SongTranspose.fromJson(json['transpose']);
+    SongTranspose? transpose =
+        json.containsKey('transpose')
+            ? SongTranspose.fromJson(json['transpose'])
+            : null;
 
     SongSlide songSlide = SongSlide(
       json['uuid'],
       songResult.song,
       parent,
-      json['comment'],
+      json.containsKey('comment') ? json['comment'] : null,
       viewType: viewType,
       transpose: transpose,
     )..contentDifferentFlag = songResult.contentDifferentFlag;
@@ -46,9 +47,13 @@ class SongSlide extends Slide {
       ref
           .read(viewTypeForProvider(songResult.song, songSlide).notifier)
           .set(viewType);
-      ref
-          .read(transposeStateForProvider(songResult.song, songSlide).notifier)
-          .set(transpose);
+      if (transpose != null) {
+        ref
+            .read(
+              transposeStateForProvider(songResult.song, songSlide).notifier,
+            )
+            .set(transpose);
+      }
     }
 
     return songSlide;
@@ -56,14 +61,15 @@ class SongSlide extends Slide {
 
   @override
   Map toJson() {
-    return {
-      'uuid': uuid,
-      'slideType': slideType,
-      'song': songOfSlideToJson(song),
-      'viewType': viewType.name,
-      'transpose': transpose?.toJson(),
-      'comment': comment,
-    };
+    return Map.fromEntries([
+      MapEntry('uuid', uuid),
+      MapEntry('slideType', slideType),
+      MapEntry('song', songOfSlideToJson(song)),
+      MapEntry('viewType', viewType.name),
+      if (transpose != null && transpose!.isNotEmpty)
+        MapEntry('transpose', transpose!.toJson()),
+      if (comment != null) MapEntry('comment', comment),
+    ]);
   }
 
   SongSlide(
