@@ -3,7 +3,7 @@ description: "Your Open Worship Superapp"
 
 publish_to: 'none'
 
-version: 0.4.0+40
+version: 0.4.1+41
 
 environment:
   sdk: '>=3.8.0 <4.0.0'
@@ -17,7 +17,7 @@ msix_config:
     # 1.2.3 - Semantic version
     # [major+10].[minor].[patch].0
     # 11.2.3.0 - MSIX version
-  msix_version: 10.4.0.0
+  msix_version: 10.4.1.0
   logo_path: assets/icon/sofar_dalapp_windows.ico
   capabilities: internetClient
   store: true
