@@ -47,11 +47,6 @@ Future<VersionInfo?> checkNewVersion(Ref ref) async {
         backgroundColor: Colors.blue[700],
         showCloseIcon: true,
         duration: Duration(seconds: 10),
-        action: SnackBarAction(
-          label: 'Nézzük',
-          onPressed: () => globals.router.go('/home'),
-          backgroundColor: Colors.blue[900],
-        ),
       ),
     );
 

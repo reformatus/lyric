@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lyric/data/log/logger.dart';
 
 import '../../main.dart';
 import '../../services/bank/bank_updated.dart';
@@ -8,28 +9,55 @@ import '../../services/songs/update.dart';
 import '../common/error/card.dart';
 import 'banner.dart';
 
-class LoadingPage extends ConsumerWidget {
+class LoadingPage extends ConsumerStatefulWidget {
   const LoadingPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final hasEverUpdatedProvider = ref.watch(hasEverUpdatedAnythingProvider);
-    hasEverUpdatedProvider.whenData((d) {
-      if (d) showOnlineBanksUpdatingBanner();
-    });
+  ConsumerState<LoadingPage> createState() => _LoadingPageState();
+}
 
-    final bankStates = ref.watch(updateAllBanksProvider);
+class _LoadingPageState extends ConsumerState<LoadingPage> {
+  bool _hasNavigated = false;
 
-    /*  Continue from loading page if either:
-          App has been launched before or
-          All banks finished updating
-    */
-    if (hasEverUpdatedProvider.valueOrNull == true ||
-        bankStates.hasValue && bankStates.value!.values.every(isDone)) {
+  void _checkAndNavigateIfReady() {
+    if (_hasNavigated) return;
+
+    final hasEverUpdated = ref.read(hasEverUpdatedAnythingProvider);
+    final bankStates = ref.read(updateAllBanksProvider);
+
+    if (hasEverUpdated.valueOrNull == true ||
+        (bankStates.hasValue && bankStates.value!.values.every(isDone))) {
+      _hasNavigated = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.pushReplacement('/home');
+        if (mounted) {
+          context.pushReplacement('/home');
+        }
       });
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Listen for hasEverUpdated changes and show banner
+    ref.listenManual(hasEverUpdatedAnythingProvider, (previous, next) {
+      next.whenData((d) {
+        if (d) showOnlineBanksUpdatingBanner();
+      });
+      _checkAndNavigateIfReady();
+    });
+
+    // Listen for bank states and navigate when done
+    ref.listenManual(updateAllBanksProvider, (previous, next) {
+      _checkAndNavigateIfReady();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final hasEverUpdatedProvider = ref.watch(hasEverUpdatedAnythingProvider);
+    final bankStates = ref.watch(updateAllBanksProvider);
 
     return Scaffold(
       appBar: AppBar(

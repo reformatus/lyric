@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lyric/data/log/logger.dart';
 import 'package:lyric/services/app_links/app_links.dart';
 
 import '../../data/log/provider.dart';
@@ -66,11 +67,16 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
             MediaQuery.of(context).size.width > constants.desktopFromWidth;
       });
 
-      // Handle deep links (only when app is in normal state, showing base scaffold)
-      String? currentShouldNavigate = ref.read(shouldNavigateProvider).value;
-      if (currentShouldNavigate != null) {
-        context.go('/$currentShouldNavigate');
-      }
+      shouldNavigateListener = ref.listenManual(
+        shouldNavigateProvider,
+        fireImmediately: true,
+        (_, path) {
+          String? pathString = path.value;
+          if (pathString != null) {
+            context.go('/$pathString');
+          }
+        },
+      );
     });
   }
 
@@ -88,13 +94,6 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
   Widget build(BuildContext context) {
     final newVersion = ref.watch(checkNewVersionProvider);
     final unreadLogCount = ref.watch(unreadLogCountProvider);
-
-    ref.listen(shouldNavigateProvider, (_, path) {
-      String? pathString = path.value;
-      if (pathString != null) {
-        context.go('/$pathString');
-      }
-    });
 
     final List<GeneralNavigationDestination> destinations = [
       (

@@ -11,6 +11,7 @@ import 'package:lyric/ui/common/error/dialog.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/cue/cue.dart';
+import '../../data/log/logger.dart';
 import '../cue/from_uuid.dart';
 
 part 'app_links.g.dart';
@@ -20,11 +21,13 @@ final appLinksSingleton = AppLinks();
 @Riverpod(keepAlive: true)
 Stream<String> shouldNavigate(Ref ref) async* {
   await for (Uri uri in appLinksSingleton.uriLinkStream) {
+    log.info('Bejövő link kezelése: "$uri"');
     try {
       if (uri.scheme != constants.urlScheme &&
           uri.authority != constants.domain) {
         continue;
       }
+      if (uri.pathSegments.isEmpty) continue;
       switch (uri.pathSegments[0]) {
         case 'launch':
           if (uri.pathSegments.length < 2) continue;
@@ -70,6 +73,9 @@ Stream<String> shouldNavigate(Ref ref) async* {
               } catch (e) {
                 throw Exception('Hibás lista a linkben:\n$e');
               }
+            case '':
+            case '/':
+              continue;
             default:
               yield Uri(
                 pathSegments: uri.pathSegments.skip(1),
@@ -78,6 +84,9 @@ Stream<String> shouldNavigate(Ref ref) async* {
               ).toString();
           }
           break;
+        case '':
+        case '/':
+          continue;
         default:
           // Forward path to GoRouter (for webapp)
           yield Uri(
