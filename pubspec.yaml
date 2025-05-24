@@ -5,6 +5,22 @@ publish_to: 'none'
 
 version: 0.4.0+40
 
+msix_config:
+  display_name: Sófár DalApp
+  identity_name: RefLabs.SfrDalApp
+  publisher_display_name: RefLabs
+  publisher: CN=89EEEB6C-58E0-4995-BBFE-64F0DFAC94F4
+    # MSIX version created like so:
+    # 1.2.3 - Semantic version
+    # [major+10].[minor].[patch].0
+    # 11.2.3.0 - MSIX version
+  msix_version: 10.4.0.0
+  logo_path: assets/icon/sofar_dalapp_windows.ico
+  capabilities: internetClient
+  store: true
+  protocol_activation: https, lyric
+  app_uri_handler_hosts: app.sofarkotta.hu
+
 environment:
   sdk: '>=3.7.0 <4.0.0'
 
@@ -63,7 +79,6 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-
 flutter_launcher_icons:
   android: "launcher_icon"
   image_path_android: "assets/icon/sofar_dalapp_rounded_1000.png"
@@ -80,26 +95,9 @@ flutter_launcher_icons:
   image_path_ios_tinted_grayscale: "assets/icon/sofar_dalapp_ios_tinted_base_1000.png"
   min_sdk_android: 21
 
-  # TODO create a multi-size .ico file (may need be placed directly to windows\runner\resources\app_icon.ico)
   windows:
     generate: false
 
   macos:
     generate: true
     image_path: "assets/icon/sofar_dalapp_rounded_1000.png"
-
-msix_config:
-  display_name: Sófár DalApp
-  identity_name: RefLabs.SfrDalApp
-  publisher_display_name: RefLabs
-  publisher: CN=89EEEB6C-58E0-4995-BBFE-64F0DFAC94F4
-    # MSIX version created like so:
-    # 1.2.3 - Semantic version
-    # [major+10].[minor].[patch].0
-    # 11.2.3.0 - MSIX version
-  msix_version: 10.4.0.0
-  logo_path: assets/icon/sofar_dalapp_windows.ico
-  capabilities: internetClient
-  store: true
-  protocol_activation: https, lyric
-  app_uri_handler_hosts: app.sofarkotta.hu
