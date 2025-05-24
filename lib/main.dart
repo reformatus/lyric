@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,13 +31,23 @@ void main() async {
 }
 
 final globals = (
-  tabletFromWidth: 700,
-  desktopFromWidth: 1000,
   isDesktop: Platform.isMacOS || Platform.isWindows || Platform.isLinux,
   isMobile: Platform.isIOS || Platform.isAndroid,
-  gitHubApiRoot: 'https://api.github.com/repos/reformatus/lyric',
+  isWeb: kIsWeb,
   scaffoldKey: GlobalKey<ScaffoldMessengerState>(),
   router: _router,
+);
+
+const constants = (
+  appName: 'Sófár DalApp',
+  organisationName: 'Sófár',
+  gitHubApiRoot: 'https://api.github.com/repos/reformatus/lyric',
+  domain: 'app.sofarkotta.hu',
+  homepageRoot: 'https://app.sofarkotta.hu/',
+  webappRoot: 'https://app.sofarkotta.hu/web/',
+  urlScheme: 'lyric',
+  tabletFromWidth: 700,
+  desktopFromWidth: 1000,
 );
 
 class LyricApp extends ConsumerStatefulWidget {

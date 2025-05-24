@@ -30,7 +30,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
     _overlayPortalController = OverlayPortalController();
     _filterExpansionScrollController = ScrollController();
     _filterSidebarScrollController = ScrollController();
-    _filterExpansionTileController = ExpansionTileController();
+    _filterExpansionTileController = ExpansibleController();
     _searchFieldController = TextEditingController(
       text: ref.read(searchStringStateProvider),
     );
@@ -62,7 +62,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
   late OverlayPortalController _overlayPortalController;
   late ScrollController _filterExpansionScrollController;
   late ScrollController _filterSidebarScrollController;
-  late ExpansionTileController _filterExpansionTileController;
+  late ExpansibleController _filterExpansionTileController;
   late TextEditingController _searchFieldController;
   final _link = LayerLink();
 
@@ -159,7 +159,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                             ),
                           ],
                         ),
-                        if (constraints.maxWidth < globals.tabletFromWidth)
+                        if (constraints.maxWidth < constants.tabletFromWidth)
                           Card(
                             clipBehavior: Clip.antiAlias,
                             child: ConstrainedBox(
@@ -272,7 +272,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                     ),
                   ),
                 ),
-                if (constraints.maxWidth >= globals.tabletFromWidth)
+                if (constraints.maxWidth >= constants.tabletFromWidth)
                   SizedBox(
                     width: (constraints.maxWidth / 3).clamp(
                       400,

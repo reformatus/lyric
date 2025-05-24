@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../main.dart';
 import '../../services/bank/bank_updated.dart';
 import '../../services/songs/update.dart';
 import '../common/error/card.dart';
@@ -32,7 +33,7 @@ class LoadingPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sófár DalApp'),
+        title: Text(constants.appName),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(4),
           child: LinearProgressIndicator(),

@@ -21,7 +21,8 @@ final appLinksSingleton = AppLinks();
 Stream<String> shouldNavigate(Ref ref) async* {
   await for (Uri uri in appLinksSingleton.uriLinkStream) {
     try {
-      if (uri.scheme != 'lyric' && uri.authority != 'app.sofarkotta.hu') {
+      if (uri.scheme != constants.urlScheme &&
+          uri.authority != constants.domain) {
         continue;
       }
       switch (uri.pathSegments[0]) {

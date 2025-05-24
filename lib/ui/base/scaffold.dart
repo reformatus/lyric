@@ -63,7 +63,7 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
         extendedNavRail =
-            MediaQuery.of(context).size.width > globals.desktopFromWidth;
+            MediaQuery.of(context).size.width > constants.desktopFromWidth;
       });
 
       // Handle deep links (only when app is in normal state, showing base scaffold)

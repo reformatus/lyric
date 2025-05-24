@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/services/app_links/get_shareable.dart';
+import 'package:lyric/ui/common/share/dialog.dart';
 
 import '../../../data/song/song.dart';
 import '../view_chooser.dart';
@@ -39,7 +41,7 @@ class SongPageAppBar extends ConsumerWidget implements PreferredSizeWidget {
       actions: [
         if (isDesktop)
           ViewChooser(song: song, songSlide: null, useDropdown: false),
-        if (detailsContent.isNotEmpty && !isDesktop && !isMobile)
+        if (detailsContent.isNotEmpty && !isDesktop && !isMobile) ...[
           ConstrainedBox(
             constraints: BoxConstraints(maxWidth: constraints.maxWidth / 2.5),
             child: DetailsButton(
@@ -49,7 +51,21 @@ class SongPageAppBar extends ConsumerWidget implements PreferredSizeWidget {
               detailsSheetScrollController: detailsSheetScrollController,
             ),
           ),
-        const SizedBox(width: 10),
+        ],
+        const SizedBox(width: 8),
+        IconButton.filledTonal(
+          onPressed:
+              () => showShareDialog(
+                context,
+                title: 'Dal megosztása',
+                sharedTitle: song.title,
+                sharedLink: getShareableLinkFor(song),
+                sharedIcon: Icons.music_note,
+              ),
+          icon: Icon(Icons.share),
+          tooltip: 'Megosztási lehetőségek',
+        ),
+        const SizedBox(width: 8),
       ],
     );
   }

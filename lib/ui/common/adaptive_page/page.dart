@@ -8,6 +8,7 @@ class AdaptivePage extends StatefulWidget {
   const AdaptivePage({
     required this.title,
     required this.body,
+    this.subtitle,
     this.leftDrawer,
     this.leftDrawerIcon,
     this.leftDrawerTooltip,
@@ -21,6 +22,7 @@ class AdaptivePage extends StatefulWidget {
   });
 
   final String title;
+  final String? subtitle;
   final Widget? leftDrawer;
   final IconData? leftDrawerIcon;
   final String? leftDrawerTooltip;
@@ -78,8 +80,9 @@ class _AdaptivePageState extends State<AdaptivePage>
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        bool tabletOrBigger = constraints.maxWidth > globals.tabletFromWidth;
-        bool desktopOrBigger = constraints.maxWidth > globals.desktopFromWidth;
+        bool tabletOrBigger = constraints.maxWidth > constants.tabletFromWidth;
+        bool desktopOrBigger =
+            constraints.maxWidth > constants.desktopFromWidth;
 
         if (!tabletOrBigger && previousAnimation != 1) {
           leftDrawerController.reverse(from: previousAnimation != 0 ? null : 1);
@@ -102,10 +105,30 @@ class _AdaptivePageState extends State<AdaptivePage>
           );
           previousAnimation = 3;
         }
-
         return Scaffold(
           appBar: AppBar(
-            title: Text(widget.title),
+            title:
+                widget.subtitle != null && widget.subtitle!.isNotEmpty
+                    ? Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.title,
+                          style: Theme.of(context).appBarTheme.titleTextStyle,
+                        ),
+                        Text(
+                          widget.subtitle!,
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodySmall?.copyWith(
+                            color: Theme.of(context).appBarTheme.foregroundColor
+                                ?.withValues(alpha: 0.7),
+                          ),
+                        ),
+                      ],
+                    )
+                    : Text(widget.title),
             leading: BackButton(),
             automaticallyImplyLeading: false,
             actions: [

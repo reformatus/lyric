@@ -22,7 +22,7 @@ Future<VersionInfo?> checkNewVersion(Ref ref) async {
   try {
     final latestRelease =
         (await Dio().get<Map<String, dynamic>>(
-          '${globals.gitHubApiRoot}/releases/latest',
+          '${constants.gitHubApiRoot}/releases/latest',
         )).data!;
 
     final latestVersion = (latestRelease['tag_name'] as String);

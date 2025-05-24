@@ -35,7 +35,7 @@ class _LogViewDialogState extends ConsumerState<LogViewDialog> {
       insetPadding: EdgeInsets.all(10),
       child: ConstrainedBox(
         constraints: BoxConstraints(
-          maxWidth: globals.tabletFromWidth.toDouble(),
+          maxWidth: constants.tabletFromWidth.toDouble(),
         ),
         child: Scaffold(
           appBar: AppBar(
