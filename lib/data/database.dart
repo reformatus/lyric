@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:drift_flutter/drift_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
@@ -26,7 +27,9 @@ late final Directory dataDir;
   },
 )
 class LyricDatabase extends _$LyricDatabase {
-  LyricDatabase() : super(_openConnection());
+  // LyricDatabase() : super(_openConnection()); //used for debugging
+  LyricDatabase([QueryExecutor? executor])
+    : super(executor ?? _openConnection());
 
   @override
   int get schemaVersion => 1;
@@ -42,10 +45,15 @@ class LyricDatabase extends _$LyricDatabase {
       },
     );
   }
+
+  static QueryExecutor _openConnection() {
+    return driftDatabase(name: 'lyric');
+  }
 }
 
+/*
 // see https://drift.simonbinder.eu/setup/#database-class
-// implemented for logStatemets capability
+// implemented for logStatemets capability, used for debugging
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
@@ -61,7 +69,7 @@ LazyDatabase _openConnection() {
     return NativeDatabase.createInBackground(file, logStatements: false);
   });
 }
-
+*/
 class UriConverter extends TypeConverter<Uri, String> {
   const UriConverter();
 
