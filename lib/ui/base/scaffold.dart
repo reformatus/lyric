@@ -8,8 +8,11 @@ import '../../main.dart';
 import '../../services/app_version/check_new_version.dart';
 import '../common/log/dialog.dart';
 
-typedef GeneralNavigationDestination =
-    ({Widget icon, Widget? selectedIcon, String label});
+typedef GeneralNavigationDestination = ({
+  Widget icon,
+  Widget? selectedIcon,
+  String label,
+});
 
 NavigationDestination destinationFromGeneral(GeneralNavigationDestination d) =>
     NavigationDestination(
@@ -135,30 +138,29 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
         bool showBottomNavBar =
             constraints.maxHeight / constraints.maxWidth > 1.41;
         return Scaffold(
-          bottomNavigationBar:
-              showBottomNavBar
-                  ? NavigationBar(
-                    labelBehavior:
-                        NavigationDestinationLabelBehavior.onlyShowSelected,
-                    height: 65,
-                    destinations:
-                        destinations
-                            .map((d) => destinationFromGeneral(d))
-                            .toList(),
-                    selectedIndex: BaseScaffold._calculateSelectedIndex(
-                      context,
-                    ),
-                    onDestinationSelected:
-                        (int index) => _onDestinationSelected(index, context),
-                  )
-                  : null,
-          body:
-              !showBottomNavBar
-                  ? Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Container(
-                        color: Theme.of(context).colorScheme.surfaceContainer,
+          bottomNavigationBar: showBottomNavBar
+              ? NavigationBar(
+                  labelBehavior:
+                      NavigationDestinationLabelBehavior.onlyShowSelected,
+                  height: 65,
+                  destinations: destinations
+                      .map((d) => destinationFromGeneral(d))
+                      .toList(),
+                  selectedIndex: BaseScaffold._calculateSelectedIndex(context),
+                  onDestinationSelected: (int index) =>
+                      _onDestinationSelected(index, context),
+                )
+              : null,
+          body: !showBottomNavBar
+              ? Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Container(
+                      color: Theme.of(context).colorScheme.surfaceContainer,
+                      child: SafeArea(
+                        right: false,
+                        top: false,
+                        bottom: false,
                         child: AnimatedSize(
                           clipBehavior: Clip.none,
                           duration: Duration(milliseconds: 300),
@@ -173,26 +175,21 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
                                   child: IntrinsicHeight(
                                     child: NavigationRail(
                                       extended: extendedNavRail,
-                                      labelType:
-                                          extendedNavRail
-                                              ? NavigationRailLabelType.none
-                                              : NavigationRailLabelType
-                                                  .selected,
-                                      destinations:
-                                          destinations
-                                              .map(
-                                                (d) =>
-                                                    railDestinationFromGeneral(
-                                                      d,
-                                                    ),
-                                              )
-                                              .toList(),
+                                      labelType: extendedNavRail
+                                          ? NavigationRailLabelType.none
+                                          : NavigationRailLabelType.selected,
+                                      destinations: destinations
+                                          .map(
+                                            (d) =>
+                                                railDestinationFromGeneral(d),
+                                          )
+                                          .toList(),
                                       selectedIndex:
                                           BaseScaffold._calculateSelectedIndex(
                                             context,
                                           ),
-                                      onDestinationSelected:
-                                          (int index) => _onDestinationSelected(
+                                      onDestinationSelected: (int index) =>
+                                          _onDestinationSelected(
                                             index,
                                             context,
                                           ),
@@ -205,23 +202,20 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
                                 Padding(
                                   padding: EdgeInsets.all(8),
                                   child: Flex(
-                                    direction:
-                                        extendedNavRail
-                                            ? Axis.horizontal
-                                            : Axis.vertical,
+                                    direction: extendedNavRail
+                                        ? Axis.horizontal
+                                        : Axis.vertical,
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       Badge(
                                         label: Text(unreadLogCount.toString()),
                                         isLabelVisible: unreadLogCount > 0,
                                         child: IconButton.outlined(
-                                          onPressed:
-                                              () => showDialog(
-                                                context: context,
-                                                builder:
-                                                    (context) =>
-                                                        LogViewDialog(),
-                                              ),
+                                          onPressed: () => showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                LogViewDialog(),
+                                          ),
                                           tooltip: "Napló",
                                           icon: Icon(
                                             Icons.notification_important,
@@ -235,10 +229,9 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
                                               ? Icons.chevron_left
                                               : Icons.chevron_right,
                                         ),
-                                        tooltip:
-                                            extendedNavRail
-                                                ? "Összecsukás"
-                                                : "Kinyitás",
+                                        tooltip: extendedNavRail
+                                            ? "Összecsukás"
+                                            : "Kinyitás",
                                         onPressed: () {
                                           setState(() {
                                             extendedNavRail = !extendedNavRail;
@@ -253,10 +246,17 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
                           ),
                         ),
                       ),
-                      Expanded(child: widget.child),
-                    ],
-                  )
-                  : widget.child,
+                    ),
+                    Expanded(
+                      child: MediaQuery.removePadding(
+                        removeLeft: true,
+                        context: context,
+                        child: SafeArea(child: widget.child),
+                      ),
+                    ),
+                  ],
+                )
+              : widget.child,
         );
       },
     );

@@ -24,7 +24,7 @@ class _SetsPageState extends ConsumerState<SetsPage> {
       appBar: AppBar(title: Text('Listáim')),
       floatingActionButton: FloatingActionButton.extended(
         onPressed:
-            () => showAdaptiveDialog(
+            () => showDialog(
               context: context,
               builder: (context) => EditCueDialog(),
             ).then((createdCue) {
@@ -79,7 +79,7 @@ class CueTile extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.edit_outlined),
             onPressed:
-                () => showAdaptiveDialog(
+                () => showDialog(
                   context: context,
                   builder: (context) => EditCueDialog(cue: cue),
                 ),
@@ -88,7 +88,7 @@ class CueTile extends StatelessWidget {
             icon: Icon(Icons.delete_outline),
             // TODO refactor with showConfirmDialog
             onPressed:
-                () => showAdaptiveDialog(
+                () => showDialog(
                   context: context,
                   builder: (context) => DeleteCueDialog(cue: cue),
                 ),

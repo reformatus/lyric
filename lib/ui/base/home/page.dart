@@ -87,11 +87,10 @@ class HomePage extends ConsumerWidget {
                           ),
                           title: 'Napló',
                           subtitle: 'Háttérfolyamatok üzenetei',
-                          onPressed:
-                              () => showDialog(
-                                context: context,
-                                builder: (context) => LogViewDialog(),
-                              ),
+                          onPressed: () => showDialog(
+                            context: context,
+                            builder: (context) => LogViewDialog(),
+                          ),
                         ),
                       ],
                     );

@@ -143,7 +143,7 @@ class _AddToCueSearchState extends ConsumerState<AddToCueSearch> {
                       ),
                     ),
                     onTap:
-                        () => showAdaptiveDialog(
+                        () => showDialog(
                           context: context,
                           builder:
                               (context) => EditCueDialog(

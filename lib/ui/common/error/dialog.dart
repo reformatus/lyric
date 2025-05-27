@@ -4,8 +4,8 @@ import 'package:lyric/ui/common/error/card.dart';
 
 import '../../base/home/parts/feedback/send_mail.dart';
 
-class AdaptiveErrorDialog extends StatelessWidget {
-  const AdaptiveErrorDialog({
+class ErrorDialog extends StatelessWidget {
+  const ErrorDialog({
     super.key,
     required this.type,
     required this.title,
@@ -24,7 +24,7 @@ class AdaptiveErrorDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog.adaptive(
+    return AlertDialog(
       content: LErrorCard(
         type: type,
         title: title,
@@ -35,11 +35,10 @@ class AdaptiveErrorDialog extends StatelessWidget {
       ),
       actions: [
         FilledButton.tonalIcon(
-          onPressed:
-              () => launchFeedbackEmail(
-                errorMessage: '$title ($message)',
-                stackTrace: stack,
-              ),
+          onPressed: () => launchFeedbackEmail(
+            errorMessage: '$title ($message)',
+            stackTrace: stack,
+          ),
           label: Text('Hibajelentés'),
           icon: Icon(Icons.feedback_outlined),
         ),

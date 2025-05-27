@@ -112,16 +112,15 @@ Stream<String> shouldNavigate(Ref ref) async* {
               final NavigatorState? navigator =
                   globals.router.routerDelegate.navigatorKey.currentState;
               if (navigator != null) {
-                showAdaptiveDialog(
+                showDialog(
                   context: navigator.context,
-                  builder:
-                      (context) => AdaptiveErrorDialog(
-                        type: LErrorType.error,
-                        title: 'Hiba egy link megnyitása közben',
-                        icon: Icons.link_off,
-                        message: e.toString(),
-                        stack: s.toString(),
-                      ),
+                  builder: (context) => ErrorDialog(
+                    type: LErrorType.error,
+                    title: 'Hiba egy link megnyitása közben',
+                    icon: Icons.link_off,
+                    message: e.toString(),
+                    stack: s.toString(),
+                  ),
                 );
               }
             },

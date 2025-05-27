@@ -66,7 +66,7 @@ class EditCueDialogState extends State<EditCueDialog> {
       }
     }
 
-    return AlertDialog.adaptive(
+    return AlertDialog(
       title:
           widget.cue != null
               ? Text('Lista szerkesztése')

@@ -10,7 +10,7 @@ Future showConfirmDialog(
   bool dangerousAction = false,
   Key? key,
 }) async {
-  return await showAdaptiveDialog(
+  return await showDialog(
     context: context,
     builder:
         (context) => ConfirmDialog(
@@ -58,7 +58,7 @@ class _ConfirmDialogState extends State<ConfirmDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog.adaptive(
+    return AlertDialog(
       title: Text(widget.title),
       actions: [
         if (widget.dangerousAction) ...[

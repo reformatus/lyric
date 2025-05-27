@@ -22,17 +22,16 @@ Future<void> showShareDialog(
   IconData? sharedIcon,
   required String sharedLink,
 }) async {
-  return showAdaptiveDialog<void>(
+  return showDialog<void>(
     context: context,
-    builder:
-        (context) => ShareDialog(
-          title: title,
-          description: description,
-          sharedTitle: sharedTitle,
-          sharedDescription: sharedDescription,
-          sharedIcon: sharedIcon,
-          sharedLink: sharedLink,
-        ),
+    builder: (context) => ShareDialog(
+      title: title,
+      description: description,
+      sharedTitle: sharedTitle,
+      sharedDescription: sharedDescription,
+      sharedIcon: sharedIcon,
+      sharedLink: sharedLink,
+    ),
   );
 }
 
@@ -65,7 +64,7 @@ class _ShareDialogState extends State<ShareDialog> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    return AlertDialog.adaptive(
+    return AlertDialog(
       title: Row(
         children: [
           Expanded(child: Text(widget.title)),
@@ -251,28 +250,23 @@ class _ShareDialogState extends State<ShareDialog> {
                                 ),
                                 child: Container(
                                   width: 48,
-                                  decoration:
-                                      _copySuccess
-                                          ? BoxDecoration(
-                                            color: Colors.green.withValues(
-                                              alpha: 0.1,
-                                            ),
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                                  topRight: Radius.circular(8),
-                                                  bottomRight: Radius.circular(
-                                                    8,
-                                                  ),
-                                                ),
-                                          )
-                                          : null,
+                                  decoration: _copySuccess
+                                      ? BoxDecoration(
+                                          color: Colors.green.withValues(
+                                            alpha: 0.1,
+                                          ),
+                                          borderRadius: const BorderRadius.only(
+                                            topRight: Radius.circular(8),
+                                            bottomRight: Radius.circular(8),
+                                          ),
+                                        )
+                                      : null,
                                   child: Icon(
                                     _copySuccess ? Icons.check : Icons.copy,
                                     size: 18,
-                                    color:
-                                        _copySuccess
-                                            ? Colors.green
-                                            : colorScheme.onSurfaceVariant,
+                                    color: _copySuccess
+                                        ? Colors.green
+                                        : colorScheme.onSurfaceVariant,
                                   ),
                                 ),
                               ),

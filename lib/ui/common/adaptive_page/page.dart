@@ -105,11 +105,11 @@ class _AdaptivePageState extends State<AdaptivePage>
           );
           previousAnimation = 3;
         }
-        return Scaffold(
-          appBar: AppBar(
-            title:
-                widget.subtitle != null && widget.subtitle!.isNotEmpty
-                    ? Column(
+        return ClipRect(
+          child: Scaffold(
+            appBar: AppBar(
+              title: widget.subtitle != null && widget.subtitle!.isNotEmpty
+                  ? Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -119,181 +119,175 @@ class _AdaptivePageState extends State<AdaptivePage>
                         ),
                         Text(
                           widget.subtitle!,
-                          style: Theme.of(
-                            context,
-                          ).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).appBarTheme.foregroundColor
-                                ?.withValues(alpha: 0.7),
-                          ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: Theme.of(context)
+                                    .appBarTheme
+                                    .foregroundColor
+                                    ?.withValues(alpha: 0.7),
+                              ),
                         ),
                       ],
                     )
-                    : Text(widget.title),
-            leading: BackButton(),
-            automaticallyImplyLeading: false,
-            actions: [
-              SizedBox.shrink(),
-              if (!tabletOrBigger) ...widget.actionBarTrailingChildren ?? [],
-              SizedBox(width: 8),
-            ],
-          ),
-          drawer:
-              tabletOrBigger || widget.leftDrawer == null
-                  ? null
-                  : Drawer(child: SafeArea(child: widget.leftDrawer!)),
-          endDrawer:
-              tabletOrBigger || widget.rightDrawer == null
-                  ? null
-                  : Drawer(child: SafeArea(child: widget.rightDrawer!)),
-          body: Builder(
-            builder: (context) {
-              return Container(
-                color: Theme.of(context).colorScheme.surfaceContainer,
-                child: Stack(
-                  children: [
-                    Row(
-                      children: [
-                        if (widget.leftDrawer != null && tabletOrBigger)
-                          AnimatedBuilder(
-                            animation: leftDrawerAnimation,
-                            builder: (context, _) {
-                              return SizedBox(
-                                width:
-                                    max(constraints.maxWidth / 5, 250) *
-                                    leftDrawerAnimation.value,
-                              );
-                            },
-                          ),
-                        Expanded(
-                          child: Column(
-                            children: [
-                              if (!tabletOrBigger) _buildBody(),
-                              Container(
-                                height: 50,
-                                padding: EdgeInsets.symmetric(vertical: 4),
-                                child: Row(
-                                  children: [
-                                    if (widget.leftDrawer != null)
-                                      AdaptivePageDrawerButton(
-                                        onPressed:
-                                            tabletOrBigger
-                                                ? leftDrawerController.toggle
-                                                : Scaffold.of(
-                                                  context,
-                                                ).openDrawer,
-                                        animation: leftDrawerAnimation,
-                                        drawerIcon: widget.leftDrawerIcon,
-                                        tooltip: widget.leftDrawerTooltip,
-                                      ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 5,
+                  : Text(widget.title),
+              leading: BackButton(),
+              automaticallyImplyLeading: false,
+              actions: [
+                SizedBox.shrink(),
+                if (!tabletOrBigger) ...widget.actionBarTrailingChildren ?? [],
+                SizedBox(width: 8),
+              ],
+            ),
+            drawer: tabletOrBigger || widget.leftDrawer == null
+                ? null
+                : Drawer(child: SafeArea(child: widget.leftDrawer!)),
+            endDrawer: tabletOrBigger || widget.rightDrawer == null
+                ? null
+                : Drawer(child: SafeArea(child: widget.rightDrawer!)),
+            body: Builder(
+              builder: (context) {
+                return Container(
+                  color: Theme.of(context).colorScheme.surfaceContainer,
+                  child: Stack(
+                    children: [
+                      Row(
+                        children: [
+                          if (widget.leftDrawer != null && tabletOrBigger)
+                            AnimatedBuilder(
+                              animation: leftDrawerAnimation,
+                              builder: (context, _) {
+                                return SizedBox(
+                                  width:
+                                      max(constraints.maxWidth / 5, 250) *
+                                      leftDrawerAnimation.value,
+                                );
+                              },
+                            ),
+                          Expanded(
+                            child: Column(
+                              children: [
+                                if (!tabletOrBigger) _buildBody(),
+                                Container(
+                                  height: 50,
+                                  padding: EdgeInsets.symmetric(vertical: 4),
+                                  child: Row(
+                                    children: [
+                                      if (widget.leftDrawer != null)
+                                        AdaptivePageDrawerButton(
+                                          onPressed: tabletOrBigger
+                                              ? leftDrawerController.toggle
+                                              : Scaffold.of(context).openDrawer,
+                                          animation: leftDrawerAnimation,
+                                          drawerIcon: widget.leftDrawerIcon,
+                                          tooltip: widget.leftDrawerTooltip,
                                         ),
-                                        child: Row(
-                                          children: [
-                                            ...widget.actionBarChildren ?? [],
-                                            Spacer(),
-                                            if (tabletOrBigger)
-                                              ...widget
-                                                      .actionBarTrailingChildren ??
-                                                  [],
-                                          ],
+                                      Expanded(
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 5,
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              ...widget.actionBarChildren ?? [],
+                                              Spacer(),
+                                              if (tabletOrBigger)
+                                                ...widget
+                                                        .actionBarTrailingChildren ??
+                                                    [],
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    if (widget.rightDrawer != null)
-                                      AdaptivePageDrawerButton(
-                                        onPressed:
-                                            tabletOrBigger
-                                                ? rightDrawerController.toggle
-                                                : Scaffold.of(
+                                      if (widget.rightDrawer != null)
+                                        AdaptivePageDrawerButton(
+                                          onPressed: tabletOrBigger
+                                              ? rightDrawerController.toggle
+                                              : Scaffold.of(
                                                   context,
                                                 ).openEndDrawer,
-                                        animation: rightDrawerAnimation,
-                                        drawerIcon: widget.rightDrawerIcon,
-                                        tooltip: widget.rightDrawerTooltip,
-                                        endDrawer: true,
-                                      ),
-                                  ],
+                                          animation: rightDrawerAnimation,
+                                          drawerIcon: widget.rightDrawerIcon,
+                                          tooltip: widget.rightDrawerTooltip,
+                                          endDrawer: true,
+                                        ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              if (tabletOrBigger) _buildBody(),
-                            ],
+                                if (tabletOrBigger) _buildBody(),
+                              ],
+                            ),
                           ),
-                        ),
 
-                        if (widget.rightDrawer != null && tabletOrBigger)
-                          AnimatedBuilder(
-                            animation: rightDrawerAnimation,
+                          if (widget.rightDrawer != null && tabletOrBigger)
+                            AnimatedBuilder(
+                              animation: rightDrawerAnimation,
+                              builder: (context, _) {
+                                return SizedBox(
+                                  width:
+                                      max(constraints.maxWidth / 5, 250) *
+                                      rightDrawerAnimation.value,
+                                );
+                              },
+                            ),
+                        ],
+                      ),
+                      if (widget.leftDrawer != null)
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: AnimatedBuilder(
+                            animation: leftDrawerAnimation,
                             builder: (context, _) {
-                              return SizedBox(
-                                width:
-                                    max(constraints.maxWidth / 5, 250) *
-                                    rightDrawerAnimation.value,
+                              return FractionalTranslation(
+                                translation: Tween<Offset>(
+                                  begin: Offset(-1, 0),
+                                  end: Offset.zero,
+                                ).animate(leftDrawerAnimation).value,
+                                child: SizedBox(
+                                  width: max(constraints.maxWidth / 5, 250),
+                                  child: Drawer(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(
+                                        topRight: Radius.circular(15),
+                                      ),
+                                    ),
+                                    child: widget.leftDrawer,
+                                  ),
+                                ),
                               );
                             },
                           ),
-                      ],
-                    ),
-                    if (widget.leftDrawer != null)
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: AnimatedBuilder(
-                          animation: leftDrawerAnimation,
-                          builder: (context, _) {
-                            return FractionalTranslation(
-                              translation:
-                                  Tween<Offset>(
-                                    begin: Offset(-1, 0),
-                                    end: Offset.zero,
-                                  ).animate(leftDrawerAnimation).value,
-                              child: SizedBox(
-                                width: max(constraints.maxWidth / 5, 250),
-                                child: Drawer(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                      topRight: Radius.circular(15),
-                                    ),
-                                  ),
-                                  child: widget.leftDrawer,
-                                ),
-                              ),
-                            );
-                          },
                         ),
-                      ),
-                    if (widget.rightDrawer != null)
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: AnimatedBuilder(
-                          animation: rightDrawerAnimation,
-                          builder: (context, _) {
-                            return FractionalTranslation(
-                              translation:
-                                  Tween<Offset>(
-                                    begin: Offset(1, 0),
-                                    end: Offset.zero,
-                                  ).animate(rightDrawerAnimation).value,
-                              child: SizedBox(
-                                width: max(constraints.maxWidth / 5, 250),
-                                child: Drawer(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(15),
+                      if (widget.rightDrawer != null)
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: AnimatedBuilder(
+                            animation: rightDrawerAnimation,
+                            builder: (context, _) {
+                              return FractionalTranslation(
+                                translation: Tween<Offset>(
+                                  begin: Offset(1, 0),
+                                  end: Offset.zero,
+                                ).animate(rightDrawerAnimation).value,
+                                child: SizedBox(
+                                  width: max(constraints.maxWidth / 5, 250),
+                                  child: Drawer(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(15),
+                                      ),
                                     ),
+                                    child: widget.rightDrawer,
                                   ),
-                                  child: widget.rightDrawer,
                                 ),
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                  ],
-                ),
-              );
-            },
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
         );
       },
@@ -302,10 +296,9 @@ class _AdaptivePageState extends State<AdaptivePage>
 
   Expanded _buildBody() {
     return Expanded(
-      child:
-          widget.bodyHeroTag != null
-              ? Hero(tag: widget.bodyHeroTag!, child: widget.body)
-              : widget.body,
+      child: widget.bodyHeroTag != null
+          ? Hero(tag: widget.bodyHeroTag!, child: widget.body)
+          : widget.body,
     );
   }
 }

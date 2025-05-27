@@ -41,7 +41,7 @@ class EditCueDialogState extends State<EditCueDialog> {
       }
     }
 
-    return AlertDialog.adaptive(
+    return AlertDialog(
       title: Text('Lista létrehozása'),
       content: SingleChildScrollView(
         child: Form(

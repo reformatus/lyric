@@ -27,7 +27,7 @@ class SearchFieldSelectorColumn extends ConsumerWidget {
         ),
         ...fullTextSearchFields.map((e) {
           var field = songFieldsMap[e]!;
-          return CheckboxListTile.adaptive(
+          return CheckboxListTile(
             title: Text(field['title_hu']),
             secondary: Icon(field['icon']),
             value: searchFieldsState.contains(e),
