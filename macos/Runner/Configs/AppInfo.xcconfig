@@ -5,10 +5,10 @@
 // 'flutter create' template.
 
 // The application's name. By default this is also the title of the Flutter window.
-PRODUCT_NAME = Sófár DalApp
+PRODUCT_NAME = Sofar DalApp
 
 // The application's bundle identifier
 PRODUCT_BUNDLE_IDENTIFIER = org.lyricapp.sofar
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2024 com.example. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2025 Benedek Fodor. All rights reserved. Released under the GPL-2.0.
