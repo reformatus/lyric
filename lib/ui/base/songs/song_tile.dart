@@ -16,15 +16,6 @@ class LSongResultTile extends StatelessWidget {
     final Song song = songResult.song;
     final SongFulltextSearchResult? result = songResult.result;
 
-    String firstLine = "";
-    try {
-      firstLine = song.contentMap['first_line'] ?? "";
-      if (firstLine.isEmpty) {
-        song.opensong.substring(song.opensong.indexOf('\n'));
-      }
-    } catch (_) {
-      firstLine = song.opensong;
-    }
     return ListTile(
       // far future todo dense on desktop (maybe even table?)
       onTap: () => context.push('/song/${song.uuid}'),
@@ -40,42 +31,41 @@ class LSongResultTile extends StatelessWidget {
           ),
         ),
       ),
-      subtitle:
-          result == null
-              ? firstLine.startsWith(song.title) || firstLine.isEmpty
-                  ? null
-                  : Text(
-                    firstLine,
+      subtitle: result == null
+          ? song.firstLine.startsWith(song.title) || song.firstLine.isEmpty
+                ? null
+                : Text(
+                    song.firstLine,
                     maxLines: 1,
                     softWrap: false,
                     overflow: TextOverflow.fade,
                   )
-              : Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (hasMatch(result.matchOpensong))
-                    contentResultRow(
-                      context,
-                      Icons.text_snippet,
-                      result.matchOpensong,
-                    ),
-                  if (hasMatch(result.matchComposer))
-                    contentResultRow(
-                      context,
-                      Icons.music_note,
-                      result.matchComposer,
-                    ),
-                  if (hasMatch(result.matchLyricist))
-                    contentResultRow(context, Icons.edit, result.matchLyricist),
-                  if (hasMatch(result.matchTranslator))
-                    contentResultRow(
-                      context,
-                      Icons.translate,
-                      result.matchTranslator,
-                    ),
-                ],
-              ),
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (hasMatch(result.matchOpensong))
+                  contentResultRow(
+                    context,
+                    Icons.text_snippet,
+                    result.matchOpensong,
+                  ),
+                if (hasMatch(result.matchComposer))
+                  contentResultRow(
+                    context,
+                    Icons.music_note,
+                    result.matchComposer,
+                  ),
+                if (hasMatch(result.matchLyricist))
+                  contentResultRow(context, Icons.edit, result.matchLyricist),
+                if (hasMatch(result.matchTranslator))
+                  contentResultRow(
+                    context,
+                    Icons.translate,
+                    result.matchTranslator,
+                  ),
+              ],
+            ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [

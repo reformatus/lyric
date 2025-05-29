@@ -57,6 +57,17 @@ class Song extends Insertable<Song> {
     this.userNote,
   });
 
+  String get firstLine {
+    try {
+      final lines = opensong.substring(0, 100).split('\n');
+      return lines
+          .firstWhere((e) => !e.startsWith('[') && !e.startsWith('.'))
+          .trim();
+    } catch (_) {
+      return '';
+    }
+  }
+
   int get contentHash => Object.hash(jsonEncode(contentMap), sourceBankId);
 
   @override
