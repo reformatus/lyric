@@ -29,14 +29,6 @@ class _SlideViewState extends ConsumerState<SlideView>
       ref.read(currentSlideListOfProvider(widget.cue)),
     );
 
-    tabController!.addListener(
-      () => ref
-          .read(currentSlideOfProvider(widget.cue).notifier)
-          .setCurrent(
-            ref.read(currentSlideListOfProvider(widget.cue))[tabController!
-                .index],
-          ),
-    );
     ref.listenManual(
       currentSlideOfProvider(widget.cue),
       (_, newSlide) => tabController!.animateTo(
@@ -59,9 +51,19 @@ class _SlideViewState extends ConsumerState<SlideView>
       }
       tabController = TabController(
         length: slides.length,
-        initialIndex:
-            slide != null ? slides.indexOf(slide).clamp(0, slides.length) : 0,
+        initialIndex: slide != null
+            ? slides.indexOf(slide).clamp(0, slides.length)
+            : 0,
         vsync: this,
+      );
+      tabController!.addListener(
+        () => ref
+            .read(currentSlideOfProvider(widget.cue).notifier)
+            .setCurrent(
+              ref.read(
+                currentSlideListOfProvider(widget.cue),
+              )[tabController!.index],
+            ),
       );
     });
   }
@@ -74,16 +76,15 @@ class _SlideViewState extends ConsumerState<SlideView>
       data: Theme.of(context),
       child: Hero(
         tag: 'SlideView',
-        child:
-            slides.isEmpty
-                ? CenteredHint(
-                  'Keress és adj hozzá dalokat a listához a Daltár oldalon',
-                  iconData: Icons.library_music,
-                )
-                : TabBarView(
-                  controller: tabController,
-                  children: slides.map((s) => renderSlide(s)).toList(),
-                ),
+        child: slides.isEmpty
+            ? CenteredHint(
+                'Keress és adj hozzá dalokat a listához a Daltár oldalon',
+                iconData: Icons.library_music,
+              )
+            : TabBarView(
+                controller: tabController,
+                children: slides.map((s) => renderSlide(s)).toList(),
+              ),
       ),
     );
   }
