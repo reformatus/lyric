@@ -75,7 +75,11 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
         (_, path) {
           String? pathString = path.value;
           if (pathString != null) {
-            context.go('/$pathString');
+            context.go('/home');
+            Future(() {
+              if (!mounted) return;
+              context.push('/$pathString');
+            });
           }
         },
       );
