@@ -15,6 +15,7 @@ class LSongResultTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final Song song = songResult.song;
     final SongFulltextSearchResult? result = songResult.result;
+    final List<String> downloadedAssets = songResult.downloadedAssets;
 
     return ListTile(
       // far future todo dense on desktop (maybe even table?)
@@ -71,7 +72,14 @@ class LSongResultTile extends StatelessWidget {
         children: [
           Text(song.keyField?.toString() ?? ''),
           SizedBox(width: 10),
-          SongFeatures(song),
+          if (downloadedAssets.isNotEmpty) ...[
+            Tooltip(
+              message: 'Kottakép letöltve',
+              child: Icon(Icons.offline_pin, color: Colors.green[600]),
+            ),
+            SizedBox(width: 10),
+          ],
+          SongFeatures(song, downloadedAssets),
         ],
       ),
     );
@@ -107,15 +115,17 @@ class LSongResultTile extends StatelessWidget {
 }
 
 class SongFeatures extends StatelessWidget {
-  const SongFeatures(this.song, {super.key});
+  const SongFeatures(this.song, this.downloadedAssets, {super.key});
 
   final Song song;
+  final List<String> downloadedAssets;
 
   @override
   Widget build(BuildContext context) {
     return Tooltip(
       richMessage: TextSpan(
         children: [
+          // TODO factor out to make configurable
           TextSpan(text: 'Tartalom: '),
           WidgetSpan(
             child: Icon(
@@ -149,28 +159,58 @@ class SongFeatures extends StatelessWidget {
             ),
           ),
           TextSpan(text: 'Akkord'),
+          TextSpan(text: '\nZöld: letöltve, Szürke: nem elérhető'),
         ],
       ),
-      child: SizedBox(
-        width: 36,
-        child: Wrap(
-          children: [
-            indicatorIcon(context, Icons.music_note_outlined, song.hasSvg),
-            indicatorIcon(context, Icons.audio_file_outlined, song.hasPdf),
-            indicatorIcon(context, Icons.text_snippet_outlined, song.hasLyrics),
-            indicatorIcon(context, Icons.tag_outlined, song.hasChords),
-          ],
-        ),
+      child: Wrap(
+        direction: Axis.vertical,
+        // TODO factor out to make configurable
+        children: [
+          indicatorIcon(
+            context,
+            Icons.music_note_outlined,
+            available: song.hasSvg,
+            downloaded: downloadedAssets.contains('svg'),
+          ),
+          indicatorIcon(
+            context,
+            Icons.audio_file_outlined,
+            available: song.hasPdf,
+            downloaded: downloadedAssets.contains('pdf'),
+          ),
+          indicatorIcon(
+            context,
+            Icons.text_snippet_outlined,
+            available: song.hasLyrics,
+            downloaded: song.hasLyrics,
+          ),
+          indicatorIcon(
+            context,
+            Icons.tag_outlined,
+            available: song.hasChords,
+            downloaded: song.hasLyrics,
+          ),
+        ],
       ),
     );
   }
 
-  Widget indicatorIcon(BuildContext context, IconData iconData, bool active) {
-    return Icon(
-      iconData,
-      color: active ? null : Theme.of(context).disabledColor.withAlpha(60),
-      size: 18,
-    );
+  Widget indicatorIcon(
+    BuildContext context,
+    IconData iconData, {
+    required bool available,
+    bool downloaded = false,
+  }) {
+    Color? color;
+    if (downloaded) {
+      color = Colors.green[600];
+    } else if (available) {
+      color = null;
+    } else {
+      color = Theme.of(context).disabledColor.withAlpha(60);
+    }
+
+    return Icon(iconData, color: color, size: 18);
   }
 }
 

@@ -5,6 +5,7 @@ import 'filter.dart';
 songFulltextSearch(:match_string AS TEXT):
   SELECT
       songs.** AS song
+      ,$assets
       ,bm25(songs_fts, 10.0, 0.5, 5.0, 5.0, 2.0) AS rank
       ,snippet(songs_fts, 0, '<?', '?>', '...', 30) AS match_title
       ,snippet(songs_fts, 1, '<?', '?>', '...', 40) AS match_opensong

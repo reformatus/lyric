@@ -138,27 +138,56 @@ Stream<List<SongResult>> filteredSongs(Ref ref) {
     );
   }
 
+  final downloadedAssetsSubquery = db.selectOnly(db.assets)
+    ..addColumns([
+      db.assets.fieldName.groupConcat(distinct: true, separator: ','),
+    ])
+    ..where(db.assets.songUuid.equalsExp(db.songs.uuid));
+
   if (searchString.isEmpty) {
-    return ((db.select(db.songs)
-          ..where((songs) => filterExpression(songs))).watch())
-        .map((songsList) => songsList.map((song) => SongResult(song)).toList());
+    return ((db.select(db.songs).addColumns([
+      subqueryExpression(downloadedAssetsSubquery),
+    ])..where(filterExpression(db.songs))).watch()).map(
+      (resultList) => resultList
+          .map(
+            (result) => SongResult(
+              result.readTable(db.songs),
+              downloadedAssets:
+                  (result.rawData.readNullableWithType(
+                    DriftSqlType.string,
+                    'c0',
+                  ))?.split(',') ??
+                  [],
+            ),
+          )
+          .toList(),
+    );
   } else {
     return db
         .songFulltextSearch(
+          (_, _) => subqueryExpression(downloadedAssetsSubquery),
           ftsMatchString,
           (_, songs) => filterExpression(songs),
         )
         .watch()
         .map(
-          (results) =>
-              results.map((result) => SongResult(result.song, result)).toList(),
+          (results) => results
+              .map(
+                (result) => SongResult(
+                  result.song,
+                  result: result,
+                  downloadedAssets: result.assets?.split(',') ?? [],
+                ),
+              )
+              .toList(),
         );
   }
 }
 
 class SongResult {
   final Song song;
+  final List<String> downloadedAssets;
   final SongFulltextSearchResult? result;
 
-  SongResult(this.song, [this.result]);
+  SongResult(this.song, {required this.downloadedAssets, this.result});
 }
