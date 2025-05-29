@@ -65,11 +65,11 @@ dependencies:
   wtf_sliding_sheet: ^1.1.5
   app_links: ^6.4.0
   qr_flutter: ^4.1.0
-  share_plus: ^10.1.3
+  share_plus: ^11.0.0
 
 dev_dependencies:
   msix: ^3.16.9
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
   build_runner: ^2.4.12
   json_serializable: ^6.9.5
   riverpod_generator: ^2.3.0
@@ -77,10 +77,6 @@ dev_dependencies:
   drift_dev: ^2.26.1
   flutter_launcher_icons: ^0.14.1
   rename_app: ^1.6.3
-    # Pin versions, see https://github.com/dart-lang/sdk/issues/60784
-    #TODO remove pinning if solved
-  analyzer: 7.3.0
-  analyzer_plugin: 0.12.0
 
 flutter:
   uses-material-design: true
