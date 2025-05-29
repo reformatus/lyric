@@ -11,6 +11,7 @@ String getPrettyVerseTagFrom(String type, int? index) {
       // TODO make configurable
       'V' => 'Versszak',
       'C' => 'Refrén',
+      'R' => 'Refrén',
       'P' => 'Pre-Refrén',
       'B' => 'Bridge',
       'T' => 'Coda',
