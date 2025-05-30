@@ -11,6 +11,7 @@ import '../../data/bank/bank.dart';
 import '../../data/database.dart';
 import '../../data/song/song.dart';
 import '../bank/bank_updated.dart';
+import '../bank/update.dart';
 
 part 'update.g.dart';
 
@@ -25,13 +26,14 @@ double? getProgress(({int toUpdateCount, int updatedCount})? record) {
   return record.updatedCount / record.toUpdateCount;
 }
 
+/// Update all songs on all banks
 @riverpod
-Stream<Map<Bank, ({int toUpdateCount, int updatedCount})?>> updateAllBanks(
+Stream<Map<Bank, ({int toUpdateCount, int updatedCount})?>> updateAllBanksSongs(
   Ref ref,
 ) async* {
   // TODO update bank metadata
 
-  await updateAllBanks(ref);
+  await updateBanks();
 
   Map<Bank, ({int toUpdateCount, int updatedCount})?> bankStates =
       Map.fromEntries(
@@ -45,7 +47,7 @@ Stream<Map<Bank, ({int toUpdateCount, int updatedCount})?>> updateAllBanks(
 
   for (var bankState in bankStates.entries) {
     try {
-      await for (var newState in updateBank(bankState.key)) {
+      await for (var newState in updateBankSongs(bankState.key)) {
         bankStates[bankState.key] = newState;
         yield {...bankStates};
       }
@@ -55,7 +57,10 @@ Stream<Map<Bank, ({int toUpdateCount, int updatedCount})?>> updateAllBanks(
   }
 }
 
-Stream<({int toUpdateCount, int updatedCount})> updateBank(Bank bank) async* {
+/// Update all songs in a bank
+Stream<({int toUpdateCount, int updatedCount})> updateBankSongs(
+  Bank bank,
+) async* {
   // stay in indefinite loading state until we know protosong count
   // return protosong count for display
   List<ProtoSong> toUpdate = await bank.getProtoSongs(since: bank.lastUpdated);

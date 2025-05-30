@@ -22,7 +22,7 @@ class _LoadingPageState extends ConsumerState<LoadingPage> {
     if (_hasNavigated) return;
 
     final hasEverUpdated = ref.read(hasEverUpdatedAnythingProvider);
-    final bankStates = ref.read(updateAllBanksProvider);
+    final bankStates = ref.read(updateAllBanksSongsProvider);
 
     if (hasEverUpdated.valueOrNull == true ||
         (bankStates.hasValue && bankStates.value!.values.every(isDone))) {
@@ -48,7 +48,7 @@ class _LoadingPageState extends ConsumerState<LoadingPage> {
     });
 
     // Listen for bank states and navigate when done
-    ref.listenManual(updateAllBanksProvider, (previous, next) {
+    ref.listenManual(updateAllBanksSongsProvider, (previous, next) {
       _checkAndNavigateIfReady();
     });
   }
@@ -56,7 +56,7 @@ class _LoadingPageState extends ConsumerState<LoadingPage> {
   @override
   Widget build(BuildContext context) {
     final hasEverUpdatedProvider = ref.watch(hasEverUpdatedAnythingProvider);
-    final bankStates = ref.watch(updateAllBanksProvider);
+    final bankStates = ref.watch(updateAllBanksSongsProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -67,20 +67,19 @@ class _LoadingPageState extends ConsumerState<LoadingPage> {
         ),
       ),
       body: Center(
-        child:
-            hasEverUpdatedProvider.valueOrNull == false
-                ? switch (bankStates) {
-                  AsyncError(:final error, :final stackTrace) => LErrorCard(
-                    type: LErrorType.error,
-                    title: 'Hiba a tárak frissítése közben',
-                    message: error.toString(),
-                    stack: stackTrace.toString(),
-                    icon: Icons.error,
-                  ),
-                  AsyncValue(:final value) =>
-                    value == null
-                        ? Center(child: CircularProgressIndicator())
-                        : ConstrainedBox(
+        child: hasEverUpdatedProvider.valueOrNull == false
+            ? switch (bankStates) {
+                AsyncError(:final error, :final stackTrace) => LErrorCard(
+                  type: LErrorType.error,
+                  title: 'Hiba a tárak frissítése közben',
+                  message: error.toString(),
+                  stack: stackTrace.toString(),
+                  icon: Icons.error,
+                ),
+                AsyncValue(:final value) =>
+                  value == null
+                      ? Center(child: CircularProgressIndicator())
+                      : ConstrainedBox(
                           constraints: BoxConstraints(maxWidth: 600),
                           child: Padding(
                             padding: const EdgeInsets.all(16),
@@ -103,10 +102,9 @@ class _LoadingPageState extends ConsumerState<LoadingPage> {
                                         ),
                                         child: Text(
                                           'Online tárak frissítése...',
-                                          style:
-                                              Theme.of(
-                                                context,
-                                              ).textTheme.titleLarge,
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.titleLarge,
                                         ),
                                       ),
                                       LinearProgressIndicator(
@@ -117,15 +115,14 @@ class _LoadingPageState extends ConsumerState<LoadingPage> {
                                           int stateCount = value.length;
                                           if (stateCount == 0) return null;
 
-                                          int doneCount =
-                                              value.values
-                                                  .where(
-                                                    (e) =>
-                                                        e != null &&
-                                                        (e.toUpdateCount ==
-                                                            e.updatedCount),
-                                                  )
-                                                  .length;
+                                          int doneCount = value.values
+                                              .where(
+                                                (e) =>
+                                                    e != null &&
+                                                    (e.toUpdateCount ==
+                                                        e.updatedCount),
+                                              )
+                                              .length;
 
                                           return doneCount / stateCount;
                                         }(),
@@ -138,18 +135,17 @@ class _LoadingPageState extends ConsumerState<LoadingPage> {
                                     (e) => Padding(
                                       padding: EdgeInsets.only(left: 20),
                                       child: ListTile(
-                                        leading:
-                                            isDone(e.value)
-                                                ? Icon(Icons.check)
-                                                : SizedBox.square(
-                                                  dimension: 25,
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                        value: getProgress(
-                                                          e.value,
-                                                        ),
+                                        leading: isDone(e.value)
+                                            ? Icon(Icons.check)
+                                            : SizedBox.square(
+                                                dimension: 25,
+                                                child:
+                                                    CircularProgressIndicator(
+                                                      value: getProgress(
+                                                        e.value,
                                                       ),
-                                                ),
+                                                    ),
+                                              ),
                                         title: Text(
                                           e.key.name,
                                           style: TextStyle(
@@ -168,8 +164,8 @@ class _LoadingPageState extends ConsumerState<LoadingPage> {
                             ),
                           ),
                         ),
-                }
-                : CircularProgressIndicator(),
+              }
+            : CircularProgressIndicator(),
       ),
     );
   }

@@ -13,9 +13,8 @@ showOnlineBanksUpdatingBanner() {
       padding: EdgeInsets.zero,
       actions: [
         IconButton(
-          onPressed:
-              () =>
-                  globals.scaffoldKey.currentState?.hideCurrentMaterialBanner(),
+          onPressed: () =>
+              globals.scaffoldKey.currentState?.hideCurrentMaterialBanner(),
           icon: Icon(Icons.keyboard_arrow_up),
         ),
       ],
@@ -29,7 +28,7 @@ class UpdatingBanner extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final bankStates = ref.watch(updateAllBanksProvider);
+    final bankStates = ref.watch(updateAllBanksSongsProvider);
 
     getOverallProgress() {
       if (!bankStates.hasValue) {
@@ -38,10 +37,9 @@ class UpdatingBanner extends ConsumerWidget {
       int stateCount = bankStates.requireValue.length;
       if (stateCount == 0) return null;
 
-      int doneCount =
-          bankStates.requireValue.values
-              .where((e) => e != null && (e.toUpdateCount == e.updatedCount))
-              .length;
+      int doneCount = bankStates.requireValue.values
+          .where((e) => e != null && (e.toUpdateCount == e.updatedCount))
+          .length;
 
       return doneCount / stateCount;
     }
@@ -63,8 +61,9 @@ class UpdatingBanner extends ConsumerWidget {
         );
       case AsyncLoading(:final value!) || AsyncValue(:final value!):
         final statesToShow = value.entries.where((e) => e.value != null);
-        final stateToShow =
-            statesToShow.isEmpty ? value.entries.first : statesToShow.last;
+        final stateToShow = statesToShow.isEmpty
+            ? value.entries.first
+            : statesToShow.last;
 
         return Column(
           mainAxisSize: MainAxisSize.min,
@@ -73,15 +72,14 @@ class UpdatingBanner extends ConsumerWidget {
             Padding(
               padding: EdgeInsets.only(left: 10, bottom: 5),
               child: ListTile(
-                leading:
-                    isDone(stateToShow.value)
-                        ? Icon(Icons.check)
-                        : SizedBox.square(
-                          dimension: 25,
-                          child: CircularProgressIndicator(
-                            value: getProgress(stateToShow.value),
-                          ),
+                leading: isDone(stateToShow.value)
+                    ? Icon(Icons.check)
+                    : SizedBox.square(
+                        dimension: 25,
+                        child: CircularProgressIndicator(
+                          value: getProgress(stateToShow.value),
                         ),
+                      ),
                 title: Text(
                   stateToShow.key.name,
                   style: TextStyle(fontWeight: FontWeight.w500),
