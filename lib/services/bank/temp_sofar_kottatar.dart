@@ -1,3 +1,5 @@
+// TODO write spec
+
 String sofarKottatarTempData = '''
 {
   "uuid": "8a7cf461-b286-4ba1-9b70-c13b30574f90",
@@ -11,88 +13,120 @@ String sofarKottatarTempData = '''
   "songFields": {
     "title": {
       "title_hu": "Cím",
-      "type": "searchable",
+      "search_type": "fulltext", // TODO dynamic fulltext search
+      "filter_type": null,
       "icon": "text_fields"
     },
     "title_original": {
       "title_hu": "Cím (eredeti)",
-      "type": "searchable",
+      "search_type": "fulltext",
+      "filter_type": null,
       "icon": "wrap_text"
     },
     "first_line": {
       "title_hu": "Kezdősor",
-      "type": "searchable",
+      "search_type": "fulltext",
+      "filter_type": null,
       "icon": "short_text"
-    },
-    "opensong": {
-      "title_hu": "Dalszöveg",
-      "type": "searchable",
-      "icon": "text_snippet"
     },
     "composer": {
       "title_hu": "Dalszerző",
-      "type": "searchable",
+      "search_type": "fulltext",
+      "filter_type": null,
       "icon": "music_note"
     },
     "lyricist": {
       "title_hu": "Szövegíró",
-      "type": "searchable",
+      "search_type": "fulltext",
+      "filter_type": null,
       "icon": "edit"
     },
     "translator": {
       "title_hu": "Fordította",
-      "type": "searchable",
+      "search_type": "fulltext",
+      "filter_type": null,
       "icon": "translate"
     },
     "bible_ref": {
       "title_hu": "Igeszakasz",
-      "type": "searchable",
+      "search_type": "like",
+      "filter_type": "bible_books",
       "icon": "book"
     },
     "ref_songbook": {
       "title_hu": "Református Énekeskönyv",
-      "type": "searchable",
+      "search_type": "like",
+      "filter_type": "ref_songbook",
       "icon": "menu_book"
     },
     "language": {
       "title_hu": "Eredeti nyelv",
-      "type": "filterable_multiselect_tags",
+      "search_type": null,
+      "filter_type": "filterable_multiselect_tags",
       "icon": "language"
     },
     "tempo": {
       "title_hu": "Tempó",
-      "type": "filterable_multiselect",
+      "search_type": null,
+      "filter_type": "filterable_multiselect",
       "icon": "speed"
     },
     "ambitus": {
       "title_hu": "Hangterjedelem",
-      "type": "filterable_multiselect",
+      "search_type": null,
+      "filter_type": "filterable_multiselect",
       "icon": "height"
     },
     "key": {
       "title_hu": "Hangnem",
-      "type": "filterable_key",
+      "search_type": null,
+      "filter_type": "filterable_key",
       "icon": "music_note"
     },
     "genre": {
       "title_hu": "Stílus / műfaj",
-      "type": "filterable_multiselect_tags",
+      "search_type": null,
+      "filter_type": "filterable_multiselect_tags",
       "icon": "style"
     },
     "content_tags": {
       "title_hu": "Tartalomcímkék",
-      "type": "filterable_multiselect_tags",
+      "search_type": null,
+      "filter_type": "filterable_multiselect_tags",
       "icon": "label_sharp"
     },
     "holiday": {
       "title_hu": "Ünnep",
-      "type": "filterable_multiselect_tags",
+      "search_type": null,
+      "filter_type": "filterable_multiselect_tags",
       "icon": "celebration"
     },
     "sofar": {
       "title_hu": "Szerepelt Sófáron",
-      "type": "filterable_multiselect_tags",
+      "search_type": null,
+      "filter_type": "filterable_multiselect_tags",
       "icon": "calendar_month"
+    },
+    "opensong": {
+      "title_hu": "Dalszöveg",
+      "search_type": "fulltext",
+      "filter_type": "feature_exists",
+      "view": "lyrics_opensong",
+      "icon": "text_snippet"
+    },
+    "svg": {
+      "title_hu": "Kotta",
+      "search_type": null,
+      "filter_type": "feature_exists",
+      "view": "sheet_single_svg",
+      "icon": "music_note_outlined"
+    },
+    "pdf": {
+      "title_hu": "PDF",
+      "search_type": null,
+      "filter_type": "feature_exists",
+      "view": "sheet_single_pdf",
+      "icon": "audio_file_outlined"
     }
   }
 }''';

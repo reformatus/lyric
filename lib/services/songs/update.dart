@@ -31,8 +31,6 @@ double? getProgress(({int toUpdateCount, int updatedCount})? record) {
 Stream<Map<Bank, ({int toUpdateCount, int updatedCount})?>> updateAllBanksSongs(
   Ref ref,
 ) async* {
-  // TODO update bank metadata
-
   await updateBanks();
 
   Map<Bank, ({int toUpdateCount, int updatedCount})?> bankStates =
