@@ -347,6 +347,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.4"
+  dynamic_icons:
+    dependency: "direct main"
+    description:
+      name: dynamic_icons
+      sha256: "5ab78b96bbd467f646a4b6f28f95208d2e8a553d71cc19c66bc86ee95759495a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   fading_edge_scrollview:
     dependency: "direct main"
     description:
@@ -442,6 +450,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  font_awesome_flutter:
+    dependency: transitive
+    description:
+      name: font_awesome_flutter
+      sha256: d3a89184101baec7f4600d58840a764d2ef760fe1c5a20ef9e6b0e9b24a07a3a
+      url: "https://pub.dev"
+    source: hosted
+    version: "10.8.0"
   freezed_annotation:
     dependency: transitive
     description:

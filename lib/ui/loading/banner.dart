@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/bank/bank.dart';
 import '../../main.dart';
 import '../../services/songs/update.dart';
 import '../common/error/card.dart';
@@ -59,7 +60,11 @@ class UpdatingBanner extends ConsumerWidget {
           stack: stackTrace.toString(),
           icon: Icons.error,
         );
-      case AsyncLoading(:final value!) || AsyncValue(:final value!):
+      case AsyncLoading():
+        return LinearProgressIndicator();
+      case AsyncValue<Map<Bank, ({int toUpdateCount, int updatedCount})?>>(
+        :final value!,
+      ):
         final statesToShow = value.entries.where((e) => e.value != null);
         final stateToShow = statesToShow.isEmpty
             ? value.entries.first

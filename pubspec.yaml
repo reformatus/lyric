@@ -66,6 +66,7 @@ dependencies:
   app_links: ^6.4.0
   qr_flutter: ^4.1.0
   share_plus: ^11.0.0
+  dynamic_icons: ^1.0.1
 
 dev_dependencies:
   msix: ^3.16.9

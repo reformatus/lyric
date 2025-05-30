@@ -31,7 +31,7 @@ import '../song/song.dart';
 // todo add a way to add and disable banks
 final List<Bank> defaultBanks = [
   /*Bank(1, 'TESZT Sófár Kottatár', Uri.parse('https://kiskutyafule.csecsy.hu/api/')),*/
-  Bank(
+  /*Bank(
     0,
     true,
     2,
@@ -39,7 +39,7 @@ final List<Bank> defaultBanks = [
     null,
     'Sófár Kottatár',
     Uri.parse('https://sofarkotta.hu/api/'),
-  ),
+  ),*/
   /*Bank(1, true, null, 'Református Énekeskönyv (1948)',
       Uri.parse('https://banks.lyricapp.org/reformatus-enekeskonyv/48/')),
   Bank(2, true, null, 'Református Énekeskönyv (2021)',
@@ -48,28 +48,37 @@ final List<Bank> defaultBanks = [
 
 class Bank extends Insertable<Bank> {
   final int id;
-  // todo add global uuid (to support banks changing urls)
-  bool isEnabled;
-  int parallelUpdateJobs;
-  int amountOfSongsInRequest;
-  DateTime? lastUpdated;
-  // todo support static banks where lastUpdated is not used, only new songs are downloaded
-  final Uri baseUrl;
+  final String uuid;
+  final Uint8List? logo;
   final String name;
-  // todo add description
-  final Dio dio = Dio();
+  final String description;
+  final String legal;
+  final Uri baseUrl;
+  final int parallelUpdateJobs;
+  final int amountOfSongsInRequest;
+  final bool noCms;
+  final Map songFields;
+  bool isEnabled;
+  bool isOfflineMode;
+  DateTime? lastUpdated;
 
-  @deprecated
-  List<Song> songs = [];
+  final Dio dio = Dio();
 
   Bank(
     this.id,
-    this.isEnabled,
+    this.uuid,
+    this.logo,
+    this.name,
+    this.description,
+    this.legal,
+    this.baseUrl,
     this.parallelUpdateJobs,
     this.amountOfSongsInRequest,
+    this.noCms,
+    this.songFields,
+    this.isEnabled,
+    this.isOfflineMode,
     this.lastUpdated,
-    this.name,
-    this.baseUrl,
   );
 
   Future<List<ProtoSong>> getProtoSongs({DateTime? since}) async {
@@ -119,12 +128,19 @@ class Bank extends Insertable<Bank> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     return BanksCompanion(
       id: Value.absent(),
-      isEnabled: Value(isEnabled),
+      uuid: Value(uuid),
+      logo: Value.absentIfNull(logo),
+      name: Value(name),
+      description: Value(description),
+      legal: Value(legal),
+      baseUrl: Value(baseUrl),
       parallelUpdateJobs: Value(parallelUpdateJobs),
       amountOfSongsInRequest: Value(amountOfSongsInRequest),
+      noCms: Value(noCms),
+      songFields: Value(songFields),
+      isEnabled: Value(isEnabled),
+      isOfflineMode: Value(isOfflineMode),
       lastUpdated: Value(lastUpdated),
-      name: Value(name),
-      baseUrl: Value(baseUrl),
     ).toColumns(nullToAbsent);
   }
 }
@@ -132,12 +148,33 @@ class Bank extends Insertable<Bank> {
 @UseRowClass(Bank)
 class Banks extends Table {
   IntColumn get id => integer().autoIncrement()();
-  BoolColumn get isEnabled => boolean()();
+  TextColumn get uuid => text()();
+  BlobColumn get logo => blob().nullable()();
+  TextColumn get name => text()();
+  TextColumn get description => text()();
+  TextColumn get legal => text()();
+  TextColumn get baseUrl => text().map(const UriConverter())();
   IntColumn get parallelUpdateJobs => integer()();
   IntColumn get amountOfSongsInRequest => integer()();
+  BoolColumn get noCms => boolean()();
+  TextColumn get songFields => text().map(const MapConverter())();
+  BoolColumn get isEnabled => boolean()();
+  BoolColumn get isOfflineMode => boolean()();
   DateTimeColumn get lastUpdated => dateTime().nullable()();
-  TextColumn get name => text()();
-  TextColumn get baseUrl => text().map(const UriConverter())();
+}
+
+class MapConverter extends TypeConverter<Map, String> {
+  const MapConverter();
+
+  @override
+  Map fromSql(String fromDb) {
+    return jsonDecode(fromDb) as Map;
+  }
+
+  @override
+  String toSql(Map value) {
+    return jsonEncode(value);
+  }
 }
 
 class ProtoSong {
