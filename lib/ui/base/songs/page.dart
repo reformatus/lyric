@@ -1,6 +1,7 @@
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/ui/base/songs/widgets/bank_chooser.dart';
 import '../../common/centered_hint.dart';
 
 import '../../../data/cue/cue.dart';
@@ -31,6 +32,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
     _filterExpansionScrollController = ScrollController();
     _filterSidebarScrollController = ScrollController();
     _filterExpansionTileController = ExpansibleController();
+    _filterExpansionTileController.expand();
     _searchFieldController = TextEditingController(
       text: ref.read(searchStringStateProvider),
     );
@@ -58,6 +60,8 @@ class _SongsPageState extends ConsumerState<SongsPage> {
   }
 
   bool filtersScrolled = false;
+
+  bool bankChooserDismissed = false;
 
   late OverlayPortalController _overlayPortalController;
   late ScrollController _filterExpansionScrollController;
@@ -91,11 +95,11 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                           children: [
                             SizedBox(
                               height: 5,
-                              child:
-                                  songResults.isLoading
-                                      ? LinearProgressIndicator()
-                                      : null,
+                              child: songResults.isLoading
+                                  ? LinearProgressIndicator()
+                                  : null,
                             ),
+                            // Search bar
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 8),
                               child: TextField(
@@ -105,22 +109,18 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                                   hintText: 'Keresés (min. 3 betű)',
                                   prefixIcon:
                                       _searchFieldController.text.isEmpty
-                                          ? Icon(Icons.search)
-                                          : IconButton(
-                                            icon: Icon(Icons.clear),
-                                            onPressed:
-                                                () =>
-                                                    _searchFieldController
-                                                        .clear(),
-                                          ),
+                                      ? Icon(Icons.search)
+                                      : IconButton(
+                                          icon: Icon(Icons.clear),
+                                          onPressed: () =>
+                                              _searchFieldController.clear(),
+                                        ),
                                   suffixIcon: CompositedTransformTarget(
                                     link: _link,
                                     child: OverlayPortal(
                                       controller: _overlayPortalController,
-                                      overlayChildBuilder:
-                                          (
-                                            context,
-                                          ) => CompositedTransformFollower(
+                                      overlayChildBuilder: (context) =>
+                                          CompositedTransformFollower(
                                             link: _link,
                                             followerAnchor: Alignment.topRight,
                                             targetAnchor: Alignment.bottomRight,
@@ -141,12 +141,11 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                                           ),
                                       child: IconButton(
                                         tooltip: 'Miben keressen',
-                                        icon:
-                                            _overlayPortalController.isShowing
-                                                ? const Icon(Icons.close)
-                                                : const Icon(
-                                                  Icons.check_box_outlined,
-                                                ),
+                                        icon: _overlayPortalController.isShowing
+                                            ? const Icon(Icons.close)
+                                            : const Icon(
+                                                Icons.check_box_outlined,
+                                              ),
                                         onPressed: () {
                                           _overlayPortalController.toggle();
                                           setState(() {});
@@ -159,6 +158,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                             ),
                           ],
                         ),
+                        // Filters expansion tile on small screens
                         if (constraints.maxWidth < constants.tabletFromWidth)
                           Card(
                             clipBehavior: Clip.antiAlias,
@@ -186,18 +186,18 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                                           ),
                                           collapsedBackgroundColor:
                                               (filterState.isEmpty &&
-                                                      keyFilterState.isEmpty)
-                                                  ? null
-                                                  : Theme.of(context)
-                                                      .colorScheme
-                                                      .secondaryContainer,
+                                                  keyFilterState.isEmpty)
+                                              ? null
+                                              : Theme.of(context)
+                                                    .colorScheme
+                                                    .secondaryContainer,
                                           collapsedIconColor:
                                               (filterState.isEmpty &&
-                                                      keyFilterState.isEmpty)
-                                                  ? null
-                                                  : Theme.of(context)
-                                                      .colorScheme
-                                                      .onSecondaryContainer,
+                                                  keyFilterState.isEmpty)
+                                              ? null
+                                              : Theme.of(context)
+                                                    .colorScheme
+                                                    .onSecondaryContainer,
                                           controller:
                                               _filterExpansionTileController,
                                           leading: const Icon(
@@ -230,48 +230,55 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                               ),
                             ),
                           ),
-                        Expanded(
-                          child: switch (songResults) {
-                            AsyncError(:final error, :final stackTrace) =>
-                              Center(
-                                child: LErrorCard(
-                                  type: LErrorType.error,
-                                  title: 'Hová lettek a dalok? :(',
-                                  message: error.toString(),
-                                  icon: Icons.error,
-                                  stack: stackTrace.toString(),
-                                ),
-                              ),
-                            AsyncValue(:final value) =>
-                              value == null
-                                  ? const Center(
-                                    child: CircularProgressIndicator(),
-                                  )
-                                  : searchString.isNotEmpty &&
-                                      searchString.length < 3
-                                  ? CenteredHint(
-                                    'Írj be legalább három betűt a kereséshez.',
-                                    iconData: Icons.search,
-                                  )
-                                  : value.isEmpty
-                                  ? CenteredHint(
-                                    'Nincs találat :(',
-                                    iconData: Icons.search_off,
-                                  )
-                                  : ListView.builder(
-                                    itemBuilder: (BuildContext context, int i) {
-                                      return LSongResultTile(
-                                        value.elementAt(i),
-                                      );
-                                    },
-                                    itemCount: value.length,
+                        if (!bankChooserDismissed &&
+                            constraints.maxWidth < constants.tabletFromWidth)
+                          Expanded(child: BankChooser())
+                        else
+                          Expanded(
+                            // Songs list
+                            child: switch (songResults) {
+                              AsyncError(:final error, :final stackTrace) =>
+                                Center(
+                                  child: LErrorCard(
+                                    type: LErrorType.error,
+                                    title: 'Hová lettek a dalok? :(',
+                                    message: error.toString(),
+                                    icon: Icons.error,
+                                    stack: stackTrace.toString(),
                                   ),
-                          },
-                        ),
+                                ),
+                              AsyncValue(:final value) =>
+                                value == null
+                                    ? const Center(
+                                        child: CircularProgressIndicator(),
+                                      )
+                                    : searchString.isNotEmpty &&
+                                          searchString.length < 3
+                                    ? CenteredHint(
+                                        'Írj be legalább három betűt a kereséshez.',
+                                        iconData: Icons.search,
+                                      )
+                                    : value.isEmpty
+                                    ? CenteredHint(
+                                        'Nincs találat :(',
+                                        iconData: Icons.search_off,
+                                      )
+                                    : ListView.builder(
+                                        itemBuilder:
+                                            (BuildContext context, int i) {
+                                              return LSongResultTile(
+                                                value.elementAt(i),
+                                              );
+                                            },
+                                        itemCount: value.length,
+                                      ),
+                            },
+                          ),
                       ],
                     ),
                   ),
                 ),
+                // Filters column in wide view
                 if (constraints.maxWidth >= constants.tabletFromWidth)
                   SizedBox(
                     width: (constraints.maxWidth / 3).clamp(
@@ -288,10 +295,8 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                         automaticallyImplyLeading: false,
                         backgroundColor:
                             filterState.isEmpty && keyFilterState.isEmpty
-                                ? Theme.of(context).colorScheme.surface
-                                : Theme.of(
-                                  context,
-                                ).colorScheme.secondaryContainer,
+                            ? Theme.of(context).colorScheme.surface
+                            : Theme.of(context).colorScheme.secondaryContainer,
                       ),
                       body: FadingEdgeScrollView.fromSingleChildScrollView(
                         child: SingleChildScrollView(
@@ -313,10 +318,9 @@ class _SongsPageState extends ConsumerState<SongsPage> {
               setState(() {});
             }
           },
-          behavior:
-              _overlayPortalController.isShowing
-                  ? HitTestBehavior.opaque
-                  : HitTestBehavior.deferToChild,
+          behavior: _overlayPortalController.isShowing
+              ? HitTestBehavior.opaque
+              : HitTestBehavior.deferToChild,
         ),
       ],
     );
@@ -345,35 +349,33 @@ class FiltersTitle extends ConsumerWidget {
               (filterState.isEmpty && keyFilterState.isEmpty)
                   ? 'Szűrők'
                   : ([
-                    if (keyFilterState.isNotEmpty)
-                      [
-                        if (keyFilterState.keys.isNotEmpty)
-                          keyFilterState.keys
-                              .map((e) => e.toString())
-                              .join(' vagy '),
-                        if (keyFilterState.pitches.isNotEmpty ||
-                            keyFilterState.modes.isNotEmpty)
-                          [
-                            if (keyFilterState.pitches.isNotEmpty)
-                              'alaphangja ${keyFilterState.pitches.join(' vagy ')}',
-                            if (keyFilterState.modes.isNotEmpty)
-                              'hangsora ${keyFilterState.modes.join(' vagy ')}',
-                          ].join(' és '),
-                      ].join(', vagy '),
-                    if (filterState.isNotEmpty)
-                      filterState.values
-                          .map((e) => e.join(' vagy '))
-                          .join(', és '),
-                  ].join(', valamint ')),
+                      if (keyFilterState.isNotEmpty)
+                        [
+                          if (keyFilterState.keys.isNotEmpty)
+                            keyFilterState.keys
+                                .map((e) => e.toString())
+                                .join(' vagy '),
+                          if (keyFilterState.pitches.isNotEmpty ||
+                              keyFilterState.modes.isNotEmpty)
+                            [
+                              if (keyFilterState.pitches.isNotEmpty)
+                                'alaphangja ${keyFilterState.pitches.join(' vagy ')}',
+                              if (keyFilterState.modes.isNotEmpty)
+                                'hangsora ${keyFilterState.modes.join(' vagy ')}',
+                            ].join(' és '),
+                        ].join(', vagy '),
+                      if (filterState.isNotEmpty)
+                        filterState.values
+                            .map((e) => e.join(' vagy '))
+                            .join(', és '),
+                    ].join(', valamint ')),
               style: TextStyle(
-                color:
-                    (filterState.isEmpty && keyFilterState.isEmpty)
-                        ? null
-                        : Theme.of(context).colorScheme.onSecondaryContainer,
-                fontSize:
-                    (filterState.isEmpty && keyFilterState.isEmpty)
-                        ? null
-                        : Theme.of(context).textTheme.bodyMedium!.fontSize,
+                color: (filterState.isEmpty && keyFilterState.isEmpty)
+                    ? null
+                    : Theme.of(context).colorScheme.onSecondaryContainer,
+                fontSize: (filterState.isEmpty && keyFilterState.isEmpty)
+                    ? null
+                    : Theme.of(context).textTheme.bodyMedium!.fontSize,
               ),
               softWrap: true,
               maxLines: 3,
