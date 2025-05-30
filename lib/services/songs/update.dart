@@ -29,6 +29,10 @@ double? getProgress(({int toUpdateCount, int updatedCount})? record) {
 Stream<Map<Bank, ({int toUpdateCount, int updatedCount})?>> updateAllBanks(
   Ref ref,
 ) async* {
+  // TODO update bank metadata
+
+  await updateAllBanks(ref);
+
   Map<Bank, ({int toUpdateCount, int updatedCount})?> bankStates =
       Map.fromEntries(
         (await (db.banks.select()..where((b) => b.isEnabled)).get()).map(
