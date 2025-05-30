@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../../data/song/extensions.dart';
+import '../../../../data/song/extensions.dart';
 
-import '../../../data/database.dart';
-import '../../../data/song/song.dart';
-import '../../../services/songs/filter.dart';
+import '../../../../data/database.dart';
+import '../../../../data/song/song.dart';
+import '../../../../services/songs/filter.dart';
 
 class LSongResultTile extends StatelessWidget {
   const LSongResultTile(this.songResult, {super.key});

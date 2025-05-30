@@ -7,12 +7,12 @@ import '../../../data/cue/cue.dart';
 import '../../../main.dart';
 import '../../../services/songs/filter.dart';
 import '../../common/error/card.dart';
-import 'filter/types/key/state.dart';
-import 'filter/types/multiselect-tags/state.dart';
-import 'filter/types/search/search_field_selector.dart';
-import 'filter/types/search/state.dart';
-import 'filter/widgets/filters_column.dart';
-import 'song_tile.dart';
+import 'widgets/filter/types/key/state.dart';
+import 'widgets/filter/types/multiselect-tags/state.dart';
+import 'widgets/filter/types/search/search_field_selector.dart';
+import 'widgets/filter/types/search/state.dart';
+import 'widgets/filter/common/filters_column.dart';
+import 'widgets/song_tile.dart';
 
 class SongsPage extends ConsumerStatefulWidget {
   const SongsPage({this.addingToCue, super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../data/song/song.dart';
-import '../../base/songs/filter/types/field_type.dart';
+import '../../base/songs/widgets/filter/types/field_type.dart';
 
 // Helper functions for song details
 List<Widget> getDetailsSummaryContent(Song song, BuildContext context) {
