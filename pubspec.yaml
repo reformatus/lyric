@@ -61,7 +61,7 @@ dependencies:
   pdfrx: ^1.1.29
   music_notes: ^0.22.0
   logging: ^1.3.0
-  flutter_fullscreen: ^1.0.5
+  flutter_fullscreen: ^1.2.0
   wtf_sliding_sheet: ^1.1.5
   app_links: ^6.4.0
   qr_flutter: ^4.1.0
