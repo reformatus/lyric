@@ -76,7 +76,7 @@ dev_dependencies:
   riverpod_generator: ^2.3.0
   riverpod_lint: ^2.1.0
   drift_dev: ^2.26.1
-  flutter_launcher_icons: ^0.14.1
+  flutter_launcher_icons: ^0.14.4
   rename_app: ^1.6.3
 
 flutter:
