@@ -75,7 +75,7 @@ dev_dependencies:
   json_serializable: ^6.9.5
   riverpod_generator: ^2.3.0
   riverpod_lint: ^2.1.0
-  drift_dev: ^2.26.1
+  drift_dev: ^2.27.0
   flutter_launcher_icons: ^0.14.1
   rename_app: ^1.6.3
 
