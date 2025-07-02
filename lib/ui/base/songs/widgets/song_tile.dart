@@ -188,7 +188,7 @@ class SongFeatures extends StatelessWidget {
             context,
             Icons.tag_outlined,
             available: song.hasChords,
-            downloaded: song.hasLyrics,
+            downloaded: song.hasChords,
           ),
         ],
       ),
