@@ -13,7 +13,7 @@ String sofarKottatarTempData = '''
   "songFields": {
     "title": {
       "title_hu": "Cím",
-      "search_type": "fulltext", // TODO dynamic fulltext search
+      "search_type": "fulltext",
       "filter_type": null,
       "icon": "text_fields"
     },
