@@ -62,7 +62,8 @@ class Song extends Insertable<Song> {
       final lines = opensong.substring(0, 100).split('\n');
       return lines
           .firstWhere((e) => !e.startsWith('[') && !e.startsWith('.'))
-          .trim();
+          .trim()
+          .replaceAll('_', '');
     } catch (_) {
       return '';
     }
