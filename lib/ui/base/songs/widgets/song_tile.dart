@@ -11,7 +11,7 @@ class LSongResultTile extends StatelessWidget {
   const LSongResultTile(this.songResult, this.bank, {super.key});
 
   final SongResult songResult;
-  final Bank bank;
+  final Bank? bank;
 
   @override
   Widget build(BuildContext context) {
@@ -69,13 +69,13 @@ class LSongResultTile extends StatelessWidget {
                   ),
               ],
             ),
-      leading: bank.tinyLogo != null
+      leading: bank?.tinyLogo != null
           ? Tooltip(
-              message: bank.name,
+              message: bank!.name,
               child: Padding(
                 padding: EdgeInsetsGeometry.only(right: 5),
                 child: Image.memory(
-                  bank.tinyLogo!,
+                  bank!.tinyLogo!,
                   cacheHeight: 26,
                   cacheWidth: 26,
                 ),

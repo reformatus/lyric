@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/services/bank/banks.dart';
 import 'package:lyric/ui/base/songs/widgets/bank_chooser.dart';
+import 'package:lyric/ui/base/songs/widgets/filter/types/bank/state.dart';
 import '../../../data/bank/bank.dart';
 import '../../common/centered_hint.dart';
 
@@ -14,7 +15,7 @@ import 'widgets/filter/types/key/state.dart';
 import 'widgets/filter/types/multiselect-tags/state.dart';
 import 'widgets/filter/types/search/search_field_selector.dart';
 import 'widgets/filter/types/search/state.dart';
-import 'widgets/filter/common/filters_column.dart';
+import 'widgets/filter/filters_column.dart';
 import 'widgets/song_tile.dart';
 
 class SongsPage extends ConsumerStatefulWidget {
@@ -78,6 +79,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
     final songResults = ref.watch(filteredSongsProvider);
     final filterState = ref.watch(multiselectTagsFilterStateProvider);
     final keyFilterState = ref.watch(keyFilterStateProvider);
+    final banksFilterState = ref.watch(banksFilterStateProvider);
     final searchString = ref.watch(searchStringStateProvider);
 
     return switch (banks) {
@@ -222,8 +224,11 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                                               Icons.filter_list,
                                             ),
                                             title: FiltersTitle(
+                                              banks: banks,
                                               filterState: filterState,
                                               keyFilterState: keyFilterState,
+                                              banksFilterState:
+                                                  banksFilterState,
                                             ),
                                             children: [FiltersColumn()],
                                           ),
@@ -286,14 +291,16 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                                               (BuildContext context, int i) {
                                                 return LSongResultTile(
                                                   value.elementAt(i),
-                                                  banks.firstWhere(
-                                                    (b) =>
-                                                        b.uuid ==
-                                                        value
-                                                            .elementAt(i)
-                                                            .song
-                                                            .sourceBank,
-                                                  ),
+                                                  banksFilterState.length == 1
+                                                      ? null
+                                                      : banks.firstWhere(
+                                                          (b) =>
+                                                              b.uuid ==
+                                                              value
+                                                                  .elementAt(i)
+                                                                  .song
+                                                                  .sourceBank,
+                                                        ),
                                                 );
                                               },
                                           itemCount: value.length,
@@ -315,8 +322,10 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                         backgroundColor: Theme.of(context).colorScheme.surface,
                         appBar: AppBar(
                           title: FiltersTitle(
+                            banks: banks,
                             filterState: filterState,
                             keyFilterState: keyFilterState,
+                            banksFilterState: banksFilterState,
                           ),
                           automaticallyImplyLeading: false,
                           backgroundColor:
@@ -359,12 +368,16 @@ class _SongsPageState extends ConsumerState<SongsPage> {
 class FiltersTitle extends ConsumerWidget {
   const FiltersTitle({
     super.key,
+    required this.banks,
     required this.filterState,
     required this.keyFilterState,
+    required this.banksFilterState,
   });
 
+  final List<Bank> banks;
   final Map<String, List<String>> filterState;
   final KeyFilters keyFilterState;
+  final Set<String> banksFilterState;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -411,14 +424,39 @@ class FiltersTitle extends ConsumerWidget {
               overflow: TextOverflow.ellipsis,
             ),
           ),
+          ...banksFilterState
+              .map((i) => banks.firstWhere((b) => b.uuid == i))
+              .map(
+                (b) => b.tinyLogo != null
+                    ? Tooltip(
+                        message: b.name,
+                        child: Image.memory(
+                          b.tinyLogo!,
+                          cacheWidth: 30,
+                          cacheHeight: 30,
+                        ),
+                      )
+                    : ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: 50),
+                        child: Text(
+                          b.name,
+                          overflow: TextOverflow.fade,
+                          maxLines: 1,
+                          softWrap: false,
+                        ),
+                      ),
+              ),
+          if (banksFilterState.isNotEmpty) SizedBox(width: 10),
           if (filterState.isNotEmpty || keyFilterState.isNotEmpty)
             IconButton(
               icon: Icon(Icons.clear),
               onPressed: () {
+                // TODO move filter states to sealed superclass and iterate trough reset (??) || Or at least move this to a service.
                 ref
                     .read(multiselectTagsFilterStateProvider.notifier)
                     .resetAllFilters();
                 ref.read(keyFilterStateProvider.notifier).reset();
+                ref.read(banksFilterStateProvider.notifier).reset();
               },
             ),
         ],

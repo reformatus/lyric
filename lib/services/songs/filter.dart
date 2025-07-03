@@ -2,6 +2,7 @@
 import 'package:drift/drift.dart';
 import 'package:drift/extensions/json1.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/ui/base/songs/widgets/filter/types/bank/state.dart';
 import 'package:lyric/ui/base/songs/widgets/filter/types/key/state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -98,6 +99,7 @@ Stream<List<SongResult>> filteredSongs(Ref ref) {
     multiselectTagsFilterStateProvider,
   );
   final KeyFilters keyFilters = ref.watch(keyFilterStateProvider);
+  final Set<String> bankFilters = ref.watch(banksFilterStateProvider);
 
   String ftsMatchString = '{${searchFields.join(' ')}} : $searchString';
 
@@ -134,6 +136,8 @@ Stream<List<SongResult>> filteredSongs(Ref ref) {
                   ),
                 ),
             ], ifEmpty: Constant(true)),
+            if (bankFilters.isNotEmpty)
+              Expression.or(bankFilters.map((b) => songs.sourceBank.equals(b))),
           ]),
     );
   }

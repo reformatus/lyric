@@ -6,7 +6,7 @@ class BaseFilterCard extends StatelessWidget {
   const BaseFilterCard({
     required this.icon,
     required this.title,
-    required this.children,
+    this.child,
     this.onResetPressed,
     this.trailing,
     this.isActive = false,
@@ -19,8 +19,8 @@ class BaseFilterCard extends StatelessWidget {
   /// The title text for the filter
   final String title;
 
-  /// The widgets to display in the subtitle area (typically filter chips or content)
-  final List<Widget> children;
+  /// The widget to display in the subtitle area (typically filter content)
+  final Widget? child;
 
   /// Callback when the reset (X) button is pressed. If null, no reset button is shown.
   final VoidCallback? onResetPressed;
@@ -60,15 +60,7 @@ class BaseFilterCard extends StatelessWidget {
             if (trailing != null) Expanded(child: trailing!),
           ],
         ),
-        subtitle: children.isEmpty
-            ? null
-            : children.length == 1
-            ? children.first
-            : Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: children,
-              ),
+        subtitle: child,
       ),
     );
   }
