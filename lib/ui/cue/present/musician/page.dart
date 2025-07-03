@@ -65,8 +65,9 @@ class _CuePresentMusicianPageState extends ConsumerState<CuePresentMusicianPage>
 
   @override
   Widget build(BuildContext context) {
-    var slideIndex =
-        ref.watch(watchSlideIndexOfCueProvider(widget.cue)).valueOrNull;
+    var slideIndex = ref
+        .watch(watchSlideIndexOfCueProvider(widget.cue))
+        .valueOrNull;
     ref.watch(currentSlideOfProvider(widget.cue));
     ref.watch(currentSlideListOfProvider(widget.cue));
 
@@ -81,7 +82,7 @@ class _CuePresentMusicianPageState extends ConsumerState<CuePresentMusicianPage>
                   child!,
                   GestureDetector(
                     behavior: HitTestBehavior.translucent,
-                    onTapDown: (_) {
+                    onTapUp: (_) {
                       if (overlayController.isCompleted) {
                         overlayController.reverse();
                       } else if (overlayController.isDismissed) {

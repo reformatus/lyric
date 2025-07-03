@@ -27,53 +27,57 @@ class LyricsView extends ConsumerWidget {
       transposeStateForProvider(song, songSlide),
     );
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        //! Calculate layout
-        int crossAxisCount = (constraints.maxWidth ~/ 350).clamp(1, 9999);
-        double cardWidth = (constraints.maxWidth / crossAxisCount);
+    return Material(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          //! Calculate layout
+          int crossAxisCount = (constraints.maxWidth ~/ 350).clamp(1, 9999);
+          double cardWidth = (constraints.maxWidth / crossAxisCount);
 
-        // When scrolling sideways, make sure a bit of the next column is visible
-        if (crossAxisCount > 1) cardWidth -= (30 / (crossAxisCount));
+          // When scrolling sideways, make sure a bit of the next column is visible
+          if (crossAxisCount > 1) cardWidth -= (30 / (crossAxisCount));
 
-        //! Parse OpenSong
-        var openSongContent = song.contentMap['opensong'];
-        if (openSongContent == null) {
-          return Center(
-            child: LErrorCard(
-              type: LErrorType.warning,
-              title: 'A dalhoz nem tartozik dalszöveg!',
-              icon: Icons.error,
+          //! Parse OpenSong
+          var openSongContent = song.contentMap['opensong'];
+          if (openSongContent == null) {
+            return Center(
+              child: LErrorCard(
+                type: LErrorType.warning,
+                title: 'A dalhoz nem tartozik dalszöveg!',
+                icon: Icons.error,
+              ),
+            );
+          }
+          var verses = os.getVersesFromString(openSongContent);
+
+          // far future todo Parse ChordPro
+
+          return SingleChildScrollView(
+            scrollDirection: crossAxisCount > 1
+                ? Axis.horizontal
+                : Axis.vertical,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minWidth: constraints.maxWidth),
+              child: Wrap(
+                direction: Axis.vertical,
+                children: [
+                  if (transpose.capo != 0)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text('Capo: ${transpose.capo}'),
+                    ),
+                  ...verses.map(
+                    (e) => SizedBox(
+                      width: cardWidth,
+                      child: VerseCard(song, e, transpose: transpose),
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
-        }
-        var verses = os.getVersesFromString(openSongContent);
-
-        // far future todo Parse ChordPro
-
-        return SingleChildScrollView(
-          scrollDirection: crossAxisCount > 1 ? Axis.horizontal : Axis.vertical,
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minWidth: constraints.maxWidth),
-            child: Wrap(
-              direction: Axis.vertical,
-              children: [
-                if (transpose.capo != 0)
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text('Capo: ${transpose.capo}'),
-                  ),
-                ...verses.map(
-                  (e) => SizedBox(
-                    width: cardWidth,
-                    child: VerseCard(song, e, transpose: transpose),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+        },
+      ),
     );
   }
 }
@@ -116,40 +120,38 @@ class VerseCard extends StatelessWidget {
               padding: EdgeInsets.only(top: 5, left: 10, right: 10, bottom: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children:
-                    verse.parts
-                        .map(
-                          (e) => switch (e) {
-                            os.VerseLine(:final segments) => Wrap(
-                              alignment: WrapAlignment.start,
-                              crossAxisAlignment: WrapCrossAlignment.start,
-                              children:
-                                  segments
-                                      .map(
-                                        (e) => LyricsSegment(
-                                          song: song,
-                                          transpose: transpose,
-                                          segments: segments,
-                                          e: e,
-                                        ),
-                                      )
-                                      .toList(),
-                            ),
-                            os.CommentLine(:final comment) => Text(
-                              comment,
-                              style: TextStyle(fontStyle: FontStyle.italic),
-                            ),
-                            os.NewSlide() => Divider(),
-                            os.EmptyLine() => Text(''),
-                            os.UnsupportedLine(:final original) => LErrorCard(
-                              type: LErrorType.warning,
-                              title: 'Ismeretlen sortípus',
-                              message: original,
-                              icon: Icons.question_mark,
-                            ),
-                          },
-                        )
-                        .toList(),
+                children: verse.parts
+                    .map(
+                      (e) => switch (e) {
+                        os.VerseLine(:final segments) => Wrap(
+                          alignment: WrapAlignment.start,
+                          crossAxisAlignment: WrapCrossAlignment.start,
+                          children: segments
+                              .map(
+                                (e) => LyricsSegment(
+                                  song: song,
+                                  transpose: transpose,
+                                  segments: segments,
+                                  e: e,
+                                ),
+                              )
+                              .toList(),
+                        ),
+                        os.CommentLine(:final comment) => Text(
+                          comment,
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                        os.NewSlide() => Divider(),
+                        os.EmptyLine() => Text(''),
+                        os.UnsupportedLine(:final original) => LErrorCard(
+                          type: LErrorType.warning,
+                          title: 'Ismeretlen sortípus',
+                          message: original,
+                          icon: Icons.question_mark,
+                        ),
+                      },
+                    )
+                    .toList(),
               ),
             ),
           ],
