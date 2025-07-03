@@ -3,10 +3,11 @@
 String sofarKottatarTempData = '''
 {
   "uuid": "8a7cf461-b286-4ba1-9b70-c13b30574f90",
-  "logo": "https://sofarhangolo.hu/wp-content/uploads/2024/10/logo_teljes_sarga-kek@2x.png",
+  "logo": "https://sofarhangolo.hu/wp-content/uploads/2024/10/cropped-logo_kor_szines@2x-192x192.png",
+  "tinyLogo": "https://sofarhangolo.hu/wp-content/uploads/2024/10/cropped-logo_kor_szines@2x-32x32.png",
   "name": "Sófár Kottatár",
   "description": "",
-  "legal": "",
+  "legal": "Ezeket az énekeket egyedül Isten dicsőségére tesszük közzé azaz sem anyagi, sem egyéb hasznunk nem származik belőle. Ahol csak tudjuk, feltüntetjük az ének szerzőjét/szerzőit. Ha olyan éneket találsz itt, amelynek Te vagy a szerzője, azt kérjük, hogy jelezd nekünk emailben az info@sofarportal.hu címen, ui. szeretnénk hogy a szerző jóváhagyásával kerüljön fel minden ének. Ha pedig úgy látod szerzőként, hogy egy anyag a te szerzői jogaidat sérti, vagy nem szeretnéd, hogy éneked fent legyen honlapunkon, jelezd ugyanott, és levesszük. Célunk, hogy ezek az Istent dicsőítő énekek mindenki számára elérhetőek legyenek, és segítsék gyülekezeteink megújulását és épülését az Isten dicséretben.",
   "parallelUpdateJobs": 2,
   "amountOfSongsInRequest": 10,
   "noCms": false,

@@ -5,7 +5,7 @@ import 'package:drift/drift.dart';
 import 'package:lyric/data/database.dart';
 import 'package:lyric/main.dart';
 import 'package:lyric/services/bank/from_uuid.dart';
-import 'package:lyric/services/bank/temp_sofar_kottatar.dart';
+import 'package:lyric/services/bank/tempBankSchemas/sofar_kottatar.dart';
 
 import '../../data/bank/bank.dart';
 
