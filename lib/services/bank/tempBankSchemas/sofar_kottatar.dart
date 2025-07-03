@@ -103,7 +103,7 @@ String sofarKottatarTempData = '''
       "icon": "celebration"
     },
     "sofar": {
-      "title_hu": "Szerepelt Sófáron",
+      "title_hu": "Sófár kottafüzet",
       "search_type": null,
       "filter_type": "filterable_multiselect_tags",
       "icon": "calendar_month"
