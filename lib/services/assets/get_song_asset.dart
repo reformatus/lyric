@@ -24,8 +24,9 @@ Stream<AssetResult> getSongAsset(
 
   () async {
     final bank = await ref.watch(bankOfSongProvider(song).future);
-    final String sourceUrl =
-        bank.baseUrl.resolve(song.contentMap[fieldName]!).toString();
+    final String sourceUrl = bank.baseUrl
+        .resolve(song.contentMap[fieldName]!)
+        .toString();
 
     final asset =
         await (db.assets.select()..where((a) => a.sourceUrl.equals(sourceUrl)))
@@ -35,7 +36,12 @@ Stream<AssetResult> getSongAsset(
       controller.add((progress: 1.0, data: asset.content));
       await controller.close();
     } else {
-      final dio = Dio();
+      final dio = Dio(
+        BaseOptions(
+          connectTimeout: Duration(seconds: 5),
+          receiveTimeout: Duration(seconds: 10),
+        ),
+      );
 
       // Download the asset with progress updates
       try {

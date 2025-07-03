@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../data/bank/bank.dart';
 import '../../../../data/song/extensions.dart';
 
 import '../../../../data/database.dart';
@@ -7,9 +8,10 @@ import '../../../../data/song/song.dart';
 import '../../../../services/songs/filter.dart';
 
 class LSongResultTile extends StatelessWidget {
-  const LSongResultTile(this.songResult, {super.key});
+  const LSongResultTile(this.songResult, this.bank, {super.key});
 
   final SongResult songResult;
+  final Bank? bank;
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +69,19 @@ class LSongResultTile extends StatelessWidget {
                   ),
               ],
             ),
+      leading: bank?.tinyLogo != null
+          ? Tooltip(
+              message: bank!.name,
+              child: Padding(
+                padding: EdgeInsetsGeometry.only(right: 5),
+                child: Image.memory(
+                  bank!.tinyLogo!,
+                  cacheHeight: 26,
+                  cacheWidth: 26,
+                ),
+              ),
+            )
+          : null,
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [

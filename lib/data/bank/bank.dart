@@ -50,6 +50,7 @@ class Bank extends Insertable<Bank> {
   final int id;
   final String uuid;
   final Uint8List? logo;
+  final Uint8List? tinyLogo;
   final String name;
   final String description;
   final String legal;
@@ -62,12 +63,18 @@ class Bank extends Insertable<Bank> {
   bool isOfflineMode;
   DateTime? lastUpdated;
 
-  final Dio dio = Dio();
+  final Dio dio = Dio(
+    BaseOptions(
+      connectTimeout: Duration(seconds: 5),
+      receiveTimeout: Duration(seconds: 10),
+    )
+  );
 
   Bank(
     this.id,
     this.uuid,
     this.logo,
+    this.tinyLogo,
     this.name,
     this.description,
     this.legal,
@@ -130,6 +137,7 @@ class Bank extends Insertable<Bank> {
       id: Value.absent(),
       uuid: Value(uuid),
       logo: Value.absentIfNull(logo),
+      tinyLogo: Value.absentIfNull(tinyLogo),
       name: Value(name),
       description: Value(description),
       legal: Value(legal),
@@ -150,6 +158,7 @@ class Banks extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get uuid => text()();
   BlobColumn get logo => blob().nullable()();
+  BlobColumn get tinyLogo => blob().nullable()();
   TextColumn get name => text()();
   TextColumn get description => text()();
   TextColumn get legal => text()();

@@ -3,6 +3,7 @@
 // let plugins provide filter ui and logic
 import 'package:flutter/material.dart';
 
+// TODO read this from bank schema
 const Map<String, Map<String, dynamic>> songFieldsMap = {
   'title': {'title_hu': 'Cím', 'type': 'searchable', 'icon': Icons.text_fields},
   'title_original': {
@@ -87,7 +88,6 @@ const Map<String, Map<String, dynamic>> songFieldsMap = {
   },
 };
 
-// @project2
 enum FieldType {
   multiselect("filterable_multiselect", isFilterable: true),
   multiselectTags(

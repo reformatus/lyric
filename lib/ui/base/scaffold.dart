@@ -114,12 +114,12 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
       (
         icon: Icon(Icons.library_music_outlined),
         selectedIcon: Icon(Icons.library_music),
-        label: 'Daltár',
+        label: 'Dalok',
       ),
       (
         icon: Icon(Icons.view_list_outlined),
         selectedIcon: Icon(Icons.view_list),
-        label: 'Listáim',
+        label: 'Listák',
       ),
       if (GoRouterState.of(context).uri.path.startsWith('/song/'))
         (

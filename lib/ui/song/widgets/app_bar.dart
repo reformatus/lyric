@@ -54,16 +54,15 @@ class SongPageAppBar extends ConsumerWidget implements PreferredSizeWidget {
         ],
         const SizedBox(width: 8),
         IconButton.filledTonal(
-          onPressed:
-              () => showShareDialog(
-                context,
-                title: 'Dal megosztása',
-                description:
-                    'Mutasd meg a kódot vagy küldd el a linket valakinek. A megosztott ének megnyílik az eszközén.',
-                sharedTitle: song.title,
-                sharedLink: getShareableLinkFor(song),
-                sharedIcon: Icons.music_note,
-              ),
+          onPressed: () => showShareDialog(
+            context,
+            title: 'Dal megosztása',
+            description:
+                'Mutasd meg a kódot vagy küldd el a linket valakinek. A megosztott ének megnyílik az eszközén.',
+            sharedTitle: song.title,
+            sharedLink: getShareableLinkFor(song),
+            sharedIcon: Icons.music_note,
+          ),
           icon: Icon(Icons.share),
           tooltip: 'Megosztási lehetőségek',
         ),

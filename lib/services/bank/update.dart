@@ -5,12 +5,17 @@ import 'package:drift/drift.dart';
 import 'package:lyric/data/database.dart';
 import 'package:lyric/main.dart';
 import 'package:lyric/services/bank/from_uuid.dart';
-import 'package:lyric/services/bank/temp_sofar_kottatar.dart';
+import 'package:lyric/services/bank/tempBankSchemas/sofar_kottatar.dart';
 
 import '../../data/bank/bank.dart';
 
 Future updateBanks() async {
-  Dio dio = Dio();
+  Dio dio = Dio(
+    BaseOptions(
+      connectTimeout: Duration(seconds: 5),
+      receiveTimeout: Duration(seconds: 10),
+    ),
+  );
 
   late List protoBanks;
   try {
@@ -35,7 +40,8 @@ Future updateBanks() async {
     Bank? existingBank = await dbWatchBankWithUuid(details['uuid']).first;
 
     Uint8List? logo;
-    if (existingBank == null || existingBank.logo == null) {
+    if (details['logo'] != null &&
+        (existingBank == null || existingBank.logo == null)) {
       try {
         logo = (await dio.get<Uint8List>(
           details['logo'],
@@ -43,7 +49,19 @@ Future updateBanks() async {
         )).data;
       } catch (_) {}
     } else {
-      logo = existingBank.logo;
+      logo = existingBank?.logo;
+    }
+    Uint8List? tinyLogo;
+    if (details['tinyLogo'] != null &&
+        (existingBank == null || existingBank.tinyLogo == null)) {
+      try {
+        tinyLogo = (await dio.get<Uint8List>(
+          details['tinyLogo'],
+          options: Options(responseType: ResponseType.bytes),
+        )).data;
+      } catch (_) {}
+    } else {
+      tinyLogo = existingBank?.tinyLogo;
     }
 
     bool isEnabled = false;
@@ -60,6 +78,7 @@ Future updateBanks() async {
       uuid: Value(details['uuid']!),
       baseUrl: Value(Uri.parse(protoBank['api'])),
       logo: Value.absentIfNull(logo),
+      tinyLogo: Value.absentIfNull(tinyLogo),
       name: Value(details['name']!),
       description: Value.absentIfNull(details['description']),
       legal: Value.absentIfNull(details['legal']),
