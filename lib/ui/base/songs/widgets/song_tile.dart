@@ -73,7 +73,7 @@ class LSongResultTile extends StatelessWidget {
           ? Tooltip(
               message: bank!.name,
               child: Padding(
-                padding: EdgeInsetsGeometry.only(right: 5),
+                padding: EdgeInsets.only(right: 5),
                 child: Image.memory(
                   bank!.tinyLogo!,
                   cacheHeight: 26,
