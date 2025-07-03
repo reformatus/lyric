@@ -7,7 +7,7 @@ import '../database.dart';
 
 class Song extends Insertable<Song> {
   final String uuid;
-  final int? sourceBankId; // todo store bank uuid (planned) instead
+  final String? sourceBank;
   final String title;
   final String opensong;
   final KeyField? keyField;
@@ -32,7 +32,7 @@ class Song extends Insertable<Song> {
         opensong: json['opensong'],
         keyField: KeyField.fromString(json['key']),
         contentMap: json.map((key, value) => MapEntry(key, value.toString())),
-        sourceBankId: sourceBank?.id,
+        sourceBank: sourceBank?.uuid,
         composer: json['composer'],
         lyricist: json['lyricist'],
         translator: json['translator'],
@@ -50,7 +50,7 @@ class Song extends Insertable<Song> {
     required this.opensong,
     required this.keyField,
     required this.contentMap,
-    this.sourceBankId,
+    this.sourceBank,
     this.composer,
     this.lyricist,
     this.translator,
@@ -69,13 +69,13 @@ class Song extends Insertable<Song> {
     }
   }
 
-  int get contentHash => Object.hash(jsonEncode(contentMap), sourceBankId);
+  int get contentHash => Object.hash(jsonEncode(contentMap), sourceBank);
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     return SongsCompanion(
       uuid: Value(uuid),
-      sourceBankId: Value(sourceBankId),
+      sourceBank: Value(sourceBank),
       contentMap: Value(contentMap),
       title: Value(title),
       opensong: Value(opensong),
@@ -95,7 +95,7 @@ const List<String> mandatoryFields = ['uuid', 'title', 'opensong'];
 class Songs extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get uuid => text()();
-  IntColumn get sourceBankId => integer().nullable().references(Banks, #id)();
+  TextColumn get sourceBank => text().nullable().references(Banks, #uuid)();
   TextColumn get contentMap => text().map(const SongContentConverter())();
   TextColumn get title => text()();
   TextColumn get opensong => text()();
