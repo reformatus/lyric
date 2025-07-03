@@ -22,10 +22,11 @@ class MultiselectFilterCard extends ConsumerStatefulWidget {
   final int fieldPopulatedCount;
 
   @override
-  ConsumerState<MultiselectFilterCard> createState() => LFilterChipsState();
+  ConsumerState<MultiselectFilterCard> createState() =>
+      MultiselectFilterCardState();
 }
 
-class LFilterChipsState extends ConsumerState<MultiselectFilterCard> {
+class MultiselectFilterCardState extends ConsumerState<MultiselectFilterCard> {
   @override
   void initState() {
     super.initState();
