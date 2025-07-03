@@ -9,34 +9,38 @@ import '../../main.dart';
 
 part 'check_new_version.g.dart';
 
-typedef VersionInfo =
-    ({
-      String versionNumber,
-      String releaseNotesMd,
-      Uri releaseInfoLink,
-      Uri downloadLink,
-    });
+typedef VersionInfo = ({
+  String versionNumber,
+  String releaseNotesMd,
+  Uri releaseInfoLink,
+  Uri downloadLink,
+});
 
 @Riverpod(keepAlive: true)
 Future<VersionInfo?> checkNewVersion(Ref ref) async {
   try {
     final latestRelease =
-        (await Dio().get<Map<String, dynamic>>(
-          '${constants.gitHubApiRoot}/releases/latest',
-        )).data!;
+        (await Dio(
+              BaseOptions(
+                connectTimeout: Duration(seconds: 5),
+                receiveTimeout: Duration(seconds: 10),
+              ),
+            ).get<Map<String, dynamic>>(
+              '${constants.gitHubApiRoot}/releases/latest',
+            ))
+            .data!;
 
     final latestVersion = (latestRelease['tag_name'] as String);
 
     final packageInfo = await PackageInfo.fromPlatform();
     final currentVersion = packageInfo.version;
 
-    final latest =
-        latestVersion
-            .split('+')
-            .first
-            .split('.')
-            .map((e) => int.parse(e))
-            .toList();
+    final latest = latestVersion
+        .split('+')
+        .first
+        .split('.')
+        .map((e) => int.parse(e))
+        .toList();
     final current = currentVersion.split('.').map((e) => int.parse(e)).toList();
 
     if (!latest.isNeverVersionThan(current)) return null;

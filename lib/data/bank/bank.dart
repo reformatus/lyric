@@ -63,7 +63,12 @@ class Bank extends Insertable<Bank> {
   bool isOfflineMode;
   DateTime? lastUpdated;
 
-  final Dio dio = Dio();
+  final Dio dio = Dio(
+    BaseOptions(
+      connectTimeout: Duration(seconds: 5),
+      receiveTimeout: Duration(seconds: 10),
+    )
+  );
 
   Bank(
     this.id,

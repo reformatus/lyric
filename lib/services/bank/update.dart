@@ -10,7 +10,12 @@ import 'package:lyric/services/bank/tempBankSchemas/sofar_kottatar.dart';
 import '../../data/bank/bank.dart';
 
 Future updateBanks() async {
-  Dio dio = Dio();
+  Dio dio = Dio(
+    BaseOptions(
+      connectTimeout: Duration(seconds: 5),
+      receiveTimeout: Duration(seconds: 10),
+    ),
+  );
 
   late List protoBanks;
   try {
