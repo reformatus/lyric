@@ -69,6 +69,19 @@ class LSongResultTile extends StatelessWidget {
                   ),
               ],
             ),
+      leading: bank.tinyLogo != null
+          ? Tooltip(
+              message: bank.name,
+              child: Padding(
+                padding: EdgeInsetsGeometry.only(right: 5),
+                child: Image.memory(
+                  bank.tinyLogo!,
+                  cacheHeight: 26,
+                  cacheWidth: 26,
+                ),
+              ),
+            )
+          : null,
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -81,18 +94,6 @@ class LSongResultTile extends StatelessWidget {
             ),
             SizedBox(width: 10),
           ],
-          if (bank.tinyLogo != null)
-            Tooltip(
-              message: bank.name,
-              child: Padding(
-                padding: EdgeInsetsGeometry.only(right: 5),
-                child: Image.memory(
-                  bank.tinyLogo!,
-                  cacheHeight: 26,
-                  cacheWidth: 26,
-                ),
-              ),
-            ),
           SongFeatures(song, downloadedAssets),
         ],
       ),
