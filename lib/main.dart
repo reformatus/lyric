@@ -54,7 +54,7 @@ const constants = (
   apiRoot: 'https://app.sofarkotta.hu/api',
   webappRoot: 'https://app.sofarkotta.hu/web',
   newsRss: 'https://testpress.server.fodor.pro/category/app/aktualis/feed',
-  buttonsRss: '',
+  buttonsRss: 'https://testpress.server.fodor.pro/category/app/linkek/feed',
   urlScheme: 'lyric',
   tabletFromWidth: 700,
   desktopFromWidth: 1000,

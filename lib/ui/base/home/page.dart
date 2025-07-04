@@ -1,7 +1,7 @@
-import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/ui/base/home/parts/promo/news_carousel.dart';
+import 'package:lyric/ui/base/home/parts/promo/buttons_section.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -11,15 +11,6 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
-  late final ScrollController linksListController;
-
-  @override
-  void initState() {
-    linksListController = ScrollController();
-
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,23 +20,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         children: [
           Container(
             color: Theme.of(context).colorScheme.onPrimary,
-            child: Column(
-              children: [
-                NewsCarousel(),
-                SizedBox(
-                  height: 30,
-                  child: FadingEdgeScrollView.fromScrollView(
-                    child: ListView(
-                      controller: linksListController,
-                      scrollDirection: Axis.horizontal,
-                      children: [
-                        FilledButton.tonal(onPressed: () {}, child: Text('hi')),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            child: Column(children: [NewsCarousel(), ButtonsSection()]),
           ),
         ],
       ),

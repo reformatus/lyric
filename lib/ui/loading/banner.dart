@@ -51,53 +51,89 @@ class UpdatingBanner extends ConsumerWidget {
       );
     }
 
-    switch (bankStates) {
-      case AsyncError(:final error, :final stackTrace):
-        return LErrorCard(
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 300),
+      child: bankStates.when(
+        error: (error, stackTrace) => LErrorCard(
+          key: const ValueKey('error'),
           type: LErrorType.error,
           title: 'Hiba a tárak frissítése közben',
           message: error.toString(),
           stack: stackTrace.toString(),
           icon: Icons.error,
-        );
-      case AsyncLoading():
-        return LinearProgressIndicator();
-      case AsyncValue<Map<Bank, ({int toUpdateCount, int updatedCount})?>>(
-        :final value!,
-      ):
-        final statesToShow = value.entries.where((e) => e.value != null);
-        final stateToShow = statesToShow.isEmpty
-            ? value.entries.first
-            : statesToShow.last;
+        ),
+        loading: () => _buildBannerStructure(
+          key: const ValueKey('loading'),
+          isLoading: true,
+        ),
+        data: (value) => _buildBannerStructure(
+          key: const ValueKey('data'),
+          value: value,
+          overallProgress: getOverallProgress(),
+        ),
+      ),
+    );
+  }
 
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            LinearProgressIndicator(value: getOverallProgress()),
-            Padding(
-              padding: EdgeInsets.only(left: 10, bottom: 5),
-              child: ListTile(
-                leading: isDone(stateToShow.value)
-                    ? Icon(Icons.check)
-                    : SizedBox.square(
-                        dimension: 25,
-                        child: CircularProgressIndicator(
-                          value: getProgress(stateToShow.value),
-                        ),
-                      ),
-                title: Text(
-                  stateToShow.key.name,
-                  style: TextStyle(fontWeight: FontWeight.w500),
-                ),
-                subtitle: Text(
-                  stateToShow.value != null
-                      ? "${stateToShow.value!.updatedCount} / ${stateToShow.value!.toUpdateCount} frissítve"
-                      : "",
-                ),
+  Widget _buildBannerStructure({
+    Key? key,
+    Map<Bank, ({int toUpdateCount, int updatedCount})?>? value,
+    double? overallProgress,
+    bool isLoading = false,
+  }) {
+    Widget leading;
+    String title = '';
+    String message = '';
+
+    if (isLoading) {
+      leading = SizedBox.square(
+        dimension: 25,
+        child: CircularProgressIndicator(),
+      );
+    } else {
+      final statesToShow = value!.entries.where((e) => e.value != null);
+      final stateToShow = statesToShow.isEmpty
+          ? value.entries.first
+          : statesToShow.last;
+
+      leading = isDone(stateToShow.value)
+          ? Icon(Icons.check)
+          : SizedBox.square(
+              dimension: 25,
+              child: CircularProgressIndicator(
+                value: getProgress(stateToShow.value),
               ),
-            ),
-          ],
-        );
+            );
+
+      title = stateToShow.key.name;
+
+      if (stateToShow.value != null) {
+        if (stateToShow.value!.toUpdateCount == 0 &&
+            stateToShow.value!.toUpdateCount == 0) {
+          message = 'Minden friss.';
+        } else {
+          message =
+              '${stateToShow.value!.updatedCount} / ${stateToShow.value!.toUpdateCount} frissítve';
+        }
+      } else {
+        message = '';
+      }
     }
+
+    return Column(
+      key: key,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        LinearProgressIndicator(value: isLoading ? null : overallProgress),
+        Padding(
+          padding: EdgeInsets.only(left: 10, bottom: 5),
+          child: ListTile(
+            leading: leading,
+            title: Text(title, style: TextStyle(fontWeight: FontWeight.w500)),
+            subtitle: Text(message),
+          ),
+        ),
+      ],
+    );
   }
 }

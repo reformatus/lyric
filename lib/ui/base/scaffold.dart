@@ -141,126 +141,138 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
         // TODO move this to global; take this into account on song page as well?
         bool showBottomNavBar =
             constraints.maxHeight / constraints.maxWidth > 1.41;
-        return Scaffold(
-          bottomNavigationBar: showBottomNavBar
-              ? NavigationBar(
-                  labelBehavior:
-                      NavigationDestinationLabelBehavior.onlyShowSelected,
-                  height: 65,
-                  destinations: destinations
-                      .map((d) => destinationFromGeneral(d))
-                      .toList(),
-                  selectedIndex: BaseScaffold._calculateSelectedIndex(context),
-                  onDestinationSelected: (int index) =>
-                      _onDestinationSelected(index, context),
-                )
-              : null,
-          body: !showBottomNavBar
-              ? Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Container(
-                      color: Theme.of(context).colorScheme.surfaceContainer,
-                      child: SafeArea(
-                        right: false,
-                        top: false,
-                        bottom: false,
-                        child: AnimatedSize(
-                          clipBehavior: Clip.none,
-                          duration: Duration(milliseconds: 300),
-                          curve: Curves.easeInOutCubicEmphasized,
-                          child: SizedBox(
-                            width: extendedNavRail ? 150 : 70,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Align(
-                                  alignment: Alignment.topRight,
-                                  child: IntrinsicHeight(
-                                    child: NavigationRail(
-                                      extended: extendedNavRail,
-                                      labelType: extendedNavRail
-                                          ? NavigationRailLabelType.none
-                                          : NavigationRailLabelType.selected,
-                                      destinations: destinations
-                                          .map(
-                                            (d) =>
-                                                railDestinationFromGeneral(d),
-                                          )
-                                          .toList(),
-                                      selectedIndex:
-                                          BaseScaffold._calculateSelectedIndex(
-                                            context,
-                                          ),
-                                      onDestinationSelected: (int index) =>
-                                          _onDestinationSelected(
-                                            index,
-                                            context,
-                                          ),
-                                      backgroundColor: Colors.transparent,
-                                      minExtendedWidth: 160,
+
+        return Column(
+          children: [
+            Expanded(
+              child: !showBottomNavBar
+                  ? Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Container(
+                          color: Theme.of(context).colorScheme.surfaceContainer,
+                          child: SafeArea(
+                            right: false,
+                            top: false,
+                            bottom: false,
+                            child: AnimatedSize(
+                              clipBehavior: Clip.none,
+                              duration: Duration(milliseconds: 300),
+                              curve: Curves.easeInOutCubicEmphasized,
+                              child: SizedBox(
+                                width: extendedNavRail ? 150 : 70,
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.topRight,
+                                      child: IntrinsicHeight(
+                                        child: NavigationRail(
+                                          extended: extendedNavRail,
+                                          labelType: extendedNavRail
+                                              ? NavigationRailLabelType.none
+                                              : NavigationRailLabelType
+                                                    .selected,
+                                          destinations: destinations
+                                              .map(
+                                                (d) =>
+                                                    railDestinationFromGeneral(
+                                                      d,
+                                                    ),
+                                              )
+                                              .toList(),
+                                          selectedIndex:
+                                              BaseScaffold._calculateSelectedIndex(
+                                                context,
+                                              ),
+                                          onDestinationSelected: (int index) =>
+                                              _onDestinationSelected(
+                                                index,
+                                                context,
+                                              ),
+                                          backgroundColor: Colors.transparent,
+                                          minExtendedWidth: 160,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                                Spacer(),
-                                Padding(
-                                  padding: EdgeInsets.all(8),
-                                  child: Flex(
-                                    direction: extendedNavRail
-                                        ? Axis.horizontal
-                                        : Axis.vertical,
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Badge(
-                                        label: Text(unreadLogCount.toString()),
-                                        isLabelVisible: unreadLogCount > 0,
-                                        child: IconButton.outlined(
-                                          onPressed: () => showDialog(
-                                            context: context,
-                                            builder: (context) =>
-                                                LogViewDialog(),
+                                    Spacer(),
+                                    Padding(
+                                      padding: EdgeInsets.all(8),
+                                      child: Flex(
+                                        direction: extendedNavRail
+                                            ? Axis.horizontal
+                                            : Axis.vertical,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Badge(
+                                            label: Text(
+                                              unreadLogCount.toString(),
+                                            ),
+                                            isLabelVisible: unreadLogCount > 0,
+                                            child: IconButton.outlined(
+                                              onPressed: () => showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    LogViewDialog(),
+                                              ),
+                                              tooltip: "Napló",
+                                              icon: Icon(
+                                                Icons.notification_important,
+                                              ),
+                                            ),
                                           ),
-                                          tooltip: "Napló",
-                                          icon: Icon(
-                                            Icons.notification_important,
+                                          if (extendedNavRail) Spacer(),
+                                          IconButton(
+                                            icon: Icon(
+                                              extendedNavRail
+                                                  ? Icons.chevron_left
+                                                  : Icons.chevron_right,
+                                            ),
+                                            tooltip: extendedNavRail
+                                                ? "Összecsukás"
+                                                : "Kinyitás",
+                                            onPressed: () {
+                                              setState(() {
+                                                extendedNavRail =
+                                                    !extendedNavRail;
+                                              });
+                                            },
                                           ),
-                                        ),
+                                        ],
                                       ),
-                                      if (extendedNavRail) Spacer(),
-                                      IconButton(
-                                        icon: Icon(
-                                          extendedNavRail
-                                              ? Icons.chevron_left
-                                              : Icons.chevron_right,
-                                        ),
-                                        tooltip: extendedNavRail
-                                            ? "Összecsukás"
-                                            : "Kinyitás",
-                                        onPressed: () {
-                                          setState(() {
-                                            extendedNavRail = !extendedNavRail;
-                                          });
-                                        },
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                    Expanded(
-                      child: MediaQuery.removePadding(
-                        removeLeft: true,
-                        context: context,
-                        child: SafeArea(child: widget.child),
-                      ),
-                    ),
-                  ],
-                )
-              : widget.child,
+                        Expanded(
+                          child: MediaQuery.removePadding(
+                            removeLeft: true,
+                            context: context,
+                            child: SafeArea(child: widget.child),
+                          ),
+                        ),
+                      ],
+                    )
+                  : widget.child,
+            ),
+            if (showBottomNavBar)
+              NavigationBar(
+                labelBehavior:
+                    NavigationDestinationLabelBehavior.onlyShowSelected,
+                height: 65,
+                destinations: destinations
+                    .map((d) => destinationFromGeneral(d))
+                    .toList(),
+                selectedIndex: BaseScaffold._calculateSelectedIndex(context),
+                onDestinationSelected: (int index) =>
+                    _onDestinationSelected(index, context),
+              ),
+          ],
         );
       },
     );

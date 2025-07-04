@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -19,11 +18,9 @@ typedef VersionInfo = ({
 @Riverpod(keepAlive: true)
 Future<VersionInfo?> checkNewVersion(Ref ref) async {
   try {
-    final latestRelease =
-        (await globals.dio.get<Map<String, dynamic>>(
-              '${constants.gitHubApiRoot}/releases/latest',
-            ))
-            .data!;
+    final latestRelease = (await globals.dio.get<Map<String, dynamic>>(
+      '${constants.gitHubApiRoot}/releases/latest',
+    )).data!;
 
     final latestVersion = (latestRelease['tag_name'] as String);
 
