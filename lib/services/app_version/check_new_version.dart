@@ -20,12 +20,7 @@ typedef VersionInfo = ({
 Future<VersionInfo?> checkNewVersion(Ref ref) async {
   try {
     final latestRelease =
-        (await Dio(
-              BaseOptions(
-                connectTimeout: Duration(seconds: 5),
-                receiveTimeout: Duration(seconds: 10),
-              ),
-            ).get<Map<String, dynamic>>(
+        (await globals.dio.get<Map<String, dynamic>>(
               '${constants.gitHubApiRoot}/releases/latest',
             ))
             .data!;

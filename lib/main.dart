@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -36,6 +37,12 @@ final globals = (
   isWeb: kIsWeb,
   scaffoldKey: GlobalKey<ScaffoldMessengerState>(),
   router: _router,
+  dio: Dio(
+    BaseOptions(
+      connectTimeout: Duration(seconds: 5),
+      receiveTimeout: Duration(seconds: 10),
+    ),
+  ),
 );
 
 const constants = (
@@ -46,6 +53,8 @@ const constants = (
   homepageRoot: 'https://app.sofarkotta.hu',
   apiRoot: 'https://app.sofarkotta.hu/api',
   webappRoot: 'https://app.sofarkotta.hu/web',
+  newsRss: 'https://testpress.server.fodor.pro/category/app/aktualis/feed',
+  buttonsRss: '',
   urlScheme: 'lyric',
   tabletFromWidth: 700,
   desktopFromWidth: 1000,
