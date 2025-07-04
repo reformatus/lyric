@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../main.dart';
 import '../bank/bank_of_song.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -36,16 +37,9 @@ Stream<AssetResult> getSongAsset(
       controller.add((progress: 1.0, data: asset.content));
       await controller.close();
     } else {
-      final dio = Dio(
-        BaseOptions(
-          connectTimeout: Duration(seconds: 5),
-          receiveTimeout: Duration(seconds: 10),
-        ),
-      );
-
       // Download the asset with progress updates
       try {
-        final response = await dio.get<List<int>>(
+        final response = await globals.dio.get<List<int>>(
           sourceUrl,
           options: Options(
             responseType: ResponseType.bytes,

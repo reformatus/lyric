@@ -10,16 +10,9 @@ import 'package:lyric/services/bank/tempBankSchemas/sofar_kottatar.dart';
 import '../../data/bank/bank.dart';
 
 Future updateBanks() async {
-  Dio dio = Dio(
-    BaseOptions(
-      connectTimeout: Duration(seconds: 5),
-      receiveTimeout: Duration(seconds: 10),
-    ),
-  );
-
   late List protoBanks;
   try {
-    protoBanks = (await dio.get<List>('${constants.apiRoot}/banks')).data!;
+    protoBanks = (await globals.dio.get<List>('${constants.apiRoot}/banks')).data!;
   } catch (e) {
     throw Exception('Nem sikerült lekérni az elérhető daltárakat: $e');
   }
@@ -43,7 +36,7 @@ Future updateBanks() async {
     if (details['logo'] != null &&
         (existingBank == null || existingBank.logo == null)) {
       try {
-        logo = (await dio.get<Uint8List>(
+        logo = (await globals.dio.get<Uint8List>(
           details['logo'],
           options: Options(responseType: ResponseType.bytes),
         )).data;
@@ -55,7 +48,7 @@ Future updateBanks() async {
     if (details['tinyLogo'] != null &&
         (existingBank == null || existingBank.tinyLogo == null)) {
       try {
-        tinyLogo = (await dio.get<Uint8List>(
+        tinyLogo = (await globals.dio.get<Uint8List>(
           details['tinyLogo'],
           options: Options(responseType: ResponseType.bytes),
         )).data;

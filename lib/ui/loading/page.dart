@@ -29,7 +29,7 @@ class _LoadingPageState extends ConsumerState<LoadingPage> {
       _hasNavigated = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          context.pushReplacement('/home');
+          context.replace('/home');
         }
       });
     }
@@ -41,10 +41,14 @@ class _LoadingPageState extends ConsumerState<LoadingPage> {
 
     // Listen for hasEverUpdated changes and show banner
     ref.listenManual(hasEverUpdatedAnythingProvider, (previous, next) {
-      next.whenData((d) {
-        if (d) showOnlineBanksUpdatingBanner();
-      });
       _checkAndNavigateIfReady();
+      next.whenData((d) async {
+        if (d) {
+          Future(() {
+            showOnlineBanksUpdatingBanner();
+          });
+        }
+      });
     });
 
     // Listen for bank states and navigate when done
@@ -165,7 +169,7 @@ class _LoadingPageState extends ConsumerState<LoadingPage> {
                           ),
                         ),
               }
-            : CircularProgressIndicator(),
+            : SizedBox.shrink(),
       ),
     );
   }

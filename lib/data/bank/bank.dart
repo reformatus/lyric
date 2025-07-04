@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import 'package:dio/dio.dart';
 import 'package:drift/drift.dart';
 import 'package:intl/intl.dart';
 
 //import 'package:path_provider/path_provider.dart';
 
+import '../../main.dart';
 import '../database.dart';
 import '../song/song.dart';
 
@@ -63,13 +63,6 @@ class Bank extends Insertable<Bank> {
   bool isOfflineMode;
   DateTime? lastUpdated;
 
-  final Dio dio = Dio(
-    BaseOptions(
-      connectTimeout: Duration(seconds: 5),
-      receiveTimeout: Duration(seconds: 10),
-    )
-  );
-
   Bank(
     this.id,
     this.uuid,
@@ -94,7 +87,7 @@ class Bank extends Insertable<Bank> {
       String formattedDate = DateFormat('yyyy-MM-dd+HH:mm').format(since);
       url += '?c=$formattedDate';
     }
-    final resp = await dio.get<String>(url);
+    final resp = await globals.dio.get<String>(url);
     final jsonList = jsonDecode(resp.data ?? "[]") as List;
 
     return jsonList
@@ -105,7 +98,7 @@ class Bank extends Insertable<Bank> {
   Future<List<Song>> getDetailsForSongs(List<String> uuids) async {
     Uri source = Uri.parse('$baseUrl/song/${uuids.join(',')}');
 
-    final resp = await dio.getUri<String>(source);
+    final resp = await globals.dio.getUri<String>(source);
     try {
       var songsJson = jsonDecode(resp.data!);
       if (songsJson is List) {
