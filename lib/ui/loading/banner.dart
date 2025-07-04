@@ -108,8 +108,7 @@ class UpdatingBanner extends ConsumerWidget {
       title = stateToShow.key.name;
 
       if (stateToShow.value != null) {
-        if (stateToShow.value!.toUpdateCount == 0 &&
-            stateToShow.value!.toUpdateCount == 0) {
+        if (stateToShow.value!.toUpdateCount == 0) {
           message = 'Minden friss.';
         } else {
           message =
