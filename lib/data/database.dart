@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'package:lyric/data/preferences/storage.dart';
 
 /*
 // Used for debugging
@@ -23,7 +24,7 @@ late LyricDatabase db;
 late final Directory dataDir;
 
 @DriftDatabase(
-  tables: [Songs, Banks, Assets, Cues],
+  tables: [Songs, Banks, Assets, Cues, PreferenceStorage],
   include: {
     'song/song.drift',
     '../services/songs/filter.drift',
