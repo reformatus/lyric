@@ -44,8 +44,7 @@ class LSongResultTile extends StatelessWidget {
                     overflow: TextOverflow.fade,
                   )
           : Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 if (hasMatch(result.matchOpensong))
                   contentResultRow(
@@ -109,20 +108,22 @@ class LSongResultTile extends StatelessWidget {
       children: [
         Icon(iconData, size: 18),
         SizedBox(width: 5),
-        RichText(
-          text: TextSpan(
-            children: spansFromSnippet(
-              matchString ?? "",
-              normalStyle: Theme.of(context).textTheme.bodySmall!,
-              highlightStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
+        Expanded(
+          child: RichText(
+            text: TextSpan(
+              children: spansFromSnippet(
+                matchString ?? "",
+                normalStyle: Theme.of(context).textTheme.bodySmall!,
+                highlightStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
             ),
+            maxLines: 1,
+            softWrap: false,
+            overflow: TextOverflow.fade,
           ),
-          maxLines: 1,
-          softWrap: false,
-          overflow: TextOverflow.fade,
         ),
       ],
     );
@@ -137,75 +138,80 @@ class SongFeatures extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Tooltip(
-      richMessage: TextSpan(
-        children: [
+    return SizedBox(
+      height: 40,
+      child: Tooltip(
+        richMessage: TextSpan(
+          children: [
+            // TODO factor out to make configurable
+            // TODO explain current applicable state instead of general info
+            TextSpan(text: 'Tartalom: '),
+            WidgetSpan(
+              child: Icon(
+                Icons.music_note_outlined,
+                size: 18,
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
+            ),
+            TextSpan(text: 'Kotta, '),
+            WidgetSpan(
+              child: Icon(
+                Icons.audio_file_outlined,
+                size: 18,
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
+            ),
+            TextSpan(text: 'PDF, '),
+            WidgetSpan(
+              child: Icon(
+                Icons.text_snippet_outlined,
+                size: 18,
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
+            ),
+            TextSpan(text: 'Dalszöveg, '),
+            WidgetSpan(
+              child: Icon(
+                Icons.tag_outlined,
+                size: 18,
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
+            ),
+            TextSpan(text: 'Akkord'),
+            TextSpan(text: '\nZöld: letöltve, Szürke: nem elérhető'),
+          ],
+        ),
+        child: Wrap(
+          direction: Axis.vertical,
+          alignment: WrapAlignment.spaceEvenly,
           // TODO factor out to make configurable
-          TextSpan(text: 'Tartalom: '),
-          WidgetSpan(
-            child: Icon(
+          children: [
+            indicatorIcon(
+              context,
               Icons.music_note_outlined,
-              size: 18,
-              color: Theme.of(context).colorScheme.onPrimary,
+              available: song.hasSvg,
+              downloaded: downloadedAssets.contains('svg'),
             ),
-          ),
-          TextSpan(text: 'Kotta, '),
-          WidgetSpan(
-            child: Icon(
+            indicatorIcon(
+              context,
               Icons.audio_file_outlined,
-              size: 18,
-              color: Theme.of(context).colorScheme.onPrimary,
+              available: song.hasPdf,
+              downloaded: downloadedAssets.contains('pdf'),
             ),
-          ),
-          TextSpan(text: 'PDF, '),
-          WidgetSpan(
-            child: Icon(
+            indicatorIcon(
+              context,
               Icons.text_snippet_outlined,
-              size: 18,
-              color: Theme.of(context).colorScheme.onPrimary,
+              available: song.hasLyrics,
+              downloaded: song.hasLyrics,
             ),
-          ),
-          TextSpan(text: 'Dalszöveg, '),
-          WidgetSpan(
-            child: Icon(
+            indicatorIcon(
+              context,
               Icons.tag_outlined,
-              size: 18,
-              color: Theme.of(context).colorScheme.onPrimary,
+              available: song.hasChords,
+              downloaded: song.hasChords,
             ),
-          ),
-          TextSpan(text: 'Akkord'),
-          TextSpan(text: '\nZöld: letöltve, Szürke: nem elérhető'),
-        ],
-      ),
-      child: Wrap(
-        direction: Axis.vertical,
-        // TODO factor out to make configurable
-        children: [
-          indicatorIcon(
-            context,
-            Icons.music_note_outlined,
-            available: song.hasSvg,
-            downloaded: downloadedAssets.contains('svg'),
-          ),
-          indicatorIcon(
-            context,
-            Icons.audio_file_outlined,
-            available: song.hasPdf,
-            downloaded: downloadedAssets.contains('pdf'),
-          ),
-          indicatorIcon(
-            context,
-            Icons.text_snippet_outlined,
-            available: song.hasLyrics,
-            downloaded: song.hasLyrics,
-          ),
-          indicatorIcon(
-            context,
-            Icons.tag_outlined,
-            available: song.hasChords,
-            downloaded: song.hasChords,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
