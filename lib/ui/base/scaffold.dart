@@ -261,16 +261,20 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
                   : widget.child,
             ),
             if (showBottomNavBar)
-              NavigationBar(
-                labelBehavior:
-                    NavigationDestinationLabelBehavior.onlyShowSelected,
-                height: 65,
-                destinations: destinations
-                    .map((d) => destinationFromGeneral(d))
-                    .toList(),
-                selectedIndex: BaseScaffold._calculateSelectedIndex(context),
-                onDestinationSelected: (int index) =>
-                    _onDestinationSelected(index, context),
+              MediaQuery.removePadding(
+                context: context,
+                removeTop: true,
+                child: NavigationBar(
+                  labelBehavior:
+                      NavigationDestinationLabelBehavior.onlyShowSelected,
+                  height: 65,
+                  destinations: destinations
+                      .map((d) => destinationFromGeneral(d))
+                      .toList(),
+                  selectedIndex: BaseScaffold._calculateSelectedIndex(context),
+                  onDestinationSelected: (int index) =>
+                      _onDestinationSelected(index, context),
+                ),
               ),
           ],
         );
