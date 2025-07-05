@@ -2,7 +2,6 @@ import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lyric/services/bank/banks.dart';
-import 'package:lyric/ui/base/songs/widgets/bank_chooser.dart';
 import 'package:lyric/ui/base/songs/widgets/filter/types/bank/state.dart';
 import '../../../data/bank/bank.dart';
 import '../../common/centered_hint.dart';
@@ -35,7 +34,6 @@ class _SongsPageState extends ConsumerState<SongsPage> {
     _filterExpansionScrollController = ScrollController();
     _filterSidebarScrollController = ScrollController();
     _filterExpansionTileController = ExpansibleController();
-    _filterExpansionTileController.expand();
     _searchFieldController = TextEditingController(
       text: ref.read(searchStringStateProvider),
     );
@@ -64,14 +62,21 @@ class _SongsPageState extends ConsumerState<SongsPage> {
 
   bool filtersScrolled = false;
 
-  bool bankChooserDismissed = false;
-
   late OverlayPortalController _overlayPortalController;
   late ScrollController _filterExpansionScrollController;
   late ScrollController _filterSidebarScrollController;
   late ExpansibleController _filterExpansionTileController;
   late TextEditingController _searchFieldController;
   final _link = LayerLink();
+
+  bool get _areAllFiltersEmpty {
+    final filterState = ref.read(multiselectTagsFilterStateProvider);
+    final keyFilterState = ref.read(keyFilterStateProvider);
+    final banksFilterState = ref.read(banksFilterStateProvider);
+    return filterState.isEmpty &&
+        keyFilterState.isEmpty &&
+        banksFilterState.isEmpty;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -210,15 +215,13 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                                                 //reverseCurve: Curves.easeInOutCubicEmphasized,
                                               ),
                                               collapsedBackgroundColor:
-                                                  (filterState.isEmpty &&
-                                                      keyFilterState.isEmpty)
+                                                  _areAllFiltersEmpty
                                                   ? null
                                                   : Theme.of(context)
                                                         .colorScheme
                                                         .secondaryContainer,
                                               collapsedIconColor:
-                                                  (filterState.isEmpty &&
-                                                      keyFilterState.isEmpty)
+                                                  _areAllFiltersEmpty
                                                   ? null
                                                   : Theme.of(context)
                                                         .colorScheme
@@ -258,63 +261,56 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                                   ),
                                 ),
                               ),
-                            if (!bankChooserDismissed &&
-                                constraints.maxWidth <
-                                    constants.tabletFromWidth)
-                              Expanded(child: BankChooser())
-                            else
-                              Expanded(
-                                // Songs list
-                                child: switch (songResults) {
-                                  AsyncError(:final error, :final stackTrace) =>
-                                    Center(
-                                      child: LErrorCard(
-                                        type: LErrorType.error,
-                                        title: 'Hová lettek a dalok? :(',
-                                        message: error.toString(),
-                                        icon: Icons.error,
-                                        stack: stackTrace.toString(),
-                                      ),
+                            Expanded(
+                              // Songs list
+                              child: switch (songResults) {
+                                AsyncError(:final error, :final stackTrace) =>
+                                  Center(
+                                    child: LErrorCard(
+                                      type: LErrorType.error,
+                                      title: 'Hová lettek a dalok? :(',
+                                      message: error.toString(),
+                                      icon: Icons.error,
+                                      stack: stackTrace.toString(),
                                     ),
-                                  AsyncValue(:final value) =>
-                                    value == null
-                                        ? const Center(
-                                            child: CircularProgressIndicator(),
-                                          )
-                                        : searchString.isNotEmpty &&
-                                              searchString.length < 3
-                                        ? CenteredHint(
-                                            'Írj be legalább három betűt a kereséshez.',
-                                            iconData: Icons.search,
-                                          )
-                                        : value.isEmpty
-                                        ? CenteredHint(
-                                            'Nincs találat :(',
-                                            iconData: Icons.search_off,
-                                          )
-                                        : ListView.builder(
-                                            itemBuilder:
-                                                (BuildContext context, int i) {
-                                                  return LSongResultTile(
-                                                    value.elementAt(i),
-                                                    banksFilterState.length == 1
-                                                        ? null
-                                                        : banks.firstWhere(
-                                                            (b) =>
-                                                                b.uuid ==
-                                                                value
-                                                                    .elementAt(
-                                                                      i,
-                                                                    )
-                                                                    .song
-                                                                    .sourceBank,
-                                                          ),
-                                                  );
-                                                },
-                                            itemCount: value.length,
-                                          ),
-                                },
-                              ),
+                                  ),
+                                AsyncValue(:final value) =>
+                                  value == null
+                                      ? const Center(
+                                          child: CircularProgressIndicator(),
+                                        )
+                                      : searchString.isNotEmpty &&
+                                            searchString.length < 3
+                                      ? CenteredHint(
+                                          'Írj be legalább három betűt a kereséshez.',
+                                          iconData: Icons.search,
+                                        )
+                                      : value.isEmpty
+                                      ? CenteredHint(
+                                          'Nincs találat :(',
+                                          iconData: Icons.search_off,
+                                        )
+                                      : ListView.builder(
+                                          itemBuilder:
+                                              (BuildContext context, int i) {
+                                                return LSongResultTile(
+                                                  value.elementAt(i),
+                                                  banksFilterState.length == 1
+                                                      ? null
+                                                      : banks.firstWhere(
+                                                          (b) =>
+                                                              b.uuid ==
+                                                              value
+                                                                  .elementAt(i)
+                                                                  .song
+                                                                  .sourceBank,
+                                                        ),
+                                                );
+                                              },
+                                          itemCount: value.length,
+                                        ),
+                              },
+                            ),
                           ],
                         ),
                       ),
@@ -338,8 +334,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                               banksFilterState: banksFilterState,
                             ),
                             automaticallyImplyLeading: false,
-                            backgroundColor:
-                                filterState.isEmpty && keyFilterState.isEmpty
+                            backgroundColor: _areAllFiltersEmpty
                                 ? Theme.of(context).colorScheme.surface
                                 : Theme.of(
                                     context,
@@ -458,7 +453,9 @@ class FiltersTitle extends ConsumerWidget {
                       ),
               ),
           if (banksFilterState.isNotEmpty) SizedBox(width: 10),
-          if (filterState.isNotEmpty || keyFilterState.isNotEmpty)
+          if (filterState.isNotEmpty ||
+              keyFilterState.isNotEmpty ||
+              banksFilterState.isNotEmpty)
             IconButton(
               icon: Icon(Icons.clear),
               onPressed: () {

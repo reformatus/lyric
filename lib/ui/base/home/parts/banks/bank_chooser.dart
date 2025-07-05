@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lyric/data/bank/bank.dart';
 import 'package:lyric/services/bank/banks.dart';
+import 'package:lyric/ui/base/songs/widgets/filter/types/bank/state.dart';
 import 'package:lyric/ui/common/error/card.dart';
 
 class BankChooser extends ConsumerWidget {
@@ -36,7 +38,15 @@ class BankChooser extends ConsumerWidget {
                   onPressed: () {},
                 ),
                 Spacer(),
-                TextButton(onPressed: () {}, child: Text('Ne mutassa többet')),
+                Padding(
+                  padding: EdgeInsets.only(right: 6),
+                  child: FilledButton.icon(
+                    iconAlignment: IconAlignment.end,
+                    onPressed: () => context.go('/bank'),
+                    label: Text('Összes dal'),
+                    icon: Icon(Icons.chevron_right),
+                  ),
+                ),
               ],
             ),
             ...value.map((bank) => BankTile(bank)),
@@ -47,14 +57,15 @@ class BankChooser extends ConsumerWidget {
   }
 }
 
-class BankTile extends StatelessWidget {
+class BankTile extends ConsumerWidget {
   const BankTile(this.bank, {super.key});
 
   final Bank bank;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Card(
+      margin: EdgeInsets.symmetric(horizontal: 6),
       clipBehavior: Clip.antiAlias,
       child: SizedBox(
         height: 80,
@@ -83,7 +94,7 @@ class BankTile extends StatelessWidget {
                         style: Theme.of(context).textTheme.bodyMedium,
                       )
                     : null,
-                trailing: Row(
+                /*trailing: Row( // TODO download functionality
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
@@ -91,7 +102,7 @@ class BankTile extends StatelessWidget {
                       onPressed: () {},
                     ),
                   ],
-                ),
+                ),*/
               ),
             ),
             SizedBox(
@@ -100,8 +111,13 @@ class BankTile extends StatelessWidget {
                 elevation: 2,
                 color: Theme.of(context).colorScheme.surfaceContainerHigh,
                 child: InkWell(
-                  onTap: () {},
-                  child: Center(child: Icon(Icons.arrow_right_sharp)),
+                  onTap: () {
+                    ref
+                        .read(banksFilterStateProvider.notifier)
+                        .setFilter(bank.uuid, true);
+                    context.go('/bank');
+                  },
+                  child: Center(child: Icon(Icons.chevron_right)),
                 ),
               ),
             ),

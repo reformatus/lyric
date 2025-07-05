@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/ui/base/home/parts/banks/bank_chooser.dart';
 import 'package:lyric/ui/base/home/parts/promo/news_carousel.dart';
 import 'package:lyric/ui/base/home/parts/promo/buttons_section.dart';
 
@@ -22,6 +23,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             color: Theme.of(context).colorScheme.onPrimary,
             child: Column(children: [NewsCarousel(), ButtonsSection()]),
           ),
+          Expanded(child: BankChooser()),
         ],
       ),
     );
