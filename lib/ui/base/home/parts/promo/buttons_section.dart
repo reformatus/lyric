@@ -32,7 +32,7 @@ class _ButtonsSectionState extends ConsumerState<ButtonsSection> {
     final buttons = ref.watch(getButtonsProvider);
 
     return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 500),
+      duration: Durations.medium3,
       child: buttons.when(
         data: (buttonItems) {
           // Hide the section if there are no button items
@@ -55,7 +55,7 @@ class _ButtonsSectionState extends ConsumerState<ButtonsSection> {
     return Container(
       key: key,
       padding: const EdgeInsets.only(top: 5, bottom: 8),
-      height: 45,
+      height: 53,
       child: const SizedBox.shrink(), // Just maintain the vertical space
     );
   }
@@ -75,8 +75,8 @@ class _ButtonsSectionState extends ConsumerState<ButtonsSection> {
 
     return Container(
       key: key,
+      height: 53,
       padding: const EdgeInsets.only(top: 5, bottom: 8),
-      height: 45,
       child: FadingEdgeScrollView.fromScrollView(
         child: ListView(
           controller: _scrollController,
@@ -111,7 +111,7 @@ class _ButtonItem extends StatelessWidget {
       return FilledButton.tonalIcon(
         onPressed: () async {
           try {
-            await launchUrl(buttonItem.link);
+            await launchUrl(buttonItem.link, mode: LaunchMode.inAppBrowserView);
           } catch (e) {
             // Handle error silently
           }
@@ -123,7 +123,7 @@ class _ButtonItem extends StatelessWidget {
       return FilledButton.tonal(
         onPressed: () async {
           try {
-            await launchUrl(buttonItem.link);
+            await launchUrl(buttonItem.link, mode: LaunchMode.inAppBrowserView);
           } catch (e) {
             // Handle error silently
           }

@@ -12,7 +12,7 @@ class NewsCarousel extends ConsumerWidget {
     final news = ref.watch(getNewsProvider);
 
     return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 1000),
+      duration: Durations.long1,
       child: news.when(
         data: (newsItems) {
           // Hide the carousel if there are no news items
@@ -99,7 +99,10 @@ class NewsCarousel extends ConsumerWidget {
             shrinkExtent: 100,
             onTap: (index) async {
               try {
-                await launchUrl(newsItems[index].link);
+                await launchUrl(
+                  newsItems[index].link,
+                  mode: LaunchMode.inAppBrowserView,
+                );
               } catch (_) {}
             },
             children: children,

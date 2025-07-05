@@ -27,7 +27,10 @@ class BankChooser extends ConsumerWidget {
             Row(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 18,
+                  ),
                   child: Text(
                     'DALTÁRAK',
                     style: Theme.of(context).textTheme.labelLarge,

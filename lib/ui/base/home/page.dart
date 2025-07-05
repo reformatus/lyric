@@ -19,10 +19,15 @@ class _HomePageState extends ConsumerState<HomePage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Container(
+          Material(
             color: Theme.of(context).colorScheme.onPrimary,
-            child: Column(children: [NewsCarousel(), ButtonsSection()]),
+            elevation: 3,
+            child: AnimatedSize(
+              duration: Durations.long1,
+              child: Column(children: [NewsCarousel(), ButtonsSection()]),
+            ),
           ),
+          SizedBox(height: 8),
           Expanded(child: BankChooser()),
         ],
       ),

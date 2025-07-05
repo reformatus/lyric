@@ -52,7 +52,7 @@ class UpdatingBanner extends ConsumerWidget {
     }
 
     return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 300),
+      duration: Durations.medium2,
       child: bankStates.when(
         error: (error, stackTrace) => LErrorCard(
           key: const ValueKey('error'),
