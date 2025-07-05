@@ -37,7 +37,10 @@ class _BankFilterCardState extends ConsumerState<BankFilterCard> {
             .setFilter(bank.uuid, setTo),
         chipLabelBuilder: (bank) => bank.name,
         chipLeadingBuilder: (bank) => (bank.tinyLogo != null)
-            ? Image.memory(bank.tinyLogo!, cacheHeight: 20, cacheWidth: 20)
+            ? SizedBox.square(
+                dimension: 20,
+                child: Image.memory(bank.tinyLogo!),
+              )
             : null,
       ),
     );

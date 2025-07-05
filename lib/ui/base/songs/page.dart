@@ -436,10 +436,9 @@ class FiltersTitle extends ConsumerWidget {
                 (b) => b.tinyLogo != null
                     ? Tooltip(
                         message: b.name,
-                        child: Image.memory(
-                          b.tinyLogo!,
-                          cacheWidth: 30,
-                          cacheHeight: 30,
+                        child: SizedBox.square(
+                          dimension: 30,
+                          child: Image.memory(b.tinyLogo!),
                         ),
                       )
                     : ConstrainedBox(

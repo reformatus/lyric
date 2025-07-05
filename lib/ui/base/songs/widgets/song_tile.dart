@@ -73,10 +73,9 @@ class LSongResultTile extends StatelessWidget {
               message: bank!.name,
               child: Padding(
                 padding: EdgeInsets.only(right: 5),
-                child: Image.memory(
-                  bank!.tinyLogo!,
-                  cacheHeight: 26,
-                  cacheWidth: 26,
+                child: SizedBox.square(
+                  dimension: 26,
+                  child: Image.memory(bank!.tinyLogo!),
                 ),
               ),
             )
