@@ -249,11 +249,12 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
                             ),
                           ),
                         ),
+                        // TODO validate on iOS!
                         Expanded(
                           child: MediaQuery.removePadding(
                             removeLeft: true,
                             context: context,
-                            child: SafeArea(child: widget.child),
+                            child: widget.child,
                           ),
                         ),
                       ],
