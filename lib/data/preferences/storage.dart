@@ -6,5 +6,5 @@ class PreferenceStorage extends Table {
   TextColumn get value => text().map(const MapConverter())();
 
   @override
-  Set<Column<Object>> get primaryKey => {value};
+  Set<Column<Object>> get primaryKey => {key};
 }

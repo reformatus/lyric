@@ -9,11 +9,12 @@ class LyricsViewStyle {
     required this.verseTagSize,
   });
 
-  factory LyricsViewStyle.fromJson(Map<String, dynamic> json) {
+  factory LyricsViewStyle.fromJson(Map<String, dynamic>? json) {
     return LyricsViewStyle(
-      lyricsSize: json['lyricsSize'],
-      chordsSize: json['chordsSize'],
-      verseTagSize: json['verseTagSize'],
+      // TODO default values
+      lyricsSize: json?['lyricsSize'] ?? 20,
+      chordsSize: json?['chordsSize'] ?? 20,
+      verseTagSize: json?['verseTagSize'] ?? 20,
     );
   }
 

@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:drift/drift.dart';
+import 'package:lyric/data/log/logger.dart';
 
 import '../database.dart';
 import 'classes/lyrics_view_style.dart';
@@ -10,7 +11,7 @@ sealed class PreferencesClass<T extends PreferencesClass<T>> {
   PreferencesClass(this.key);
 
   /// Abstract method for subclasses to provide their fromJson factory
-  T fromJson(Map<String, dynamic> json);
+  T fromJson(Map<String, dynamic>? json);
 
   /// Initialize self from database
   Future<T> getFromDb() async {
@@ -18,11 +19,11 @@ sealed class PreferencesClass<T extends PreferencesClass<T>> {
     return fromJson(json);
   }
 
-  Future<Map<String, dynamic>> _getJsonFromDb() async {
+  Future<Map<String, dynamic>?> _getJsonFromDb() async {
     final json =
         (await (db.preferenceStorage.select()..where((p) => p.key.equals(key)))
-                .getSingle())
-            .value;
+                .getSingleOrNull())
+            ?.value;
     return json;
   }
 
@@ -30,15 +31,32 @@ sealed class PreferencesClass<T extends PreferencesClass<T>> {
 
   /// Write self to database
   Future writeToDb() async {
-    await ((db.update(db.preferenceStorage)..where((p) => p.key.equals(key)))
-        .write(PreferenceStorageCompanion(value: Value(toJson()))));
+    try {
+      await db
+          .into(db.preferenceStorage)
+          .insert(
+            PreferenceStorageCompanion(key: Value(key), value: Value(toJson())),
+            mode: InsertMode.insertOrReplace,
+          );
+    } catch (e, s) {
+      log.severe('Beállítások: Nem sikerült $key mentése!', e, s);
+    }
   }
+}
+
+enum BrightnessSetting {
+  light('Világos'),
+  dark('Sötét'),
+  device('Eszköz');
+
+  final String title;
+  const BrightnessSetting(this.title);
 }
 
 class GeneralPreferencesClass
     extends PreferencesClass<GeneralPreferencesClass> {
-  Brightness appBrightness;
-  Brightness sheetBrightness;
+  BrightnessSetting appBrightness;
+  BrightnessSetting sheetBrightness;
 
   GeneralPreferencesClass({
     required this.appBrightness,
@@ -46,12 +64,12 @@ class GeneralPreferencesClass
   }) : super('generalPreferences');
 
   @override
-  GeneralPreferencesClass fromJson(Map<String, dynamic> json) {
+  GeneralPreferencesClass fromJson(Map<String, dynamic>? json) {
     return GeneralPreferencesClass(
-      appBrightness:
-          Brightness.values[json['appBrightness'] ?? Brightness.light.index],
-      sheetBrightness:
-          Brightness.values[json['sheetBrightness'] ?? Brightness.light.index],
+      appBrightness: BrightnessSetting
+          .values[json?['appBrightness'] ?? BrightnessSetting.device.index],
+      sheetBrightness: BrightnessSetting
+          .values[json?['sheetBrightness'] ?? BrightnessSetting.light.index],
     );
   }
 
@@ -74,10 +92,12 @@ class SongPreferencesClass extends PreferencesClass<SongPreferencesClass> {
   }) : super('songPreferences');
 
   @override
-  SongPreferencesClass fromJson(Map<String, dynamic> json) {
+  SongPreferencesClass fromJson(Map<String, dynamic>? json) {
     return SongPreferencesClass(
-      lyricsViewStyle: LyricsViewStyle.fromJson(json['lyricsViewStyle'] ?? {}),
-      songViewOrder: Set.from(json['songViewOrder'] ?? []),
+      lyricsViewStyle: LyricsViewStyle.fromJson(json?['lyricsViewStyle']),
+      songViewOrder: Set.from(
+        json?['songViewOrder'] ?? ['svg', 'pdf', 'chords', 'lyrics'],
+      ),
     );
   }
 

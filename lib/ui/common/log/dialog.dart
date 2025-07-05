@@ -46,44 +46,38 @@ class _LogViewDialogState extends ConsumerState<LogViewDialog> {
             ],
             actionsPadding: EdgeInsets.only(right: 8),
           ),
-          body:
-              messages.isEmpty
-                  ? Center(
-                    child: CenteredHint(
-                      'Nincs naplóüzenet',
-                      iconData: Icons.mark_chat_read_outlined,
-                    ),
-                  )
-                  : Padding(
-                    padding: EdgeInsets.only(
-                      top: 4,
-                      bottom: unreadCount > 0 ? 65 : 4,
-                    ),
-                    child: FadingEdgeScrollView.fromScrollView(
-                      child: ListView.builder(
-                        controller: scrollController,
-                        shrinkWrap: true,
-                        reverse: true,
-                        itemBuilder:
-                            (context, i) => LogMessageCard(
-                              message: messages[messages.length - 1 - i],
-                            ),
-                        itemCount: messages.length,
+          body: messages.isEmpty
+              ? Center(
+                  child: CenteredHint(
+                    'Nincs naplóüzenet',
+                    iconData: Icons.mark_chat_read_outlined,
+                  ),
+                )
+              : Padding(
+                  padding: EdgeInsets.only(
+                    top: 4,
+                    bottom: unreadCount > 0 ? 65 : 4,
+                  ),
+                  child: FadingEdgeScrollView.fromScrollView(
+                    child: ListView.builder(
+                      controller: scrollController,
+                      shrinkWrap: true,
+                      reverse: true,
+                      itemBuilder: (context, i) => LogMessageCard(
+                        message: messages[messages.length - 1 - i],
                       ),
+                      itemCount: messages.length,
                     ),
                   ),
-          floatingActionButton:
-              unreadCount > 0
-                  ? FloatingActionButton.small(
-                    onPressed:
-                        () =>
-                            ref
-                                .read(logMessagesProvider.notifier)
-                                .markAllRead(),
-                    tooltip: 'Összes olvasottnak jelölése',
-                    child: Icon(Icons.done_all),
-                  )
-                  : null,
+                ),
+          floatingActionButton: unreadCount > 0
+              ? FloatingActionButton.small(
+                  onPressed: () =>
+                      ref.read(logMessagesProvider.notifier).markAllRead(),
+                  tooltip: 'Összes olvasottnak jelölése',
+                  child: Icon(Icons.done_all),
+                )
+              : null,
         ),
       ),
     );
@@ -155,18 +149,17 @@ class LogMessageCard extends ConsumerWidget {
                   '${record.time.hour}:${record.time.minute.toString().padLeft(2, '0')}',
                   style: TextStyle(fontSize: 12),
                 ),
-                trailing:
-                    !message.isRead
-                        ? IconButton(
-                          icon: Icon(Icons.check),
-                          tooltip: 'Olvasottnak jelölés',
-                          onPressed: () {
-                            ref
-                                .read(logMessagesProvider.notifier)
-                                .markAsRead(message);
-                          },
-                        )
-                        : null,
+                trailing: !message.isRead
+                    ? IconButton(
+                        icon: Icon(Icons.check),
+                        tooltip: 'Olvasottnak jelölés',
+                        onPressed: () {
+                          ref
+                              .read(logMessagesProvider.notifier)
+                              .markAsRead(message);
+                        },
+                      )
+                    : null,
               ),
               if (record.error != null || record.stackTrace != null)
                 Padding(
