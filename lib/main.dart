@@ -7,6 +7,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_fullscreen/flutter_fullscreen.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lyric/data/preferences/preferences.dart';
+import 'package:lyric/services/preferences/provider.dart';
 import 'package:lyric/ui/cue/state.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -76,12 +78,22 @@ class _LyricAppState extends ConsumerState<LyricApp> {
 
   @override
   Widget build(BuildContext context) {
+    final generalPrefs = ref.watch(generalPreferencesProvider);
+    final Brightness platformBrightness = MediaQuery.platformBrightnessOf(
+      context,
+    );
+    final Brightness appBrightness = switch (generalPrefs.appBrightness) {
+      BrightnessSetting.light => Brightness.light,
+      BrightnessSetting.dark => Brightness.dark,
+      BrightnessSetting.device => platformBrightness,
+    };
+
     return MaterialApp.router(
       theme: ThemeData.from(
         colorScheme: ColorScheme.fromSeed(
           seedColor: Color(0xff025462),
           primary: Color(0xffc3a140),
-          brightness: Brightness.light,
+          brightness: appBrightness,
         ),
         useMaterial3: true,
       ),

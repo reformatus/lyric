@@ -13,8 +13,8 @@ class GeneralPreferences extends _$GeneralPreferences {
     // Values here don't matter (defaults are in the fromJson factory)
     // far future todo: can this be removed and default values provided from the outside?
     return GeneralPreferencesClass(
-      appBrightness: BrightnessSetting.light,
-      sheetBrightness: BrightnessSetting.light,
+      appBrightness: BrightnessSetting.device,
+      sheetBrightness: BrightnessSetting.device,
     );
   }
 
