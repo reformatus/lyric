@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lyric/data/preferences/preferences.dart';
-import 'package:lyric/services/preferences/preference.dart';
+import 'package:lyric/services/preferences/provider.dart';
 
 class PreferencesDialog extends ConsumerStatefulWidget {
   const PreferencesDialog({super.key});

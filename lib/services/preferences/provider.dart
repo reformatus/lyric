@@ -4,7 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/log/logger.dart';
 
-part 'preference.g.dart';
+part 'provider.g.dart';
 
 @Riverpod(keepAlive: true)
 class GeneralPreferences extends _$GeneralPreferences {
@@ -18,7 +18,7 @@ class GeneralPreferences extends _$GeneralPreferences {
     );
   }
 
-  Future loadFromDb() async {
+  Future<void> loadFromDb() async {
     state = await state.getFromDb();
   }
 
