@@ -58,7 +58,7 @@ class Bank extends Insertable<Bank> {
   final int parallelUpdateJobs;
   final int amountOfSongsInRequest;
   final bool noCms;
-  final Map songFields;
+  final Map<String, dynamic> songFields;
   bool isEnabled;
   bool isOfflineMode;
   DateTime? lastUpdated;
@@ -165,16 +165,16 @@ class Banks extends Table {
   DateTimeColumn get lastUpdated => dateTime().nullable()();
 }
 
-class MapConverter extends TypeConverter<Map, String> {
+class MapConverter extends TypeConverter<Map<String, dynamic>, String> {
   const MapConverter();
 
   @override
-  Map fromSql(String fromDb) {
-    return jsonDecode(fromDb) as Map;
+  Map<String, dynamic> fromSql(String fromDb) {
+    return jsonDecode(fromDb) as Map<String, dynamic>;
   }
 
   @override
-  String toSql(Map value) {
+  String toSql(Map<String, dynamic> value) {
     return jsonEncode(value);
   }
 }

@@ -25,6 +25,9 @@ class LErrorCard extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.all(10),
       child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadiusGeometry.circular(18),
+        ),
         color: Color.lerp(
           switch (type) {
             LErrorType.error => Colors.red,
@@ -51,18 +54,7 @@ class LErrorCard extends StatelessWidget {
                 title,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
-              trailing:
-                  showReportButton
-                      ? FilledButton.icon(
-                        onPressed:
-                            () => launchFeedbackEmail(
-                              errorMessage: '$title ($message)',
-                              stackTrace: stack,
-                            ),
-                        icon: Icon(Icons.feedback_outlined),
-                        label: Text('Hibajelentés'),
-                      )
-                      : null,
+
               contentPadding: EdgeInsets.only(left: 13, right: 8),
             ),
             if (message != null || stack != null)
@@ -88,6 +80,18 @@ class LErrorCard extends StatelessWidget {
                         ),
                       ),
                   ],
+                ),
+              ),
+            if (showReportButton)
+              Padding(
+                padding: EdgeInsetsGeometry.all(8),
+                child: FilledButton.icon(
+                  onPressed: () => launchFeedbackEmail(
+                    errorMessage: '$title ($message)',
+                    stackTrace: stack,
+                  ),
+                  icon: Icon(Icons.feedback_outlined),
+                  label: Text('Hibajelentés'),
                 ),
               ),
           ],

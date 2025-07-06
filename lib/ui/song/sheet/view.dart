@@ -4,7 +4,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pdfrx/pdfrx.dart';
 
 import '../../../data/song/song.dart';
+import '../../../main.dart';
 import '../../../services/assets/get_song_asset.dart';
+import '../../../services/preferences/provider.dart';
 import '../../common/error/card.dart';
 import '../state.dart';
 
@@ -18,6 +20,13 @@ class SheetView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     assert(_viewType != SongViewType.lyrics);
+
+    final generalPrefs = ref.watch(generalPreferencesProvider);
+    final Brightness sheetBrightness = switch (generalPrefs.sheetBrightness) {
+      ThemeMode.light => Brightness.light,
+      ThemeMode.dark => Brightness.dark,
+      ThemeMode.system => MediaQuery.platformBrightnessOf(context),
+    };
 
     final asset = ref.watch(
       getSongAssetProvider(song, switch (_viewType) {
@@ -41,21 +50,42 @@ class SheetView extends ConsumerWidget {
         if (assetResult.data != null) {
           switch (_viewType) {
             case SongViewType.svg:
-              return Container(
-                color: Theme.of(context).colorScheme.onPrimary,
-                child: InteractiveViewer(
-                  maxScale: double.infinity,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: SvgPicture.memory(
-                      assetResult.data!,
-                      // todo make this color configurable
-                      /*colorFilter: ColorFilter.mode(
-                        Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                        BlendMode.src,
-                      ),*/
-                    ),
+              return Theme(
+                data: ThemeData.from(
+                  colorScheme: ColorScheme.fromSeed(
+                    seedColor: constants.seedColor,
+                    primary: constants.primaryColor,
+                    brightness: sheetBrightness,
+                    surface: sheetBrightness == Brightness.dark
+                        ? Colors.black
+                        : null,
                   ),
+                ),
+                child: Builder(
+                  builder: (context) {
+                    return Container(
+                      color: sheetBrightness == Brightness.light
+                          ? Theme.of(context).colorScheme.onPrimary
+                          : generalPrefs.oledBlackBackground
+                          ? Colors.black
+                          : Theme.of(context).colorScheme.surface,
+                      child: InteractiveViewer(
+                        maxScale: double.infinity,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: SvgPicture.memory(
+                            assetResult.data!,
+                            colorFilter: sheetBrightness == Brightness.dark
+                                ? ColorFilter.mode(
+                                    Theme.of(context).colorScheme.onSurface,
+                                    BlendMode.srcIn,
+                                  )
+                                : null,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               );
             case SongViewType.pdf || _:
@@ -64,8 +94,8 @@ class SheetView extends ConsumerWidget {
                 sourceName: song.uuid,
                 params: PdfViewerParams(
                   backgroundColor: Theme.of(context).canvasColor,
-                  loadingBannerBuilder:
-                      (_, _, _) => Center(child: CircularProgressIndicator()),
+                  loadingBannerBuilder: (_, _, _) =>
+                      Center(child: CircularProgressIndicator()),
                   pageDropShadow: BoxShadow(
                     color: Theme.of(context).shadowColor.withAlpha(30),
                     blurRadius: 30,

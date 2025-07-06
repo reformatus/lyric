@@ -7,6 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_fullscreen/flutter_fullscreen.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lyric/services/preferences/provider.dart';
 import 'package:lyric/ui/cue/state.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -56,8 +57,10 @@ const constants = (
   newsRss: 'https://testpress.server.fodor.pro/category/app/aktualis/feed',
   buttonsRss: 'https://testpress.server.fodor.pro/category/app/linkek/feed',
   urlScheme: 'lyric',
-  tabletFromWidth: 700,
-  desktopFromWidth: 1000,
+  tabletFromWidth: 700.0,
+  desktopFromWidth: 1000.0,
+  seedColor: Color(0xff025462),
+  primaryColor: Color(0xffc3a140),
 );
 
 class LyricApp extends ConsumerStatefulWidget {
@@ -76,11 +79,22 @@ class _LyricAppState extends ConsumerState<LyricApp> {
 
   @override
   Widget build(BuildContext context) {
+    final generalPrefs = ref.watch(generalPreferencesProvider);
+
     return MaterialApp.router(
+      themeMode: generalPrefs.appBrightness,
+      darkTheme: ThemeData.from(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: constants.seedColor,
+          primary: constants.primaryColor,
+          surface: generalPrefs.oledBlackBackground ? Colors.black : null,
+          brightness: Brightness.dark,
+        ),
+      ),
       theme: ThemeData.from(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Color(0xff025462),
-          primary: Color(0xffc3a140),
+          seedColor: constants.seedColor,
+          primary: constants.primaryColor,
           brightness: Brightness.light,
         ),
         useMaterial3: true,

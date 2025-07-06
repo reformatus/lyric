@@ -6,7 +6,6 @@ import 'package:lyric/services/app_links/app_links.dart';
 import '../../data/log/provider.dart';
 import '../../main.dart';
 import '../../services/app_version/check_new_version.dart';
-import '../common/log/dialog.dart';
 
 typedef GeneralNavigationDestination = ({
   Widget icon,
@@ -206,23 +205,6 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.end,
                                         children: [
-                                          Badge(
-                                            label: Text(
-                                              unreadLogCount.toString(),
-                                            ),
-                                            isLabelVisible: unreadLogCount > 0,
-                                            child: IconButton.outlined(
-                                              onPressed: () => showDialog(
-                                                context: context,
-                                                builder: (context) =>
-                                                    LogViewDialog(),
-                                              ),
-                                              tooltip: "Napló",
-                                              icon: Icon(
-                                                Icons.notification_important,
-                                              ),
-                                            ),
-                                          ),
                                           if (extendedNavRail) Spacer(),
                                           IconButton(
                                             icon: Icon(

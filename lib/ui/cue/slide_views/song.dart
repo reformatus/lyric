@@ -54,13 +54,10 @@ class SongSlideView extends ConsumerWidget {
       viewTypeForProvider(songSlide.song, songSlide),
     );
 
-    switch (viewType) {
-      case SongViewType.svg:
-        return SheetView.svg(songSlide.song);
-      case SongViewType.pdf:
-        return SheetView.pdf(songSlide.song);
-      case SongViewType.lyrics:
-        return LyricsView(songSlide.song, songSlide: songSlide);
-    }
+    return switch (viewType) {
+      SongViewType.svg => SheetView.svg(songSlide.song),
+      SongViewType.pdf => SheetView.pdf(songSlide.song),
+      SongViewType.lyrics => LyricsView(songSlide.song, songSlide: songSlide),
+    };
   }
 }
