@@ -5,7 +5,7 @@ import '../../main.dart';
 import '../../data/cue/cue.dart';
 import '../../data/song/song.dart';
 
-String getShareableLinkFor(item) {
+String getShareableLinkFor<T>(T item) {
   if (item is Song) {
     return Uri(
       scheme: 'https',
