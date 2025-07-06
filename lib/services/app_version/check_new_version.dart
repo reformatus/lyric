@@ -12,7 +12,6 @@ typedef VersionInfo = ({
   String versionNumber,
   String releaseNotesMd,
   Uri releaseInfoLink,
-  Uri downloadLink,
 });
 
 @Riverpod(keepAlive: true)
@@ -50,9 +49,6 @@ Future<VersionInfo?> checkNewVersion(Ref ref) async {
       versionNumber: latestVersion,
       releaseNotesMd: latestRelease['body'] as String,
       releaseInfoLink: Uri.parse(latestRelease['html_url'] as String),
-      downloadLink: Uri.parse(
-        latestRelease['assets'][0]['browser_download_url'],
-      ),
     );
   } catch (e, s) {
     log.warning("Couldn't check for new versions:", e, s);

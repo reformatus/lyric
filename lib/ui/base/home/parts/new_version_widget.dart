@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/main.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -14,7 +15,14 @@ class NewVersionWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final newVersionProvider = ref.watch(checkNewVersionProvider);
-    final newVersion = newVersionProvider.valueOrNull;
+    //final newVersion = newVersionProvider.valueOrNull;
+
+    // TODO removeme
+    VersionInfo newVersion = (
+      releaseInfoLink: Uri.parse('https://example.com'),
+      releaseNotesMd: "# Hello.",
+      versionNumber: "1.1.1",
+    );
 
     if (newVersion != null) {
       return Padding(
@@ -67,29 +75,24 @@ class NewVersionWidget extends ConsumerWidget {
                   ),
                   Divider(),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    child: Text(
-                      Platform.isAndroid || Platform.isWindows
-                          ? 'Csak akkor töltsd le manuálisan az appot, ha nem alkalmazásboltból telepítetted!'
-                          : 'Nézz be az alkalmazásboltba a frissítésért.',
-                    ),
-                  ),
-                  Padding(
                     padding: EdgeInsets.all(15),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        if (Platform.isAndroid)
-                          ElevatedButton(
-                            onPressed: () => launchUrl(newVersion.downloadLink),
-                            child: Text('Letöltés'),
-                          ),
-                        SizedBox(width: 5),
-                        FilledButton(
-                          onPressed:
-                              () => launchUrl(newVersion.releaseInfoLink),
+                        ElevatedButton(
+                          onPressed: () =>
+                              launchUrl(newVersion.releaseInfoLink),
                           child: Text('Részletek'),
                         ),
+                        if (storeLinkForCurrentPlatform != null) ...[
+                          SizedBox(width: 5),
+                          FilledButton(
+                            onPressed: () => launchUrl(
+                              Uri.parse(storeLinkForCurrentPlatform!),
+                            ),
+                            child: Text('Frissítés'),
+                          ),
+                        ],
                       ],
                     ),
                   ),
