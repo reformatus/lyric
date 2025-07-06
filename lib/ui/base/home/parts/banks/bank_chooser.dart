@@ -21,40 +21,38 @@ class BankChooser extends ConsumerWidget {
         stack: stackTrace.toString(),
       ),
       AsyncLoading() => Center(child: CircularProgressIndicator()),
-      AsyncValue<List<Bank>>(:final value!) => SingleChildScrollView(
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 18,
-                  ),
-                  child: Text(
-                    'DALTÁRAK',
-                    style: Theme.of(context).textTheme.labelLarge,
-                  ),
+      AsyncValue<List<Bank>>(:final value!) => Column(
+        children: [
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 18,
                 ),
-                IconButton(
-                  icon: Icon(Icons.settings_outlined),
-                  onPressed: () {},
+                child: Text(
+                  'DALTÁRAK',
+                  style: Theme.of(context).textTheme.labelLarge,
                 ),
-                Spacer(),
-                Padding(
-                  padding: EdgeInsets.only(right: 6),
-                  child: FilledButton.icon(
-                    iconAlignment: IconAlignment.end,
-                    onPressed: () => context.go('/bank'),
-                    label: Text('Összes dal'),
-                    icon: Icon(Icons.chevron_right),
-                  ),
+              ),
+              /*IconButton(
+                icon: Icon(Icons.settings_outlined),
+                onPressed: () {},
+              ),*/
+              Spacer(),
+              Padding(
+                padding: EdgeInsets.only(right: 6),
+                child: FilledButton.icon(
+                  iconAlignment: IconAlignment.end,
+                  onPressed: () => context.go('/bank'),
+                  label: Text('Összes dal'),
+                  icon: Icon(Icons.chevron_right),
                 ),
-              ],
-            ),
-            ...value.map((bank) => BankTile(bank)),
-          ],
-        ),
+              ),
+            ],
+          ),
+          ...value.map((bank) => BankTile(bank)),
+        ],
       ),
     };
   }
@@ -70,6 +68,7 @@ class BankTile extends ConsumerWidget {
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 6),
       clipBehavior: Clip.antiAlias,
+      color: Theme.of(context).colorScheme.surfaceContainerHigh,
       child: SizedBox(
         height: 80,
         child: Row(
@@ -111,8 +110,8 @@ class BankTile extends ConsumerWidget {
             SizedBox(
               width: 50,
               child: Material(
-                elevation: 2,
-                color: Theme.of(context).colorScheme.surfaceContainerHigh,
+                elevation: 5,
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 child: InkWell(
                   onTap: () {
                     ref
@@ -120,7 +119,12 @@ class BankTile extends ConsumerWidget {
                         .setFilter(bank.uuid, true);
                     context.go('/bank');
                   },
-                  child: Center(child: Icon(Icons.chevron_right)),
+                  child: Center(
+                    child: Icon(
+                      Icons.chevron_right,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                  ),
                 ),
               ),
             ),
