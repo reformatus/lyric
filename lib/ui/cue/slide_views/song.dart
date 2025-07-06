@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/services/preferences/provider.dart';
 
 import '../../../data/cue/slide.dart';
 import '../../../main.dart';

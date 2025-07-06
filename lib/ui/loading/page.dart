@@ -30,11 +30,9 @@ class _LoadingPageState extends ConsumerState<LoadingPage> {
         (bankStates.hasValue && bankStates.value!.values.every(isDone))) {
       _hasNavigated = true;
 
-      print('loading settings');
-
       await preferenceLoaders;
 
-      print('settings should have loaded');
+      // settings should have loaded
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
