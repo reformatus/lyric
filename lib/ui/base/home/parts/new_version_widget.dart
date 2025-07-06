@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,14 +13,7 @@ class NewVersionWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final newVersionProvider = ref.watch(checkNewVersionProvider);
-    //final newVersion = newVersionProvider.valueOrNull;
-
-    // TODO removeme
-    VersionInfo newVersion = (
-      releaseInfoLink: Uri.parse('https://example.com'),
-      releaseNotesMd: "# Hello.",
-      versionNumber: "1.1.1",
-    );
+    final newVersion = newVersionProvider.valueOrNull;
 
     if (newVersion != null) {
       return Padding(
@@ -70,7 +61,7 @@ class NewVersionWidget extends ConsumerWidget {
                     child: Markdown(
                       data: newVersion.releaseNotesMd,
                       shrinkWrap: true,
-                      onTapLink: (link, _, __) => launchUrl(Uri.parse(link)),
+                      onTapLink: (link, _, _) => launchUrl(Uri.parse(link)),
                     ),
                   ),
                   Divider(),
