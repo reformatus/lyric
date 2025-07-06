@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:lyric/data/database.dart';
+import '../../data/database.dart';
 
 import '../../data/bank/bank.dart';
 

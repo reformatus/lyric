@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/ui/common/centered_hint.dart';
-import 'package:lyric/ui/common/confirm_dialog.dart';
-import 'package:lyric/ui/cue/slide_views/unknown.dart';
+import '../../common/centered_hint.dart';
+import '../../common/confirm_dialog.dart';
+import '../slide_views/unknown.dart';
 
 import '../../../data/cue/cue.dart';
 import '../../../data/cue/slide.dart';
@@ -37,36 +37,31 @@ class SlideList extends ConsumerWidget {
           SongSlide songSlide => SongSlideTile(
             songSlide,
             key: ValueKey(songSlide.hashCode),
-            selectCallback:
-                () => ref
-                    .read(currentSlideOfProvider(cue).notifier)
-                    .setCurrent(slide),
-            removeCallback:
-                () => showConfirmDialog(
-                  context,
-                  title:
-                      '${songSlide.song.title} - biztos eltávolítod a listából?',
-                  actionIcon: Icons.delete_outline,
-                  actionLabel: 'Eltávolítás',
-                  actionOnPressed: () async {
-                    await ref
-                        .read(currentSlideListOfProvider(cue).notifier)
-                        .removeSlide(slide);
-                  },
-                ),
+            selectCallback: () => ref
+                .read(currentSlideOfProvider(cue).notifier)
+                .setCurrent(slide),
+            removeCallback: () => showConfirmDialog(
+              context,
+              title: '${songSlide.song.title} - biztos eltávolítod a listából?',
+              actionIcon: Icons.delete_outline,
+              actionLabel: 'Eltávolítás',
+              actionOnPressed: () async {
+                await ref
+                    .read(currentSlideListOfProvider(cue).notifier)
+                    .removeSlide(slide);
+              },
+            ),
             isCurrent: currentSlide == slide,
           ),
           UnknownTypeSlide unknownSlide => UnknownTypeSlideTile(
             unknownSlide,
             key: ValueKey(unknownSlide.hashCode),
-            selectCallback:
-                () => ref
-                    .read(currentSlideOfProvider(cue).notifier)
-                    .setCurrent(slide),
-            removeCallback:
-                () => ref
-                    .read(currentSlideListOfProvider(cue).notifier)
-                    .removeSlide(slide),
+            selectCallback: () => ref
+                .read(currentSlideOfProvider(cue).notifier)
+                .setCurrent(slide),
+            removeCallback: () => ref
+                .read(currentSlideListOfProvider(cue).notifier)
+                .removeSlide(slide),
             isCurrent: currentSlide == slide,
           ),
         };

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lyric/data/preferences/classes/lyrics_view_style.dart';
-import 'package:lyric/data/preferences/preferences.dart';
+import '../../data/preferences/classes/lyrics_view_style.dart';
+import '../../data/preferences/preferences.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/log/logger.dart';

@@ -1,8 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:lyric/main.dart';
-import 'package:lyric/ui/common/adaptive_page/drawer_button.dart';
+import '../../../main.dart';
+import 'drawer_button.dart';
 
 class AdaptivePage extends StatefulWidget {
   const AdaptivePage({

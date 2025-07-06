@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/ui/base/songs/widgets/filter/types/bank/bank_filter_card.dart';
+import 'types/bank/bank_filter_card.dart';
 
 import '../../../../../services/songs/filter.dart';
 import '../../../../common/error/card.dart';

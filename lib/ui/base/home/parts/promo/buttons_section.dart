@@ -2,7 +2,7 @@ import 'package:dynamic_icons/dynamic_icons.dart';
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/services/home/promo/rss.dart';
+import '../../../../../services/home/promo/rss.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ButtonsSection extends ConsumerStatefulWidget {

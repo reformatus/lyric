@@ -2,12 +2,12 @@ import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lyric/data/cue/cue.dart';
-import 'package:lyric/data/cue/slide.dart';
-import 'package:lyric/ui/common/error/card.dart';
-import 'package:lyric/ui/cue/state.dart';
-import 'package:lyric/ui/song/transpose/widget.dart';
-import 'package:lyric/ui/song/view_chooser.dart';
+import '../../../data/cue/cue.dart';
+import '../../../data/cue/slide.dart';
+import '../../common/error/card.dart';
+import '../state.dart';
+import '../../song/transpose/widget.dart';
+import '../../song/view_chooser.dart';
 
 class ActionsDrawer extends ConsumerStatefulWidget {
   const ActionsDrawer(this.cue, {super.key});

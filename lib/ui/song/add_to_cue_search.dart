@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lyric/main.dart';
+import '../../main.dart';
 
 import '../../data/cue/cue.dart';
 import '../../data/song/song.dart';
@@ -61,8 +61,8 @@ class _AddToCueSearchState extends ConsumerState<AddToCueSearch> {
           ),
           action: SnackBarAction(
             label: 'Ugrás',
-            onPressed:
-                () => context.push('/cue/${cue.uuid}/edit?slide=$slideUuid'),
+            onPressed: () =>
+                context.push('/cue/${cue.uuid}/edit?slide=$slideUuid'),
           ),
           duration: const Duration(seconds: 5),
         ),
@@ -142,13 +142,11 @@ class _AddToCueSearchState extends ConsumerState<AddToCueSearch> {
                             Theme.of(context).textTheme.bodyMedium?.fontSize,
                       ),
                     ),
-                    onTap:
-                        () => showDialog(
+                    onTap: () =>
+                        showDialog(
                           context: context,
-                          builder:
-                              (context) => EditCueDialog(
-                                prefilledTitle: controller.text,
-                              ),
+                          builder: (context) =>
+                              EditCueDialog(prefilledTitle: controller.text),
                         ).then((createdCue) {
                           if (createdCue == null) return;
                           createdCue as Cue;
@@ -164,15 +162,14 @@ class _AddToCueSearchState extends ConsumerState<AddToCueSearch> {
                     selected: selected,
                     selectedTileColor: Theme.of(context).colorScheme.onPrimary,
                     title: Text(cueEntry.value.title),
-                    subtitle:
-                        cueEntry.value.description.isNotEmpty
-                            ? Text(
-                              cueEntry.value.description.split('\n').first,
-                              maxLines: 1,
-                              softWrap: false,
-                              overflow: TextOverflow.fade,
-                            )
-                            : null,
+                    subtitle: cueEntry.value.description.isNotEmpty
+                        ? Text(
+                            cueEntry.value.description.split('\n').first,
+                            maxLines: 1,
+                            softWrap: false,
+                            overflow: TextOverflow.fade,
+                          )
+                        : null,
                     trailing: selected ? Icon(Icons.keyboard_return) : null,
                     onTap: () => handleCueSelection(controller, cueEntry.value),
                   );

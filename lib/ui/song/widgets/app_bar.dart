@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/services/app_links/get_shareable.dart';
-import 'package:lyric/ui/common/share/dialog.dart';
+import '../../../services/app_links/get_shareable.dart';
+import '../../common/share/dialog.dart';
 
 import '../../../data/song/song.dart';
 import '../view_chooser.dart';

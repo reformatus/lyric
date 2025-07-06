@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/services/bank/banks.dart';
-import 'package:lyric/ui/base/songs/widgets/filter/common/base_filter_card.dart';
-import 'package:lyric/ui/base/songs/widgets/filter/types/bank/state.dart';
+import '../../../../../../../services/bank/banks.dart';
+import '../../common/base_filter_card.dart';
+import 'state.dart';
 
 import '../../../../../../../data/bank/bank.dart';
 import '../../common/async_chip_row_handler.dart';

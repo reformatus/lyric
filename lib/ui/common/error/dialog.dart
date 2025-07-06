@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lyric/ui/common/error/card.dart';
+import 'card.dart';
 
 import '../../base/home/parts/feedback/send_mail.dart';
 

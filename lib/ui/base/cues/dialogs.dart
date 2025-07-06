@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lyric/ui/common/confirm_dialog.dart';
+import '../../common/confirm_dialog.dart';
 
 import '../../../data/cue/cue.dart';
 import '../../../services/cue/write_cue.dart';
@@ -67,10 +67,9 @@ class EditCueDialogState extends State<EditCueDialog> {
     }
 
     return AlertDialog(
-      title:
-          widget.cue != null
-              ? Text('Lista szerkesztése')
-              : Text('Lista létrehozása'),
+      title: widget.cue != null
+          ? Text('Lista szerkesztése')
+          : Text('Lista létrehozása'),
       content: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -107,10 +106,9 @@ class EditCueDialogState extends State<EditCueDialog> {
           onPressed: onSubmit,
           child: AnimatedSize(
             duration: Durations.medium1,
-            child:
-                isSaving
-                    ? SizedBox(width: 50, child: LinearProgressIndicator())
-                    : Text(widget.cue != null ? 'Mentés' : 'Létrehozás'),
+            child: isSaving
+                ? SizedBox(width: 50, child: LinearProgressIndicator())
+                : Text(widget.cue != null ? 'Mentés' : 'Létrehozás'),
           ),
         ),
       ],

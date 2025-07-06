@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/data/song/extensions.dart';
-import 'package:lyric/data/song/transpose.dart';
-import 'package:lyric/ui/song/state.dart';
+import '../../../data/song/extensions.dart';
+import '../../../data/song/transpose.dart';
+import '../state.dart';
 import '../../../data/cue/slide.dart';
 
 import '../../../data/song/song.dart';
@@ -27,11 +27,9 @@ class TransposeResetButton extends ConsumerWidget {
     if (transpose.semitones != 0 || transpose.capo != 0) {
       return IconButton(
         tooltip: 'Transzponálás visszaállítása',
-        onPressed:
-            () =>
-                ref
-                    .read(TransposeStateForProvider(song, songSlide).notifier)
-                    .reset(),
+        onPressed: () => ref
+            .read(TransposeStateForProvider(song, songSlide).notifier)
+            .reset(),
         icon: Icon(Icons.replay),
         iconSize: isCompact ? 18 : null,
         visualDensity: VisualDensity.compact,
@@ -174,9 +172,9 @@ class TransposeCard extends ConsumerWidget {
                     Text(
                       song.keyField != null
                           ? getTransposedKey(
-                            song.keyField!,
-                            transpose.semitones,
-                          ).toString()
+                              song.keyField!,
+                              transpose.semitones,
+                            ).toString()
                           : 'Hangnem',
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),

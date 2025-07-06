@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:lyric/main.dart';
+import '../../main.dart';
 
 import '../../data/cue/cue.dart';
 import '../../data/song/song.dart';

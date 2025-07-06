@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../data/song/song.dart';
 import '../../../data/song/extensions.dart';
+import '../../../data/song/song.dart';
 import '../add_to_cue_search.dart';
 import '../state.dart';
 import '../transpose/state.dart';

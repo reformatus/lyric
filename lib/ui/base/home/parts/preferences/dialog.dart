@@ -2,8 +2,8 @@ import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lyric/data/preferences/preferences.dart';
-import 'package:lyric/services/preferences/provider.dart';
+import '../../../../../data/preferences/preferences.dart';
+import '../../../../../services/preferences/provider.dart';
 
 import '../../../../../main.dart';
 

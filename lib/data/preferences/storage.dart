@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:lyric/data/bank/bank.dart';
+import '../bank/bank.dart';
 
 class PreferenceStorage extends Table {
   TextColumn get key => text()();

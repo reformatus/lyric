@@ -1,8 +1,7 @@
-import '../../data/cue/slide.dart';
-
-import '../../data/song/extensions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../data/cue/slide.dart';
+import '../../data/song/extensions.dart';
 import '../../data/song/song.dart';
 
 part 'state.g.dart';

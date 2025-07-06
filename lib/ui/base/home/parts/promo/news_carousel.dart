@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/main.dart';
-import 'package:lyric/services/home/promo/rss.dart';
+import '../../../../../main.dart';
+import '../../../../../services/home/promo/rss.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class NewsCarousel extends ConsumerWidget {

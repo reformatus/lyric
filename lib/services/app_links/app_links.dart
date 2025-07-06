@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/main.dart';
-import 'package:lyric/services/cue/write_cue.dart';
-import 'package:lyric/ui/common/confirm_dialog.dart';
-import 'package:lyric/ui/common/error/card.dart';
-import 'package:lyric/ui/common/error/dialog.dart';
+import '../../main.dart';
+import '../cue/write_cue.dart';
+import '../../ui/common/confirm_dialog.dart';
+import '../../ui/common/error/card.dart';
+import '../../ui/common/error/dialog.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/cue/cue.dart';

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../common/centered_hint.dart';
 
 import '../../../data/cue/cue.dart';
 import '../../../services/cue/cues.dart';
+import '../../common/centered_hint.dart';
 import '../../common/error/card.dart';
 import 'dialogs.dart';
 
@@ -23,8 +23,8 @@ class _SetsPageState extends ConsumerState<SetsPage> {
     return Scaffold(
       appBar: AppBar(title: Text('Listáim')),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed:
-            () => showDialog(
+        onPressed: () =>
+            showDialog(
               context: context,
               builder: (context) => EditCueDialog(),
             ).then((createdCue) {
@@ -52,11 +52,11 @@ class _SetsPageState extends ConsumerState<SetsPage> {
           value.isNotEmpty
               ? ListView(children: value.map((e) => CueTile(e)).toList())
               : Center(
-                child: CenteredHint(
-                  'Adj hozzá egy listát a jobb alsó sarokban!',
-                  iconData: Icons.add_box_outlined,
+                  child: CenteredHint(
+                    'Adj hozzá egy listát a jobb alsó sarokban!',
+                    iconData: Icons.add_box_outlined,
+                  ),
                 ),
-              ),
       },
     );
   }
@@ -78,20 +78,18 @@ class CueTile extends StatelessWidget {
         children: [
           IconButton(
             icon: Icon(Icons.edit_outlined),
-            onPressed:
-                () => showDialog(
-                  context: context,
-                  builder: (context) => EditCueDialog(cue: cue),
-                ),
+            onPressed: () => showDialog(
+              context: context,
+              builder: (context) => EditCueDialog(cue: cue),
+            ),
           ),
           IconButton(
             icon: Icon(Icons.delete_outline),
             // TODO refactor with showConfirmDialog
-            onPressed:
-                () => showDialog(
-                  context: context,
-                  builder: (context) => DeleteCueDialog(cue: cue),
-                ),
+            onPressed: () => showDialog(
+              context: context,
+              builder: (context) => DeleteCueDialog(cue: cue),
+            ),
           ),
         ],
       ),

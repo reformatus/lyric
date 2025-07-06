@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/ui/song/state.dart';
-import 'package:lyric/ui/song/transpose/state.dart';
+import '../song/state.dart';
+import '../song/transpose/state.dart';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

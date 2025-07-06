@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lyric/ui/common/adaptive_page/page.dart';
-import 'package:lyric/ui/cue/widgets/actions_drawer.dart';
+import '../../common/adaptive_page/page.dart';
+import '../widgets/actions_drawer.dart';
 
 import '../../../data/cue/cue.dart';
 import '../../../services/app_links/get_shareable.dart';
@@ -33,23 +33,21 @@ class CueEditPage extends ConsumerWidget {
       actionBarChildren: [
         const SizedBox(width: 8),
         IconButton.filledTonal(
-          onPressed:
-              hasPreviousSlide(slideIndex)
-                  ? () => ref
-                      .read(currentSlideOfProvider(cue).notifier)
-                      .changeSlide(-1)
-                  : null,
+          onPressed: hasPreviousSlide(slideIndex)
+              ? () => ref
+                    .read(currentSlideOfProvider(cue).notifier)
+                    .changeSlide(-1)
+              : null,
           icon: const Icon(Icons.navigate_before),
           tooltip: 'Előző dia',
         ),
         const SizedBox(width: 8),
         IconButton.filledTonal(
-          onPressed:
-              hasNextSlide(slideIndex)
-                  ? () => ref
-                      .read(currentSlideOfProvider(cue).notifier)
-                      .changeSlide(1)
-                  : null,
+          onPressed: hasNextSlide(slideIndex)
+              ? () => ref
+                    .read(currentSlideOfProvider(cue).notifier)
+                    .changeSlide(1)
+              : null,
           icon: const Icon(Icons.navigate_next),
           tooltip: 'Következő dia',
         ),
@@ -61,18 +59,16 @@ class CueEditPage extends ConsumerWidget {
       ],
       actionBarTrailingChildren: [
         IconButton.filledTonal(
-          onPressed:
-              () => showShareDialog(
-                context,
-                title: 'Lista megosztása',
-                description:
-                    'Mutasd meg a kódot vagy küldd el a linket valakinek. A megosztott lista a listái közé kerül (vagy frissül, ha korábban már megnyitotta).',
-                sharedTitle: cue.title,
-                sharedDescription:
-                    cue.description.isEmpty ? null : cue.description,
-                sharedLink: getShareableLinkFor(cue),
-                sharedIcon: Icons.list,
-              ),
+          onPressed: () => showShareDialog(
+            context,
+            title: 'Lista megosztása',
+            description:
+                'Mutasd meg a kódot vagy küldd el a linket valakinek. A megosztott lista a listái közé kerül (vagy frissül, ha korábban már megnyitotta).',
+            sharedTitle: cue.title,
+            sharedDescription: cue.description.isEmpty ? null : cue.description,
+            sharedLink: getShareableLinkFor(cue),
+            sharedIcon: Icons.list,
+          ),
           icon: Icon(Icons.share),
           tooltip: 'Megosztási lehetőségek',
         ),

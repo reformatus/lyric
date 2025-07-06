@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
-import 'package:lyric/data/preferences/storage.dart';
+import 'preferences/storage.dart';
 
 /*
 // Used for debugging

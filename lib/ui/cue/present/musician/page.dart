@@ -5,8 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_fullscreen/flutter_fullscreen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lyric/ui/cue/state.dart';
-import 'package:lyric/ui/cue/widgets/slide_view.dart';
+import '../../state.dart';
+import '../../widgets/slide_view.dart';
 
 import '../../../../data/cue/cue.dart';
 

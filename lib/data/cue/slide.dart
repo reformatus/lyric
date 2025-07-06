@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/ui/song/transpose/state.dart';
+import '../../ui/song/transpose/state.dart';
 
 import '../song/transpose.dart';
 

@@ -1,8 +1,8 @@
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/services/bank/banks.dart';
-import 'package:lyric/ui/base/songs/widgets/filter/types/bank/state.dart';
+import '../../../services/bank/banks.dart';
+import 'widgets/filter/types/bank/state.dart';
 import '../../../data/bank/bank.dart';
 import '../../common/centered_hint.dart';
 

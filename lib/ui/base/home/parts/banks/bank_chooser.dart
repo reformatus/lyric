@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lyric/data/bank/bank.dart';
-import 'package:lyric/services/bank/banks.dart';
-import 'package:lyric/ui/base/songs/widgets/filter/types/bank/state.dart';
-import 'package:lyric/ui/common/error/card.dart';
+import '../../../../../data/bank/bank.dart';
+import '../../../../../services/bank/banks.dart';
+import '../../../songs/widgets/filter/types/bank/state.dart';
+import '../../../../common/error/card.dart';
 
 class BankChooser extends ConsumerWidget {
   const BankChooser({super.key});

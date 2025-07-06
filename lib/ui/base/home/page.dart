@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/ui/base/home/parts/banks/bank_chooser.dart';
-import 'package:lyric/ui/base/home/parts/preferences/dialog.dart';
-import 'package:lyric/ui/base/home/parts/promo/news_carousel.dart';
-import 'package:lyric/ui/base/home/parts/promo/buttons_section.dart';
+import 'parts/banks/bank_chooser.dart';
+import 'parts/preferences/dialog.dart';
+import 'parts/promo/news_carousel.dart';
+import 'parts/promo/buttons_section.dart';
 
 import '../../common/log/button.dart';
 

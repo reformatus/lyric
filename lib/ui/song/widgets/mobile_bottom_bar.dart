@@ -2,8 +2,8 @@ import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../data/song/song.dart';
 import '../../../data/song/extensions.dart';
+import '../../../data/song/song.dart';
 import '../add_to_cue_search.dart';
 import '../state.dart';
 import '../transpose/state.dart';
@@ -55,12 +55,11 @@ class MobileBottomBar extends ConsumerWidget {
                       scrollDirection: Axis.horizontal,
                       reverse: true,
                       shrinkWrap: true,
-                      children:
-                          _buildActionButtons(
-                            viewType,
-                            transpose,
-                            ref,
-                          ).reversed.toList(),
+                      children: _buildActionButtons(
+                        viewType,
+                        transpose,
+                        ref,
+                      ).reversed.toList(),
                     ),
                   ),
                 ),

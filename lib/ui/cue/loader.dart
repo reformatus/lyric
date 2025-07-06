@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/ui/cue/present/musician/page.dart';
+import 'present/musician/page.dart';
 import '../../data/cue/cue.dart';
 import '../common/error/card.dart';
 import 'edit/page.dart';

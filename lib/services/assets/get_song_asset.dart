@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../main.dart';
-import '../bank/bank_of_song.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/database.dart';
 import '../../data/song/song.dart';
+import '../../main.dart';
+import '../bank/bank_of_song.dart';
 
 part 'get_song_asset.g.dart';
 
