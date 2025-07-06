@@ -47,7 +47,7 @@ class _SettingsDialogState extends ConsumerState<PreferencesDialog> {
             Expanded(
               child: Container(
                 color: Theme.of(context).colorScheme.surface,
-                padding: EdgeInsets.only(left: 8, right: 8, bottom: 8),
+                padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
                 child: FadingEdgeScrollView.fromSingleChildScrollView(
                   child: SingleChildScrollView(
                     controller: bodyController,
@@ -55,16 +55,8 @@ class _SettingsDialogState extends ConsumerState<PreferencesDialog> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        Text(
-                          'Színek',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        SizedBox(height: 5),
-                        Text(
-                          'ALKALMAZÁS',
-                          style: Theme.of(context).textTheme.labelMedium,
-                        ),
-                        SizedBox(height: 3),
+                        sectionTitle('Színek'),
+                        settingTitle('ALKALMAZÁS'),
                         SegmentedButton<ThemeMode>(
                           segments: ThemeMode.values
                               .map(
@@ -75,12 +67,20 @@ class _SettingsDialogState extends ConsumerState<PreferencesDialog> {
                               )
                               .toList(),
                           selected: {general.appBrightness},
+                          showSelectedIcon:
+                              MediaQuery.of(context).size.width < 400
+                              ? false
+                              : true,
                           multiSelectionEnabled: false,
                           onSelectionChanged: (selection) => ref
                               .read(generalPreferencesProvider.notifier)
                               .setAppBrightness(selection.first),
                         ),
-                        if (Theme.brightnessOf(context) == Brightness.dark)
+                        if (Theme.brightnessOf(context) == Brightness.dark ||
+                            (MediaQuery.platformBrightnessOf(context) ==
+                                    Brightness.dark &&
+                                general.sheetBrightness == ThemeMode.system) ||
+                            general.sheetBrightness == ThemeMode.dark)
                           Padding(
                             padding: EdgeInsets.only(top: 8),
                             child: CheckboxListTile(
@@ -91,12 +91,8 @@ class _SettingsDialogState extends ConsumerState<PreferencesDialog> {
                               title: Text('Teljesen fekete háttér'),
                             ),
                           ),
-                        SizedBox(height: 8),
-                        Text(
-                          'KOTTA',
-                          style: Theme.of(context).textTheme.labelMedium,
-                        ),
-                        SizedBox(height: 3),
+
+                        settingTitle('KOTTA'),
                         SegmentedButton<ThemeMode>(
                           segments: ThemeMode.values
                               .map(
@@ -108,11 +104,15 @@ class _SettingsDialogState extends ConsumerState<PreferencesDialog> {
                               .toList(),
                           selected: {general.sheetBrightness},
                           multiSelectionEnabled: false,
+                          showSelectedIcon:
+                              MediaQuery.of(context).size.width < 400
+                              ? false
+                              : true,
                           onSelectionChanged: (selection) => ref
                               .read(generalPreferencesProvider.notifier)
                               .setSheetBrightness(selection.first),
                         ),
-                        Divider(),
+                        /*Divider(height: 35),*/
                       ],
                     ),
                   ),
@@ -122,6 +122,20 @@ class _SettingsDialogState extends ConsumerState<PreferencesDialog> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget sectionTitle(String title) {
+    return Padding(
+      padding: EdgeInsetsGeometry.only(bottom: 5),
+      child: Text(title, style: Theme.of(context).textTheme.titleMedium),
+    );
+  }
+
+  Widget settingTitle(String title) {
+    return Padding(
+      padding: EdgeInsetsGeometry.only(bottom: 3, top: 8),
+      child: Text(title, style: Theme.of(context).textTheme.labelMedium),
     );
   }
 }
