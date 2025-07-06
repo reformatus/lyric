@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:lyric/data/preferences/classes/lyrics_view_style.dart';
 import 'package:lyric/data/preferences/preferences.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -13,8 +14,9 @@ class GeneralPreferences extends _$GeneralPreferences {
     // Values here don't matter (defaults are in the fromJson factory)
     // far future todo: can this be removed and default values provided from the outside?
     return GeneralPreferencesClass(
-      appBrightness: BrightnessSetting.device,
-      sheetBrightness: BrightnessSetting.device,
+      appBrightness: ThemeMode.system,
+      sheetBrightness: ThemeMode.light,
+      oledBlackBackground: false,
     );
   }
 
@@ -27,13 +29,18 @@ class GeneralPreferences extends _$GeneralPreferences {
     ref.notifyListeners();
   }
 
-  void setAppBrightness(BrightnessSetting newValue) {
+  void setAppBrightness(ThemeMode newValue) {
     state.appBrightness = newValue;
     go();
   }
 
-  void setSheetBrightness(BrightnessSetting newValue) {
+  void setSheetBrightness(ThemeMode newValue) {
     state.sheetBrightness = newValue;
+    go();
+  }
+
+  void setOledBlackBackground(bool newValue) {
+    state.oledBlackBackground = newValue;
     go();
   }
 }

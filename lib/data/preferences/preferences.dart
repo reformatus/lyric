@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:drift/drift.dart';
+import 'package:flutter/material.dart';
 import 'package:lyric/data/log/logger.dart';
 
 import '../database.dart';
@@ -44,32 +45,34 @@ sealed class PreferencesClass<T extends PreferencesClass<T>> {
   }
 }
 
-enum BrightnessSetting {
-  light('Világos'),
-  dark('Sötét'),
-  device('Eszköz');
-
-  final String title;
-  const BrightnessSetting(this.title);
+extension ThemeModeTitle on ThemeMode {
+  String get title => switch (this) {
+    ThemeMode.system => 'Rendszer',
+    ThemeMode.light => 'Világos',
+    ThemeMode.dark => 'Sötét',
+  };
 }
 
 class GeneralPreferencesClass
     extends PreferencesClass<GeneralPreferencesClass> {
-  BrightnessSetting appBrightness;
-  BrightnessSetting sheetBrightness;
+  ThemeMode appBrightness;
+  ThemeMode sheetBrightness;
+  bool oledBlackBackground;
 
   GeneralPreferencesClass({
     required this.appBrightness,
     required this.sheetBrightness,
+    required this.oledBlackBackground,
   }) : super('generalPreferences');
 
   @override
   GeneralPreferencesClass fromJson(Map<String, dynamic>? json) {
     return GeneralPreferencesClass(
-      appBrightness: BrightnessSetting
-          .values[json?['appBrightness'] ?? BrightnessSetting.device.index],
-      sheetBrightness: BrightnessSetting
-          .values[json?['sheetBrightness'] ?? BrightnessSetting.light.index],
+      appBrightness:
+          ThemeMode.values[json?['appBrightness'] ?? ThemeMode.system.index],
+      sheetBrightness:
+          ThemeMode.values[json?['sheetBrightness'] ?? ThemeMode.light.index],
+      oledBlackBackground: json?['oledBlackBackground'] ?? false,
     );
   }
 
@@ -78,6 +81,7 @@ class GeneralPreferencesClass
     return {
       'appBrightness': appBrightness.index,
       'sheetBrightness': sheetBrightness.index,
+      'oledBlackBackground': oledBlackBackground,
     };
   }
 }

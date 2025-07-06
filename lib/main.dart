@@ -58,8 +58,10 @@ const constants = (
   newsRss: 'https://testpress.server.fodor.pro/category/app/aktualis/feed',
   buttonsRss: 'https://testpress.server.fodor.pro/category/app/linkek/feed',
   urlScheme: 'lyric',
-  tabletFromWidth: 700,
-  desktopFromWidth: 1000,
+  tabletFromWidth: 700.0,
+  desktopFromWidth: 1000.0,
+  seedColor: Color(0xff025462),
+  primaryColor: Color(0xffc3a140),
 );
 
 class LyricApp extends ConsumerStatefulWidget {
@@ -79,21 +81,22 @@ class _LyricAppState extends ConsumerState<LyricApp> {
   @override
   Widget build(BuildContext context) {
     final generalPrefs = ref.watch(generalPreferencesProvider);
-    final Brightness platformBrightness = MediaQuery.platformBrightnessOf(
-      context,
-    );
-    final Brightness appBrightness = switch (generalPrefs.appBrightness) {
-      BrightnessSetting.light => Brightness.light,
-      BrightnessSetting.dark => Brightness.dark,
-      BrightnessSetting.device => platformBrightness,
-    };
 
     return MaterialApp.router(
+      themeMode: generalPrefs.appBrightness,
+      darkTheme: ThemeData.from(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: constants.seedColor,
+          primary: constants.primaryColor,
+          surface: generalPrefs.oledBlackBackground ? Colors.black : null,
+          brightness: Brightness.dark,
+        ),
+      ),
       theme: ThemeData.from(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Color(0xff025462),
-          primary: Color(0xffc3a140),
-          brightness: appBrightness,
+          seedColor: constants.seedColor,
+          primary: constants.primaryColor,
+          brightness: Brightness.light,
         ),
         useMaterial3: true,
       ),
