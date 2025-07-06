@@ -170,7 +170,6 @@ class MapConverter extends TypeConverter<Map<String, dynamic>, String> {
 
   @override
   Map<String, dynamic> fromSql(String fromDb) {
-    // TODO this probably won't work
     return jsonDecode(fromDb) as Map<String, dynamic>;
   }
 

@@ -26,7 +26,7 @@ class _SettingsDialogState extends ConsumerState<PreferencesDialog> {
   @override
   Widget build(BuildContext context) {
     final general = ref.watch(generalPreferencesProvider);
-    final song = ref.watch(songPreferencesProvider);
+    //final song = ref.watch(songPreferencesProvider);
 
     return Dialog(
       clipBehavior: Clip.antiAlias,

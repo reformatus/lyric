@@ -6,7 +6,6 @@ import 'package:lyric/services/app_links/app_links.dart';
 import '../../data/log/provider.dart';
 import '../../main.dart';
 import '../../services/app_version/check_new_version.dart';
-import '../common/log/button.dart';
 
 typedef GeneralNavigationDestination = ({
   Widget icon,
