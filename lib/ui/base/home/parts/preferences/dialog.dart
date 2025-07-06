@@ -92,7 +92,24 @@ class _SettingsDialogState extends ConsumerState<PreferencesDialog> {
                             ),
                           ),
 
-                        settingTitle('KOTTA'),
+                        Padding(
+                          padding: EdgeInsetsGeometry.only(bottom: 3, top: 8),
+                          child: Row(
+                            children: [
+                              Text(
+                                'KOTTA',
+                                style: Theme.of(context).textTheme.labelMedium,
+                              ),
+                              SizedBox(width: 4),
+                              Badge(
+                                label: Text('Kísérleti'),
+                                backgroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.primary,
+                              ),
+                            ],
+                          ),
+                        ),
                         SegmentedButton<ThemeMode>(
                           segments: ThemeMode.values
                               .map(

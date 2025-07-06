@@ -54,38 +54,11 @@ class SongSlideView extends ConsumerWidget {
     SongViewType viewType = ref.watch(
       viewTypeForProvider(songSlide.song, songSlide),
     );
-    final generalPrefs = ref.watch(generalPreferencesProvider);
-    final Brightness sheetBrightness = switch (generalPrefs.sheetBrightness) {
-      ThemeMode.light => Brightness.light,
-      ThemeMode.dark => Brightness.dark,
-      ThemeMode.system => MediaQuery.platformBrightnessOf(context),
-    };
 
-    return Builder(
-      builder: (context) {
-        return Theme(
-          data: ThemeData.from(
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: constants.seedColor,
-              primary: constants.primaryColor,
-              brightness: sheetBrightness,
-              surface: sheetBrightness == Brightness.dark ? Colors.black : null,
-            ),
-          ),
-          child: Builder(
-            builder: (context) {
-              return switch (viewType) {
-                SongViewType.svg => SheetView.svg(songSlide.song),
-                SongViewType.pdf => SheetView.pdf(songSlide.song),
-                SongViewType.lyrics => LyricsView(
-                  songSlide.song,
-                  songSlide: songSlide,
-                ),
-              };
-            },
-          ),
-        );
-      },
-    );
+    return switch (viewType) {
+      SongViewType.svg => SheetView.svg(songSlide.song),
+      SongViewType.pdf => SheetView.pdf(songSlide.song),
+      SongViewType.lyrics => LyricsView(songSlide.song, songSlide: songSlide),
+    };
   }
 }
