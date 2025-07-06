@@ -87,34 +87,29 @@ class _SongPageState extends ConsumerState<SongPage> {
   ) {
     return showSlidingBottomSheet(
       context,
-      builder:
-          (context) => SlidingSheetDialog(
-            avoidStatusBar: true,
-            maxWidth: 600,
-            cornerRadius: 20,
-            dismissOnBackdropTap: true,
-            duration: Durations.medium2,
-            headerBuilder:
-                (context, state) => Padding(
-                  padding: const EdgeInsets.only(left: 16, right: 8, top: 8),
-                  child: Row(
-                    children: [
-                      Text(
-                        'Részletek',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      const Spacer(),
-                      IconButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        icon: const Icon(Icons.close),
-                      ),
-                    ],
-                  ),
-                ),
-            builder: (context, state) {
-              return Column(children: detailsContent);
-            },
+      builder: (context) => SlidingSheetDialog(
+        avoidStatusBar: true,
+        maxWidth: 600,
+        cornerRadius: 20,
+        dismissOnBackdropTap: true,
+        duration: Durations.medium2,
+        headerBuilder: (context, state) => Padding(
+          padding: const EdgeInsets.only(left: 16, right: 8, top: 8),
+          child: Row(
+            children: [
+              Text('Részletek', style: Theme.of(context).textTheme.titleMedium),
+              const Spacer(),
+              IconButton(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: const Icon(Icons.close),
+              ),
+            ],
           ),
+        ),
+        builder: (context, state) {
+          return Material(child: Column(children: detailsContent));
+        },
+      ),
       useRootNavigator: false,
     );
   }
