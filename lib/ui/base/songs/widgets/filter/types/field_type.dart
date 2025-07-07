@@ -82,7 +82,7 @@ const Map<String, Map<String, dynamic>> songFieldsMap = {
     'icon': Icons.celebration,
   },
   'sofar': {
-    'title_hu': 'Szerepelt Sófáron',
+    'title_hu': 'Sófár kottafüzet',
     'type': 'filterable_multiselect_tags',
     'icon': Icons.calendar_month,
   },
