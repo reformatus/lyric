@@ -86,7 +86,15 @@ class LSongResultTile extends ConsumerWidget {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(song.keyField?.toString() ?? ''),
+          ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: 70),
+            child: Text(
+              song.keyField?.toString() ?? '',
+              textAlign: TextAlign.right,
+              maxLines: 3,
+              overflow: TextOverflow.clip,
+            ),
+          ),
           SizedBox(width: 10),
           if (downloadedAssets.isNotEmpty &&
               connection == ConnectionType.offline) ...[
