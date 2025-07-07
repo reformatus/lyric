@@ -44,21 +44,20 @@ class _KeyFilterCardState extends ConsumerState<KeyFilterCard> {
       color: isActive ? Theme.of(context).colorScheme.secondaryContainer : null,
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-        leading:
-            !isActive
-                ? Padding(
-                  padding: const EdgeInsets.only(left: 8),
-                  child: Icon(Icons.piano),
-                )
-                : SizedBox(
-                  width: 32,
-                  child: IconButton(
-                    visualDensity: VisualDensity.compact,
-                    onPressed:
-                        () => ref.read(keyFilterStateProvider.notifier).reset(),
-                    icon: Icon(Icons.clear),
-                  ),
+        leading: !isActive
+            ? Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: Icon(Icons.piano),
+              )
+            : SizedBox(
+                width: 32,
+                child: IconButton(
+                  visualDensity: VisualDensity.compact,
+                  onPressed: () =>
+                      ref.read(keyFilterStateProvider.notifier).reset(),
+                  icon: Icon(Icons.clear),
                 ),
+              ),
 
         title: AnimatedSize(
           duration: Durations.medium1,
@@ -76,19 +75,19 @@ class _KeyFilterCardState extends ConsumerState<KeyFilterCard> {
                     Text('Hangnem'),
                     Expanded(
                       child: Text(
-                        "  ${widget.fieldPopulatedCount} kitöltve",
+                        "  ${widget.fieldPopulatedCount} dalnál megadva",
                         maxLines: 1,
                         softWrap: false,
                         textAlign: TextAlign.end,
                         overflow: TextOverflow.fade,
                         style: TextStyle(
                           fontStyle: FontStyle.italic,
-                          color:
-                              Theme.of(
-                                context,
-                              ).colorScheme.onSecondaryContainer,
-                          fontSize:
-                              Theme.of(context).textTheme.bodySmall!.fontSize,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSecondaryContainer,
+                          fontSize: Theme.of(
+                            context,
+                          ).textTheme.bodySmall!.fontSize,
                         ),
                       ),
                     ),
@@ -102,19 +101,17 @@ class _KeyFilterCardState extends ConsumerState<KeyFilterCard> {
                     child: ListView(
                       controller: keysScrollController,
                       scrollDirection: Axis.horizontal,
-                      children:
-                          state.keys
-                              .map(
-                                (e) => LFilterChip(
-                                  label: e.toString(),
-                                  onSelected:
-                                      (v) => ref
-                                          .read(keyFilterStateProvider.notifier)
-                                          .setKeyTo(e, v),
-                                  selected: state.keys.contains(e),
-                                ),
-                              )
-                              .toList(),
+                      children: state.keys
+                          .map(
+                            (e) => LFilterChip(
+                              label: e.toString(),
+                              onSelected: (v) => ref
+                                  .read(keyFilterStateProvider.notifier)
+                                  .setKeyTo(e, v),
+                              selected: state.keys.contains(e),
+                            ),
+                          )
+                          .toList(),
                     ),
                   ),
                 ),
@@ -147,33 +144,31 @@ class _KeyFilterCardState extends ConsumerState<KeyFilterCard> {
       ),
       AsyncValue(:final value) => SizedBox(
         height: 42,
-        child:
-            value == null
-                ? Align(
-                  alignment: Alignment.center,
-                  child: LinearProgressIndicator(),
-                )
-                : FadingEdgeScrollView.fromScrollView(
-                  child: ListView.builder(
-                    // hack, but still better than code repetition...
-                    controller:
-                        modes ? modesScrollController : pitchesScrollController,
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder:
-                        (context, i) => LFilterChip(
-                          label: value[i].label,
-                          selected: value[i].selected,
-                          onSelected: value[i].onSelected,
-                          special: value[i].addingKey,
-                          leading:
-                              value[i].addingKey
-                                  ? Icon(Icons.add, size: 20)
-                                  : null,
-                        ),
-                    itemCount: value.length,
+        child: value == null
+            ? Align(
+                alignment: Alignment.center,
+                child: LinearProgressIndicator(),
+              )
+            : FadingEdgeScrollView.fromScrollView(
+                child: ListView.builder(
+                  // hack, but still better than code repetition...
+                  controller: modes
+                      ? modesScrollController
+                      : pitchesScrollController,
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, i) => LFilterChip(
+                    label: value[i].label,
+                    selected: value[i].selected,
+                    onSelected: value[i].onSelected,
+                    special: value[i].addingKey,
+                    leading: value[i].addingKey
+                        ? Icon(Icons.add, size: 20)
+                        : null,
                   ),
+                  itemCount: value.length,
                 ),
+              ),
       ),
     };
   }

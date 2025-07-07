@@ -37,7 +37,7 @@ class MultiselectFilterCard extends ConsumerWidget {
       isActive: isActive,
       onResetPressed: () => filterStateNotifier.resetFilterField(field),
       trailing: Text(
-        "  $fieldPopulatedCount kitöltve",
+        "  $fieldPopulatedCount dalnál megadva",
         maxLines: 1,
         softWrap: false,
         textAlign: TextAlign.end,
