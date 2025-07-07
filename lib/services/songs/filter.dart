@@ -150,22 +150,26 @@ Stream<List<SongResult>> filteredSongs(Ref ref) {
 
   if (searchString.isEmpty) {
     return ((db.select(db.songs).addColumns([
-      subqueryExpression(downloadedAssetsSubquery),
-    ])..where(filterExpression(db.songs))).watch()).map(
-      (resultList) => resultList
-          .map(
-            (result) => SongResult(
-              result.readTable(db.songs),
-              downloadedAssets:
-                  (result.rawData.readNullableWithType(
-                    DriftSqlType.string,
-                    'c0',
-                  ))?.split(',') ??
-                  [],
-            ),
-          )
-          .toList(),
-    );
+                subqueryExpression(downloadedAssetsSubquery),
+              ])
+              ..orderBy([OrderingTerm.asc(db.songs.title)])
+              ..where(filterExpression(db.songs)))
+            .watch())
+        .map(
+          (resultList) => resultList
+              .map(
+                (result) => SongResult(
+                  result.readTable(db.songs),
+                  downloadedAssets:
+                      (result.rawData.readNullableWithType(
+                        DriftSqlType.string,
+                        'c0',
+                      ))?.split(',') ??
+                      [],
+                ),
+              )
+              .toList(),
+        );
   } else {
     return db
         .songFulltextSearch(
