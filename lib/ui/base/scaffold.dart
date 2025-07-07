@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lyric/services/connectivity/provider.dart';
 import '../../services/app_links/app_links.dart';
 
 import '../../data/log/provider.dart';
@@ -99,6 +100,7 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
   Widget build(BuildContext context) {
     final newVersion = ref.watch(checkNewVersionProvider);
     final unreadLogCount = ref.watch(unreadLogCountProvider);
+    final connection = ref.watch(connectionProvider);
 
     final List<GeneralNavigationDestination> destinations = [
       (
@@ -141,125 +143,185 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
         bool showBottomNavBar =
             constraints.maxHeight / constraints.maxWidth > 1.41;
 
-        return Column(
-          children: [
-            Expanded(
-              child: !showBottomNavBar
-                  ? Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Container(
-                          color: Theme.of(context).colorScheme.surfaceContainer,
-                          child: SafeArea(
-                            right: false,
-                            top: false,
-                            bottom: false,
-                            child: AnimatedSize(
-                              clipBehavior: Clip.none,
-                              duration: Duration(milliseconds: 300),
-                              curve: Curves.easeInOutCubicEmphasized,
-                              child: SizedBox(
-                                width: extendedNavRail ? 150 : 70,
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.topRight,
-                                      child: IntrinsicHeight(
-                                        child: NavigationRail(
-                                          extended: extendedNavRail,
-                                          labelType: extendedNavRail
-                                              ? NavigationRailLabelType.none
-                                              : NavigationRailLabelType
-                                                    .selected,
-                                          destinations: destinations
-                                              .map(
-                                                (d) =>
-                                                    railDestinationFromGeneral(
-                                                      d,
+        return Material(
+          child: Column(
+            children: [
+              Expanded(
+                child: !showBottomNavBar
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Container(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainer,
+                            child: SafeArea(
+                              right: false,
+                              top: false,
+                              bottom: false,
+                              child: AnimatedSize(
+                                clipBehavior: Clip.none,
+                                duration: Duration(milliseconds: 300),
+                                curve: Curves.easeInOutCubicEmphasized,
+                                child: SizedBox(
+                                  width: extendedNavRail ? 150 : 70,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.topRight,
+                                        child: IntrinsicHeight(
+                                          child: NavigationRail(
+                                            extended: extendedNavRail,
+                                            labelType: extendedNavRail
+                                                ? NavigationRailLabelType.none
+                                                : NavigationRailLabelType
+                                                      .selected,
+                                            destinations: destinations
+                                                .map(
+                                                  (d) =>
+                                                      railDestinationFromGeneral(
+                                                        d,
+                                                      ),
+                                                )
+                                                .toList(),
+                                            selectedIndex:
+                                                BaseScaffold._calculateSelectedIndex(
+                                                  context,
+                                                ),
+                                            onDestinationSelected:
+                                                (int index) =>
+                                                    _onDestinationSelected(
+                                                      index,
+                                                      context,
                                                     ),
-                                              )
-                                              .toList(),
-                                          selectedIndex:
-                                              BaseScaffold._calculateSelectedIndex(
-                                                context,
-                                              ),
-                                          onDestinationSelected: (int index) =>
-                                              _onDestinationSelected(
-                                                index,
-                                                context,
-                                              ),
-                                          backgroundColor: Colors.transparent,
-                                          minExtendedWidth: 160,
+                                            backgroundColor: Colors.transparent,
+                                            minExtendedWidth: 160,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Spacer(),
-                                    Padding(
-                                      padding: EdgeInsets.all(8),
-                                      child: Flex(
-                                        direction: extendedNavRail
-                                            ? Axis.horizontal
-                                            : Axis.vertical,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          if (extendedNavRail) Spacer(),
-                                          IconButton(
-                                            icon: Icon(
-                                              extendedNavRail
-                                                  ? Icons.chevron_left
-                                                  : Icons.chevron_right,
+                                      Spacer(),
+                                      if (connection == ConnectionType.offline)
+                                        Container(
+                                          padding: EdgeInsets.all(7),
+                                          margin: EdgeInsets.all(7),
+                                          decoration: BoxDecoration(
+                                            color: Colors.red.withAlpha(200),
+                                            borderRadius: BorderRadius.circular(
+                                              20,
                                             ),
-                                            tooltip: extendedNavRail
-                                                ? "Összecsukás"
-                                                : "Kinyitás",
-                                            onPressed: () {
-                                              setState(() {
-                                                extendedNavRail =
-                                                    !extendedNavRail;
-                                              });
-                                            },
                                           ),
-                                        ],
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Icon(Icons.public_off_outlined),
+                                              if (extendedNavRail)
+                                                Padding(
+                                                  padding:
+                                                      EdgeInsetsGeometry.only(
+                                                        left: 5,
+                                                      ),
+                                                  child: Text('Offline'),
+                                                ),
+                                            ],
+                                          ),
+                                        ),
+
+                                      Padding(
+                                        padding: EdgeInsets.all(8),
+                                        child: Flex(
+                                          direction: extendedNavRail
+                                              ? Axis.horizontal
+                                              : Axis.vertical,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            if (extendedNavRail) Spacer(),
+                                            IconButton(
+                                              icon: Icon(
+                                                extendedNavRail
+                                                    ? Icons.chevron_left
+                                                    : Icons.chevron_right,
+                                              ),
+                                              tooltip: extendedNavRail
+                                                  ? "Összecsukás"
+                                                  : "Kinyitás",
+                                              onPressed: () {
+                                                setState(() {
+                                                  extendedNavRail =
+                                                      !extendedNavRail;
+                                                });
+                                              },
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        // TODO validate on iOS!
-                        Expanded(
-                          child: MediaQuery.removePadding(
-                            removeLeft: true,
-                            context: context,
-                            child: widget.child,
+                          // TODO validate on iOS!
+                          Expanded(
+                            child: MediaQuery.removePadding(
+                              removeLeft: true,
+                              context: context,
+                              child: widget.child,
+                            ),
                           ),
-                        ),
-                      ],
-                    )
-                  : widget.child,
-            ),
-            if (showBottomNavBar)
-              MediaQuery.removePadding(
-                context: context,
-                removeTop: true,
-                child: NavigationBar(
-                  labelBehavior:
-                      NavigationDestinationLabelBehavior.onlyShowSelected,
-                  height: 65,
-                  destinations: destinations
-                      .map((d) => destinationFromGeneral(d))
-                      .toList(),
-                  selectedIndex: BaseScaffold._calculateSelectedIndex(context),
-                  onDestinationSelected: (int index) =>
-                      _onDestinationSelected(index, context),
-                ),
+                        ],
+                      )
+                    : widget.child,
               ),
-          ],
+              if (showBottomNavBar) ...[
+                Container(
+                  color: Colors.red.withAlpha(200),
+                  child: AnimatedSize(
+                    duration: Durations.medium4,
+
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        if (connection == ConnectionType.offline) ...[
+                          Icon(Icons.public_off_outlined),
+                          Padding(
+                            padding: EdgeInsetsGeometry.only(
+                              left: 5,
+                              top: 8,
+                              bottom: 8,
+                            ),
+                            child: Text('Offline'),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+                MediaQuery.removePadding(
+                  context: context,
+                  removeTop: true,
+                  child: NavigationBar(
+                    labelBehavior:
+                        NavigationDestinationLabelBehavior.onlyShowSelected,
+                    height: 65,
+                    destinations: destinations
+                        .map((d) => destinationFromGeneral(d))
+                        .toList(),
+                    selectedIndex: BaseScaffold._calculateSelectedIndex(
+                      context,
+                    ),
+                    onDestinationSelected: (int index) =>
+                        _onDestinationSelected(index, context),
+                  ),
+                ),
+              ],
+            ],
+          ),
         );
       },
     );
