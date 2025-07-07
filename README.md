@@ -5,11 +5,10 @@
 #### How to build
 
 1. Install the latest [Flutter SDK](https://docs.flutter.dev/get-started/install)
-2. Clone this repository
-3. Switch to `flutter channel main`
-4. Run `flutter pub get` to install dependencies
-5. Run `dart run build_runner build` for generated code (drift, riverpod)
-6. Run `flutter run` to build and run the app
+1. Clone this repository
+1. Run `flutter pub get` to install dependencies
+1. Run `dart run build_runner build` for generated code (drift, riverpod)
+1. Run `flutter run` to build and run the app
 
 #### Contributing
 
