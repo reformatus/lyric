@@ -38,7 +38,12 @@ class LSongResultTile extends ConsumerWidget {
         ),
       ),
       subtitle: result == null
-          ? song.firstLine.startsWith(song.title) || song.firstLine.isEmpty
+          ? song.firstLine
+                        .replaceAll(RegExp(r'[^a-zA-Z]'), '')
+                        .startsWith(
+                          song.title.replaceAll(RegExp(r'[^a-zA-Z]'), ''),
+                        ) ||
+                    song.firstLine.isEmpty
                 ? null
                 : Text(
                     song.firstLine,
