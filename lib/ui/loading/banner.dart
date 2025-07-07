@@ -6,7 +6,7 @@ import '../../main.dart';
 import '../../services/songs/update.dart';
 import '../common/error/card.dart';
 
-showOnlineBanksUpdatingBanner() {
+void showOnlineBanksUpdatingBanner() {
   globals.scaffoldKey.currentState?.clearMaterialBanners();
   globals.scaffoldKey.currentState?.showMaterialBanner(
     MaterialBanner(
