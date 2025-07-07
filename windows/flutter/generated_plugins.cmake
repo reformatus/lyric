@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   app_links
+  connectivity_plus
   screen_retriever_windows
   share_plus
   sqlite3_flutter_libs
