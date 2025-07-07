@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../../../data/cue/slide.dart';
-import '../../../main.dart';
 import '../../common/error/card.dart';
 
 class UnknownTypeSlideTile extends StatelessWidget {
   const UnknownTypeSlideTile(
-    this.slide, {
+    this.slide,
+    this.index, {
     required this.selectCallback,
     required this.removeCallback,
     required this.isCurrent,
@@ -17,26 +17,33 @@ class UnknownTypeSlideTile extends StatelessWidget {
   final GestureTapCallback removeCallback;
   final bool isCurrent;
   final Slide slide;
+  final int index;
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text('Ismeretlen diatípus'),
-      onTap: selectCallback,
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            onPressed: removeCallback,
-            icon: Icon(Icons.delete_outline),
-          ),
-          if (globals.isMobile) Icon(Icons.drag_handle),
-        ],
+    return ReorderableDelayedDragStartListener(
+      index: index,
+      child: ListTile(
+        title: Text('Ismeretlen diatípus'),
+        onTap: selectCallback,
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              onPressed: removeCallback,
+              icon: Icon(Icons.delete_outline),
+            ),
+            ReorderableDragStartListener(
+              index: index,
+              child: Icon(Icons.drag_handle),
+            ),
+          ],
+        ),
+        selected: isCurrent,
+        tileColor: Theme.of(context).colorScheme.errorContainer,
+        selectedTileColor: Theme.of(context).colorScheme.onPrimary,
+        textColor: Theme.of(context).colorScheme.onErrorContainer,
       ),
-      selected: isCurrent,
-      tileColor: Theme.of(context).colorScheme.errorContainer,
-      selectedTileColor: Theme.of(context).colorScheme.onPrimary,
-      textColor: Theme.of(context).colorScheme.onErrorContainer,
     );
   }
 }

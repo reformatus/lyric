@@ -9,7 +9,8 @@ import '../../song/state.dart';
 
 class SongSlideTile extends StatelessWidget {
   const SongSlideTile(
-    this.slide, {
+    this.slide,
+    this.index, {
     required this.selectCallback,
     required this.removeCallback,
     required this.isCurrent,
@@ -20,24 +21,31 @@ class SongSlideTile extends StatelessWidget {
   final GestureTapCallback removeCallback;
   final bool isCurrent;
   final SongSlide slide;
+  final int index;
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(slide.song.title),
-      onTap: selectCallback,
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            onPressed: removeCallback,
-            icon: Icon(Icons.delete_outline),
-          ),
-          if (globals.isMobile) Icon(Icons.drag_handle),
-        ],
+    return ReorderableDelayedDragStartListener(
+      index: index,
+      child: ListTile(
+        title: Text(slide.song.title),
+        onTap: selectCallback,
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              onPressed: removeCallback,
+              icon: Icon(Icons.delete_outline),
+            ),
+            ReorderableDragStartListener(
+              index: index,
+              child: Icon(Icons.drag_handle),
+            ),
+          ],
+        ),
+        selected: isCurrent,
+        selectedTileColor: Theme.of(context).colorScheme.onPrimary,
       ),
-      selected: isCurrent,
-      selectedTileColor: Theme.of(context).colorScheme.onPrimary,
     );
   }
 }

@@ -25,6 +25,7 @@ class SlideList extends ConsumerWidget {
 
     return ReorderableListView.builder(
       itemCount: slides.length,
+      buildDefaultDragHandles: false,
       onReorder: (int from, int to) {
         ref
             .read(currentSlideListOfProvider(cue).notifier)
@@ -36,6 +37,7 @@ class SlideList extends ConsumerWidget {
         return switch (slide) {
           SongSlide songSlide => SongSlideTile(
             songSlide,
+            index,
             key: ValueKey(songSlide.hashCode),
             selectCallback: () => ref
                 .read(currentSlideOfProvider(cue).notifier)
@@ -55,6 +57,7 @@ class SlideList extends ConsumerWidget {
           ),
           UnknownTypeSlide unknownSlide => UnknownTypeSlideTile(
             unknownSlide,
+            index,
             key: ValueKey(unknownSlide.hashCode),
             selectCallback: () => ref
                 .read(currentSlideOfProvider(cue).notifier)
