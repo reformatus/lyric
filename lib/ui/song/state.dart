@@ -1,3 +1,4 @@
+import 'package:lyric/services/connectivity/provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/cue/slide.dart';
@@ -22,6 +23,11 @@ enum SongViewType {
 class ViewTypeFor extends _$ViewTypeFor {
   @override
   SongViewType build(Song song, SongSlide? songSlide) {
+    // TODO implement check db for downloaded assets
+    if (ref.read(connectionProvider) == ConnectionType.offline) {
+      return SongViewType.lyrics;
+    }
+
     if (song.hasSvg) {
       return SongViewType.svg;
     } else if (song.hasPdf) {
