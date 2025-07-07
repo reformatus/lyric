@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lyric/services/connectivity/provider.dart';
 
 import '../../../../data/bank/bank.dart';
 import '../../../../data/database.dart';
@@ -7,17 +9,18 @@ import '../../../../data/song/extensions.dart';
 import '../../../../data/song/song.dart';
 import '../../../../services/songs/filter.dart';
 
-class LSongResultTile extends StatelessWidget {
+class LSongResultTile extends ConsumerWidget {
   const LSongResultTile(this.songResult, this.bank, {super.key});
 
   final SongResult songResult;
   final Bank? bank;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final Song song = songResult.song;
     final SongFulltextSearchResult? result = songResult.result;
     final List<String> downloadedAssets = songResult.downloadedAssets;
+    final connection = ref.watch(connectionProvider);
 
     return ListTile(
       // far future todo dense on desktop (maybe even table?)
@@ -85,7 +88,8 @@ class LSongResultTile extends StatelessWidget {
         children: [
           Text(song.keyField?.toString() ?? ''),
           SizedBox(width: 10),
-          if (downloadedAssets.isNotEmpty) ...[
+          if (downloadedAssets.isNotEmpty &&
+              connection == ConnectionType.offline) ...[
             Tooltip(
               message: 'Kottakép letöltve',
               child: Icon(Icons.offline_pin, color: Colors.green[600]),
