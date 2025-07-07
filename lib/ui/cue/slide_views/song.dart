@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../data/cue/slide.dart';
-import '../../../main.dart';
 import '../../song/lyrics/view.dart';
 import '../../song/sheet/view.dart';
 import '../../song/state.dart';
