@@ -39,6 +39,8 @@ class _CuePresentMusicianPageState extends ConsumerState<CuePresentMusicianPage>
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Wait for page transition
+      await Future.delayed(Duration(milliseconds: 500));
       overlayController.forward();
       await Future.delayed(Duration(milliseconds: 1000));
       overlayController.reverse();
