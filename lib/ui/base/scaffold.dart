@@ -147,8 +147,13 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
           child: Column(
             children: [
               Expanded(
-                child: !showBottomNavBar
-                    ? Row(
+                child: showBottomNavBar
+                    ? MediaQuery.removePadding(
+                        context: context,
+                        removeBottom: true,
+                        child: SafeArea(child: widget.child),
+                      )
+                    : Row(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Container(
@@ -270,12 +275,11 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
                             child: MediaQuery.removePadding(
                               removeLeft: true,
                               context: context,
-                              child: widget.child,
+                              child: SafeArea(child: widget.child),
                             ),
                           ),
                         ],
-                      )
-                    : widget.child,
+                      ),
               ),
               if (showBottomNavBar) ...[
                 Container(
