@@ -4,7 +4,8 @@ import '../../../data/song/song.dart';
 selectDistinctKeys:
   SELECT DISTINCT
     key_field
-  FROM songs;
+  FROM songs
+  ORDER BY key_field;
 
 selectDistinctPitches(:for_mode AS TEXT):
   SELECT DISTINCT
@@ -14,7 +15,12 @@ selectDistinctPitches(:for_mode AS TEXT):
       ,instr(key_field, '-') - 1
     )
   FROM songs
-  WHERE key_field != '' AND key_field LIKE concat('%-', :for_mode);
+  WHERE key_field != '' AND key_field LIKE concat('%-', :for_mode)
+  ORDER BY substr(
+    key_field
+    ,1
+    ,instr(key_field, '-') - 1
+  );
 
 selectDistinctModes(:for_pitch AS TEXT):
   SELECT DISTINCT
@@ -23,4 +29,8 @@ selectDistinctModes(:for_pitch AS TEXT):
       ,instr(key_field, '-') + 1
     )
   FROM songs
-  WHERE key_field != '' AND key_field LIKE concat(:for_pitch, '-%');
+  WHERE key_field != '' AND key_field LIKE concat(:for_pitch, '-%')
+  ORDER BY substr(
+    key_field
+    ,instr(key_field, '-') + 1
+  );

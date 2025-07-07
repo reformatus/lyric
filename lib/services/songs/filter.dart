@@ -81,7 +81,9 @@ Future<List<String>> selectableValuesForFilterableField(
   }
 
   values.remove("");
-  return values.toList();
+  final list = values.toList();
+  list.sort();
+  return list;
 }
 
 @Riverpod(keepAlive: true)
