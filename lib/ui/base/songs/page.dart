@@ -167,9 +167,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                                           icon:
                                               _overlayPortalController.isShowing
                                               ? const Icon(Icons.close)
-                                              : const Icon(
-                                                  Icons.check_box_outlined,
-                                                ),
+                                              : const Icon(Icons.checklist_rtl),
                                           onPressed: () {
                                             _overlayPortalController.toggle();
                                             setState(() {});

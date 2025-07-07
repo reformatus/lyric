@@ -21,12 +21,12 @@ class LogButton extends ConsumerWidget {
           ? IconButton.outlined(
               onPressed: onPressed,
               tooltip: "Napló",
-              icon: Icon(Icons.notification_important),
+              icon: Icon(Icons.monitor_heart),
             )
           : IconButton(
               onPressed: onPressed,
               tooltip: "Napló",
-              icon: Icon(Icons.notifications_outlined),
+              icon: Icon(Icons.monitor_heart_outlined),
             ),
     );
   }
