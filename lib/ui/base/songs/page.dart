@@ -31,6 +31,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
     _filterExpansionScrollController = ScrollController();
     _filterSidebarScrollController = ScrollController();
     _filterExpansionTileController = ExpansibleController();
+    _searchFieldFocusNode = FocusNode();
     _searchFieldController = TextEditingController(
       text: ref.read(searchStringStateProvider),
     );
@@ -64,6 +65,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
   late ScrollController _filterSidebarScrollController;
   late ExpansibleController _filterExpansionTileController;
   late TextEditingController _searchFieldController;
+  late FocusNode _searchFieldFocusNode;
   final _link = LayerLink();
 
   bool get _areAllFiltersEmpty {
@@ -120,6 +122,8 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                                 padding: EdgeInsets.symmetric(horizontal: 8),
                                 child: TextField(
                                   controller: _searchFieldController,
+                                  focusNode: _searchFieldFocusNode,
+
                                   autocorrect: false,
                                   decoration: InputDecoration(
                                     hintText: 'Keresés (min. 3 betű)',
@@ -281,22 +285,29 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                                         iconData: Icons.search_off,
                                       )
                                     : ListView.builder(
-                                        itemBuilder:
-                                            (BuildContext context, int i) {
-                                              return LSongResultTile(
-                                                value.elementAt(i),
-                                                banksFilterState.length == 1
-                                                    ? null
-                                                    : banks.firstWhere(
-                                                        (b) =>
-                                                            b.uuid ==
-                                                            value
-                                                                .elementAt(i)
-                                                                .song
-                                                                .sourceBank,
-                                                      ),
-                                              );
+                                        itemBuilder: (BuildContext context, int i) {
+                                          return GestureDetector(
+                                            onTapDown: (_) {
+                                              // far future todo: this is just sad.
+                                              _searchFieldFocusNode.unfocus();
                                             },
+                                            behavior:
+                                                HitTestBehavior.translucent,
+                                            child: LSongResultTile(
+                                              value.elementAt(i),
+                                              banksFilterState.length == 1
+                                                  ? null
+                                                  : banks.firstWhere(
+                                                      (b) =>
+                                                          b.uuid ==
+                                                          value
+                                                              .elementAt(i)
+                                                              .song
+                                                              .sourceBank,
+                                                    ),
+                                            ),
+                                          );
+                                        },
                                         itemCount: value.length,
                                       ),
                             },
@@ -357,6 +368,16 @@ class _SongsPageState extends ConsumerState<SongsPage> {
         ),
       },
     );
+  }
+
+  @override
+  void dispose() {
+    _searchFieldController.dispose();
+    _searchFieldFocusNode.dispose();
+    _filterExpansionScrollController.dispose();
+    _filterSidebarScrollController.dispose();
+    _filterExpansionTileController.dispose();
+    super.dispose();
   }
 }
 
