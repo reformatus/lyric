@@ -9,8 +9,8 @@ environment:
   sdk: '>=3.8.0 <4.0.0'
 
 msix_config:
-  display_name: Sófár DalApp
-  identity_name: RefLabs.SfrDalApp
+  display_name: Sófár Hangoló
+  identity_name: RefLabs.SfrHangolo
   publisher_display_name: RefLabs
   publisher: CN=89EEEB6C-58E0-4995-BBFE-64F0DFAC94F4
     # MSIX version created like so:

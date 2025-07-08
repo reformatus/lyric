@@ -1,4 +1,4 @@
-# Sófár DalApp
+# Sófár Hangoló
 
 ## [Homepage](https://app.sofarkotta.hu/)
 
