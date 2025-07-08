@@ -87,281 +87,271 @@ class _SongsPageState extends ConsumerState<SongsPage> {
     final searchString = ref.watch(searchStringStateProvider);
 
     // TODO refactor: move search to appbar
-    return Scaffold(
-      body: switch (banks) {
-        AsyncLoading() => Center(child: CircularProgressIndicator()),
-        AsyncError(:final error, :final stackTrace) => Center(
-          child: LErrorCard(
-            type: LErrorType.error,
-            title: 'Nem sikerült betölteni a daltárakat!',
-            icon: Icons.library_music,
-            message: error.toString(),
-            stack: stackTrace.toString(),
-          ),
+    return switch (banks) {
+      AsyncLoading() => Center(child: CircularProgressIndicator()),
+      AsyncError(:final error, :final stackTrace) => Center(
+        child: LErrorCard(
+          type: LErrorType.error,
+          title: 'Nem sikerült betölteni a daltárakat!',
+          icon: Icons.library_music,
+          message: error.toString(),
+          stack: stackTrace.toString(),
         ),
-        AsyncValue<List<Bank>>(value: final banks!) => Stack(
-          children: [
-            LayoutBuilder(
-              builder: (context, constraints) {
-                return Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SizedBox(
-                                height: 5,
-                                child: songResults.isLoading
-                                    ? LinearProgressIndicator()
-                                    : null,
-                              ),
-                              // Search bar
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 8),
-                                child: TextField(
-                                  controller: _searchFieldController,
-                                  focusNode: _searchFieldFocusNode,
+      ),
+      AsyncValue<List<Bank>>(value: final banks!) => Stack(
+        children: [
+          LayoutBuilder(
+            builder: (context, constraints) {
+              return Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              height: 5,
+                              child: songResults.isLoading
+                                  ? LinearProgressIndicator()
+                                  : null,
+                            ),
+                            // Search bar
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 8),
+                              child: TextField(
+                                controller: _searchFieldController,
+                                focusNode: _searchFieldFocusNode,
 
-                                  autocorrect: false,
-                                  decoration: InputDecoration(
-                                    hintText: 'Keresés (min. 3 betű)',
-                                    prefixIcon:
-                                        _searchFieldController.text.isEmpty
-                                        ? Icon(Icons.search)
-                                        : IconButton(
-                                            icon: Icon(Icons.clear),
-                                            onPressed: () =>
-                                                _searchFieldController.clear(),
-                                          ),
-                                    suffixIcon: CompositedTransformTarget(
-                                      link: _link,
-                                      child: OverlayPortal(
-                                        controller: _overlayPortalController,
-                                        overlayChildBuilder: (context) =>
-                                            CompositedTransformFollower(
-                                              link: _link,
-                                              followerAnchor:
-                                                  Alignment.topRight,
-                                              targetAnchor:
-                                                  Alignment.bottomRight,
-                                              child: Align(
-                                                alignment: Alignment.topRight,
-                                                child: SizedBox(
-                                                  width: 300,
-                                                  child: Card(
-                                                    elevation: 10,
-                                                    clipBehavior:
-                                                        Clip.antiAlias,
-                                                    child: SingleChildScrollView(
-                                                      child:
-                                                          SearchFieldSelectorColumn(),
-                                                    ),
+                                autocorrect: false,
+                                decoration: InputDecoration(
+                                  hintText: 'Keresés (min. 3 betű)',
+                                  prefixIcon:
+                                      _searchFieldController.text.isEmpty
+                                      ? Icon(Icons.search)
+                                      : IconButton(
+                                          icon: Icon(Icons.clear),
+                                          onPressed: () =>
+                                              _searchFieldController.clear(),
+                                        ),
+                                  suffixIcon: CompositedTransformTarget(
+                                    link: _link,
+                                    child: OverlayPortal(
+                                      controller: _overlayPortalController,
+                                      overlayChildBuilder: (context) =>
+                                          CompositedTransformFollower(
+                                            link: _link,
+                                            followerAnchor: Alignment.topRight,
+                                            targetAnchor: Alignment.bottomRight,
+                                            child: Align(
+                                              alignment: Alignment.topRight,
+                                              child: SizedBox(
+                                                width: 300,
+                                                child: Card(
+                                                  elevation: 10,
+                                                  clipBehavior: Clip.antiAlias,
+                                                  child: SingleChildScrollView(
+                                                    child:
+                                                        SearchFieldSelectorColumn(),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                        child: IconButton(
-                                          tooltip: 'Miben keressen',
-                                          icon:
-                                              _overlayPortalController.isShowing
-                                              ? const Icon(Icons.close)
-                                              : const Icon(Icons.checklist_rtl),
-                                          onPressed: () {
-                                            _overlayPortalController.toggle();
-                                            setState(() {});
-                                          },
-                                        ),
+                                          ),
+                                      child: IconButton(
+                                        tooltip: 'Miben keressen',
+                                        icon: _overlayPortalController.isShowing
+                                            ? const Icon(Icons.close)
+                                            : const Icon(Icons.checklist_rtl),
+                                        onPressed: () {
+                                          _overlayPortalController.toggle();
+                                          setState(() {});
+                                        },
                                       ),
                                     ),
                                   ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          // Filters expansion tile on small screens
-                          if (constraints.maxWidth < constants.tabletFromWidth)
-                            Card(
-                              clipBehavior: Clip.antiAlias,
-                              child: ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  maxHeight: constraints.maxHeight / 2,
-                                ),
-                                child: Stack(
-                                  children: [
-                                    FadingEdgeScrollView.fromSingleChildScrollView(
-                                      child: SingleChildScrollView(
-                                        controller:
-                                            _filterExpansionScrollController,
-                                        child: Theme(
-                                          data: Theme.of(context).copyWith(
-                                            dividerColor: Colors.transparent,
-                                          ),
-                                          child: ExpansionTile(
-                                            expansionAnimationStyle: AnimationStyle(
-                                              duration: Durations.medium1,
-                                              curve: Curves
-                                                  .easeInOutCubicEmphasized,
-                                              //reverseDuration: Durations.medium1,
-                                              //reverseCurve: Curves.easeInOutCubicEmphasized,
-                                            ),
-                                            collapsedBackgroundColor:
-                                                _areAllFiltersEmpty
-                                                ? null
-                                                : Theme.of(context)
-                                                      .colorScheme
-                                                      .secondaryContainer,
-                                            collapsedIconColor:
-                                                _areAllFiltersEmpty
-                                                ? null
-                                                : Theme.of(context)
-                                                      .colorScheme
-                                                      .onSecondaryContainer,
-                                            controller:
-                                                _filterExpansionTileController,
-                                            leading: const Icon(
-                                              Icons.filter_list,
-                                            ),
-                                            title: FiltersTitle(
-                                              banks: banks,
-                                              filterState: filterState,
-                                              keyFilterState: keyFilterState,
-                                              banksFilterState:
-                                                  banksFilterState,
-                                            ),
-                                            children: [FiltersColumn()],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    if (filtersScrolled)
-                                      Positioned(
-                                        right: 12,
-                                        top: 6,
-                                        child: IconButton.filledTonal(
-                                          icon: Icon(Icons.expand_less),
-                                          onPressed: () {
-                                            _filterExpansionScrollController
-                                                .jumpTo(0);
-                                            _filterExpansionTileController
-                                                .collapse();
-                                          },
-                                        ),
-                                      ),
-                                  ],
                                 ),
                               ),
                             ),
-                          Expanded(
-                            // Songs list
-                            child: switch (songResults) {
-                              AsyncError(:final error, :final stackTrace) =>
-                                Center(
-                                  child: LErrorCard(
-                                    type: LErrorType.error,
-                                    title: 'Hová lettek a dalok? :(',
-                                    message: error.toString(),
-                                    icon: Icons.error,
-                                    stack: stackTrace.toString(),
-                                  ),
-                                ),
-                              AsyncValue(:final value) =>
-                                value == null
-                                    ? const Center(
-                                        child: CircularProgressIndicator(),
-                                      )
-                                    : searchString.isNotEmpty &&
-                                          searchString.length < 3
-                                    ? CenteredHint(
-                                        'Írj be legalább három betűt a kereséshez.',
-                                        iconData: Icons.search,
-                                      )
-                                    : value.isEmpty
-                                    ? CenteredHint(
-                                        'Nincs találat :(',
-                                        iconData: Icons.search_off,
-                                      )
-                                    : ListView.builder(
-                                        itemBuilder:
-                                            (BuildContext context, int i) {
-                                              return LSongResultTile(
-                                                value.elementAt(i),
-                                                banksFilterState.length == 1
-                                                    ? null
-                                                    : banks.firstWhere(
-                                                        (b) =>
-                                                            b.uuid ==
-                                                            value
-                                                                .elementAt(i)
-                                                                .song
-                                                                .sourceBank,
-                                                      ),
-                                                onTap: () =>
-                                                    _searchFieldFocusNode
-                                                        .unfocus(),
-                                              );
-                                            },
-                                        itemCount: value.length,
+                          ],
+                        ),
+                        // Filters expansion tile on small screens
+                        if (constraints.maxWidth < constants.tabletFromWidth)
+                          Card(
+                            clipBehavior: Clip.antiAlias,
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                maxHeight: constraints.maxHeight / 2,
+                              ),
+                              child: Stack(
+                                children: [
+                                  FadingEdgeScrollView.fromSingleChildScrollView(
+                                    child: SingleChildScrollView(
+                                      controller:
+                                          _filterExpansionScrollController,
+                                      child: Theme(
+                                        data: Theme.of(context).copyWith(
+                                          dividerColor: Colors.transparent,
+                                        ),
+                                        child: ExpansionTile(
+                                          expansionAnimationStyle: AnimationStyle(
+                                            duration: Durations.medium1,
+                                            curve:
+                                                Curves.easeInOutCubicEmphasized,
+                                            //reverseDuration: Durations.medium1,
+                                            //reverseCurve: Curves.easeInOutCubicEmphasized,
+                                          ),
+                                          collapsedBackgroundColor:
+                                              _areAllFiltersEmpty
+                                              ? null
+                                              : Theme.of(context)
+                                                    .colorScheme
+                                                    .secondaryContainer,
+                                          collapsedIconColor:
+                                              _areAllFiltersEmpty
+                                              ? null
+                                              : Theme.of(context)
+                                                    .colorScheme
+                                                    .onSecondaryContainer,
+                                          controller:
+                                              _filterExpansionTileController,
+                                          leading: const Icon(
+                                            Icons.filter_list,
+                                          ),
+                                          title: FiltersTitle(
+                                            banks: banks,
+                                            filterState: filterState,
+                                            keyFilterState: keyFilterState,
+                                            banksFilterState: banksFilterState,
+                                          ),
+                                          children: [FiltersColumn()],
+                                        ),
                                       ),
-                            },
+                                    ),
+                                  ),
+                                  if (filtersScrolled)
+                                    Positioned(
+                                      right: 12,
+                                      top: 6,
+                                      child: IconButton.filledTonal(
+                                        icon: Icon(Icons.expand_less),
+                                        onPressed: () {
+                                          _filterExpansionScrollController
+                                              .jumpTo(0);
+                                          _filterExpansionTileController
+                                              .collapse();
+                                        },
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
                           ),
-                        ],
+                        Expanded(
+                          // Songs list
+                          child: switch (songResults) {
+                            AsyncError(:final error, :final stackTrace) =>
+                              Center(
+                                child: LErrorCard(
+                                  type: LErrorType.error,
+                                  title: 'Hová lettek a dalok? :(',
+                                  message: error.toString(),
+                                  icon: Icons.error,
+                                  stack: stackTrace.toString(),
+                                ),
+                              ),
+                            AsyncValue(:final value) =>
+                              value == null
+                                  ? const Center(
+                                      child: CircularProgressIndicator(),
+                                    )
+                                  : searchString.isNotEmpty &&
+                                        searchString.length < 3
+                                  ? CenteredHint(
+                                      'Írj be legalább három betűt a kereséshez.',
+                                      iconData: Icons.search,
+                                    )
+                                  : value.isEmpty
+                                  ? CenteredHint(
+                                      'Nincs találat :(',
+                                      iconData: Icons.search_off,
+                                    )
+                                  : ListView.builder(
+                                      itemBuilder:
+                                          (BuildContext context, int i) {
+                                            return LSongResultTile(
+                                              value.elementAt(i),
+                                              banksFilterState.length == 1
+                                                  ? null
+                                                  : banks.firstWhere(
+                                                      (b) =>
+                                                          b.uuid ==
+                                                          value
+                                                              .elementAt(i)
+                                                              .song
+                                                              .sourceBank,
+                                                    ),
+                                              onTap: () => _searchFieldFocusNode
+                                                  .unfocus(),
+                                            );
+                                          },
+                                      itemCount: value.length,
+                                    ),
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Filters column in wide view
+                  if (constraints.maxWidth >= constants.tabletFromWidth)
+                    SizedBox(
+                      width: (constraints.maxWidth / 3).clamp(
+                        380,
+                        double.infinity,
+                      ),
+                      child: Scaffold(
+                        backgroundColor: Theme.of(context).colorScheme.surface,
+                        appBar: AppBar(
+                          title: FiltersTitle(
+                            banks: banks,
+                            filterState: filterState,
+                            keyFilterState: keyFilterState,
+                            banksFilterState: banksFilterState,
+                          ),
+                          automaticallyImplyLeading: false,
+                          backgroundColor: _areAllFiltersEmpty
+                              ? Theme.of(context).colorScheme.surface
+                              : Theme.of(
+                                  context,
+                                ).colorScheme.secondaryContainer,
+                        ),
+                        body: FadingEdgeScrollView.fromSingleChildScrollView(
+                          child: SingleChildScrollView(
+                            controller: _filterSidebarScrollController,
+                            child: FiltersColumn(),
+                          ),
+                        ),
                       ),
                     ),
-                    // Filters column in wide view
-                    if (constraints.maxWidth >= constants.tabletFromWidth)
-                      SizedBox(
-                        width: (constraints.maxWidth / 3).clamp(
-                          380,
-                          double.infinity,
-                        ),
-                        child: Scaffold(
-                          backgroundColor: Theme.of(
-                            context,
-                          ).colorScheme.surface,
-                          appBar: AppBar(
-                            title: FiltersTitle(
-                              banks: banks,
-                              filterState: filterState,
-                              keyFilterState: keyFilterState,
-                              banksFilterState: banksFilterState,
-                            ),
-                            automaticallyImplyLeading: false,
-                            backgroundColor: _areAllFiltersEmpty
-                                ? Theme.of(context).colorScheme.surface
-                                : Theme.of(
-                                    context,
-                                  ).colorScheme.secondaryContainer,
-                          ),
-                          body: FadingEdgeScrollView.fromSingleChildScrollView(
-                            child: SingleChildScrollView(
-                              controller: _filterSidebarScrollController,
-                              child: FiltersColumn(),
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                );
-              },
-            ),
-            GestureDetector(
-              // When showing the overlay, the user can tap anywhere to close it
-              onTap: () {
-                if (_overlayPortalController.isShowing) {
-                  _overlayPortalController.toggle();
-                  setState(() {});
-                }
-              },
-              behavior: _overlayPortalController.isShowing
-                  ? HitTestBehavior.opaque
-                  : HitTestBehavior.deferToChild,
-            ),
-          ],
-        ),
-      },
-    );
+                ],
+              );
+            },
+          ),
+          GestureDetector(
+            // When showing the overlay, the user can tap anywhere to close it
+            onTap: () {
+              if (_overlayPortalController.isShowing) {
+                _overlayPortalController.toggle();
+                setState(() {});
+              }
+            },
+            behavior: _overlayPortalController.isShowing
+                ? HitTestBehavior.opaque
+                : HitTestBehavior.deferToChild,
+          ),
+        ],
+      ),
+    };
   }
 
   @override
