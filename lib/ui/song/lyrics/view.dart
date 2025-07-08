@@ -48,7 +48,8 @@ class LyricsView extends ConsumerWidget {
               ),
             );
           }
-          var verses = os.getVersesFromString(openSongContent);
+
+          final verses = os.getVersesFromString(openSongContent);
 
           // far future todo Parse ChordPro
 
@@ -100,22 +101,23 @@ class VerseCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(5),
-                  bottomRight: Radius.circular(5),
+            if (verse.tag.isNotEmpty)
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(5),
+                    bottomRight: Radius.circular(5),
+                  ),
+                  color: Theme.of(context).colorScheme.primary,
                 ),
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              child: Text(
-                getPrettyVerseTagFrom(verse.type, verse.index),
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimary,
+                child: Text(
+                  getPrettyVerseTagFrom(verse.type, verse.index),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
                 ),
               ),
-            ),
             Padding(
               padding: EdgeInsets.only(top: 5, left: 10, right: 10, bottom: 10),
               child: Column(
