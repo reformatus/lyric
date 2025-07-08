@@ -10,10 +10,11 @@ import '../../../../data/song/song.dart';
 import '../../../../services/songs/filter.dart';
 
 class LSongResultTile extends ConsumerWidget {
-  const LSongResultTile(this.songResult, this.bank, {super.key});
+  const LSongResultTile(this.songResult, this.bank, {this.onTap, super.key});
 
   final SongResult songResult;
   final Bank? bank;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,7 +25,10 @@ class LSongResultTile extends ConsumerWidget {
 
     return ListTile(
       // far future todo dense on desktop (maybe even table?)
-      onTap: () => context.push('/song/${song.uuid}'),
+      onTap: () {
+        onTap?.call();
+        context.push('/song/${song.uuid}');
+      },
       title: RichText(
         text: TextSpan(
           children: spansFromSnippet(

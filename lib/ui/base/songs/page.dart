@@ -283,29 +283,25 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                                         iconData: Icons.search_off,
                                       )
                                     : ListView.builder(
-                                        itemBuilder: (BuildContext context, int i) {
-                                          return GestureDetector(
-                                            onTapDown: (_) {
-                                              // far future todo: this is just sad.
-                                              _searchFieldFocusNode.unfocus();
+                                        itemBuilder:
+                                            (BuildContext context, int i) {
+                                              return LSongResultTile(
+                                                value.elementAt(i),
+                                                banksFilterState.length == 1
+                                                    ? null
+                                                    : banks.firstWhere(
+                                                        (b) =>
+                                                            b.uuid ==
+                                                            value
+                                                                .elementAt(i)
+                                                                .song
+                                                                .sourceBank,
+                                                      ),
+                                                onTap: () =>
+                                                    _searchFieldFocusNode
+                                                        .unfocus(),
+                                              );
                                             },
-                                            behavior:
-                                                HitTestBehavior.translucent,
-                                            child: LSongResultTile(
-                                              value.elementAt(i),
-                                              banksFilterState.length == 1
-                                                  ? null
-                                                  : banks.firstWhere(
-                                                      (b) =>
-                                                          b.uuid ==
-                                                          value
-                                                              .elementAt(i)
-                                                              .song
-                                                              .sourceBank,
-                                                    ),
-                                            ),
-                                          );
-                                        },
                                         itemCount: value.length,
                                       ),
                             },
