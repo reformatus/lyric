@@ -50,7 +50,7 @@ Stream<Map<Bank, ({int toUpdateCount, int updatedCount})?>> updateAllBanksSongs(
         yield {...bankStates};
       }
     } catch (e, s) {
-      log.severe('Error while updating bank ${bankState.key.name}:', e, s);
+      log.severe('Hiba a ${bankState.key.name} frissítése közben:', e, s);
     }
   }
 }
@@ -97,7 +97,7 @@ Stream<({int toUpdateCount, int updatedCount})> updateBankSongs(
               }
               retries++;
               log.info(
-                'Error while fetching details for songs $protoSongs, retrying ($retries / 5)',
+                '$protoSongs azonosítójú dalok részleteinek lekérdezésekor hiba lépett fel, újrapróbálkozás: ($retries / 5)',
               );
               await Future.delayed(const Duration(milliseconds: 500));
             }
@@ -115,7 +115,7 @@ Stream<({int toUpdateCount, int updatedCount})> updateBankSongs(
             } catch (f, t) {
               hadErrors = true;
               log.severe(
-                'Error while writing song ${song.uuid} to database:',
+                'Nem sikerült ${song.uuid} azonosítójú dal adatbázisba írása:',
                 f,
                 t,
               );
@@ -124,7 +124,7 @@ Stream<({int toUpdateCount, int updatedCount})> updateBankSongs(
         } catch (e, s) {
           hadErrors = true;
           log.severe(
-            'Multiple errors while fetching details for songs $protoSongs, giving up:',
+            '$protoSongs azonosítójú dalok lekérdezése sokadik próbálkozásra sem sikerült:',
             e,
             s,
           );
@@ -140,9 +140,9 @@ Stream<({int toUpdateCount, int updatedCount})> updateBankSongs(
 
   if (!hadErrors) {
     await setAsUpdatedNow(bank);
-    log.info('All songs updated for bank ${bank.name}');
+    log.info('Minden dal frissítve: ${bank.name}');
   } else {
-    log.warning('Some songs failed to update for bank ${bank.name}');
+    log.warning('Néhány dalt nem sikerült frissíteni: ${bank.name}');
   }
 
   return;
