@@ -82,7 +82,7 @@ String sofarKottatarTempData = '''
       "title_hu": "Hangnem",
       "search_type": null,
       "filter_type": "filterable_key",
-      "icon": "music_note"
+      "icon": "piano"
     },
     "genre": {
       "title_hu": "Stílus / műfaj",

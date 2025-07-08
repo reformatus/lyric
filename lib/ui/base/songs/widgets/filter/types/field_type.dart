@@ -61,11 +61,7 @@ const Map<String, Map<String, dynamic>> songFieldsMap = {
     'type': 'filterable_multiselect',
     'icon': Icons.height,
   },
-  'key': {
-    'title_hu': 'Hangnem',
-    'type': 'filterable_key',
-    'icon': Icons.music_note,
-  },
+  'key': {'title_hu': 'Hangnem', 'type': 'filterable_key', 'icon': Icons.piano},
   'genre': {
     'title_hu': 'Stílus / műfaj',
     'type': 'filterable_multiselect_tags',
