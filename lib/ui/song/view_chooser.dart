@@ -65,58 +65,73 @@ class ViewChooser extends ConsumerWidget {
                 ),
               ),
             ),
-            segments:
-                viewTypeEntries
-                    .map(
-                      (e) => ButtonSegment(
-                        value: e.value,
-                        label: Text(e.label),
-                        icon: Icon(e.icon),
-                        enabled: e.enabled,
-                        tooltip: !e.enabled ? 'Nem elérhető' : null,
-                      ),
-                    )
-                    .toList(),
+            segments: viewTypeEntries
+                .map(
+                  (e) => ButtonSegment(
+                    value: e.value,
+                    label: Text(e.label),
+                    icon: Icon(e.icon),
+                    enabled: e.enabled,
+                    tooltip: !e.enabled ? 'Nem elérhető' : null,
+                  ),
+                )
+                .toList(),
           );
         } else {
-          return FilledButton.tonal(
+          return FilledButton(
             style: ButtonStyle(
               padding: WidgetStatePropertyAll(EdgeInsets.zero),
               enableFeedback: false,
               splashFactory: NoSplash.splashFactory,
               overlayColor: WidgetStatePropertyAll(Colors.transparent),
             ),
+            focusNode: FocusNode(skipTraversal: true),
             onPressed: () {},
             child: DropdownButton<SongViewType>(
               borderRadius: BorderRadius.circular(15),
               isDense: true,
               padding: EdgeInsets.only(top: 5, bottom: 5, left: 15, right: 5),
               underline: SizedBox.shrink(),
+              focusColor: Colors.transparent,
+              icon: Icon(
+                Icons.arrow_drop_down_rounded,
+                color: Theme.of(context).colorScheme.inverseSurface,
+              ),
               autofocus: false,
               value: viewType,
-              onChanged:
-                  (viewType) => ref
-                      .read(ViewTypeForProvider(song, songSlide).notifier)
-                      .set(viewType!),
-              items:
-                  viewTypeEntries
-                      .where((e) => e.enabled)
-                      .map(
-                        (e) => DropdownMenuItem(
-                          enabled: e.enabled,
-                          value: e.value,
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(right: 10),
-                                child: Icon(e.icon),
-                              ),
-                              Text(e.label),
-                            ],
+              onChanged: (viewType) => ref
+                  .read(ViewTypeForProvider(song, songSlide).notifier)
+                  .set(viewType!),
+              items: viewTypeEntries
+                  .where((e) => e.enabled)
+                  .map(
+                    (e) => DropdownMenuItem(
+                      enabled: e.enabled,
+                      value: e.value,
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(right: 10),
+                            child: Icon(
+                              e.icon,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.inverseSurface,
+                            ),
                           ),
-                        ),
-                      )
-                      .toList(),
+                          Text(
+                            e.label,
+                            style: TextStyle(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.inverseSurface,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                  .toList(),
             ),
           );
         }
