@@ -21,7 +21,9 @@ final appLinksSingleton = AppLinks();
 @Riverpod(keepAlive: true)
 Stream<String> shouldNavigate(Ref ref) async* {
   await for (Uri uri in appLinksSingleton.uriLinkStream) {
-    log.info('Bejövő link kezelése: "$uri"');
+    log.info(
+      'Bejövő link kezelése: "${uri.toString().substring(0, uri.toString().length.clamp(0, 100))}"',
+    );
     try {
       if (uri.scheme != constants.urlScheme &&
           uri.authority != constants.domain) {
