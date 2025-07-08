@@ -244,7 +244,7 @@ class SongFeatures extends StatelessWidget {
     } else if (available) {
       color = null;
     } else {
-      color = Colors.transparent;
+      color = Colors.grey.withAlpha(80);
     }
 
     return Icon(iconData, color: color, size: 18);
