@@ -122,17 +122,22 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                               child: TextField(
                                 controller: _searchFieldController,
                                 focusNode: _searchFieldFocusNode,
-
+                                onTapOutside: (_) =>
+                                    _searchFieldFocusNode.unfocus(),
+                                onEditingComplete: () =>
+                                    _searchFieldFocusNode.unfocus(),
                                 autocorrect: false,
                                 decoration: InputDecoration(
-                                  hintText: 'Keresés (min. 3 betű)',
+                                  hintText: 'Keresés',
                                   prefixIcon:
                                       _searchFieldController.text.isEmpty
                                       ? Icon(Icons.search)
                                       : IconButton(
                                           icon: Icon(Icons.clear),
-                                          onPressed: () =>
-                                              _searchFieldController.clear(),
+                                          onPressed: () {
+                                            _searchFieldController.clear();
+                                            _searchFieldFocusNode.unfocus();
+                                          },
                                         ),
                                   suffixIcon: CompositedTransformTarget(
                                     link: _link,
