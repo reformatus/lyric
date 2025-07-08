@@ -275,11 +275,13 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                                   ? CenteredHint(
                                       'Írj be legalább három betűt a kereséshez.',
                                       iconData: Icons.search,
+                                      alignment: Alignment.topCenter,
                                     )
                                   : value.isEmpty
                                   ? CenteredHint(
                                       'Nincs találat :(',
                                       iconData: Icons.search_off,
+                                      alignment: Alignment.topCenter,
                                     )
                                   : ListView.builder(
                                       itemBuilder:
