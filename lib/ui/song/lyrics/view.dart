@@ -1,4 +1,5 @@
 import 'package:dart_opensong/dart_opensong.dart' as os;
+import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../transpose/state.dart';
@@ -83,7 +84,7 @@ class LyricsView extends ConsumerWidget {
   }
 }
 
-class VerseCard extends StatelessWidget {
+class VerseCard extends StatefulWidget {
   const VerseCard(this.song, this.verse, {required this.transpose, super.key});
 
   final os.Verse verse;
@@ -91,72 +92,98 @@ class VerseCard extends StatelessWidget {
   final SongTranspose transpose;
 
   @override
+  State<VerseCard> createState() => _VerseCardState();
+}
+
+class _VerseCardState extends State<VerseCard> {
+  late final ScrollController cardController;
+
+  @override
+  void initState() {
+    cardController = ScrollController();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(top: 5, left: 5, right: 5),
-      child: Card(
-        elevation: 0,
-        color: Theme.of(context).colorScheme.onPrimary,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (verse.tag.isNotEmpty)
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(5),
-                    bottomRight: Radius.circular(5),
+    return FadingEdgeScrollView.fromSingleChildScrollView(
+      child: SingleChildScrollView(
+        controller: cardController,
+        child: Padding(
+          padding: EdgeInsets.only(top: 5, left: 5, right: 5),
+          child: Card(
+            elevation: 0,
+            color: Theme.of(context).colorScheme.onPrimary,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (widget.verse.tag.isNotEmpty)
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(5),
+                        bottomRight: Radius.circular(5),
+                      ),
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    child: Text(
+                      getPrettyVerseTagFrom(
+                        widget.verse.type,
+                        widget.verse.index,
+                      ),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
                   ),
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                child: Text(
-                  getPrettyVerseTagFrom(verse.type, verse.index),
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onPrimary,
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: 5,
+                    left: 10,
+                    right: 10,
+                    bottom: 10,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: widget.verse.parts
+                        .map(
+                          (e) => switch (e) {
+                            os.VerseLine(:final segments) => Wrap(
+                              alignment: WrapAlignment.start,
+                              crossAxisAlignment: WrapCrossAlignment.start,
+                              children: segments
+                                  .map(
+                                    (e) => LyricsSegment(
+                                      song: widget.song,
+                                      transpose: widget.transpose,
+                                      segments: segments,
+                                      e: e,
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                            os.CommentLine(:final comment) => Text(
+                              comment,
+                              style: TextStyle(fontStyle: FontStyle.italic),
+                            ),
+                            os.NewSlide() => Divider(),
+                            os.EmptyLine() => Text(''),
+                            os.UnsupportedLine(:final original) => LErrorCard(
+                              type: LErrorType.warning,
+                              title: 'Ismeretlen sortípus',
+                              message: original,
+                              icon: Icons.question_mark,
+                            ),
+                          },
+                        )
+                        .toList(),
                   ),
                 ),
-              ),
-            Padding(
-              padding: EdgeInsets.only(top: 5, left: 10, right: 10, bottom: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: verse.parts
-                    .map(
-                      (e) => switch (e) {
-                        os.VerseLine(:final segments) => Wrap(
-                          alignment: WrapAlignment.start,
-                          crossAxisAlignment: WrapCrossAlignment.start,
-                          children: segments
-                              .map(
-                                (e) => LyricsSegment(
-                                  song: song,
-                                  transpose: transpose,
-                                  segments: segments,
-                                  e: e,
-                                ),
-                              )
-                              .toList(),
-                        ),
-                        os.CommentLine(:final comment) => Text(
-                          comment,
-                          style: TextStyle(fontStyle: FontStyle.italic),
-                        ),
-                        os.NewSlide() => Divider(),
-                        os.EmptyLine() => Text(''),
-                        os.UnsupportedLine(:final original) => LErrorCard(
-                          type: LErrorType.warning,
-                          title: 'Ismeretlen sortípus',
-                          message: original,
-                          icon: Icons.question_mark,
-                        ),
-                      },
-                    )
-                    .toList(),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
