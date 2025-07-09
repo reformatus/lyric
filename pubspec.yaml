@@ -6,7 +6,7 @@ publish_to: 'none'
 version: 0.5.2+45
 
 environment:
-  sdk: '>=3.8.0 <4.0.0'
+  sdk: '>=3.7.0 <4.0.0'
 
 msix_config:
   display_name: Sófár Hangoló
