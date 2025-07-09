@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/services/connectivity/provider.dart';
 
 import '../../data/bank/bank.dart';
 import '../../main.dart';
@@ -30,6 +31,21 @@ class UpdatingBanner extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bankStates = ref.watch(updateAllBanksSongsProvider);
+    final connection = ref.watch(connectionProvider);
+
+    if (connection == ConnectionType.offline) {
+      Future.delayed(Duration(seconds: 8)).then(
+        (_) => globals.scaffoldKey.currentState?.hideCurrentMaterialBanner(),
+      );
+      return LErrorCard(
+        type: LErrorType.warning,
+        title: 'Offline vagy.',
+        message:
+            'A már letöltött kottáidat és az összes dalszöveget továbbra is eléred.',
+        icon: Icons.public_off_outlined,
+        showReportButton: false,
+      );
+    }
 
     getOverallProgress() {
       if (!bankStates.hasValue) {
