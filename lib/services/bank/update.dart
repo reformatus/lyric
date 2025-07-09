@@ -21,16 +21,20 @@ Future updateBanks() async {
 
   for (final protoBank in protoBanks) {
     late Map details;
-    /* TODO uncomment when enpoint is ready
-    try {
-      bankDetails = (await dio.get<Map>('${protoBank['api']}/about')).data!;
-    } catch (e) {
-      throw Exception(
-        'Nem sikerült lekérni a(z) ${protoBank['name']} tár adatait: $e',
-      );
-    }*/
 
-    details = jsonDecode(sofarKottatarTempData);
+    if (protoBank['api'] == 'https://sofarkotta.hu/api') {
+      details = jsonDecode(sofarKottatarTempData);
+    } else {
+      try {
+        details = (await globals.dio.get<Map>(
+          '${protoBank['api']}/about',
+        )).data!;
+      } catch (e) {
+        throw Exception(
+          'Nem sikerült lekérni a(z) ${protoBank['name']} tár adatait: $e',
+        );
+      }
+    }
 
     Bank? existingBank = await dbWatchBankWithUuid(details['uuid']).first;
 
