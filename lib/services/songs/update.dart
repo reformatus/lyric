@@ -61,7 +61,21 @@ Stream<({int toUpdateCount, int updatedCount})> updateBankSongs(
 ) async* {
   // stay in indefinite loading state until we know protosong count
   // return protosong count for display
-  List<ProtoSong> toUpdate = await bank.getProtoSongs(since: bank.lastUpdated);
+  List<ProtoSong> toUpdate;
+  if (bank.noCms) {
+    // when the bank static without cms, update all songs if there have been changes.
+    final remoteLastUpdated = await bank.getRemoteLastUpdated();
+    if (remoteLastUpdated != null &&
+        bank.lastUpdated != null &&
+        bank.lastUpdated!.isAfter(remoteLastUpdated)) {
+      toUpdate = [];
+    } else {
+      toUpdate = await bank.getProtoSongs();
+    }
+  } else {
+    toUpdate = await bank.getProtoSongs(since: bank.lastUpdated);
+  }
+
   int updatedCount = 0;
   bool hadErrors = false;
 

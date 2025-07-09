@@ -124,6 +124,20 @@ class Bank extends Insertable<Bank> {
     }
   }
 
+  Future<DateTime?> getRemoteLastUpdated() async {
+    try {
+      final resp = await globals.dio.get<String>('$baseUrl/about');
+      final jsonData = jsonDecode(resp.data ?? "{}") as Map<String, dynamic>;
+
+      if (jsonData.containsKey('lastUpdated')) {
+        return DateTime.parse(jsonData['lastUpdated'] as String);
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     return BanksCompanion(
