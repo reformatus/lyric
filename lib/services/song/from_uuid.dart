@@ -12,7 +12,7 @@ part 'from_uuid.g.dart';
 Future<Song> songFromUuid(Ref ref, String uuid) async {
   Song? songOrNull = await dbSongFromUuid(uuid);
   if (songOrNull == null) {
-    throw Exception("Nem található dal az azonosítóval: $uuid");
+    throw Exception("Úgy tűnik, ez a dal nincs a táradban: $uuid");
   } else {
     return songOrNull;
   }
