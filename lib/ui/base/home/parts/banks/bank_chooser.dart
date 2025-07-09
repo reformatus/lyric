@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lyric/services/songs/update.dart';
+import 'package:lyric/ui/loading/banner.dart';
 import '../../../../../data/bank/bank.dart';
 import '../../../../../services/bank/banks.dart';
 import '../../../songs/widgets/filter/types/bank/state.dart';
@@ -34,6 +36,14 @@ class BankChooser extends ConsumerWidget {
                   'DALTÁRAK',
                   style: Theme.of(context).textTheme.labelLarge,
                 ),
+              ),
+              IconButton(
+                icon: Icon(Icons.cloud_sync_outlined),
+                tooltip: 'Frissítés most',
+                onPressed: () {
+                  ref.read(updateAllBanksSongsProvider);
+                  showOnlineBanksUpdatingBanner();
+                },
               ),
               /*IconButton(
                 icon: Icon(Icons.settings_outlined),
