@@ -24,6 +24,7 @@ class _SettingsDialogState extends ConsumerState<PreferencesDialog> {
     super.initState();
   }
 
+  // TODO factor out each section into separate widgets
   @override
   Widget build(BuildContext context) {
     final general = ref.watch(generalPreferencesProvider);
@@ -94,7 +95,7 @@ class _SettingsDialogState extends ConsumerState<PreferencesDialog> {
                           ),
 
                         Padding(
-                          padding: EdgeInsetsGeometry.only(bottom: 3, top: 8),
+                          padding: EdgeInsetsGeometry.only(bottom: 3, top: 15),
                           child: Row(
                             children: [
                               Text(
@@ -130,7 +131,7 @@ class _SettingsDialogState extends ConsumerState<PreferencesDialog> {
                               .read(generalPreferencesProvider.notifier)
                               .setSheetBrightness(selection.first),
                         ),
-                        Divider(height: 35),
+                        Divider(height: 45, thickness: 2),
                         Row(
                           children: [
                             sectionTitle('Dalszöveg és akkordok'),
@@ -212,7 +213,7 @@ class _SettingsDialogState extends ConsumerState<PreferencesDialog> {
 
   Widget settingTitle(String title) {
     return Padding(
-      padding: EdgeInsetsGeometry.only(bottom: 3, top: 8),
+      padding: EdgeInsetsGeometry.only(bottom: 3, top: 12),
       child: Text(
         title.toUpperCase(),
         style: Theme.of(context).textTheme.labelMedium,

@@ -16,7 +16,7 @@ class LyricsViewStylePreferencesClass
 
   @override
   LyricsViewStylePreferencesClass fromJson(Map<String, dynamic>? json) {
-    double defaultFontSize = 20;
+    double defaultFontSize = 16;
 
     if (globals.scaffoldKey.currentContext != null) {
       defaultFontSize =
