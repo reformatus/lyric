@@ -1,19 +1,24 @@
 import 'package:lyric/services/connectivity/provider.dart';
+import 'package:lyric/services/preferences/providers/song_view_order.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/cue/slide.dart';
 import '../../data/song/extensions.dart';
 import '../../data/song/song.dart';
+import '../../services/assets/downloaded.dart';
 
 part 'state.g.dart';
 
 enum SongViewType {
-  svg('svg'),
-  pdf('pdf'),
-  lyrics('lyrics');
+  svg('svg', requiresAsset: true),
+  pdf('pdf', requiresAsset: true),
+  lyrics('lyrics'),
+  chords('chords');
 
   final String type;
-  const SongViewType(this.type);
+  final bool requiresAsset;
+
+  const SongViewType(this.type, {this.requiresAsset = false});
   factory SongViewType.fromString(String type) {
     return SongViewType.values.firstWhere((e) => e.type == type);
   }
@@ -22,29 +27,41 @@ enum SongViewType {
 @Riverpod(keepAlive: true)
 class ViewTypeFor extends _$ViewTypeFor {
   @override
-  SongViewType build(Song song, SongSlide? songSlide) {
-    // TODO implement check db for downloaded assets
-    if (ref.read(connectionProvider) == ConnectionType.offline) {
-      return SongViewType.lyrics;
-    }
+  Future<SongViewType> build(Song song, SongSlide? songSlide) async {
+    final songViewOrder = (ref.watch(
+      songViewOrderPreferencesProvider,
+    )).songViewOrder;
 
-    if (song.hasSvg) {
-      return SongViewType.svg;
-    } else if (song.hasPdf) {
-      return SongViewType.pdf;
+    if (ref.read(connectionProvider) == ConnectionType.offline) {
+      List<String> downloadedAssets = await downloadedAssetsForSong(song);
+
+      return songViewOrder.firstWhere(
+        (v) =>
+            (song.availableViews.contains(v.name)) &&
+            (!v.requiresAsset ||
+                (v.requiresAsset && downloadedAssets.contains(v.name))),
+      );
     } else {
-      return SongViewType.lyrics;
+      return songViewOrder.firstWhere(
+        (v) => song.availableViews.contains(v.name),
+      );
     }
   }
 
+  /*  // TODO test this - is it even necessary?
   @override
-  bool updateShouldNotify(SongViewType previous, SongViewType next) {
-    songSlide?.viewType = state;
+  bool updateShouldNotify(
+    AsyncValue<SongViewType> previous,
+    AsyncValue<SongViewType> next,
+  ) {
+    if (state.hasValue) {
+      songSlide?.viewType = state.requireValue;
+    }
     return super.updateShouldNotify(previous, next);
   }
+*/
 
-  void set(SongViewType viewType) {
-    state = viewType;
-    // TODO update songSlide
+  void setTo(SongViewType newValue) {
+    state = AsyncValue.data(newValue);
   }
 }

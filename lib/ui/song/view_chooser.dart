@@ -36,15 +36,26 @@ class ViewChooser extends ConsumerWidget {
         label: 'PDF',
         enabled: song.hasPdf,
       ),
-      (
-        value: SongViewType.lyrics,
-        icon: song.hasChords ? Icons.tag_outlined : Icons.text_snippet_outlined,
-        label: song.hasChords ? 'Akkordok' : 'Dalszöveg',
-        enabled: song.hasLyrics,
-      ),
+      if (song.hasChords)
+        (
+          value: SongViewType.chords,
+          icon: Icons.tag_outlined,
+          label: 'Akkordok',
+          enabled: song.hasChords,
+        )
+      else
+        (
+          value: SongViewType.lyrics,
+          icon: Icons.text_snippet_outlined,
+          label: 'Dalszöveg',
+          enabled: song.hasLyrics,
+        ),
     ];
 
-    SongViewType viewType = ref.watch(viewTypeForProvider(song, songSlide));
+    final viewTypeAsync = ref.watch(viewTypeForProvider(song, songSlide));
+
+    if (!viewTypeAsync.hasValue) return SizedBox.shrink();
+    final viewType = viewTypeAsync.requireValue;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -54,7 +65,7 @@ class ViewChooser extends ConsumerWidget {
             onSelectionChanged: (viewTypeSet) {
               ref
                   .read(ViewTypeForProvider(song, songSlide).notifier)
-                  .set(viewTypeSet.first);
+                  .setTo(viewTypeSet.first);
             },
             showSelectedIcon: false,
             multiSelectionEnabled: false,
@@ -101,7 +112,7 @@ class ViewChooser extends ConsumerWidget {
               value: viewType,
               onChanged: (viewType) => ref
                   .read(ViewTypeForProvider(song, songSlide).notifier)
-                  .set(viewType!),
+                  .setTo(viewType!),
               items: viewTypeEntries
                   .where((e) => e.enabled)
                   .map(

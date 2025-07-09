@@ -11,6 +11,7 @@ import '../../data/song/song.dart';
 import '../../ui/base/songs/widgets/filter/types/field_type.dart';
 import '../../ui/base/songs/widgets/filter/types/multiselect-tags/state.dart';
 import '../../ui/base/songs/widgets/filter/types/search/state.dart';
+import '../assets/downloaded.dart';
 
 part 'filter.g.dart';
 
@@ -143,12 +144,6 @@ Stream<List<SongResult>> filteredSongs(Ref ref) {
           ]),
     );
   }
-
-  final downloadedAssetsSubquery = db.selectOnly(db.assets)
-    ..addColumns([
-      db.assets.fieldName.groupConcat(distinct: true, separator: ','),
-    ])
-    ..where(db.assets.songUuid.equalsExp(db.songs.uuid));
 
   if (searchString.isEmpty) {
     return ((db.select(db.songs).addColumns([

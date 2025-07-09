@@ -6,7 +6,7 @@ import 'package:pdfrx/pdfrx.dart';
 import '../../../data/song/song.dart';
 import '../../../main.dart';
 import '../../../services/assets/get_song_asset.dart';
-import '../../../services/preferences/provider.dart';
+import '../../../services/preferences/providers/general.dart';
 import '../../common/error/card.dart';
 import '../state.dart';
 
@@ -19,7 +19,9 @@ class SheetView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    assert(_viewType != SongViewType.lyrics);
+    assert(
+      _viewType != SongViewType.lyrics && _viewType != SongViewType.chords,
+    );
 
     final generalPrefs = ref.watch(generalPreferencesProvider);
     final Brightness sheetBrightness = switch (generalPrefs.sheetBrightness) {

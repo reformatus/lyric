@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../data/song/extensions.dart';
 import '../../../data/song/transpose.dart';
 import '../state.dart';
 import '../../../data/cue/slide.dart';
@@ -151,9 +150,9 @@ class TransposeCard extends ConsumerWidget {
     SongTranspose transpose = ref.watch(
       transposeStateForProvider(song, songSlide),
     );
-    SongViewType viewType = ref.watch(viewTypeForProvider(song, songSlide))!;
+    final viewTypeAsync = ref.watch(viewTypeForProvider(song, songSlide));
 
-    if (viewType != SongViewType.lyrics || !song.hasChords) {
+    if (viewTypeAsync.valueOrNull != SongViewType.chords) {
       return SizedBox.shrink();
     }
 

@@ -72,6 +72,15 @@ class Song extends Insertable<Song> {
   int get contentHash => Object.hash(jsonEncode(contentMap), sourceBank);
 
   @override
+  bool operator ==(Object other) {
+    if (other is! Song) return false;
+    return uuid == other.uuid;
+  }
+
+  @override
+  int get hashCode => uuid.hashCode;
+
+  @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     return SongsCompanion(
       uuid: Value(uuid),

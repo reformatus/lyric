@@ -74,6 +74,15 @@ class Cue extends Insertable<Cue> {
       "content": content,
     };
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is Cue && other.uuid == uuid;
+  }
+
+  @override
+  int get hashCode => uuid.hashCode;
 }
 
 class CueContentConverter extends TypeConverter<List<Map>, String> {

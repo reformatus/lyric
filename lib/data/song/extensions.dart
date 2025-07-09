@@ -13,4 +13,11 @@ extension PropertyUtils on Song {
   bool get hasChords => hasLyrics
       ? RegExp(r'\n\.').hasMatch(contentMap['opensong'] ?? "")
       : false;
+
+  List<String> get availableViews => [
+    if (hasSvg) 'svg',
+    if (hasPdf) 'pdf',
+    if (hasLyrics) 'lyrics',
+    if (hasChords) 'chords',
+  ];
 }

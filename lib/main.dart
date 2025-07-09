@@ -7,7 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_fullscreen/flutter_fullscreen.dart';
 import 'package:go_router/go_router.dart';
-import 'services/preferences/provider.dart';
+import 'services/preferences/providers/general.dart';
 import 'ui/cue/state.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -47,7 +47,7 @@ final globals = (
 );
 
 const constants = (
-  appName: 'Sófár DalApp',
+  appName: 'Sófár Hangoló',
   organisationName: 'Sófár',
   gitHubApiRoot: 'https://api.github.com/repos/reformatus/lyric',
   domain: 'app.sofarkotta.hu',

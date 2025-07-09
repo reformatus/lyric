@@ -2,10 +2,10 @@ import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../../data/preferences/preferences.dart';
-import '../../../../../services/preferences/provider.dart';
+import '../../../../../services/preferences/preferences_parent.dart';
 
 import '../../../../../main.dart';
+import '../../../../../services/preferences/providers/general.dart';
 
 class PreferencesDialog extends ConsumerStatefulWidget {
   const PreferencesDialog({super.key});

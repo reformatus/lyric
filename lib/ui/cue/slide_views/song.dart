@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/ui/common/error/card.dart';
 
 import '../../../data/cue/slide.dart';
 import '../../song/lyrics/view.dart';
@@ -57,14 +58,25 @@ class SongSlideView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    SongViewType viewType = ref.watch(
-      viewTypeForProvider(songSlide.song, songSlide),
-    );
+    final viewType = ref.watch(viewTypeForProvider(songSlide.song, songSlide));
 
-    return switch (viewType) {
-      SongViewType.svg => SheetView.svg(songSlide.song),
-      SongViewType.pdf => SheetView.pdf(songSlide.song),
-      SongViewType.lyrics => LyricsView(songSlide.song, songSlide: songSlide),
-    };
+    return viewType.when(
+      data: (viewType) => switch (viewType) {
+        SongViewType.svg => SheetView.svg(songSlide.song),
+        SongViewType.pdf => SheetView.pdf(songSlide.song),
+        SongViewType.lyrics ||
+        SongViewType.chords => LyricsView(songSlide.song, songSlide: songSlide),
+      },
+      error: (e, s) => Center(
+        child: LErrorCard(
+          type: LErrorType.error,
+          title: 'Hiba a dalnézet kiválasztása közben!',
+          icon: Icons.error,
+          message: e.toString(),
+          stack: s.toString(),
+        ),
+      ),
+      loading: SizedBox.shrink,
+    );
   }
 }

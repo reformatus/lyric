@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../services/preferences/provider.dart';
+import 'package:lyric/services/preferences/preferences_parent.dart';
 
 import '../../main.dart';
 import '../../services/bank/bank_updated.dart';
@@ -18,7 +18,7 @@ class LoadingPage extends ConsumerStatefulWidget {
 
 class _LoadingPageState extends ConsumerState<LoadingPage> {
   bool _hasNavigated = false;
-  late final Future preferenceLoaders;
+  late final Future preferenceLoader = loadAllPreferences(ref);
 
   void _checkAndNavigateIfReady() async {
     if (_hasNavigated) return;
@@ -30,7 +30,7 @@ class _LoadingPageState extends ConsumerState<LoadingPage> {
         (bankStates.hasValue && bankStates.value!.values.every(isDone))) {
       _hasNavigated = true;
 
-      await preferenceLoaders;
+      await preferenceLoader;
 
       // settings should have loaded
 
@@ -62,11 +62,6 @@ class _LoadingPageState extends ConsumerState<LoadingPage> {
     ref.listenManual(updateAllBanksSongsProvider, (previous, next) {
       _checkAndNavigateIfReady();
     });
-
-    preferenceLoaders = Future.wait([
-      ref.read(generalPreferencesProvider.notifier).loadFromDb(),
-      ref.read(songPreferencesProvider.notifier).loadFromDb(),
-    ]);
   }
 
   @override
@@ -83,7 +78,7 @@ class _LoadingPageState extends ConsumerState<LoadingPage> {
         ),
       ),
       body: FutureBuilder(
-        future: preferenceLoaders,
+        future: preferenceLoader,
         builder: (context, snapshot) {
           // Show error if preferences failed to load
           if (snapshot.hasError) {

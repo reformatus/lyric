@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/ui/common/error/card.dart';
 
 import '../../../data/song/song.dart';
-import '../../../data/song/extensions.dart';
 import '../lyrics/view.dart';
 import '../sheet/view.dart';
 import '../state.dart';
@@ -40,7 +40,21 @@ class SongPageBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewType = ref.watch(ViewTypeForProvider(song, null));
+    final viewTypeAsync = ref.watch(ViewTypeForProvider(song, null));
+    if (!viewTypeAsync.hasValue) return SizedBox.shrink();
+    if (viewTypeAsync.hasError) {
+      return Center(
+        child: LErrorCard(
+          type: LErrorType.error,
+          title: 'Nincs érvényes dalnézet!',
+          icon: Icons.error,
+          message: viewTypeAsync.error?.toString(),
+          stack: viewTypeAsync.stackTrace?.toString(),
+        ),
+      );
+    }
+
+    final viewType = viewTypeAsync.requireValue;
 
     if (isDesktop) {
       return Flex(
@@ -84,9 +98,7 @@ class SongPageBody extends ConsumerWidget {
         ValueListenableBuilder<bool>(
           valueListenable: transposeOverlayVisible,
           builder: (context, isVisible, child) {
-            if (viewType == SongViewType.lyrics &&
-                song.hasChords &&
-                isVisible) {
+            if (viewType == SongViewType.chords && isVisible) {
               return Positioned(
                 bottom: 60, // Above the bottom bar
                 right: 16,
@@ -112,7 +124,7 @@ class SongPageBody extends ConsumerWidget {
     return switch (viewType) {
       SongViewType.svg => SheetView.svg(song),
       SongViewType.pdf => SheetView.pdf(song),
-      SongViewType.lyrics => LyricsView(song),
+      SongViewType.lyrics || SongViewType.chords => LyricsView(song),
     };
   }
 }

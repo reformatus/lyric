@@ -28,10 +28,9 @@ class SongSlide extends Slide {
     var songResult = await getSongForSlideJson(json['song']);
 
     SongViewType viewType = SongViewType.fromString(json['viewType']);
-    SongTranspose? transpose =
-        json.containsKey('transpose')
-            ? SongTranspose.fromJson(json['transpose'])
-            : null;
+    SongTranspose? transpose = json.containsKey('transpose')
+        ? SongTranspose.fromJson(json['transpose'])
+        : null;
 
     SongSlide songSlide = SongSlide(
       json['uuid'],
@@ -46,13 +45,13 @@ class SongSlide extends Slide {
     if (ref != null) {
       ref
           .read(viewTypeForProvider(songResult.song, songSlide).notifier)
-          .set(viewType);
+          .setTo(viewType);
       if (transpose != null) {
         ref
             .read(
               transposeStateForProvider(songResult.song, songSlide).notifier,
             )
-            .set(transpose);
+            .setTo(transpose);
       }
     }
 

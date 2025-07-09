@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../data/song/extensions.dart';
 import '../../../data/song/song.dart';
 import '../add_to_cue_search.dart';
 import '../state.dart';
@@ -22,8 +21,12 @@ class DesktopSidebar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewType = ref.watch(ViewTypeForProvider(song, null));
+    final viewTypeAsync = ref.watch(ViewTypeForProvider(song, null));
     final transpose = ref.watch(transposeStateForProvider(song, null));
+
+    if (!viewTypeAsync.hasValue) return SizedBox.shrink();
+
+    final viewType = viewTypeAsync.requireValue;
 
     return SizedBox(
       width: (constraints.maxWidth / 5).clamp(200, 350),
@@ -34,7 +37,7 @@ class DesktopSidebar extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (viewType == SongViewType.lyrics && song.hasChords) ...[
+              if (viewType == SongViewType.chords) ...[
                 TransposeCard(song: song),
                 SizedBox(height: 10),
               ],

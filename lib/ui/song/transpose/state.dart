@@ -19,7 +19,7 @@ class TransposeStateFor extends _$TransposeStateFor {
     return super.updateShouldNotify(previous, next);
   }
 
-  void set(SongTranspose transpose) {
+  void setTo(SongTranspose transpose) {
     state = transpose;
   }
 

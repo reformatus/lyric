@@ -2,7 +2,6 @@ import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../data/song/extensions.dart';
 import '../../../data/song/song.dart';
 import '../add_to_cue_search.dart';
 import '../state.dart';
@@ -27,7 +26,10 @@ class MobileBottomBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewType = ref.watch(ViewTypeForProvider(song, null));
+    final viewTypeAsync = ref.watch(ViewTypeForProvider(song, null));
+    if (!viewTypeAsync.hasValue) return SizedBox.shrink();
+    final viewType = viewTypeAsync.requireValue;
+
     final transpose = ref.watch(transposeStateForProvider(song, null));
 
     return SizedBox(
@@ -83,7 +85,7 @@ class MobileBottomBar extends ConsumerWidget {
         viewType: viewType,
         transpose: transpose,
       ),
-      if (viewType == SongViewType.lyrics && song.hasChords) ...[
+      if (viewType == SongViewType.chords) ...[
         const VerticalDivider(),
         TransposeResetButton(song, songSlide: null, isCompact: false),
         TransposeOverlayButton(

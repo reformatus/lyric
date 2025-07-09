@@ -1,16 +1,20 @@
-class LyricsViewStyle {
+part of '../preferences_parent.dart';
+
+class LyricsViewStylePreferencesClass
+    extends PreferencesParentClass<LyricsViewStylePreferencesClass> {
   double lyricsSize;
   double chordsSize;
   double verseTagSize;
 
-  LyricsViewStyle({
+  LyricsViewStylePreferencesClass({
     required this.lyricsSize,
     required this.chordsSize,
     required this.verseTagSize,
-  });
+  }) : super('lyricsViewStyle');
 
-  factory LyricsViewStyle.fromJson(Map<String, dynamic>? json) {
-    return LyricsViewStyle(
+  @override
+  LyricsViewStylePreferencesClass fromJson(Map<String, dynamic>? json) {
+    return LyricsViewStylePreferencesClass(
       // TODO default values
       lyricsSize: json?['lyricsSize'] ?? 20,
       chordsSize: json?['chordsSize'] ?? 20,
@@ -18,6 +22,7 @@ class LyricsViewStyle {
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'lyricsSize': lyricsSize,
