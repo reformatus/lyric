@@ -2,6 +2,7 @@ import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lyric/services/preferences/providers/lyrics_view_style.dart';
 import '../../../../../services/preferences/preferences_parent.dart';
 
 import '../../../../../main.dart';
@@ -26,7 +27,7 @@ class _SettingsDialogState extends ConsumerState<PreferencesDialog> {
   @override
   Widget build(BuildContext context) {
     final general = ref.watch(generalPreferencesProvider);
-    //final song = ref.watch(songPreferencesProvider);
+    final lyricsView = ref.watch(lyricsViewStylePreferencesProvider);
 
     return Dialog(
       clipBehavior: Clip.antiAlias,
@@ -129,7 +130,67 @@ class _SettingsDialogState extends ConsumerState<PreferencesDialog> {
                               .read(generalPreferencesProvider.notifier)
                               .setSheetBrightness(selection.first),
                         ),
-                        /*Divider(height: 35),*/
+                        Divider(height: 35),
+                        Row(
+                          children: [
+                            sectionTitle('Dalszöveg és akkordok'),
+                            IconButton(
+                              onPressed: () => ref
+                                  .read(
+                                    lyricsViewStylePreferencesProvider.notifier,
+                                  )
+                                  .reset(),
+                              icon: Icon(Icons.replay),
+                              visualDensity: VisualDensity.compact,
+                              iconSize: 18,
+                              tooltip: 'Visszaállítás',
+                            ),
+                          ],
+                        ),
+                        settingTitle(
+                          'Versszakszám mérete - ${lyricsView.verseTagSize.truncate()}',
+                        ),
+                        Slider(
+                          value: lyricsView.verseTagSize,
+                          onChanged: (newValue) => ref
+                              .read(lyricsViewStylePreferencesProvider.notifier)
+                              .setVerseTagSize(newValue),
+                          min: 1,
+                          max: 100,
+                        ),
+                        settingTitle(
+                          'Akkordok mérete - ${lyricsView.chordsSize.truncate()}',
+                        ),
+                        Slider(
+                          value: lyricsView.chordsSize,
+                          onChanged: (newValue) => ref
+                              .read(lyricsViewStylePreferencesProvider.notifier)
+                              .setChordsSize(newValue),
+                          min: 1,
+                          max: 100,
+                        ),
+                        settingTitle(
+                          'Dalszöveg mérete - ${lyricsView.lyricsSize.truncate()}',
+                        ),
+                        Slider(
+                          value: lyricsView.lyricsSize,
+                          onChanged: (newValue) => ref
+                              .read(lyricsViewStylePreferencesProvider.notifier)
+                              .setLyricsSize(newValue),
+                          min: 1,
+                          max: 100,
+                        ),
+                        settingTitle(
+                          'Oszlopszélesség - ${lyricsView.verseCardColumnWidth}',
+                        ),
+                        Slider(
+                          value: lyricsView.verseCardColumnWidth.toDouble(),
+                          onChanged: (newValue) => ref
+                              .read(lyricsViewStylePreferencesProvider.notifier)
+                              .setVerseCardColumnWidth(newValue.round()),
+                          min: 70,
+                          max: 1000,
+                        ),
                       ],
                     ),
                   ),
@@ -152,7 +213,10 @@ class _SettingsDialogState extends ConsumerState<PreferencesDialog> {
   Widget settingTitle(String title) {
     return Padding(
       padding: EdgeInsetsGeometry.only(bottom: 3, top: 8),
-      child: Text(title, style: Theme.of(context).textTheme.labelMedium),
+      child: Text(
+        title.toUpperCase(),
+        style: Theme.of(context).textTheme.labelMedium,
+      ),
     );
   }
 }

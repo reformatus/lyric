@@ -16,7 +16,7 @@ class SongViewOrderPreferences extends _$SongViewOrderPreferences {
     state = await state.getFromDb();
   }
 
-  void go() async {
+  Future<void> go() async {
     ref.notifyListeners();
     try {
       await state.writeToDb();

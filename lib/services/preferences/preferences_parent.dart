@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
+import 'package:lyric/main.dart';
 import 'package:lyric/services/preferences/providers/lyrics_view_style.dart';
 import 'package:lyric/services/preferences/providers/song_view_order.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -55,7 +56,7 @@ sealed class PreferencesParentClass<T extends PreferencesParentClass<T>> {
 Future<void> loadAllPreferences(WidgetRef ref) async {
   await Future.wait([
     ref.read(generalPreferencesProvider.notifier).loadFromDb(),
-    //ref.read(lyricsViewStylePreferencesProvider.notifier).loadFromDb(), // TODO implement
+    ref.read(lyricsViewStylePreferencesProvider.notifier).loadFromDb(),
     ref.read(songViewOrderPreferencesProvider.notifier).loadFromDb(),
   ]);
 

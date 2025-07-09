@@ -2,6 +2,7 @@ import 'package:dart_opensong/dart_opensong.dart' as os;
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/services/preferences/providers/lyrics_view_style.dart';
 import '../transpose/state.dart';
 import '../../../data/cue/slide.dart';
 import '../../../data/song/transpose.dart';
@@ -27,12 +28,15 @@ class LyricsView extends ConsumerWidget {
     SongTranspose transpose = ref.watch(
       transposeStateForProvider(song, songSlide),
     );
+    final lyricsViewStyle = ref.watch(lyricsViewStylePreferencesProvider);
 
     return Material(
       child: LayoutBuilder(
         builder: (context, constraints) {
           //! Calculate layout
-          int crossAxisCount = (constraints.maxWidth ~/ 350).clamp(1, 9999);
+          int crossAxisCount =
+              (constraints.maxWidth ~/ lyricsViewStyle.verseCardColumnWidth)
+                  .clamp(1, 9999);
           double cardWidth = (constraints.maxWidth / crossAxisCount);
 
           // When scrolling sideways, make sure a bit of the next column is visible
@@ -66,7 +70,10 @@ class LyricsView extends ConsumerWidget {
                   if (transpose.capo != 0)
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text('Capo: ${transpose.capo}'),
+                      child: Text(
+                        'Capo: ${transpose.capo}',
+                        style: TextStyle(fontSize: lyricsViewStyle.chordsSize),
+                      ),
                     ),
                   ...verses.map(
                     (e) => SizedBox(
@@ -84,7 +91,7 @@ class LyricsView extends ConsumerWidget {
   }
 }
 
-class VerseCard extends StatefulWidget {
+class VerseCard extends ConsumerStatefulWidget {
   const VerseCard(this.song, this.verse, {required this.transpose, super.key});
 
   final os.Verse verse;
@@ -92,10 +99,10 @@ class VerseCard extends StatefulWidget {
   final SongTranspose transpose;
 
   @override
-  State<VerseCard> createState() => _VerseCardState();
+  ConsumerState<VerseCard> createState() => _VerseCardState();
 }
 
-class _VerseCardState extends State<VerseCard> {
+class _VerseCardState extends ConsumerState<VerseCard> {
   late final ScrollController cardController;
 
   @override
@@ -106,6 +113,8 @@ class _VerseCardState extends State<VerseCard> {
 
   @override
   Widget build(BuildContext context) {
+    final lyricsViewStyle = ref.watch(lyricsViewStylePreferencesProvider);
+
     return FadingEdgeScrollView.fromSingleChildScrollView(
       child: SingleChildScrollView(
         controller: cardController,
@@ -135,6 +144,7 @@ class _VerseCardState extends State<VerseCard> {
                       ),
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onPrimary,
+                        fontSize: lyricsViewStyle.verseTagSize,
                       ),
                     ),
                   ),
@@ -171,7 +181,7 @@ class _VerseCardState extends State<VerseCard> {
                             os.NewSlide() => Divider(),
                             os.EmptyLine() => Text(''),
                             os.UnsupportedLine(:final original) => LErrorCard(
-                              type: LErrorType.warning,
+                              type: LErrorType.info,
                               title: 'Ismeretlen sortípus',
                               message: original,
                               icon: Icons.question_mark,
@@ -190,7 +200,7 @@ class _VerseCardState extends State<VerseCard> {
   }
 }
 
-class LyricsSegment extends StatelessWidget {
+class LyricsSegment extends ConsumerWidget {
   const LyricsSegment({
     super.key,
     required this.song,
@@ -205,7 +215,9 @@ class LyricsSegment extends StatelessWidget {
   final SongTranspose transpose;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final lyricsViewStyle = ref.watch(lyricsViewStylePreferencesProvider);
+
     final chord = getTransposedChord(
       e.chord,
       song.keyField?.pitch,
@@ -215,13 +227,19 @@ class LyricsSegment extends StatelessWidget {
     final TextPainter chordPainter = TextPainter(
       text: TextSpan(
         text: chord ?? '',
-        style: TextStyle(fontWeight: FontWeight.w600),
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: lyricsViewStyle.chordsSize,
+        ),
       ),
       textDirection: TextDirection.ltr,
     )..layout();
 
     final TextPainter lyricsPainter = TextPainter(
-      text: TextSpan(text: e.lyrics),
+      text: TextSpan(
+        text: e.lyrics,
+        style: TextStyle(fontSize: lyricsViewStyle.lyricsSize),
+      ),
       textDirection: TextDirection.ltr,
     )..layout();
 
@@ -246,7 +264,10 @@ class LyricsSegment extends StatelessWidget {
                 padding: EdgeInsets.only(right: 4),
                 child: Text(
                   chord ?? '',
-                  style: TextStyle(fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: lyricsViewStyle.chordsSize,
+                  ),
                 ),
               ),
             Row(
@@ -255,14 +276,26 @@ class LyricsSegment extends StatelessWidget {
                 if (e.lyrics.isNotEmpty)
                   ConstrainedBox(
                     constraints: BoxConstraints(maxWidth: constraints.maxWidth),
-                    child: Text(e.lyrics),
+                    child: Text(
+                      e.lyrics,
+                      style: TextStyle(fontSize: lyricsViewStyle.lyricsSize),
+                    ),
                   )
                 else
                   SizedBox(height: 8),
                 if (hyphenWidth > 2)
                   SizedBox(
                     width: hyphenWidth,
-                    child: ClipRect(child: Center(child: Text("-"))),
+                    child: ClipRect(
+                      child: Center(
+                        child: Text(
+                          "-",
+                          style: TextStyle(
+                            fontSize: lyricsViewStyle.lyricsSize,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
               ],
             ),

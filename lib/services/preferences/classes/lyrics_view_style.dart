@@ -5,20 +5,32 @@ class LyricsViewStylePreferencesClass
   double lyricsSize;
   double chordsSize;
   double verseTagSize;
+  int verseCardColumnWidth;
 
   LyricsViewStylePreferencesClass({
     required this.lyricsSize,
     required this.chordsSize,
     required this.verseTagSize,
+    required this.verseCardColumnWidth,
   }) : super('lyricsViewStyle');
 
   @override
   LyricsViewStylePreferencesClass fromJson(Map<String, dynamic>? json) {
+    double defaultFontSize = 20;
+
+    if (globals.scaffoldKey.currentContext != null) {
+      defaultFontSize =
+          Theme.of(
+            globals.scaffoldKey.currentContext!,
+          ).textTheme.bodyMedium?.fontSize ??
+          20;
+    }
+
     return LyricsViewStylePreferencesClass(
-      // TODO default values
-      lyricsSize: json?['lyricsSize'] ?? 20,
-      chordsSize: json?['chordsSize'] ?? 20,
-      verseTagSize: json?['verseTagSize'] ?? 20,
+      lyricsSize: json?['lyricsSize'] ?? defaultFontSize,
+      chordsSize: json?['chordsSize'] ?? defaultFontSize,
+      verseTagSize: json?['verseTagSize'] ?? defaultFontSize,
+      verseCardColumnWidth: json?['verseCardColumnWidth'] ?? 350,
     );
   }
 
@@ -28,6 +40,7 @@ class LyricsViewStylePreferencesClass
       'lyricsSize': lyricsSize,
       'chordsSize': chordsSize,
       'verseTagSize': verseTagSize,
+      'verseCardColumnWidth': verseCardColumnWidth,
     };
   }
 }
