@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lyric/services/preferences/providers/lyrics_view_style.dart';
+import 'package:lyric/services/preferences/providers/song_view_order.dart';
+import 'package:lyric/ui/song/state.dart';
 import '../../../../../services/preferences/preferences_parent.dart';
 
 import '../../../../../main.dart';
@@ -29,6 +31,9 @@ class _SettingsDialogState extends ConsumerState<PreferencesDialog> {
   Widget build(BuildContext context) {
     final general = ref.watch(generalPreferencesProvider);
     final lyricsView = ref.watch(lyricsViewStylePreferencesProvider);
+    final songViewOrder = (ref.watch(
+      songViewOrderPreferencesProvider,
+    )).songViewOrder;
 
     return Dialog(
       clipBehavior: Clip.antiAlias,
@@ -130,6 +135,42 @@ class _SettingsDialogState extends ConsumerState<PreferencesDialog> {
                           onSelectionChanged: (selection) => ref
                               .read(generalPreferencesProvider.notifier)
                               .setSheetBrightness(selection.first),
+                        ),
+                        Divider(height: 45, thickness: 2),
+                        sectionTitle('Alapértelmezett nézet'),
+                        Text(
+                          'Rendezd prioritási sorrendbe a dalnézeteket. Az első elérhető nézettel fog megnyílni minden dal első megnyitáskor.',
+                        ),
+                        SizedBox(height: 8),
+                        ReorderableListView.builder(
+                          shrinkWrap: true,
+                          buildDefaultDragHandles: false,
+                          itemCount: songViewOrder.length,
+                          itemBuilder: (context, index) => IntrinsicHeight(
+                            key: Key(songViewOrder[index].name),
+                            child: ListTile(
+                              leading: Icon(switch (songViewOrder[index]) {
+                                SongViewType.svg => Icons.music_note_outlined,
+                                SongViewType.pdf => Icons.audio_file_outlined,
+                                SongViewType.lyrics =>
+                                  Icons.text_snippet_outlined,
+                                SongViewType.chords => Icons.tag_outlined,
+                              }),
+                              title: Text(switch (songViewOrder[index]) {
+                                SongViewType.svg => 'Kotta',
+                                SongViewType.pdf => 'PDF',
+                                SongViewType.lyrics => 'Dalszöveg',
+                                SongViewType.chords => 'Akkordos dalszöveg',
+                              }),
+                              trailing: ReorderableDragStartListener(
+                                index: index,
+                                child: Icon(Icons.drag_handle),
+                              ),
+                            ),
+                          ),
+                          onReorder: (oldIndex, newIndex) => ref
+                              .read(songViewOrderPreferencesProvider.notifier)
+                              .reorder(oldIndex, newIndex),
                         ),
                         Divider(height: 45, thickness: 2),
                         Row(

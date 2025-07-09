@@ -12,7 +12,7 @@ class SongViewOrderPreferencesClass
     return SongViewOrderPreferencesClass(
       songViewOrder:
           ((json?['songViewOrder'] ?? ['svg', 'chords', 'pdf', 'lyrics'])
-                  as List<String>)
+                  .cast<String>())
               .map<SongViewType>(
                 (String typeString) => SongViewType.fromString(typeString),
               )
