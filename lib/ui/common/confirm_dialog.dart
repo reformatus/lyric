@@ -12,13 +12,12 @@ Future showConfirmDialog(
 }) async {
   return await showDialog(
     context: context,
-    builder:
-        (context) => ConfirmDialog(
-          title: title,
-          actionLabel: actionLabel,
-          actionIcon: actionIcon,
-          actionOnPressed: actionOnPressed,
-        ),
+    builder: (context) => ConfirmDialog(
+      title: title,
+      actionLabel: actionLabel,
+      actionIcon: actionIcon,
+      actionOnPressed: actionOnPressed,
+    ),
   );
 }
 
@@ -44,7 +43,7 @@ class ConfirmDialog extends StatefulWidget {
 
 class _ConfirmDialogState extends State<ConfirmDialog> {
   bool isLoading = false;
-  onPressed() async {
+  void onPressed() async {
     if (isLoading) return;
     setState(() {
       isLoading = true;
@@ -63,15 +62,14 @@ class _ConfirmDialogState extends State<ConfirmDialog> {
       actions: [
         if (widget.dangerousAction) ...[
           TextButton.icon(
-            label:
-                isLoading
-                    ? SizedBox(width: 60, child: LinearProgressIndicator())
-                    : Text(
-                      widget.actionLabel,
-                      style: TextStyle(
-                        color: Theme.of(context).textTheme.bodySmall!.color,
-                      ),
+            label: isLoading
+                ? SizedBox(width: 60, child: LinearProgressIndicator())
+                : Text(
+                    widget.actionLabel,
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.bodySmall!.color,
                     ),
+                  ),
             icon: IconTheme(
               data: IconThemeData(color: Colors.red),
               child: Icon(widget.actionIcon),
@@ -87,10 +85,9 @@ class _ConfirmDialogState extends State<ConfirmDialog> {
           FilledButton.tonal(onPressed: context.pop, child: Text('Mégse')),
           FilledButton.icon(
             onPressed: isLoading ? null : onPressed,
-            label:
-                isLoading
-                    ? SizedBox(width: 60, child: LinearProgressIndicator())
-                    : Text(widget.actionLabel),
+            label: isLoading
+                ? SizedBox(width: 60, child: LinearProgressIndicator())
+                : Text(widget.actionLabel),
             icon: Icon(widget.actionIcon),
             autofocus: true,
           ),

@@ -2,7 +2,6 @@ import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:lyric/services/preferences/providers/lyrics_view_style.dart';
 import 'package:lyric/services/preferences/providers/song_view_order.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../ui/song/state.dart';
