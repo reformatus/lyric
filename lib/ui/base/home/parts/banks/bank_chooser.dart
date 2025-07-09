@@ -76,34 +76,39 @@ class BankTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Card(
-      margin: EdgeInsets.symmetric(horizontal: 6),
+      margin: EdgeInsets.symmetric(horizontal: 6, vertical: 3),
       clipBehavior: Clip.antiAlias,
       color: Theme.of(context).colorScheme.surfaceContainerHigh,
-      child: SizedBox(
-        height: 80,
+      child: IntrinsicHeight(
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Padding(
+              padding: EdgeInsets.only(left: 10, top: 10, bottom: 10),
+              child: SizedBox.square(
+                dimension: 54,
+                child: FittedBox(
+                  child: bank.logo != null
+                      ? Image.memory(bank.logo!)
+                      : Icon(Icons.library_music),
+                ),
+              ),
+            ),
             Expanded(
               child: ListTile(
-                contentPadding: EdgeInsets.only(left: 10, right: 5),
-                minTileHeight: 80,
-                leading: SizedBox.square(
-                  dimension: 80,
-                  child: FittedBox(
-                    child: bank.logo != null
-                        ? Image.memory(bank.logo!)
-                        : Icon(Icons.library_music),
-                  ),
-                ),
                 title: Text(
                   bank.name,
                   style: Theme.of(context).textTheme.titleMedium,
+                  softWrap: false,
+                  maxLines: 1,
+                  overflow: TextOverflow.fade,
                 ),
                 subtitle: bank.description.isNotEmpty
                     ? Text(
                         bank.description,
                         style: Theme.of(context).textTheme.bodyMedium,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       )
                     : null,
                 /*trailing: Row( // TODO download functionality
