@@ -3,7 +3,7 @@ description: "Minden kotta, mindig veled"
 
 publish_to: 'none'
 
-version: 0.5.3+47
+version: 1.0.0+100
 
 environment:
   sdk: '>=3.8.1 <4.0.0'
