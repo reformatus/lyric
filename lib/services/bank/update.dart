@@ -1,11 +1,8 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:drift/drift.dart';
 import '../../data/database.dart';
 import '../../main.dart';
 import 'from_uuid.dart';
-import 'tempBankSchemas/sofar_kottatar.dart';
 
 import '../../data/bank/bank.dart';
 
@@ -22,18 +19,12 @@ Future updateBanks() async {
   for (final protoBank in protoBanks) {
     late Map details;
 
-    if (protoBank['api'] == 'https://sofarkotta.hu/api') {
-      details = jsonDecode(sofarKottatarTempData);
-    } else {
-      try {
-        details = (await globals.dio.get<Map>(
-          '${protoBank['api']}/about',
-        )).data!;
-      } catch (e) {
-        throw Exception(
-          'Nem sikerült lekérni a(z) ${protoBank['name']} tár adatait: $e',
-        );
-      }
+    try {
+      details = (await globals.dio.get<Map>('${protoBank['api']}/about')).data!;
+    } catch (e) {
+      throw Exception(
+        'Nem sikerült lekérni a(z) ${protoBank['name']} tár adatait: $e',
+      );
     }
 
     Bank? existingBank = await dbWatchBankWithUuid(details['uuid']).first;
