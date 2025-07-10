@@ -41,7 +41,8 @@ class _HomePageState extends ConsumerState<HomePage> {
               color: Theme.of(context).colorScheme.onPrimary,
               elevation: 3,
               child: AnimatedSize(
-                duration: Durations.long1,
+                duration: Durations.medium4,
+                curve: Curves.easeInOut,
                 child: Column(
                   children: [
                     NewVersionWidget(),

@@ -26,55 +26,29 @@ class NewsCarousel extends ConsumerWidget {
             newsItems: newsItems,
           );
         },
-        loading: () => _buildLoadingCarousel(key: const ValueKey('loading')),
+        loading: () => _buildCarousel(
+          context,
+          key: const ValueKey('loading'),
+          newsItems: null,
+        ),
         error: (_, _) => const SizedBox.shrink(key: ValueKey('error')),
       ),
-    );
-  }
-
-  Widget _buildLoadingCarousel({Key? key}) {
-    final children = List.generate(
-      3, // Show 3 loading placeholders
-      (_) => const _LoadingCarouselItem(),
-    );
-
-    return Column(
-      key: key,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Padding(
-          padding: EdgeInsetsGeometry.only(left: 8, top: 8),
-          child: const Text(
-            'AKTUÁLIS',
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-        ),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 5),
-          height: 120,
-          child: CarouselView(
-            itemExtent: 160,
-            itemSnapping: globals.isDesktop ? false : true,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            shrinkExtent: 100,
-            onTap: null, // Disable tap during loading
-            children: children,
-          ),
-        ),
-      ],
     );
   }
 
   Widget _buildCarousel(
     BuildContext context, {
     Key? key,
-    required List<HomepageNewsItem> newsItems,
+    required List<HomepageNewsItem>? newsItems,
   }) {
-    final children = newsItems
-        .map((newsItem) => _NewsCarouselItem(newsItem: newsItem))
-        .toList();
+    final List<Widget> children;
+    if (newsItems == null) {
+      children = List.generate(3, (_) => _LoadingCarouselItem());
+    } else {
+      children = newsItems
+          .map((newsItem) => _NewsCarouselItem(newsItem: newsItem))
+          .toList();
+    }
 
     return Column(
       key: key,
@@ -97,14 +71,16 @@ class NewsCarousel extends ConsumerWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             shrinkExtent: 100,
-            onTap: (index) async {
-              try {
-                await launchUrl(
-                  newsItems[index].link,
-                  mode: LaunchMode.inAppBrowserView,
-                );
-              } catch (_) {}
-            },
+            onTap: newsItems == null
+                ? null
+                : (index) async {
+                    try {
+                      await launchUrl(
+                        newsItems[index].link,
+                        mode: LaunchMode.inAppBrowserView,
+                      );
+                    } catch (_) {}
+                  },
             children: children,
           ),
         ),
@@ -134,7 +110,7 @@ class _NewsCarouselItem extends StatelessWidget {
               height: 100,
               width: 150,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: Theme.of(context).colorScheme.surfaceDim,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Icon(Icons.image_not_supported, color: Colors.grey),
@@ -145,7 +121,7 @@ class _NewsCarouselItem extends StatelessWidget {
             height: 120,
             width: 160,
             decoration: BoxDecoration(
-              color: Colors.grey[300],
+              color: Theme.of(context).colorScheme.surfaceDim,
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Icon(Icons.article, color: Colors.grey),
@@ -194,7 +170,7 @@ class _LoadingCarouselItem extends StatelessWidget {
       height: 100,
       width: 150,
       decoration: BoxDecoration(
-        color: Colors.grey[300],
+        color: Theme.of(context).colorScheme.surfaceDim,
         borderRadius: BorderRadius.circular(12),
       ),
       child: const Center(
