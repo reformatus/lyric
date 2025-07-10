@@ -309,12 +309,11 @@ packages:
   dart_opensong:
     dependency: "direct main"
     description:
-      path: "."
-      ref: dev
-      resolved-ref: "9b4d22047377db8e332bee7f54e5ca696a4f2453"
-      url: "https://github.com/reformatus/dart_opensong.git"
-    source: git
-    version: "0.0.1"
+      name: dart_opensong
+      sha256: c03cc845417fb36a2fb0a2517167d8c4858d4f6e6c1e9b708da17a4aa76523b9
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.3"
   dart_pubspec_licenses:
     dependency: transitive
     description:
