@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../main.dart';
@@ -101,12 +102,13 @@ class _NewsCarouselItem extends StatelessWidget {
       children: [
         // Background image
         if (newsItem.backgroundImgUri != null)
-          Image.network(
-            newsItem.backgroundImgUri!.toString(),
+          CachedNetworkImage(
+            imageUrl: newsItem.backgroundImgUri!.toString(),
+            fadeInDuration: Durations.medium3,
             fit: BoxFit.cover,
             height: 120,
             width: 160,
-            errorBuilder: (context, error, stackTrace) => Container(
+            errorWidget: (context, error, stackTrace) => Container(
               height: 100,
               width: 150,
               decoration: BoxDecoration(
