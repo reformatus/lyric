@@ -67,10 +67,9 @@ String? get storeLinkForCurrentPlatform {
   if (Platform.isAndroid) {
     return 'https://play.google.com/store/apps/details?id=org.lyricapp.sofar';
   }
-  // TODO will this change with app name change?
-  /*if (Platform.isIOS) {
-    return 'https://apps.apple.com/us/app/s%C3%B3f%C3%A1r-dalapp/id6738664835';
-  }*/
+  if (Platform.isIOS) {
+    return 'https://apps.apple.com/us/app/s%C3%B3f%C3%A1r-hangol%C3%B3/id6738664835';
+  }
 
   return null;
 }
