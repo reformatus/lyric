@@ -150,10 +150,11 @@ Stream<({int toUpdateCount, int updatedCount})> updateBankSongs(
       yield (toUpdateCount: toUpdate.length, updatedCount: updatedCount);
       if (remaining == 0) break;
     }
+
+    await setAsUpdatedNow(bank);
   }
 
   if (!hadErrors) {
-    await setAsUpdatedNow(bank);
     log.info('Minden dal frissítve: ${bank.name}');
   } else {
     log.warning('Néhány dalt nem sikerült frissíteni: ${bank.name}');
