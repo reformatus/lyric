@@ -34,9 +34,7 @@ class _LogViewDialogState extends ConsumerState<LogViewDialog> {
       clipBehavior: Clip.antiAlias,
       insetPadding: EdgeInsets.all(10),
       child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: constants.tabletFromWidth.toDouble(),
-        ),
+        constraints: BoxConstraints(maxWidth: constants.tabletFromWidth),
         child: Scaffold(
           appBar: AppBar(
             title: Text('Napló'),

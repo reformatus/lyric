@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lyric/services/songs/update.dart';
+import 'package:lyric/ui/base/home/parts/banks/details_dialog.dart';
 import 'package:lyric/ui/loading/banner.dart';
 import '../../../../../data/bank/bank.dart';
 import '../../../../../services/bank/banks.dart';
 import '../../../songs/widgets/filter/types/bank/state.dart';
 import '../../../../common/error/card.dart';
+import '../../../../common/hero_dialog_route.dart';
 
 class BankChooser extends ConsumerWidget {
   const BankChooser({super.key});
@@ -54,7 +56,7 @@ class BankChooser extends ConsumerWidget {
                 padding: EdgeInsets.only(right: 6),
                 child: FilledButton.icon(
                   iconAlignment: IconAlignment.end,
-                  onPressed: () => context.go('/bank'),
+                  onPressed: () => context.push('/bank'),
                   label: Text('Összes dal'),
                   icon: Icon(Icons.chevron_right),
                 ),
@@ -75,75 +77,86 @@ class BankTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Card(
-      margin: EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-      clipBehavior: Clip.antiAlias,
-      color: Theme.of(context).colorScheme.surfaceContainerHigh,
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(left: 10, top: 10, bottom: 10),
-              child: SizedBox.square(
-                dimension: 54,
-                child: FittedBox(
-                  child: bank.logo != null
-                      ? Image.memory(bank.logo!)
-                      : Icon(Icons.library_music),
-                ),
-              ),
-            ),
-            Expanded(
-              child: ListTile(
-                title: Text(
-                  bank.name,
-                  style: Theme.of(context).textTheme.titleMedium,
-                  softWrap: false,
-                  maxLines: 1,
-                  overflow: TextOverflow.fade,
-                ),
-                subtitle: bank.description.isNotEmpty
-                    ? Text(
-                        bank.description,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      )
-                    : null,
-                /*trailing: Row( // TODO download functionality
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.download_for_offline_outlined),
-                      onPressed: () {},
-                    ),
-                  ],
-                ),*/
-              ),
-            ),
-            SizedBox(
-              width: 50,
-              child: Material(
-                elevation: 5,
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                child: InkWell(
-                  onTap: () {
-                    ref
-                        .read(banksFilterStateProvider.notifier)
-                        .setFilter(bank.uuid, true);
-                    context.go('/bank');
-                  },
-                  child: Center(
-                    child: Icon(
-                      Icons.chevron_right,
-                      color: Theme.of(context).colorScheme.secondary,
+    return Hero(
+      tag: 'details-${bank.uuid}',
+      child: Card(
+        margin: EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+        clipBehavior: Clip.antiAlias,
+        color: Theme.of(context).colorScheme.surfaceContainerHigh,
+        child: InkWell(
+          onTap: () => showHeroDialog(
+            context: context,
+            builder: (context) => BankDetailsDialog(bank),
+          ),
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 10, top: 10, bottom: 10),
+                  child: SizedBox.square(
+                    dimension: 54,
+                    child: FittedBox(
+                      child: bank.logo != null
+                          ? Image.memory(bank.logo!)
+                          : Icon(Icons.library_music),
                     ),
                   ),
                 ),
-              ),
+                Expanded(
+                  child: ListTile(
+                    title: Text(
+                      bank.name,
+                      style: Theme.of(context).textTheme.titleMedium,
+                      softWrap: false,
+                      maxLines: 1,
+                      overflow: TextOverflow.fade,
+                    ),
+                    subtitle: bank.description.isNotEmpty
+                        ? Text(
+                            bank.description,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          )
+                        : null,
+                    /*trailing: Row( // TODO download functionality
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.download_for_offline_outlined),
+                          onPressed: () {},
+                        ),
+                      ],
+                    ),*/
+                  ),
+                ),
+                SizedBox(
+                  width: 50,
+                  child: Material(
+                    elevation: 5,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surfaceContainerHighest,
+                    child: InkWell(
+                      onTap: () {
+                        ref
+                            .read(banksFilterStateProvider.notifier)
+                            .setFilter(bank.uuid, true);
+                        context.go('/bank');
+                      },
+                      child: Center(
+                        child: Icon(
+                          Icons.chevron_right,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

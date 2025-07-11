@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lyric/ui/common/hero_dialog_route.dart';
 import 'fullscreen_qr_dialog.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
@@ -154,43 +155,45 @@ class _ShareDialogState extends State<ShareDialog> {
                   ),
 
                   const SizedBox(height: 24),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: colorScheme.outline.withAlpha(60),
-                        width: 1,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: colorScheme.shadow.withValues(alpha: 0.08),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
+                  if (widget.sharedLink.length < 1500)
+                    Hero(
+                      tag: 'ShareDialogQr',
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: colorScheme.outline.withAlpha(60),
+                            width: 1,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: colorScheme.shadow.withValues(alpha: 0.08),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    child: Material(
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadiusGeometry.circular(12),
-                      ),
-                      clipBehavior: Clip.antiAlias,
-                      elevation: 0,
-                      child: Tooltip(
-                        message: 'Kód nagyítása',
-                        child: InkWell(
-                          onTap: () => _showFullscreenQr(context),
-                          child: Hero(
-                            tag: 'ShareDialogQr',
-                            child: Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: SizedBox.square(
-                                dimension: 200,
-                                child: QrImageView(
-                                  data: widget.sharedLink,
-                                  version: QrVersions.auto,
-                                  gapless: true,
-                                  errorCorrectionLevel: QrErrorCorrectLevel.L,
+                        child: Material(
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadiusGeometry.circular(12),
+                          ),
+                          clipBehavior: Clip.antiAlias,
+                          elevation: 0,
+                          child: Tooltip(
+                            message: 'Kód nagyítása',
+                            child: InkWell(
+                              onTap: () => _showFullscreenQr(context),
+                              child: Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: SizedBox.square(
+                                  dimension: 200,
+                                  child: QrImageView(
+                                    data: widget.sharedLink,
+                                    version: QrVersions.auto,
+                                    gapless: true,
+                                    errorCorrectionLevel: QrErrorCorrectLevel.L,
+                                  ),
                                 ),
                               ),
                             ),
@@ -198,7 +201,6 @@ class _ShareDialogState extends State<ShareDialog> {
                         ),
                       ),
                     ),
-                  ),
 
                   const SizedBox(height: 20),
 
@@ -321,10 +323,9 @@ class _ShareDialogState extends State<ShareDialog> {
   }
 
   Future<void> _showFullscreenQr(BuildContext context) async {
-    await showFullscreenQrDialog(
-      context,
-      data: widget.sharedLink,
-      title: widget.sharedTitle,
+    showHeroDialog(
+      context: context,
+      builder: (context) => FullscreenQrDialog(data: widget.sharedLink),
     );
   }
 

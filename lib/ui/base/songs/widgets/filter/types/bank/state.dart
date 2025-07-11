@@ -18,11 +18,19 @@ class BanksFilterState extends _$BanksFilterState {
   }
 
   /// Returns true if state has changed
-  bool setFilter(String uuid, bool setTo) {
+  bool setFilter(String uuid, bool setTo, {bool clearOthers = false}) {
     bool changed = false;
     if (setTo) {
+      if (clearOthers) {
+        state = {uuid};
+        changed = true;
+      }
       changed = state.add(uuid);
     } else {
+      assert(
+        !clearOthers,
+        "'Clear others' only makes sense if we're setting a new bank as filter!",
+      );
       changed = state.remove(uuid);
     }
     if (changed) ref.notifyListeners();
