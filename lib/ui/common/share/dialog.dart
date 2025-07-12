@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lyric/ui/common/error/card.dart';
 import 'package:lyric/ui/common/hero_dialog_route.dart';
 import 'fullscreen_qr_dialog.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -155,7 +156,7 @@ class _ShareDialogState extends State<ShareDialog> {
                   ),
 
                   const SizedBox(height: 24),
-                  if (widget.sharedLink.length < 1500)
+                  if (widget.sharedLink.length < 2000)
                     Hero(
                       tag: 'ShareDialogQr',
                       child: Container(
@@ -193,6 +194,16 @@ class _ShareDialogState extends State<ShareDialog> {
                                     version: QrVersions.auto,
                                     gapless: true,
                                     errorCorrectionLevel: QrErrorCorrectLevel.L,
+                                    errorStateBuilder: (context, error) {
+                                      return LErrorCard(
+                                        icon: Icons.qr_code,
+                                        type: LErrorType.warning,
+                                        title:
+                                            'Nem tudunk QR kódot mutatni - helyette küldd el a linket közvetlenül:',
+                                        message: error.toString(),
+                                        showReportButton: false,
+                                      );
+                                    },
                                   ),
                                 ),
                               ),
@@ -200,6 +211,11 @@ class _ShareDialogState extends State<ShareDialog> {
                           ),
                         ),
                       ),
+                    )
+                  else
+                    Text(
+                      'Ez a link túl hosszú QR kódos megosztáshoz. Helyette küldd tovább a linket közvetlenül:',
+                      style: TextStyle(fontStyle: FontStyle.italic),
                     ),
 
                   const SizedBox(height: 20),

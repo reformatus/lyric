@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lyric/ui/common/error/card.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class FullscreenQrDialog extends StatelessWidget {
@@ -25,6 +26,17 @@ class FullscreenQrDialog extends StatelessWidget {
                 gapless: true,
                 errorCorrectionLevel: QrErrorCorrectLevel.M,
                 backgroundColor: Colors.white,
+                errorStateBuilder: (context, error) {
+                  return LErrorCard(
+                    icon: Icons.qr_code,
+                    type: LErrorType.warning,
+                    title:
+                        'Nem tudunk QR kódot mutatni - helyette küldd el a linket közvetlenül:',
+                    message: error.toString(),
+                    showReportButton: false,
+                  );
+                },
+                constrainErrorBounds: true,
               ),
             ),
           ),
