@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lyric/services/preferences/providers/lyrics_view_style.dart';
 import 'package:lyric/services/preferences/providers/song_view_order.dart';
+import 'package:lyric/ui/base/home/parts/about.dart';
 import 'package:lyric/ui/song/state.dart';
 import '../../../../../services/preferences/preferences_parent.dart';
 
@@ -146,6 +147,7 @@ class _SettingsDialogState extends ConsumerState<PreferencesDialog> {
                           shrinkWrap: true,
                           buildDefaultDragHandles: false,
                           itemCount: songViewOrder.length,
+                          physics: NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) => IntrinsicHeight(
                             key: Key(songViewOrder[index].name),
                             child: ListTile(
@@ -197,8 +199,8 @@ class _SettingsDialogState extends ConsumerState<PreferencesDialog> {
                           onChanged: (newValue) => ref
                               .read(lyricsViewStylePreferencesProvider.notifier)
                               .setVerseTagSize(newValue),
-                          min: 1,
-                          max: 100,
+                          min: 4,
+                          max: 50,
                         ),
                         settingTitle(
                           'Akkordok mérete - ${lyricsView.chordsSize.truncate()}',
@@ -208,8 +210,8 @@ class _SettingsDialogState extends ConsumerState<PreferencesDialog> {
                           onChanged: (newValue) => ref
                               .read(lyricsViewStylePreferencesProvider.notifier)
                               .setChordsSize(newValue),
-                          min: 1,
-                          max: 100,
+                          min: 4,
+                          max: 50,
                         ),
                         settingTitle(
                           'Dalszöveg mérete - ${lyricsView.lyricsSize.truncate()}',
@@ -219,8 +221,8 @@ class _SettingsDialogState extends ConsumerState<PreferencesDialog> {
                           onChanged: (newValue) => ref
                               .read(lyricsViewStylePreferencesProvider.notifier)
                               .setLyricsSize(newValue),
-                          min: 1,
-                          max: 100,
+                          min: 4,
+                          max: 50,
                         ),
                         settingTitle(
                           'Oszlopszélesség - ${lyricsView.verseCardColumnWidth}',
@@ -231,7 +233,13 @@ class _SettingsDialogState extends ConsumerState<PreferencesDialog> {
                               .read(lyricsViewStylePreferencesProvider.notifier)
                               .setVerseCardColumnWidth(newValue.round()),
                           min: 70,
-                          max: 1000,
+                          max: 700,
+                        ),
+                        Divider(height: 45, thickness: 2),
+                        TextButton.icon(
+                          onPressed: () => showLyricAboutDialog(context),
+                          label: Text('Névjegy'),
+                          icon: Icon(Icons.info_outlined),
                         ),
                       ],
                     ),

@@ -54,6 +54,7 @@ const constants = (
   homepageRoot: 'https://app.sofarkotta.hu',
   apiRoot: 'https://app.sofarkotta.hu/api',
   webappRoot: 'https://app.sofarkotta.hu/web',
+  gitHubRepo: 'https://github.com/reformatus/lyric/',
   newsRss: 'https://sofarhangolo.hu/category/app/aktualis/feed',
   buttonsRss: 'https://sofarhangolo.hu/category/app/linkek/feed',
   urlScheme: 'lyric',
