@@ -33,28 +33,34 @@ class _HomePageState extends ConsumerState<HomePage> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Material(
-              color: Theme.of(context).colorScheme.onPrimary,
-              elevation: 3,
-              child: AnimatedSize(
-                duration: Durations.medium4,
-                curve: Curves.easeInOut,
-                child: Column(
-                  children: [
-                    NewVersionWidget(),
-                    NewsCarousel(),
-                    ButtonsSection(),
-                  ],
+      body: Center(
+        heightFactor: 1,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: 900),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Material(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  elevation: 3,
+                  child: AnimatedSize(
+                    duration: Durations.medium4,
+                    curve: Curves.easeInOut,
+                    child: Column(
+                      children: [
+                        NewVersionWidget(),
+                        NewsCarousel(),
+                        ButtonsSection(),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+                SizedBox(height: 8),
+                BankChooser(),
+              ],
             ),
-            SizedBox(height: 8),
-            BankChooser(),
-          ],
+          ),
         ),
       ),
     );
