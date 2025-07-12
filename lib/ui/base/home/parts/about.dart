@@ -19,7 +19,10 @@ void showLyricAboutDialog(BuildContext context) async {
         child: Text('Hibajelentés'),
         onPressed: () => sendFeedbackEmail(),
       ),
-      TextButton(child: Text('Weboldal'), onPressed: () => sendFeedbackEmail()),
+      TextButton(
+        child: Text('Weboldal'),
+        onPressed: () => launchUrl(Uri.parse(constants.homepageRoot)),
+      ),
       TextButton(
         child: Text('Powered by Lyric'),
         onPressed: () => launchUrl(Uri.parse(constants.gitHubRepo)),
