@@ -53,9 +53,11 @@ class _BankDetailsDialogState extends ConsumerState<BankDetailsDialog> {
                             widget.bank.name,
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
-                          subtitle: widget.bank.description.isNotEmpty
+                          subtitle:
+                              widget.bank.description != null &&
+                                  widget.bank.description!.isNotEmpty
                               ? Text(
-                                  widget.bank.description,
+                                  widget.bank.description!,
                                   style: Theme.of(context).textTheme.bodyMedium,
                                 )
                               : null,
@@ -87,13 +89,14 @@ class _BankDetailsDialogState extends ConsumerState<BankDetailsDialog> {
                           : 'Még nem volt frissítve',
                     ),
                     SizedBox(height: 10),
-                    if (widget.bank.legal.isNotEmpty) ...[
+                    if (widget.bank.legal != null &&
+                        widget.bank.legal!.isNotEmpty) ...[
                       Text(
                         'Jogi nyilatkozat',
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       Text(
-                        widget.bank.legal,
+                        widget.bank.legal!,
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       SizedBox(height: 10),

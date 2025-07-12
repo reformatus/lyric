@@ -112,9 +112,9 @@ class BankTile extends ConsumerWidget {
                       maxLines: 1,
                       overflow: TextOverflow.fade,
                     ),
-                    subtitle: bank.description.isNotEmpty
+                    subtitle: bank.description != null && bank.description!.isNotEmpty
                         ? Text(
-                            bank.description,
+                            bank.description!,
                             style: Theme.of(context).textTheme.bodyMedium,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
