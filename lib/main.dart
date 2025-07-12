@@ -51,6 +51,7 @@ const constants = (
   organisationName: 'Sófár',
   gitHubApiRoot: 'https://api.github.com/repos/reformatus/lyric',
   domain: 'app.sofarkotta.hu',
+  appFeedbackEmail: 'sofarhangolo@fodor.pro',
   homepageRoot: 'https://app.sofarkotta.hu',
   apiRoot: 'https://app.sofarkotta.hu/api',
   webappRoot: 'https://app.sofarkotta.hu/web',

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:lyric/main.dart';
 import 'package:mailto/mailto.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -47,7 +48,7 @@ ${stackTrace?.split('\n').take(6).join('\n')}
       : 'Hibajelentés: $errorMessage';
 
   Mailto mail = Mailto(
-    to: ['lyric@reflabs.hu'],
+    to: [constants.appFeedbackEmail],
     subject:
         '$subject - Lyric ${packageInfo.version}+${packageInfo.buildNumber}',
     body:
