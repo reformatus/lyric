@@ -57,6 +57,7 @@ class _ActionsDrawerState extends ConsumerState<ActionsDrawer> {
                     song: slide.song,
                     songSlide: slide,
                     useDropdown: true,
+                    cue: widget.cue,
                   ),
                   SizedBox(height: 8),
                   FilledButton.tonalIcon(
@@ -65,7 +66,11 @@ class _ActionsDrawerState extends ConsumerState<ActionsDrawer> {
                     icon: Icon(Icons.redo),
                   ),
                   SizedBox(height: 8),
-                  TransposeCard(song: slide.song, songSlide: slide),
+                  TransposeCard(
+                    song: slide.song,
+                    songSlide: slide,
+                    cue: widget.cue,
+                  ),
                 ],
               },
             ],

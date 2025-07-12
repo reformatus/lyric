@@ -21,37 +21,44 @@ class CueLoaderPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (!ref.read(currentCueProvider.notifier).isCurrent(uuid)) {
-      return buildPage(ref.read(currentCueProvider)!);
-    }
-    return FutureBuilder(
-      future: ref
-          .read(currentCueProvider.notifier)
-          .load(uuid, initialSlideUuid: initialSlideUuid),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        } else if (snapshot.hasError) {
-          return Scaffold(
-            appBar: AppBar(title: const Text('Hiba')),
-            body: Center(
-              child: LErrorCard(
-                type: LErrorType.error,
-                title: 'Nem sikerült betölteni a listát',
-                icon: Icons.error,
-                message: snapshot.error.toString(),
-                stack: snapshot.stackTrace?.toString() ?? '',
+    if (ref.read(currentCueProvider.notifier).isDifferent(uuid)) {
+      return FutureBuilder(
+        future: ref
+            .read(currentCueProvider.notifier)
+            .load(uuid, initialSlideUuid: initialSlideUuid),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          } else if (snapshot.hasError) {
+            return Scaffold(
+              appBar: AppBar(title: const Text('Hiba')),
+              body: Center(
+                child: LErrorCard(
+                  type: LErrorType.error,
+                  title: 'Nem sikerült betölteni a listát',
+                  icon: Icons.error,
+                  message: snapshot.error.toString(),
+                  stack: snapshot.stackTrace?.toString() ?? '',
+                ),
               ),
-            ),
-          );
-        } else {
-          Cue cue = snapshot.requireData;
-          return buildPage(cue);
-        }
-      },
-    );
+            );
+          } else {
+            Cue cue = snapshot.requireData;
+            return buildPage(cue);
+          }
+        },
+      );
+    }
+
+    final currentCue = ref.watch(currentCueProvider);
+
+    if (currentCue == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    } else {
+      return buildPage(currentCue);
+    }
   }
 
   Widget buildPage(Cue cue) {

@@ -301,4 +301,11 @@ class _AdaptivePageState extends State<AdaptivePage>
           : widget.body,
     );
   }
+
+  @override
+  void dispose() {
+    leftDrawerController.dispose();
+    rightDrawerController.dispose();
+    super.dispose();
+  }
 }

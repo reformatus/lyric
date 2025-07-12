@@ -26,20 +26,20 @@ class _SlideViewState extends ConsumerState<SlideView>
     super.initState();
     initializeTabController(
       ref.read(currentSlideOfProvider(widget.cue)),
-      ref.read(currentSlideListOfProvider(widget.cue)),
+      ref.read(currentSlideListOfProvider(widget.cue))!,
     );
 
     ref.listenManual(
       currentSlideOfProvider(widget.cue),
       (_, newSlide) => tabController!.animateTo(
-        ref.read(currentSlideListOfProvider(widget.cue)).indexOf(newSlide!),
+        ref.read(currentSlideListOfProvider(widget.cue))!.indexOf(newSlide!),
       ),
     );
     ref.listenManual(
       currentSlideListOfProvider(widget.cue),
       (_, slides) => initializeTabController(
         ref.read(currentSlideOfProvider(widget.cue)),
-        slides,
+        slides!,
       ),
     );
   }
@@ -62,7 +62,7 @@ class _SlideViewState extends ConsumerState<SlideView>
             .setCurrent(
               ref.read(
                 currentSlideListOfProvider(widget.cue),
-              )[tabController!.index],
+              )![tabController!.index],
             ),
       );
     });
@@ -70,7 +70,7 @@ class _SlideViewState extends ConsumerState<SlideView>
 
   @override
   Widget build(BuildContext context) {
-    List<Slide> slides = ref.watch(currentSlideListOfProvider(widget.cue));
+    List<Slide> slides = ref.watch(currentSlideListOfProvider(widget.cue))!;
 
     return Theme(
       data: Theme.of(context),

@@ -19,7 +19,7 @@ class SlideList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     Slide? currentSlide = ref.watch(currentSlideOfProvider(cue));
-    List<Slide> slides = ref.watch(currentSlideListOfProvider(cue));
+    List<Slide> slides = ref.watch(currentSlideListOfProvider(cue))!;
 
     if (slides.isEmpty) return CenteredHint('Üres lista');
 

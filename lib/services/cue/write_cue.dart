@@ -38,15 +38,19 @@ Future<Cue> insertCueFromJson({required Map json}) {
 }
 
 Future<Cue> updateCueFromJson({required Map json}) async {
-  return (await (db.update(db.cues)
-    ..where((c) => c.uuid.equals(json["uuid"]))).writeReturning(
-    CuesCompanion(
-      title: Value(json["title"]),
-      description: Value(json["description"]),
-      cueVersion: Value(json["cueVersion"]),
-      content: Value((json["content"] as List).map((e) => e as Map).toList()),
-    ),
-  )).first;
+  return (await (db.update(
+        db.cues,
+      )..where((c) => c.uuid.equals(json["uuid"]))).writeReturning(
+        CuesCompanion(
+          title: Value(json["title"]),
+          description: Value(json["description"]),
+          cueVersion: Value(json["cueVersion"]),
+          content: Value(
+            (json["content"] as List).map((e) => e as Map).toList(),
+          ),
+        ),
+      ))
+      .first;
 }
 
 Future updateCueMetadata(Cue cue, {String? title, String? description}) {
@@ -58,10 +62,21 @@ Future updateCueMetadata(Cue cue, {String? title, String? description}) {
   );
 }
 
-Future updateCueSlides(Cue cue, List<Slide> slides) async {
-  await (db.update(db.cues)..where(
-    (c) => c.uuid.equals(cue.uuid),
-  )).write(CuesCompanion(content: Value(Cue.getContentMapFromSlides(slides))));
+/// Normally updates DB to match current object's state.
+/// When supplied with `slides`, content gets overwritten.
+Future updateCueSlides(Cue cue, [List<Slide>? slides]) async {
+  if (slides != null) {
+    cue.content = Cue.getContentMapFromSlides(slides);
+  }
+
+  await (db.update(db.cues)..where((c) => c.uuid.equals(cue.uuid))).write(
+    CuesCompanion(content: Value(cue.content)),
+  );
+}
+
+Future addSlideToCue(Slide slide, Cue cue, {int? atIndex}) async {
+  cue.content.insert(atIndex ?? cue.content.length, slide.toJson());
+  await updateCueSlides(cue);
 }
 
 Future deleteCueWithUuid(String uuid) {

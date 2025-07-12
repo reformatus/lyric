@@ -5,7 +5,6 @@ class SongSlide extends Slide {
   Song song;
   SongViewType viewType;
   SongTranspose? transpose;
-  Cue parentCue;
   // future: List<Verse> verses override
 
   bool contentDifferentFlag = false;
@@ -20,11 +19,7 @@ class SongSlide extends Slide {
     );*/
   }
 
-  static Future<SongSlide> reviveFromJson(
-    Map json,
-    Cue parent, [
-    Ref? ref,
-  ]) async {
+  static Future<SongSlide> reviveFromJson(Map json, Cue parent) async {
     var songResult = await getSongForSlideJson(json['song']);
 
     SongViewType viewType = SongViewType.fromString(json['viewType']);
@@ -35,25 +30,10 @@ class SongSlide extends Slide {
     SongSlide songSlide = SongSlide(
       json['uuid'],
       songResult.song,
-      parent,
       json.containsKey('comment') ? json['comment'] : null,
       viewType: viewType,
       transpose: transpose,
     )..contentDifferentFlag = songResult.contentDifferentFlag;
-
-    // Initialize states for UI
-    if (ref != null) {
-      ref
-          .read(viewTypeForProvider(songResult.song, songSlide).notifier)
-          .setTo(viewType);
-      if (transpose != null) {
-        ref
-            .read(
-              transposeStateForProvider(songResult.song, songSlide).notifier,
-            )
-            .setTo(transpose);
-      }
-    }
 
     return songSlide;
   }
@@ -71,10 +51,25 @@ class SongSlide extends Slide {
     ]);
   }
 
+  factory SongSlide.from(
+    Song song, {
+    required SongViewType viewType,
+    SongTranspose? transpose,
+    String? comment,
+  }) {
+    var slideUuid = const Uuid().v4();
+    return SongSlide(
+      slideUuid,
+      song,
+      comment,
+      viewType: viewType,
+      transpose: transpose,
+    );
+  }
+
   SongSlide(
     super.uuid,
     this.song,
-    this.parentCue,
     super.comment, {
     required this.viewType,
     this.transpose,

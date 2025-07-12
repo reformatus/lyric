@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lyric/data/cue/slide.dart';
+import 'package:lyric/services/cue/write_cue.dart';
 import '../../main.dart';
 
 import '../../data/cue/cue.dart';
 import '../../data/song/song.dart';
 import '../../data/song/transpose.dart';
 import '../../services/cue/cues.dart';
-import '../../services/cue/slide/song_slide.dart';
 import '../base/cues/dialogs.dart';
 import '../common/error/card.dart';
 import 'state.dart';
@@ -47,12 +48,13 @@ class _AddToCueSearchState extends ConsumerState<AddToCueSearch> {
     ) async {
       controller.closeView('');
 
-      String slideUuid = await addNewSlideOfSongToCue(
-        cue: cue,
-        song: widget.song,
+      Slide songSlide = SongSlide.from(
+        widget.song,
         viewType: widget.viewType,
         transpose: widget.transpose,
       );
+      await addSlideToCue(songSlide, cue);
+
       globals.scaffoldKey.currentState?.showSnackBar(
         SnackBar(
           showCloseIcon: true,
@@ -62,7 +64,7 @@ class _AddToCueSearchState extends ConsumerState<AddToCueSearch> {
           action: SnackBarAction(
             label: 'Ugrás',
             onPressed: () =>
-                context.push('/cue/${cue.uuid}/edit?slide=$slideUuid'),
+                context.push('/cue/${cue.uuid}/edit?slide=${songSlide.uuid}'),
           ),
           duration: const Duration(seconds: 5),
         ),

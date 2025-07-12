@@ -48,20 +48,10 @@ class ViewTypeFor extends _$ViewTypeFor {
     }
   }
 
-  /*  // TODO test this - is it even necessary?
-  @override
-  bool updateShouldNotify(
-    AsyncValue<SongViewType> previous,
-    AsyncValue<SongViewType> next,
-  ) {
-    if (state.hasValue) {
-      songSlide?.viewType = state.requireValue;
-    }
-    return super.updateShouldNotify(previous, next);
-  }
-*/
-
   void setTo(SongViewType newValue) {
     state = AsyncValue.data(newValue);
+    if (songSlide != null) {
+      songSlide!.viewType = newValue;
+    }
   }
 }
