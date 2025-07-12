@@ -98,9 +98,9 @@ class _ButtonItem extends StatelessWidget {
   Widget build(BuildContext context) {
     // Try to get icon from DynamicIcons
     Widget? iconWidget;
-    if (buttonItem.faIconName != null) {
+    if (buttonItem.faIconName != null && buttonItem.faIconName!.isNotEmpty) {
       iconWidget = DynamicIcons.getFaIconFromName(buttonItem.faIconName!);
-    } else if (buttonItem.iconName != null) {
+    } else if (buttonItem.iconName != null && buttonItem.iconName!.isNotEmpty) {
       iconWidget = DynamicIcons.getIconFromName(buttonItem.iconName!);
     }
 
