@@ -112,7 +112,8 @@ class BankTile extends ConsumerWidget {
                       maxLines: 1,
                       overflow: TextOverflow.fade,
                     ),
-                    subtitle: bank.description != null && bank.description!.isNotEmpty
+                    subtitle:
+                        bank.description != null && bank.description!.isNotEmpty
                         ? Text(
                             bank.description!,
                             style: Theme.of(context).textTheme.bodyMedium,
@@ -142,8 +143,8 @@ class BankTile extends ConsumerWidget {
                       onTap: () {
                         ref
                             .read(banksFilterStateProvider.notifier)
-                            .setFilter(bank.uuid, true);
-                        context.go('/bank');
+                            .setFilter(bank.uuid, true, clearOthers: true);
+                        context.push('/bank');
                       },
                       child: Center(
                         child: Icon(
