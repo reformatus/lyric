@@ -46,9 +46,15 @@ class HomepageNewsItem {
 class HomepageButtonItem {
   Uri link;
   String title;
+  String? faIconName;
   String? iconName;
 
-  HomepageButtonItem({required this.link, required this.title, this.iconName});
+  HomepageButtonItem({
+    required this.link,
+    required this.title,
+    this.faIconName,
+    this.iconName,
+  });
 
   factory HomepageButtonItem.fromRssItem(XmlElement item) {
     try {
@@ -60,11 +66,20 @@ class HomepageButtonItem {
       try {
         final iconNameElement = item.findElements('button_icon').first;
         iconName = iconNameElement.innerText;
-      } catch (_) {
-        // Icon is optional, so we can continue without it
-      }
+      } catch (_) {}
 
-      return HomepageButtonItem(title: title, link: link, iconName: iconName);
+      String? faIconName;
+      try {
+        final iconNameElement = item.findElements('button_fa_icon').first;
+        faIconName = iconNameElement.innerText;
+      } catch (_) {}
+
+      return HomepageButtonItem(
+        title: title,
+        link: link,
+        faIconName: faIconName,
+        iconName: iconName,
+      );
     } catch (e, s) {
       log.warning('Invalid RSS button item!', e, s);
       rethrow;

@@ -98,12 +98,10 @@ class _ButtonItem extends StatelessWidget {
   Widget build(BuildContext context) {
     // Try to get icon from DynamicIcons
     Widget? iconWidget;
-    if (buttonItem.iconName != null) {
-      try {
-        iconWidget = DynamicIcons.getIconFromName(buttonItem.iconName!);
-      } catch (e) {
-        // Continue to use regular FilledButton if icon fails
-      }
+    if (buttonItem.faIconName != null) {
+      iconWidget = DynamicIcons.getFaIconFromName(buttonItem.faIconName!);
+    } else if (buttonItem.iconName != null) {
+      iconWidget = DynamicIcons.getIconFromName(buttonItem.iconName!);
     }
 
     // If we have an icon, use FilledButton.tonalIcon, otherwise use FilledButton.tonal
