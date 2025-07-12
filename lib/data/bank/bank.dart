@@ -52,8 +52,10 @@ class Bank extends Insertable<Bank> {
   final Uint8List? logo;
   final Uint8List? tinyLogo;
   final String name;
-  final String description;
-  final String legal;
+  final String? description;
+  final String? legal;
+  final String? aboutLink;
+  final String? contactEmail;
   final Uri baseUrl;
   final int parallelUpdateJobs;
   final int amountOfSongsInRequest;
@@ -71,6 +73,8 @@ class Bank extends Insertable<Bank> {
     this.name,
     this.description,
     this.legal,
+    this.aboutLink,
+    this.contactEmail,
     this.baseUrl,
     this.parallelUpdateJobs,
     this.amountOfSongsInRequest,
@@ -167,8 +171,10 @@ class Banks extends Table {
   BlobColumn get logo => blob().nullable()();
   BlobColumn get tinyLogo => blob().nullable()();
   TextColumn get name => text()();
-  TextColumn get description => text()();
-  TextColumn get legal => text()();
+  TextColumn get description => text().nullable()();
+  TextColumn get legal => text().nullable()();
+  TextColumn get aboutLink => text().nullable()();
+  TextColumn get contactEmail => text().nullable()();
   TextColumn get baseUrl => text().map(const UriConverter())();
   IntColumn get parallelUpdateJobs => integer()();
   IntColumn get amountOfSongsInRequest => integer()();

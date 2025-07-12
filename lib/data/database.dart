@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'database.steps.dart';
 import 'preferences/storage.dart';
 
 /*
@@ -37,17 +38,25 @@ class LyricDatabase extends _$LyricDatabase {
     : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration {
     return MigrationStrategy(
       onCreate: (Migrator m) async {
         await m.createAll();
-        for (var bank in defaultBanks) {
-          await into(banks).insert(bank);
-        }
       },
+      // Examples for migrations at: https://github.com/simolus3/drift/blob/develop/examples/migrations_example/lib/database.dart#L58
+      onUpgrade: stepByStep(
+        from1To2: (m, schema) async {
+          await m.alterTable(
+            TableMigration(
+              schema.banks,
+              newColumns: [schema.banks.aboutLink, schema.banks.contactEmail],
+            ),
+          );
+        },
+      ),
     );
   }
 
