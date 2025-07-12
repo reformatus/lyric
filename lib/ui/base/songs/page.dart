@@ -445,11 +445,14 @@ class FiltersTitle extends ConsumerWidget {
               .map((i) => banks.firstWhere((b) => b.uuid == i))
               .map(
                 (b) => b.tinyLogo != null
-                    ? Tooltip(
-                        message: b.name,
-                        child: SizedBox.square(
-                          dimension: 30,
-                          child: Image.memory(b.tinyLogo!),
+                    ? Padding(
+                        padding: EdgeInsets.only(right: 5),
+                        child: Tooltip(
+                          message: b.name,
+                          child: SizedBox.square(
+                            dimension: 30,
+                            child: Image.memory(b.tinyLogo!),
+                          ),
                         ),
                       )
                     : ConstrainedBox(
