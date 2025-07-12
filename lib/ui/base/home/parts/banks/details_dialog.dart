@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lyric/main.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../data/bank/bank.dart';
 
@@ -61,9 +62,35 @@ class _BankDetailsDialogState extends ConsumerState<BankDetailsDialog> {
                                   style: Theme.of(context).textTheme.bodyMedium,
                                 )
                               : null,
-                          trailing: IconButton(
-                            onPressed: context.pop,
-                            icon: Icon(Icons.close),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (widget.bank.contactEmail != null &&
+                                  widget.bank.contactEmail!.isNotEmpty)
+                                IconButton(
+                                  tooltip: 'Üzenetküldés',
+                                  onPressed: () => launchUrl(
+                                    Uri.parse(
+                                      'mailto:${widget.bank.contactEmail}',
+                                    ),
+                                  ),
+                                  icon: Icon(Icons.sms_outlined),
+                                ),
+                              if (widget.bank.aboutLink != null &&
+                                  widget.bank.aboutLink!.isNotEmpty)
+                                IconButton(
+                                  tooltip:
+                                      'További információ: ${widget.bank.aboutLink}',
+                                  onPressed: () => launchUrl(
+                                    Uri.parse(widget.bank.aboutLink!),
+                                  ),
+                                  icon: Icon(Icons.open_in_new),
+                                ),
+                              IconButton(
+                                onPressed: context.pop,
+                                icon: Icon(Icons.close),
+                              ),
+                            ],
                           ),
                         ),
                       ),
