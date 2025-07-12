@@ -65,27 +65,6 @@ class _BankDetailsDialogState extends ConsumerState<BankDetailsDialog> {
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              if (widget.bank.contactEmail != null &&
-                                  widget.bank.contactEmail!.isNotEmpty)
-                                IconButton(
-                                  tooltip: 'Üzenetküldés',
-                                  onPressed: () => launchUrl(
-                                    Uri.parse(
-                                      'mailto:${widget.bank.contactEmail}',
-                                    ),
-                                  ),
-                                  icon: Icon(Icons.sms_outlined),
-                                ),
-                              if (widget.bank.aboutLink != null &&
-                                  widget.bank.aboutLink!.isNotEmpty)
-                                IconButton(
-                                  tooltip:
-                                      'További információ: ${widget.bank.aboutLink}',
-                                  onPressed: () => launchUrl(
-                                    Uri.parse(widget.bank.aboutLink!),
-                                  ),
-                                  icon: Icon(Icons.open_in_new),
-                                ),
                               IconButton(
                                 onPressed: context.pop,
                                 icon: Icon(Icons.close),
@@ -99,11 +78,34 @@ class _BankDetailsDialogState extends ConsumerState<BankDetailsDialog> {
                 ),
               ),
               Padding(
-                padding: EdgeInsetsGeometry.fromLTRB(10, 7, 10, 10),
+                padding: EdgeInsetsGeometry.fromLTRB(14, 7, 14, 14),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        if (widget.bank.contactEmail != null &&
+                            widget.bank.contactEmail!.isNotEmpty)
+                          IconButton(
+                            tooltip: 'Üzenetküldés',
+                            onPressed: () => launchUrl(
+                              Uri.parse('mailto:${widget.bank.contactEmail}'),
+                            ),
+                            icon: Icon(Icons.sms_outlined),
+                          ),
+                        if (widget.bank.aboutLink != null &&
+                            widget.bank.aboutLink!.isNotEmpty)
+                          IconButton(
+                            tooltip:
+                                'További információ: ${widget.bank.aboutLink}',
+                            onPressed: () =>
+                                launchUrl(Uri.parse(widget.bank.aboutLink!)),
+                            icon: Icon(Icons.open_in_new),
+                          ),
+                      ],
+                    ),
                     Text(
                       'Legutóbb frissült',
                       style: Theme.of(context).textTheme.titleMedium,
