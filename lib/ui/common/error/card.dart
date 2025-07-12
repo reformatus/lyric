@@ -86,7 +86,7 @@ class LErrorCard extends StatelessWidget {
               Padding(
                 padding: EdgeInsetsGeometry.all(8),
                 child: FilledButton.icon(
-                  onPressed: () => launchFeedbackEmail(
+                  onPressed: () => sendFeedbackEmail(
                     errorMessage: '$title ($message)',
                     stackTrace: stack,
                   ),

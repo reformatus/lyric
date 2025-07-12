@@ -8,6 +8,7 @@ import '../state.dart';
 import '../transpose/state.dart';
 import '../transpose/widget.dart';
 import '../view_chooser.dart';
+import 'report_song_button.dart';
 import 'transpose_overlay_button.dart';
 
 class MobileBottomBar extends ConsumerWidget {
@@ -79,6 +80,7 @@ class MobileBottomBar extends ConsumerWidget {
     WidgetRef ref,
   ) {
     return [
+      ReportSongButton(song),
       AddToCueSearch(
         song: song,
         isDesktop: false,

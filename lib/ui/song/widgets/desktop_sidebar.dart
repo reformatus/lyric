@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lyric/ui/song/widgets/report_song_button.dart';
 
 import '../../../data/song/song.dart';
 import '../add_to_cue_search.dart';
@@ -48,6 +49,7 @@ class DesktopSidebar extends ConsumerWidget {
                 transpose: transpose,
               ),
               SizedBox(height: 10),
+              ReportSongButton(song),
               const Divider(),
               ...detailsContent,
             ],

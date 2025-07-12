@@ -72,6 +72,8 @@ Future updateBanks() async {
       name: Value(details['name']!),
       description: Value.absentIfNull(details['description']),
       legal: Value.absentIfNull(details['legal']),
+      aboutLink: Value.absentIfNull(details['aboutLink']),
+      contactEmail: Value.absentIfNull(details['contactEmail']),
       parallelUpdateJobs: Value(details['parallelUpdateJobs']!),
       amountOfSongsInRequest: Value(details['amountOfSongsInRequest']!),
       noCms: Value(details['noCms'] ?? false),

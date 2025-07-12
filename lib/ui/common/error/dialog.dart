@@ -35,7 +35,7 @@ class ErrorDialog extends StatelessWidget {
       ),
       actions: [
         FilledButton.tonalIcon(
-          onPressed: () => launchFeedbackEmail(
+          onPressed: () => sendFeedbackEmail(
             errorMessage: '$title ($message)',
             stackTrace: stack,
           ),
