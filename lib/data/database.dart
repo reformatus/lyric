@@ -38,7 +38,7 @@ class LyricDatabase extends _$LyricDatabase {
     : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 1;
 
   @override
   MigrationStrategy get migration {
@@ -46,7 +46,7 @@ class LyricDatabase extends _$LyricDatabase {
       onCreate: (Migrator m) async {
         await m.createAll();
       },
-      // Examples for migrations at: https://github.com/simolus3/drift/blob/develop/examples/migrations_example/lib/database.dart#L58
+      /*// Examples for migrations at: https://github.com/simolus3/drift/blob/develop/examples/migrations_example/lib/database.dart#L58
       onUpgrade: stepByStep(
         from1To2: (m, schema) async {
           await m.alterTable(
@@ -56,12 +56,12 @@ class LyricDatabase extends _$LyricDatabase {
             ),
           );
         },
-      ),
+      ),*/
     );
   }
 
   static QueryExecutor _openConnection() {
-    return driftDatabase(name: 'lyric');
+    return driftDatabase(name: 'lyric3');
   }
 }
 
