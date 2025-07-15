@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/bank/bank.dart';
 import '../../data/database.dart';
+import '../../data/log/logger.dart';
 
 part 'bank_updated.g.dart';
 
@@ -17,7 +18,12 @@ Future setAsUpdatedNow(Bank bank) {
 /// Effectively, checks if the app has been launched for the first time.
 @Riverpod(keepAlive: true)
 Future<bool> hasEverUpdatedAnything(Ref ref) async {
-  return (await (db.banks.select()..where((b) => b.lastUpdated.isNotNull()))
-          .get())
-      .isNotEmpty;
+  try {
+    return (await (db.banks.select()..where((b) => b.lastUpdated.isNotNull()))
+            .get())
+        .isNotEmpty;
+  } catch (e, s) {
+    log.severe('Error caught while checking updated banks', e, s);
+    return false;
+  }
 }
