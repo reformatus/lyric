@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lyric/data/cue/slide.dart';
-import 'package:lyric/services/cue/write_cue.dart';
-import '../../main.dart';
 
 import '../../data/cue/cue.dart';
+import '../../data/cue/slide.dart';
 import '../../data/song/song.dart';
 import '../../data/song/transpose.dart';
+import '../../main.dart';
 import '../../services/cue/cues.dart';
+import '../../services/cue/write_cue.dart';
 import '../base/cues/dialogs.dart';
 import '../common/error/card.dart';
 import 'state.dart';

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lyric/services/songs/update.dart';
-import 'package:lyric/ui/base/home/parts/banks/details_dialog.dart';
-import 'package:lyric/ui/loading/banner.dart';
+
 import '../../../../../data/bank/bank.dart';
 import '../../../../../services/bank/banks.dart';
-import '../../../songs/widgets/filter/types/bank/state.dart';
+import '../../../../../services/songs/update.dart';
 import '../../../../common/error/card.dart';
 import '../../../../common/hero_dialog_route.dart';
+import '../../../../loading/banner.dart';
+import '../../../songs/widgets/filter/types/bank/state.dart';
+import 'details_dialog.dart';
 
 class BankChooser extends ConsumerWidget {
   const BankChooser({super.key});

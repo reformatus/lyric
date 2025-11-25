@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/services/bank/bank_of_song.dart';
-import 'package:lyric/services/bank/report_song.dart';
 
 import '../../../data/song/song.dart';
+import '../../../services/bank/bank_of_song.dart';
+import '../../../services/bank/report_song.dart';
 
 class ReportSongButton extends ConsumerWidget {
   const ReportSongButton(this.song, {super.key});

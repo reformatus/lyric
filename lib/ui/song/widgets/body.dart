@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/ui/common/error/card.dart';
 
 import '../../../data/song/song.dart';
+import '../../common/error/card.dart';
 import '../lyrics/view.dart';
 import '../sheet/view.dart';
 import '../state.dart';

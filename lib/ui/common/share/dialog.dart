@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lyric/ui/common/error/card.dart';
-import 'package:lyric/ui/common/hero_dialog_route.dart';
-import 'fullscreen_qr_dialog.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
+
+import '../error/card.dart';
+import '../hero_dialog_route.dart';
+import 'fullscreen_qr_dialog.dart';
 
 /// Shows an adaptive share dialog with QR code and native sharing functionality.
 ///

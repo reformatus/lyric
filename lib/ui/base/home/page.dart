@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/ui/base/home/parts/new_version_widget.dart';
-import 'parts/banks/bank_chooser.dart';
-import 'parts/preferences/dialog.dart';
-import 'parts/promo/news_carousel.dart';
-import 'parts/promo/buttons_section.dart';
 
 import '../../common/log/button.dart';
+import 'parts/banks/bank_chooser.dart';
+import 'parts/new_version_widget.dart';
+import 'parts/preferences/dialog.dart';
+import 'parts/promo/buttons_section.dart';
+import 'parts/promo/news_carousel.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});

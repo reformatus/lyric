@@ -1,15 +1,15 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
-import 'package:lyric/main.dart';
-import 'package:lyric/services/preferences/providers/lyrics_view_style.dart';
-import 'package:lyric/services/preferences/providers/song_view_order.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../main.dart';
 import '../../ui/song/state.dart';
 import '../../data/log/logger.dart';
 
 import '../../data/database.dart';
 import 'providers/general.dart';
+import 'providers/lyrics_view_style.dart';
+import 'providers/song_view_order.dart';
 
 part 'classes/lyrics_view_style.dart';
 part 'classes/general.dart';
@@ -72,11 +72,13 @@ enum PreferenceClasses {
   const PreferenceClasses(this.type);
 
   // TODO remove if unnecessary
-  NotifierProvider get provider => switch (this) {
-    general => generalPreferencesProvider,
-    lyricsViewStyle => lyricsViewStylePreferencesProvider,
-    songViewOrder => songViewOrderPreferencesProvider,
-  };
+  NotifierProvider get provider =>
+      switch (this) {
+            general => generalPreferencesProvider,
+            lyricsViewStyle => lyricsViewStylePreferencesProvider,
+            songViewOrder => songViewOrderPreferencesProvider,
+          }
+          as NotifierProvider;
 
   static PreferenceClasses fromModel<T extends PreferencesParentClass<T>>(
     T preferenceClass,

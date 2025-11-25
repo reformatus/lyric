@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lyric/ui/common/error/card.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+
+import '../error/card.dart';
 
 class FullscreenQrDialog extends StatelessWidget {
   const FullscreenQrDialog({required this.data, super.key});

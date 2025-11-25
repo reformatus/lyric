@@ -1,11 +1,11 @@
-import 'package:lyric/services/connectivity/provider.dart';
-import 'package:lyric/services/preferences/providers/song_view_order.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/cue/slide.dart';
 import '../../data/song/extensions.dart';
 import '../../data/song/song.dart';
 import '../../services/assets/downloaded.dart';
+import '../../services/connectivity/provider.dart';
+import '../../services/preferences/providers/song_view_order.dart';
 
 part 'state.g.dart';
 

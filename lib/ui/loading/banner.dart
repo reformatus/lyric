@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/services/connectivity/provider.dart';
 
 import '../../data/bank/bank.dart';
 import '../../main.dart';
+import '../../services/connectivity/provider.dart';
 import '../../services/songs/update.dart';
 import '../common/error/card.dart';
 

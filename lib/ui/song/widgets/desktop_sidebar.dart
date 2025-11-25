@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/ui/song/widgets/report_song_button.dart';
 
 import '../../../data/song/song.dart';
 import '../add_to_cue_search.dart';
 import '../state.dart';
 import '../transpose/state.dart';
 import '../transpose/widget.dart';
+import 'report_song_button.dart';
 
 class DesktopSidebar extends ConsumerWidget {
   const DesktopSidebar({

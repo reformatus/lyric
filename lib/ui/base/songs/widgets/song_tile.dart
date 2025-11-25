@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lyric/services/connectivity/provider.dart';
 
 import '../../../../data/bank/bank.dart';
 import '../../../../data/database.dart';
 import '../../../../data/song/extensions.dart';
 import '../../../../data/song/song.dart';
+import '../../../../services/connectivity/provider.dart';
 import '../../../../services/songs/filter.dart';
 
 class LSongResultTile extends ConsumerWidget {

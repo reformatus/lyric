@@ -1,17 +1,17 @@
+import 'package:chord_transposer/chord_transposer.dart';
 import 'package:dart_opensong/dart_opensong.dart' as os;
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lyric/services/preferences/providers/lyrics_view_style.dart';
-import '../transpose/state.dart';
+
 import '../../../data/cue/slide.dart';
+import '../../../data/song/song.dart';
 import '../../../data/song/transpose.dart';
 import '../../../services/key/get_transposed.dart';
+import '../../../services/preferences/providers/lyrics_view_style.dart';
 import '../../../services/song/verse_tag_pretty.dart';
 import '../../common/error/card.dart';
-import 'package:chord_transposer/chord_transposer.dart';
-
-import '../../../data/song/song.dart';
+import '../transpose/state.dart';
 
 class LyricsView extends ConsumerWidget {
   LyricsView(this.song, {this.songSlide, super.key});
