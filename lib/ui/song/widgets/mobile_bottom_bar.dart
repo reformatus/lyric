@@ -27,7 +27,7 @@ class MobileBottomBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewTypeAsync = ref.watch(ViewTypeForProvider(song, null));
+    final viewTypeAsync = ref.watch(viewTypeForProvider(song, null));
     if (!viewTypeAsync.hasValue) return SizedBox.shrink();
     final viewType = viewTypeAsync.requireValue;
 

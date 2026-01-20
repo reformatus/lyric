@@ -7,4 +7,7 @@
         ],
         "editor.defaultFormatter": "Dart-Code.dart-code"
     },
+    "chat.tools.terminal.autoApprove": {
+        "flutter": true
+    },
 }

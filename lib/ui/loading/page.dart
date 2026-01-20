@@ -26,7 +26,7 @@ class _LoadingPageState extends ConsumerState<LoadingPage> {
     final hasEverUpdated = ref.read(hasEverUpdatedAnythingProvider);
     final bankStates = ref.read(updateAllBanksSongsProvider);
 
-    if (hasEverUpdated.valueOrNull == true ||
+    if (hasEverUpdated.value == true ||
         (bankStates.hasValue && bankStates.value!.values.every(isDone))) {
       _hasNavigated = true;
 
@@ -101,7 +101,7 @@ class _LoadingPageState extends ConsumerState<LoadingPage> {
 
           // Continue with normal UI flow
           return Center(
-            child: hasEverUpdatedProvider.valueOrNull == false
+            child: hasEverUpdatedProvider.value == false
                 ? switch (bankStates) {
                     AsyncError(:final error, :final stackTrace) => LErrorCard(
                       type: LErrorType.error,

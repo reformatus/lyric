@@ -24,12 +24,12 @@ class TransposeResetButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final transpose = ref.watch(TransposeStateForProvider(song, songSlide));
+    final transpose = ref.watch(transposeStateForProvider(song, songSlide));
     if (transpose.semitones != 0 || transpose.capo != 0) {
       return IconButton(
         tooltip: 'Transzponálás visszaállítása',
         onPressed: () => ref
-            .read(TransposeStateForProvider(song, songSlide).notifier)
+            .read(transposeStateForProvider(song, songSlide).notifier)
             .reset(),
         icon: Icon(Icons.replay),
         iconSize: isCompact ? 18 : null,
@@ -74,7 +74,7 @@ class TransposeControls extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final transpose = ref.watch(TransposeStateForProvider(song, songSlide));
+    final transpose = ref.watch(transposeStateForProvider(song, songSlide));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -87,7 +87,7 @@ class TransposeControls extends ConsumerWidget {
               onPressed: () {
                 _updateTranspose(ref, () {
                   ref
-                      .read(TransposeStateForProvider(song, songSlide).notifier)
+                      .read(transposeStateForProvider(song, songSlide).notifier)
                       .down();
                 });
               },
@@ -110,7 +110,7 @@ class TransposeControls extends ConsumerWidget {
               onPressed: () {
                 _updateTranspose(ref, () {
                   ref
-                      .read(TransposeStateForProvider(song, songSlide).notifier)
+                      .read(transposeStateForProvider(song, songSlide).notifier)
                       .up();
                 });
               },
@@ -125,7 +125,7 @@ class TransposeControls extends ConsumerWidget {
               onPressed: () {
                 _updateTranspose(ref, () {
                   ref
-                      .read(TransposeStateForProvider(song, songSlide).notifier)
+                      .read(transposeStateForProvider(song, songSlide).notifier)
                       .removeCapo();
                 });
               },
@@ -148,7 +148,7 @@ class TransposeControls extends ConsumerWidget {
               onPressed: () {
                 _updateTranspose(ref, () {
                   ref
-                      .read(TransposeStateForProvider(song, songSlide).notifier)
+                      .read(transposeStateForProvider(song, songSlide).notifier)
                       .addCapo();
                 });
               },
@@ -193,7 +193,7 @@ class TransposeCard extends ConsumerWidget {
     );
     final viewTypeAsync = ref.watch(viewTypeForProvider(song, songSlide));
 
-    if (viewTypeAsync.valueOrNull != SongViewType.chords) {
+    if (viewTypeAsync.value != SongViewType.chords) {
       return SizedBox.shrink();
     }
 

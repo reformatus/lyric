@@ -106,7 +106,7 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
       (
         icon: Badge(
           isLabelVisible:
-              (newVersion.valueOrNull != null || unreadLogCount != 0),
+              (newVersion.value != null || unreadLogCount != 0),
           child: Icon(Icons.home_outlined),
         ),
         selectedIcon: Icon(Icons.home),

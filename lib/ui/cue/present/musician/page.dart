@@ -69,7 +69,7 @@ class _CuePresentMusicianPageState extends ConsumerState<CuePresentMusicianPage>
   Widget build(BuildContext context) {
     var slideIndex = ref
         .watch(watchSlideIndexOfCueProvider(widget.cue))
-        .valueOrNull;
+        .value;
     ref.watch(currentSlideOfProvider(widget.cue));
     ref.watch(currentSlideListOfProvider(widget.cue));
 

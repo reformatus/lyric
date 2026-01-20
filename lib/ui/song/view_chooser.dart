@@ -83,7 +83,7 @@ class ViewChooser extends ConsumerWidget {
               } else {
                 // In song context: call provider directly
                 ref
-                    .read(ViewTypeForProvider(song, songSlide).notifier)
+                    .read(viewTypeForProvider(song, songSlide).notifier)
                     .setTo(newViewType);
               }
             },
@@ -146,7 +146,7 @@ class ViewChooser extends ConsumerWidget {
                 } else {
                   // In song context: call provider directly
                   ref
-                      .read(ViewTypeForProvider(song, songSlide).notifier)
+                      .read(viewTypeForProvider(song, songSlide).notifier)
                       .setTo(newViewType!);
                 }
               },

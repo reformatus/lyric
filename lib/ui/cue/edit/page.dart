@@ -19,7 +19,7 @@ class CueEditPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var slideIndex = ref.watch(watchSlideIndexOfCueProvider(cue)).valueOrNull;
+    var slideIndex = ref.watch(watchSlideIndexOfCueProvider(cue)).value;
     return AdaptivePage(
       title: cue.title,
       subtitle: cue.description.isNotEmpty ? cue.description : null,

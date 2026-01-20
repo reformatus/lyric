@@ -13,7 +13,7 @@ class NewVersionWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final newVersionProvider = ref.watch(checkNewVersionProvider);
-    final newVersion = newVersionProvider.valueOrNull;
+    final newVersion = newVersionProvider.value;
 
     if (newVersion != null) {
       return Padding(
