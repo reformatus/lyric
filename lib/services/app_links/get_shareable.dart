@@ -1,9 +1,8 @@
-import 'dart:convert';
-
 import '../../main.dart';
 
 import '../../data/cue/cue.dart';
 import '../../data/song/song.dart';
+import '../cue/compression.dart';
 
 String getShareableLinkFor<T>(T item) {
   if (item is Song) {
@@ -16,8 +15,8 @@ String getShareableLinkFor<T>(T item) {
     return Uri(
       scheme: 'https',
       host: constants.domain,
-      pathSegments: ['launch', 'cueJson'],
-      queryParameters: {'data': jsonEncode(item.toJson())},
+      pathSegments: ['launch', 'cueData'],
+      queryParameters: {'data': compressCueForUrl(item.toJson())},
     ).toString();
   } else {
     throw Exception('${item.runtimeType} típusú elem nem megosztható!');

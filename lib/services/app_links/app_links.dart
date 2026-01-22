@@ -1,18 +1,13 @@
-import 'dart:convert';
-
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../main.dart';
-import '../cue/write_cue.dart';
-import '../../ui/common/confirm_dialog.dart';
+import '../cue/import_from_link.dart';
 import '../../ui/common/error/card.dart';
 import '../../ui/common/error/dialog.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../data/cue/cue.dart';
 import '../../data/log/logger.dart';
-import '../cue/from_uuid.dart';
 
 part 'app_links.g.dart';
 
@@ -34,44 +29,31 @@ Stream<String> shouldNavigate(Ref ref) async* {
         case 'launch':
           if (uri.pathSegments.length < 2) continue;
           switch (uri.pathSegments[1]) {
-            // TODO factor out to a cue service or similar
+            case 'cueData':
+              try {
+                String? encodedData = uri.queryParameters['data'];
+                if (encodedData == null) continue;
+
+                final result = await importCueFromCompressedData(
+                  encodedData,
+                  uri.queryParameters,
+                );
+
+                yield result.getNavigationPath();
+              } catch (e) {
+                throw Exception('Hibás lista a linkben:\n$e');
+              }
             case 'cueJson':
               try {
                 String? jsonString = uri.queryParameters['data'];
                 if (jsonString == null) continue;
-                Map json = jsonDecode(jsonString);
 
-                Cue? existingCue = await dbWatchCueWithUuid(json['uuid']).first;
-                Cue cue;
-                if (existingCue == null) {
-                  cue = await insertCueFromJson(json: jsonDecode(jsonString));
-                } else {
-                  cue = existingCue;
-                  final NavigatorState? navigator =
-                      globals.router.routerDelegate.navigatorKey.currentState;
-                  if (navigator != null) {
-                    await showConfirmDialog(
-                      // ignore: use_build_context_synchronously
-                      navigator.context,
-                      title:
-                          'A linkben megnyitott lista már létezik. Felülírod?',
-                      actionLabel: 'Felülírás',
-                      actionIcon: Icons.edit_note,
-                      actionOnPressed: () async {
-                        cue = await updateCueFromJson(json: json);
-                      },
-                    );
-                  }
-                }
+                final result = await importCueFromJson(
+                  jsonString,
+                  uri.queryParameters,
+                );
 
-                String? slideUuid = uri.queryParameters['slide'];
-
-                yield Uri(
-                  pathSegments: ['cue', cue.uuid, 'edit'],
-                  queryParameters: Map.fromEntries([
-                    if (slideUuid != null) MapEntry('slide', slideUuid),
-                  ]),
-                ).toString();
+                yield result.getNavigationPath();
               } catch (e) {
                 throw Exception('Hibás lista a linkben:\n$e');
               }

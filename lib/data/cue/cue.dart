@@ -62,7 +62,7 @@ class Cue extends Insertable<Cue> {
     ).toColumns(nullToAbsent);
   }
 
-  Map toJson() {
+  Map<String, dynamic> toJson() {
     return {
       "uuid": uuid,
       "title": title,
