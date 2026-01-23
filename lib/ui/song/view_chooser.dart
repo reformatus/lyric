@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../data/cue/slide.dart';
-import '../../data/cue/cue.dart';
-import '../cue/state.dart';
 
+import '../../data/cue/slide.dart';
 import '../../data/song/extensions.dart';
 import '../../data/song/song.dart';
 import 'state.dart';
@@ -14,19 +12,15 @@ class ViewChooser extends ConsumerWidget {
     required this.song,
     this.songSlide,
     required this.useDropdown,
-    this.cue,
   });
 
   final Song song;
   final bool useDropdown;
   final SongSlide? songSlide;
-  final Cue? cue;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final List<
-      ({SongViewType value, IconData icon, String label, bool enabled})
-    >
+    final List<({SongViewType value, IconData icon, String label, bool enabled})>
     viewTypeEntries = [
       (
         value: SongViewType.svg,
@@ -58,7 +52,7 @@ class ViewChooser extends ConsumerWidget {
 
     final viewTypeAsync = ref.watch(viewTypeForProvider(song, songSlide));
 
-    if (!viewTypeAsync.hasValue) return SizedBox.shrink();
+    if (!viewTypeAsync.hasValue) return const SizedBox.shrink();
     final viewType = viewTypeAsync.requireValue;
 
     return LayoutBuilder(
@@ -68,24 +62,9 @@ class ViewChooser extends ConsumerWidget {
             selected: {viewType},
             onSelectionChanged: (viewTypeSet) {
               final newViewType = viewTypeSet.first;
-              if (cue != null && songSlide != null) {
-                // In cue context: create updated slide and use slide list provider
-                final updatedSlide = SongSlide(
-                  songSlide!.uuid,
-                  songSlide!.song,
-                  songSlide!.comment,
-                  viewType: newViewType,
-                  transpose: songSlide!.transpose,
-                );
-                ref
-                    .read(currentSlideListOfProvider(cue!).notifier)
-                    .updateSlide(updatedSlide);
-              } else {
-                // In song context: call provider directly
-                ref
-                    .read(viewTypeForProvider(song, songSlide).notifier)
-                    .setTo(newViewType);
-              }
+              ref
+                  .read(viewTypeForProvider(song, songSlide).notifier)
+                  .setTo(newViewType);
             },
             showSelectedIcon: false,
             multiSelectionEnabled: false,
@@ -131,24 +110,10 @@ class ViewChooser extends ConsumerWidget {
               autofocus: false,
               value: viewType,
               onChanged: (newViewType) {
-                if (cue != null && songSlide != null) {
-                  // In cue context: create updated slide and use slide list provider
-                  final updatedSlide = SongSlide(
-                    songSlide!.uuid,
-                    songSlide!.song,
-                    songSlide!.comment,
-                    viewType: newViewType!,
-                    transpose: songSlide!.transpose,
-                  );
-                  ref
-                      .read(currentSlideListOfProvider(cue!).notifier)
-                      .updateSlide(updatedSlide);
-                } else {
-                  // In song context: call provider directly
-                  ref
-                      .read(viewTypeForProvider(song, songSlide).notifier)
-                      .setTo(newViewType!);
-                }
+                if (newViewType == null) return;
+                ref
+                    .read(viewTypeForProvider(song, songSlide).notifier)
+                    .setTo(newViewType);
               },
               items: viewTypeEntries
                   .where((e) => e.enabled)
@@ -162,17 +127,14 @@ class ViewChooser extends ConsumerWidget {
                             padding: EdgeInsets.only(right: 10),
                             child: Icon(
                               e.icon,
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.inverseSurface,
+                              color: Theme.of(context).colorScheme.inverseSurface,
                             ),
                           ),
                           Text(
                             e.label,
                             style: TextStyle(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.inverseSurface,
+                              color:
+                                  Theme.of(context).colorScheme.inverseSurface,
                             ),
                           ),
                         ],

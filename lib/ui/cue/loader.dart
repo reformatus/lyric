@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'present/musician/page.dart';
-import '../../data/cue/cue.dart';
 import '../common/error/card.dart';
 import 'edit/page.dart';
+import 'session/cue_session.dart';
+import 'session/session_provider.dart';
 import 'state.dart';
 
 /// Loader widget that initializes the cue and slide state before rendering any CuePage
@@ -21,52 +22,50 @@ class CueLoaderPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (ref.read(currentCueProvider.notifier).isDifferent(uuid)) {
-      return FutureBuilder(
-        future: ref
-            .read(currentCueProvider.notifier)
-            .load(uuid, initialSlideUuid: initialSlideUuid),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
-          } else if (snapshot.hasError) {
-            return Scaffold(
-              appBar: AppBar(title: const Text('Hiba')),
-              body: Center(
-                child: LErrorCard(
-                  type: LErrorType.error,
-                  title: 'Nem sikerült betölteni a listát',
-                  icon: Icons.error,
-                  message: snapshot.error.toString(),
-                  stack: snapshot.stackTrace?.toString() ?? '',
-                ),
-              ),
-            );
-          } else {
-            Cue cue = snapshot.requireData;
-            return buildPage(cue);
-          }
-        },
-      );
+    final sessionAsync = ref.watch(activeCueSessionProvider);
+    final currentUuid = sessionAsync.value?.cue.uuid;
+
+    if (currentUuid != uuid) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref
+            .read(activeCueSessionProvider.notifier)
+            .load(uuid, initialSlideUuid: initialSlideUuid);
+      });
     }
 
-    final currentCue = ref.watch(currentCueProvider);
-
-    if (currentCue == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    } else {
-      return buildPage(currentCue);
-    }
+    return sessionAsync.when(
+      loading: () => const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      ),
+      error: (error, stack) => Scaffold(
+        appBar: AppBar(title: const Text('Hiba')),
+        body: Center(
+          child: LErrorCard(
+            type: LErrorType.error,
+            title: 'Nem sikerült betölteni a listát',
+            icon: Icons.error,
+            message: error.toString(),
+            stack: stack.toString(),
+          ),
+        ),
+      ),
+      data: (session) {
+        if (session == null) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+        return buildPage(session);
+      },
+    );
   }
 
-  Widget buildPage(Cue cue) {
+  Widget buildPage(CueSession session) {
     switch (pageType) {
       case CuePageType.edit:
-        return CueEditPage(cue);
+        return CueEditPage(session);
       case CuePageType.musician:
-        return CuePresentMusicianPage(cue);
+        return CuePresentMusicianPage(session);
     }
   }
 }

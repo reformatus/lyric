@@ -4,30 +4,32 @@ import 'package:go_router/go_router.dart';
 import '../../common/adaptive_page/page.dart';
 import '../widgets/actions_drawer.dart';
 
-import '../../../data/cue/cue.dart';
 import '../../../services/app_links/get_shareable.dart';
 import '../../common/share/dialog.dart';
 import '../widgets/slide_list.dart';
 
+import '../session/cue_session.dart';
+import '../session/session_provider.dart';
 import '../state.dart';
 import '../widgets/slide_view.dart';
 
 class CueEditPage extends ConsumerWidget {
-  const CueEditPage(this.cue, {super.key});
+  const CueEditPage(this.session, {super.key});
 
-  final Cue cue;
+  final CueSession session;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var slideIndex = ref.watch(watchSlideIndexOfCueProvider(cue)).value;
+    final slideIndex = ref.watch(slideIndexProvider);
     return AdaptivePage(
-      title: cue.title,
-      subtitle: cue.description.isNotEmpty ? cue.description : null,
-      body: SlideView(cue),
-      leftDrawer: SlideList(cue: cue),
+      title: session.cue.title,
+      subtitle:
+          session.cue.description.isNotEmpty ? session.cue.description : null,
+      body: const SlideView(),
+      leftDrawer: const SlideList(),
       leftDrawerIcon: Icons.list,
       leftDrawerTooltip: 'Lista',
-      rightDrawer: ActionsDrawer(cue),
+      rightDrawer: const ActionsDrawer(),
       rightDrawerIcon: Icons.more_vert,
       rightDrawerTooltip: 'Opciók',
       actionBarChildren: [
@@ -35,8 +37,8 @@ class CueEditPage extends ConsumerWidget {
         IconButton.filledTonal(
           onPressed: hasPreviousSlide(slideIndex)
               ? () => ref
-                    .read(currentSlideOfProvider(cue).notifier)
-                    .changeSlide(-1)
+                    .read(activeCueSessionProvider.notifier)
+                    .navigate(-1)
               : null,
           icon: const Icon(Icons.navigate_before),
           tooltip: 'Előző dia',
@@ -45,8 +47,8 @@ class CueEditPage extends ConsumerWidget {
         IconButton.filledTonal(
           onPressed: hasNextSlide(slideIndex)
               ? () => ref
-                    .read(currentSlideOfProvider(cue).notifier)
-                    .changeSlide(1)
+                    .read(activeCueSessionProvider.notifier)
+                    .navigate(1)
               : null,
           icon: const Icon(Icons.navigate_next),
           tooltip: 'Következő dia',
@@ -64,9 +66,11 @@ class CueEditPage extends ConsumerWidget {
             title: 'Lista megosztása',
             description:
                 'Mutasd meg a kódot vagy küldd el a linket valakinek. A megosztott lista a listái közé kerül (vagy frissül, ha korábban már megnyitotta).',
-            sharedTitle: cue.title,
-            sharedDescription: cue.description.isEmpty ? null : cue.description,
-            sharedLink: getShareableLinkFor(cue),
+            sharedTitle: session.cue.title,
+            sharedDescription: session.cue.description.isEmpty
+                ? null
+                : session.cue.description,
+            sharedLink: getShareableLinkFor(session.cue),
             sharedIcon: Icons.list,
           ),
           icon: Icon(Icons.share),
@@ -76,7 +80,9 @@ class CueEditPage extends ConsumerWidget {
         // far future todo: dropdown for different projection modes
         IconButton.filled(
           tooltip: 'Teljes képernyő',
-          onPressed: () => context.push('/cue/${cue.uuid}/present/musician'),
+          onPressed: () => context.push(
+            '/cue/${session.cue.uuid}/present/musician',
+          ),
           icon: Icon(Icons.fullscreen),
           color: Theme.of(context).colorScheme.onPrimary,
         ),

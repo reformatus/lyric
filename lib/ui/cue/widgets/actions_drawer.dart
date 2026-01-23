@@ -2,17 +2,14 @@ import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../data/cue/cue.dart';
 import '../../../data/cue/slide.dart';
 import '../../common/error/card.dart';
-import '../state.dart';
+import '../session/session_provider.dart';
 import '../../song/transpose/widget.dart';
 import '../../song/view_chooser.dart';
 
 class ActionsDrawer extends ConsumerStatefulWidget {
-  const ActionsDrawer(this.cue, {super.key});
-
-  final Cue cue;
+  const ActionsDrawer({super.key});
 
   @override
   ConsumerState<ActionsDrawer> createState() => _ActionsDrawerState();
@@ -29,7 +26,7 @@ class _ActionsDrawerState extends ConsumerState<ActionsDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    Slide? slide = ref.watch(currentSlideOfProvider(widget.cue));
+    final slide = ref.watch(currentSlideProvider);
     return FadingEdgeScrollView.fromSingleChildScrollView(
       child: SingleChildScrollView(
         controller: scrollController,
@@ -57,7 +54,6 @@ class _ActionsDrawerState extends ConsumerState<ActionsDrawer> {
                     song: slide.song,
                     songSlide: slide,
                     useDropdown: true,
-                    cue: widget.cue,
                   ),
                   SizedBox(height: 8),
                   FilledButton.tonalIcon(
@@ -69,7 +65,6 @@ class _ActionsDrawerState extends ConsumerState<ActionsDrawer> {
                   TransposeCard(
                     song: slide.song,
                     songSlide: slide,
-                    cue: widget.cue,
                   ),
                 ],
               },

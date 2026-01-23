@@ -5,15 +5,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_fullscreen/flutter_fullscreen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../session/cue_session.dart';
+import '../../session/session_provider.dart';
 import '../../state.dart';
 import '../../widgets/slide_view.dart';
 
-import '../../../../data/cue/cue.dart';
-
 class CuePresentMusicianPage extends ConsumerStatefulWidget {
-  const CuePresentMusicianPage(this.cue, {super.key});
+  const CuePresentMusicianPage(this.session, {super.key});
 
-  final Cue cue;
+  final CueSession session;
 
   @override
   ConsumerState<CuePresentMusicianPage> createState() =>
@@ -67,11 +67,8 @@ class _CuePresentMusicianPageState extends ConsumerState<CuePresentMusicianPage>
 
   @override
   Widget build(BuildContext context) {
-    var slideIndex = ref
-        .watch(watchSlideIndexOfCueProvider(widget.cue))
-        .value;
-    ref.watch(currentSlideOfProvider(widget.cue));
-    ref.watch(currentSlideListOfProvider(widget.cue));
+    final slideIndex = ref.watch(slideIndexProvider);
+    ref.watch(currentSlideProvider);
 
     return Scaffold(
       body: SafeArea(
@@ -92,7 +89,7 @@ class _CuePresentMusicianPageState extends ConsumerState<CuePresentMusicianPage>
                         resetOverlayCloser();
                       }
                     },
-                    onDoubleTap: () => context.pop,
+                    onDoubleTap: () => context.pop(),
                     child: IgnorePointer(
                       child: SizedBox.expand(
                         child: Container(
@@ -151,12 +148,8 @@ class _CuePresentMusicianPageState extends ConsumerState<CuePresentMusicianPage>
                             child: InkWell(
                               onTap: () {
                                 ref
-                                    .read(
-                                      currentSlideOfProvider(
-                                        widget.cue,
-                                      ).notifier,
-                                    )
-                                    .changeSlide(-1);
+                                    .read(activeCueSessionProvider.notifier)
+                                    .navigate(-1);
                                 resetOverlayCloser();
                               },
                               child: Center(
@@ -193,12 +186,8 @@ class _CuePresentMusicianPageState extends ConsumerState<CuePresentMusicianPage>
                             child: InkWell(
                               onTap: () {
                                 ref
-                                    .read(
-                                      currentSlideOfProvider(
-                                        widget.cue,
-                                      ).notifier,
-                                    )
-                                    .changeSlide(1);
+                                    .read(activeCueSessionProvider.notifier)
+                                    .navigate(1);
                                 resetOverlayCloser();
                               },
                               child: Center(
@@ -240,7 +229,7 @@ class _CuePresentMusicianPageState extends ConsumerState<CuePresentMusicianPage>
                 ],
               );
             },
-            child: SlideView(widget.cue),
+            child: const SlideView(),
           ),
         ),
       ),

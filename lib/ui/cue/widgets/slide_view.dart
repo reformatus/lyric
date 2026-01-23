@@ -2,16 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../common/centered_hint.dart';
 
-import '../../../data/cue/cue.dart';
 import '../../../data/cue/slide.dart';
 import '../slide_views/song.dart';
 import '../slide_views/unknown.dart';
-import '../state.dart';
+import '../session/session_provider.dart';
 
 class SlideView extends ConsumerStatefulWidget {
-  const SlideView(this.cue, {super.key});
-
-  final Cue cue;
+  const SlideView({super.key});
 
   @override
   ConsumerState<SlideView> createState() => _SlideViewState();
@@ -24,23 +21,29 @@ class _SlideViewState extends ConsumerState<SlideView>
   @override
   void initState() {
     super.initState();
-    initializeTabController(
-      ref.read(currentSlideOfProvider(widget.cue)),
-      ref.read(currentSlideListOfProvider(widget.cue))!,
-    );
+    final session = ref.read(activeCueSessionProvider).value;
+    if (session != null) {
+      initializeTabController(session.currentSlide, session.slides);
+    }
 
     ref.listenManual(
-      currentSlideOfProvider(widget.cue),
-      (_, newSlide) => tabController!.animateTo(
-        ref.read(currentSlideListOfProvider(widget.cue))!.indexOf(newSlide!),
-      ),
+      currentSlideProvider,
+      (_, newSlide) {
+        final slides = ref.read(activeCueSessionProvider).value?.slides ?? [];
+        if (newSlide == null || slides.isEmpty || tabController == null) return;
+        tabController!.animateTo(slides.indexOf(newSlide));
+      },
     );
     ref.listenManual(
-      currentSlideListOfProvider(widget.cue),
-      (_, slides) => initializeTabController(
-        ref.read(currentSlideOfProvider(widget.cue)),
-        slides!,
-      ),
+      activeCueSessionProvider,
+      (_, sessionAsync) {
+        final sessionValue = sessionAsync.value;
+        if (sessionValue == null) return;
+        initializeTabController(
+          sessionValue.currentSlide,
+          sessionValue.slides,
+        );
+      },
     );
   }
 
@@ -57,20 +60,21 @@ class _SlideViewState extends ConsumerState<SlideView>
         vsync: this,
       );
       tabController!.addListener(
-        () => ref
-            .read(currentSlideOfProvider(widget.cue).notifier)
-            .setCurrent(
-              ref.read(
-                currentSlideListOfProvider(widget.cue),
-              )![tabController!.index],
-            ),
+        () {
+          final session = ref.read(activeCueSessionProvider).value;
+          if (session == null || session.slides.isEmpty) return;
+          final slide = session.slides[tabController!.index];
+          ref.read(activeCueSessionProvider.notifier).goToSlide(slide.uuid);
+        },
       );
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Slide> slides = ref.watch(currentSlideListOfProvider(widget.cue))!;
+    final session = ref.watch(activeCueSessionProvider).value;
+    final slides = session?.slides ?? [];
+    final cueUuid = session?.cue.uuid ?? '';
 
     return Theme(
       data: Theme.of(context),
@@ -83,16 +87,16 @@ class _SlideViewState extends ConsumerState<SlideView>
               )
             : TabBarView(
                 controller: tabController,
-                children: slides.map((s) => renderSlide(s)).toList(),
+                children: slides.map((s) => renderSlide(s, cueUuid)).toList(),
               ),
       ),
     );
   }
 
-  Widget renderSlide(Slide slide) {
+  Widget renderSlide(Slide slide, String cueUuid) {
     switch (slide) {
       case SongSlide songSlide:
-        return SongSlideView(songSlide, widget.cue.uuid);
+        return SongSlideView(songSlide, cueUuid);
 
       case UnknownTypeSlide unknownSlide:
         return UnknownTypeSlideView(unknownSlide);

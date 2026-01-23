@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../data/song/transpose.dart';
 import '../state.dart';
 import '../../../data/cue/slide.dart';
-import '../../../data/cue/cue.dart';
-import '../../cue/state.dart';
 
 import '../../../data/song/song.dart';
 import '../../../services/key/get_transposed.dart';
@@ -42,35 +40,10 @@ class TransposeResetButton extends ConsumerWidget {
 }
 
 class TransposeControls extends ConsumerWidget {
-  const TransposeControls(this.song, {this.songSlide, this.cue, super.key});
+  const TransposeControls(this.song, {this.songSlide, super.key});
 
   final Song song;
   final SongSlide? songSlide;
-  final Cue? cue;
-
-  // Helper method to update transpose in cue context
-  void _updateTranspose(WidgetRef ref, void Function() transposeAction) {
-    if (cue != null && songSlide != null) {
-      // In cue context: create updated slide with new transpose
-      transposeAction(); // Execute the transpose action
-      final newTranspose = ref.read(transposeStateForProvider(song, songSlide));
-
-      final updatedSlide = SongSlide(
-        songSlide!.uuid,
-        songSlide!.song,
-        songSlide!.comment,
-        viewType: songSlide!.viewType,
-        transpose: newTranspose,
-      );
-
-      ref
-          .read(currentSlideListOfProvider(cue!).notifier)
-          .updateSlide(updatedSlide);
-    } else {
-      // In song context: call action directly
-      transposeAction();
-    }
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -85,11 +58,9 @@ class TransposeControls extends ConsumerWidget {
           children: [
             IconButton.filledTonal(
               onPressed: () {
-                _updateTranspose(ref, () {
-                  ref
-                      .read(transposeStateForProvider(song, songSlide).notifier)
-                      .down();
-                });
+                ref
+                    .read(transposeStateForProvider(song, songSlide).notifier)
+                    .down();
               },
               icon: Icon(Icons.expand_more),
             ),
@@ -108,11 +79,9 @@ class TransposeControls extends ConsumerWidget {
             ),
             IconButton.filledTonal(
               onPressed: () {
-                _updateTranspose(ref, () {
-                  ref
-                      .read(transposeStateForProvider(song, songSlide).notifier)
-                      .up();
-                });
+                ref
+                    .read(transposeStateForProvider(song, songSlide).notifier)
+                    .up();
               },
               icon: Icon(Icons.expand_less),
             ),
@@ -123,11 +92,9 @@ class TransposeControls extends ConsumerWidget {
           children: [
             IconButton.filledTonal(
               onPressed: () {
-                _updateTranspose(ref, () {
-                  ref
-                      .read(transposeStateForProvider(song, songSlide).notifier)
-                      .removeCapo();
-                });
+                ref
+                    .read(transposeStateForProvider(song, songSlide).notifier)
+                    .removeCapo();
               },
               icon: Icon(Icons.remove),
             ),
@@ -146,11 +113,9 @@ class TransposeControls extends ConsumerWidget {
             ),
             IconButton.filledTonal(
               onPressed: () {
-                _updateTranspose(ref, () {
-                  ref
-                      .read(transposeStateForProvider(song, songSlide).notifier)
-                      .addCapo();
-                });
+                ref
+                    .read(transposeStateForProvider(song, songSlide).notifier)
+                    .addCapo();
               },
               icon: Icon(Icons.add),
             ),
@@ -179,12 +144,10 @@ class TransposeCard extends ConsumerWidget {
     super.key,
     required this.song,
     this.songSlide,
-    this.cue,
   });
 
   final Song song;
   final SongSlide? songSlide;
-  final Cue? cue;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -226,7 +189,7 @@ class TransposeCard extends ConsumerWidget {
                   ],
                 ),
               ),
-              TransposeControls(song, songSlide: songSlide, cue: cue),
+              TransposeControls(song, songSlide: songSlide),
             ],
           ),
         ),

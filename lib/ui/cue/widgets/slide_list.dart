@@ -4,22 +4,19 @@ import '../../common/centered_hint.dart';
 import '../../common/confirm_dialog.dart';
 import '../slide_views/unknown.dart';
 
-import '../../../data/cue/cue.dart';
 import '../../../data/cue/slide.dart';
 import '../slide_views/song.dart';
-import '../state.dart';
+import '../session/session_provider.dart';
 
 /// A drawer or side panel that displays a list of slides for a cue
 /// Uses the current slide from state management instead of an index
 class SlideList extends ConsumerWidget {
-  const SlideList({required this.cue, super.key});
-
-  final Cue cue;
+  const SlideList({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Slide? currentSlide = ref.watch(currentSlideOfProvider(cue));
-    List<Slide> slides = ref.watch(currentSlideListOfProvider(cue))!;
+    final currentSlide = ref.watch(currentSlideProvider);
+    final slides = ref.watch(activeCueSessionProvider).value?.slides ?? [];
 
     if (slides.isEmpty) return CenteredHint('Üres lista');
 
@@ -28,7 +25,7 @@ class SlideList extends ConsumerWidget {
       buildDefaultDragHandles: false,
       onReorder: (int from, int to) {
         ref
-            .read(currentSlideListOfProvider(cue).notifier)
+            .read(activeCueSessionProvider.notifier)
             .reorderSlides(from, to);
       },
       itemBuilder: (context, index) {
@@ -40,17 +37,17 @@ class SlideList extends ConsumerWidget {
             index,
             key: ValueKey(songSlide.hashCode),
             selectCallback: () => ref
-                .read(currentSlideOfProvider(cue).notifier)
-                .setCurrent(slide),
+                .read(activeCueSessionProvider.notifier)
+                .goToSlide(slide.uuid),
             removeCallback: () => showConfirmDialog(
               context,
               title: '${songSlide.song.title} - biztos eltávolítod a listából?',
               actionIcon: Icons.delete_outline,
               actionLabel: 'Eltávolítás',
               actionOnPressed: () async {
-                await ref
-                    .read(currentSlideListOfProvider(cue).notifier)
-                    .removeSlide(slide);
+                ref
+                    .read(activeCueSessionProvider.notifier)
+                    .removeSlide(slide.uuid);
               },
             ),
             isCurrent: currentSlide == slide,
@@ -60,11 +57,11 @@ class SlideList extends ConsumerWidget {
             index,
             key: ValueKey(unknownSlide.hashCode),
             selectCallback: () => ref
-                .read(currentSlideOfProvider(cue).notifier)
-                .setCurrent(slide),
+                .read(activeCueSessionProvider.notifier)
+                .goToSlide(slide.uuid),
             removeCallback: () => ref
-                .read(currentSlideListOfProvider(cue).notifier)
-                .removeSlide(slide),
+                .read(activeCueSessionProvider.notifier)
+                .removeSlide(slide.uuid),
             isCurrent: currentSlide == slide,
           ),
         };
