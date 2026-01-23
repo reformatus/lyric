@@ -1,6 +1,5 @@
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../main.dart';
 import '../cue/import_from_link.dart';
 import '../../ui/common/error/card.dart';
