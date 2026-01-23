@@ -62,10 +62,7 @@ class _ActionsDrawerState extends ConsumerState<ActionsDrawer> {
                     icon: Icon(Icons.redo),
                   ),
                   SizedBox(height: 8),
-                  TransposeCard(
-                    song: slide.song,
-                    songSlide: slide,
-                  ),
+                  TransposeCard(song: slide.song, songSlide: slide),
                 ],
               },
             ],

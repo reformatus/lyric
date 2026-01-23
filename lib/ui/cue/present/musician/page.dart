@@ -7,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../session/cue_session.dart';
 import '../../session/session_provider.dart';
-import '../../state.dart';
 import '../../widgets/slide_view.dart';
 
 class CuePresentMusicianPage extends ConsumerStatefulWidget {
@@ -68,6 +67,8 @@ class _CuePresentMusicianPageState extends ConsumerState<CuePresentMusicianPage>
   @override
   Widget build(BuildContext context) {
     final slideIndex = ref.watch(slideIndexProvider);
+    final canNavigatePrevious = ref.watch(canNavigatePreviousProvider);
+    final canNavigateNext = ref.watch(canNavigateNextProvider);
     ref.watch(currentSlideProvider);
 
     return Scaffold(
@@ -122,7 +123,7 @@ class _CuePresentMusicianPageState extends ConsumerState<CuePresentMusicianPage>
                       ),
                     ),
                   ),
-                  if (hasPreviousSlide(slideIndex))
+                  if (canNavigatePrevious)
                     Align(
                       alignment: Alignment.centerLeft,
                       child: FractionalTranslation(
@@ -160,7 +161,7 @@ class _CuePresentMusicianPageState extends ConsumerState<CuePresentMusicianPage>
                         ),
                       ),
                     ),
-                  if (hasNextSlide(slideIndex))
+                  if (canNavigateNext)
                     Align(
                       alignment: Alignment.centerRight,
                       child: FractionalTranslation(

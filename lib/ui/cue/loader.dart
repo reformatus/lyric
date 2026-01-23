@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'present/musician/page.dart';
 import '../common/error/card.dart';
 import 'edit/page.dart';
+import 'cue_page_type.dart';
 import 'session/cue_session.dart';
 import 'session/session_provider.dart';
-import 'state.dart';
 
 /// Loader widget that initializes the cue and slide state before rendering any CuePage
 class CueLoaderPage extends ConsumerWidget {
@@ -34,9 +34,8 @@ class CueLoaderPage extends ConsumerWidget {
     }
 
     return sessionAsync.when(
-      loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      ),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (error, stack) => Scaffold(
         appBar: AppBar(title: const Text('Hiba')),
         body: Center(

@@ -26,25 +26,16 @@ class _SlideViewState extends ConsumerState<SlideView>
       initializeTabController(session.currentSlide, session.slides);
     }
 
-    ref.listenManual(
-      currentSlideProvider,
-      (_, newSlide) {
-        final slides = ref.read(activeCueSessionProvider).value?.slides ?? [];
-        if (newSlide == null || slides.isEmpty || tabController == null) return;
-        tabController!.animateTo(slides.indexOf(newSlide));
-      },
-    );
-    ref.listenManual(
-      activeCueSessionProvider,
-      (_, sessionAsync) {
-        final sessionValue = sessionAsync.value;
-        if (sessionValue == null) return;
-        initializeTabController(
-          sessionValue.currentSlide,
-          sessionValue.slides,
-        );
-      },
-    );
+    ref.listenManual(currentSlideProvider, (_, newSlide) {
+      final slides = ref.read(activeCueSessionProvider).value?.slides ?? [];
+      if (newSlide == null || slides.isEmpty || tabController == null) return;
+      tabController!.animateTo(slides.indexOf(newSlide));
+    });
+    ref.listenManual(activeCueSessionProvider, (_, sessionAsync) {
+      final sessionValue = sessionAsync.value;
+      if (sessionValue == null) return;
+      initializeTabController(sessionValue.currentSlide, sessionValue.slides);
+    });
   }
 
   void initializeTabController(Slide? slide, List<Slide> slides) {
@@ -59,14 +50,12 @@ class _SlideViewState extends ConsumerState<SlideView>
             : 0,
         vsync: this,
       );
-      tabController!.addListener(
-        () {
-          final session = ref.read(activeCueSessionProvider).value;
-          if (session == null || session.slides.isEmpty) return;
-          final slide = session.slides[tabController!.index];
-          ref.read(activeCueSessionProvider.notifier).goToSlide(slide.uuid);
-        },
-      );
+      tabController!.addListener(() {
+        final session = ref.read(activeCueSessionProvider).value;
+        if (session == null || session.slides.isEmpty) return;
+        final slide = session.slides[tabController!.index];
+        ref.read(activeCueSessionProvider.notifier).goToSlide(slide.uuid);
+      });
     });
   }
 

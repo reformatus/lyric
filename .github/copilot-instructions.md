@@ -31,7 +31,7 @@ Run `dart fix --apply` to auto-fix linter issues (unnecessary imports, etc).
 - Use `@riverpod` (auto-dispose) for page-specific state
 - Providers in [lib/services/](../lib/services/) expose business logic; UI in [lib/ui/](../lib/ui/) consumes them
 - Widget pattern: `ConsumerWidget` for stateless, `ConsumerStatefulWidget` for lifecycle hooks
-- State lives in providers, not widgets - see [ui/cue/state.dart](../lib/ui/cue/state.dart) for complex notifier patterns
+- State lives in providers, not widgets - see [ui/cue/session/session_provider.dart](../lib/ui/cue/session/session_provider.dart) for cue session patterns
 
 ### Database (Drift)
 - Single database instance: `db` global from [database.dart](../lib/data/database.dart)

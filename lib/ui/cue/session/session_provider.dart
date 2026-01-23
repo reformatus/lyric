@@ -13,11 +13,6 @@ part 'session_provider.g.dart';
 
 /// The single source of truth for the currently active cue session.
 ///
-/// Replaces the previous combination of:
-/// - currentCueProvider
-/// - currentSlideListOfProvider
-/// - currentSlideOfProvider
-///
 /// All slide mutations go through this provider, which handles:
 /// - Immutable state updates for immediate UI reactivity
 /// - Debounced writes to the underlying source (DB/remote)

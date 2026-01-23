@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_fullscreen/flutter_fullscreen.dart';
 import 'package:go_router/go_router.dart';
 import 'services/preferences/providers/general.dart';
-import 'ui/cue/state.dart';
+import 'ui/cue/cue_page_type.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'data/database.dart';

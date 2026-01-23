@@ -24,9 +24,7 @@ class SlideList extends ConsumerWidget {
       itemCount: slides.length,
       buildDefaultDragHandles: false,
       onReorder: (int from, int to) {
-        ref
-            .read(activeCueSessionProvider.notifier)
-            .reorderSlides(from, to);
+        ref.read(activeCueSessionProvider.notifier).reorderSlides(from, to);
       },
       itemBuilder: (context, index) {
         final slide = slides[index];

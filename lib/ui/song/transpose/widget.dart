@@ -140,11 +140,7 @@ class TransposeControls extends ConsumerWidget {
 }
 
 class TransposeCard extends ConsumerWidget {
-  const TransposeCard({
-    super.key,
-    required this.song,
-    this.songSlide,
-  });
+  const TransposeCard({super.key, required this.song, this.songSlide});
 
   final Song song;
   final SongSlide? songSlide;

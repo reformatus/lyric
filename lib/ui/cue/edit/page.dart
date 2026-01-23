@@ -10,7 +10,6 @@ import '../widgets/slide_list.dart';
 
 import '../session/cue_session.dart';
 import '../session/session_provider.dart';
-import '../state.dart';
 import '../widgets/slide_view.dart';
 
 class CueEditPage extends ConsumerWidget {
@@ -21,10 +20,13 @@ class CueEditPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final slideIndex = ref.watch(slideIndexProvider);
+    final canNavigatePrevious = ref.watch(canNavigatePreviousProvider);
+    final canNavigateNext = ref.watch(canNavigateNextProvider);
     return AdaptivePage(
       title: session.cue.title,
-      subtitle:
-          session.cue.description.isNotEmpty ? session.cue.description : null,
+      subtitle: session.cue.description.isNotEmpty
+          ? session.cue.description
+          : null,
       body: const SlideView(),
       leftDrawer: const SlideList(),
       leftDrawerIcon: Icons.list,
@@ -35,20 +37,16 @@ class CueEditPage extends ConsumerWidget {
       actionBarChildren: [
         const SizedBox(width: 8),
         IconButton.filledTonal(
-          onPressed: hasPreviousSlide(slideIndex)
-              ? () => ref
-                    .read(activeCueSessionProvider.notifier)
-                    .navigate(-1)
+          onPressed: canNavigatePrevious
+              ? () => ref.read(activeCueSessionProvider.notifier).navigate(-1)
               : null,
           icon: const Icon(Icons.navigate_before),
           tooltip: 'Előző dia',
         ),
         const SizedBox(width: 8),
         IconButton.filledTonal(
-          onPressed: hasNextSlide(slideIndex)
-              ? () => ref
-                    .read(activeCueSessionProvider.notifier)
-                    .navigate(1)
+          onPressed: canNavigateNext
+              ? () => ref.read(activeCueSessionProvider.notifier).navigate(1)
               : null,
           icon: const Icon(Icons.navigate_next),
           tooltip: 'Következő dia',
@@ -80,9 +78,8 @@ class CueEditPage extends ConsumerWidget {
         // far future todo: dropdown for different projection modes
         IconButton.filled(
           tooltip: 'Teljes képernyő',
-          onPressed: () => context.push(
-            '/cue/${session.cue.uuid}/present/musician',
-          ),
+          onPressed: () =>
+              context.push('/cue/${session.cue.uuid}/present/musician'),
           icon: Icon(Icons.fullscreen),
           color: Theme.of(context).colorScheme.onPrimary,
         ),

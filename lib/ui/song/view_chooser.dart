@@ -20,7 +20,9 @@ class ViewChooser extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final List<({SongViewType value, IconData icon, String label, bool enabled})>
+    final List<
+      ({SongViewType value, IconData icon, String label, bool enabled})
+    >
     viewTypeEntries = [
       (
         value: SongViewType.svg,
@@ -127,14 +129,17 @@ class ViewChooser extends ConsumerWidget {
                             padding: EdgeInsets.only(right: 10),
                             child: Icon(
                               e.icon,
-                              color: Theme.of(context).colorScheme.inverseSurface,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.inverseSurface,
                             ),
                           ),
                           Text(
                             e.label,
                             style: TextStyle(
-                              color:
-                                  Theme.of(context).colorScheme.inverseSurface,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.inverseSurface,
                             ),
                           ),
                         ],
