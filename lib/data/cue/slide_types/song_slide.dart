@@ -2,12 +2,27 @@ part of '../slide.dart';
 
 class SongSlide extends Slide {
   static String slideType = 'song';
-  Song song;
-  SongViewType viewType;
-  SongTranspose? transpose;
+  final Song song;
+  final SongViewType viewType;
+  final SongTranspose? transpose;
   // future: List<Verse> verses override
 
-  bool contentDifferentFlag = false;
+  final bool contentDifferentFlag;
+
+  @override
+  SongSlide copyWith({
+    SongViewType? viewType,
+    SongTranspose? transpose,
+    String? comment,
+    bool? contentDifferentFlag,
+  }) => SongSlide(
+    uuid,
+    song,
+    comment ?? this.comment,
+    viewType: viewType ?? this.viewType,
+    transpose: transpose ?? this.transpose,
+    contentDifferentFlag: contentDifferentFlag ?? this.contentDifferentFlag,
+  );
 
   @override
   String getPreview() {
@@ -33,7 +48,8 @@ class SongSlide extends Slide {
       json.containsKey('comment') ? json['comment'] : null,
       viewType: viewType,
       transpose: transpose,
-    )..contentDifferentFlag = songResult.contentDifferentFlag;
+      contentDifferentFlag: songResult.contentDifferentFlag,
+    );
 
     return songSlide;
   }
@@ -73,6 +89,7 @@ class SongSlide extends Slide {
     super.comment, {
     required this.viewType,
     this.transpose,
+    this.contentDifferentFlag = false,
   });
 }
 

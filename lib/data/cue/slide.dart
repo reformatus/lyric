@@ -12,10 +12,13 @@ part 'slide_types/song_slide.dart';
 sealed class Slide {
   String getPreview();
   // todo have interfaces for title, subtitle, etc
-  String uuid;
-  String? comment;
+  final String uuid;
+  final String? comment;
 
-  Slide(this.uuid, this.comment);
+  const Slide(this.uuid, this.comment);
+
+  /// Create a copy with updated fields - override in subclasses
+  Slide copyWith({String? comment});
 
   static Future<Slide> reviveFromJson(Map json, Cue parent) {
     switch (json['slideType']) {
@@ -41,7 +44,7 @@ sealed class Slide {
 }
 
 class UnknownTypeSlide extends Slide {
-  Map json;
+  final Map json;
 
   @override
   String getPreview() => 'Ismeretlen diatípus: ${json['slideType']}';
@@ -49,5 +52,9 @@ class UnknownTypeSlide extends Slide {
   @override
   Map toJson() => json;
 
-  UnknownTypeSlide(this.json, super.uuid, super.comment);
+  @override
+  UnknownTypeSlide copyWith({String? comment, Map? json}) =>
+      UnknownTypeSlide(json ?? this.json, uuid, comment ?? this.comment);
+
+  const UnknownTypeSlide(this.json, super.uuid, super.comment);
 }

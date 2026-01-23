@@ -62,6 +62,33 @@ Access via `globals` and `constants` records in [main.dart](../lib/main.dart):
   2. [songs/update.dart](../lib/services/songs/update.dart) downloads changed songs per bank (respects `lastUpdated` timestamps)
   3. Assets (PDFs/SVGs) lazy-loaded on demand
 
+### Cue Session State Management (NEW ARCHITECTURE)
+The active cue is managed through a single source of truth: `activeCueSessionProvider` in [session_provider.dart](../lib/ui/cue/session/session_provider.dart).
+
+**Key concepts:**
+- **CueSession**: Immutable state object holding `cue`, `slides`, and `currentSlideUuid`
+- **CueSource**: Abstract interface for data source (local DB or future remote). See [cue_source.dart](../lib/services/cue/source/cue_source.dart)
+- **Slide immutability**: All `Slide` subclasses are immutable with `copyWith()` methods
+- **Debounced writes**: Slide changes update UI immediately, DB writes are debounced (300ms)
+
+**Data flow:**
+```
+User action → ActiveCueSession.updateSlide() → Immediate state update → Debounced DB write
+                                              ↓
+                               ref.watch() triggers UI rebuild
+                                              ↓
+                     viewTypeForProvider/transposeStateForProvider derive from session
+```
+
+**Song-level providers in cue context:**
+- `viewTypeForProvider(song, songSlide)` and `transposeStateForProvider(song, songSlide)` 
+- When `songSlide != null`: Derive state FROM `activeCueSessionProvider`, route changes THROUGH it
+- When `songSlide == null`: Hold independent local state (standalone song view)
+
+**Adding slides to cues:**
+- Use `addSlideToCue(slide, cue, ref: ref)` from [write_cue.dart](../lib/services/cue/write_cue.dart)
+- Routes through session if cue is active, otherwise writes directly to DB
+
 ### Cues (Playlists)
 - **Cue**: User-created ordered list of `Slide` objects (see [cue.dart](../lib/data/cue/cue.dart))
 - **Slide**: Sealed class with type `SongSlide` (reference to Song + view preferences) - extensible for future slide types
@@ -83,8 +110,9 @@ Pattern: Abstract `PreferencesParentClass` in [preferences_parent.dart](../lib/s
 
 ### Async Data Loading
 - Use `Stream<T>` providers for reactive DB queries (e.g., `watchAllBanks()`)
-- `FutureBuilder` pattern in loaders (see [cue/loader.dart](../lib/ui/cue/loader.dart)) - checks notifier state before async load
-- Handle `connectionState.waiting`, `hasError`, `requireData` explicitly
+- For cue loading, use `activeCueSessionProvider` which handles async loading internally with `AsyncValue`
+- In UI, use `.when()` pattern: `ref.watch(provider).when(loading: ..., error: ..., data: ...)`
+- Handle `connectionState.waiting`, `hasError`, `requireData` explicitly for FutureBuilder patterns
 
 ### Logging
 - Global `log` from [logger.dart](../lib/data/log/logger.dart) (standard `logging` package)

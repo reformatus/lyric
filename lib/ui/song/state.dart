@@ -6,6 +6,7 @@ import '../../data/song/song.dart';
 import '../../services/assets/downloaded.dart';
 import '../../services/connectivity/provider.dart';
 import '../../services/preferences/providers/song_view_order.dart';
+import '../cue/session/session_provider.dart';
 
 part 'state.g.dart';
 
@@ -24,13 +25,39 @@ enum SongViewType {
   }
 }
 
+/// Provider for view type of a song.
+///
+/// Behavior depends on context:
+/// - **In cue context** (`songSlide != null`): Derives state from ActiveCueSession.
+///   Changes route through session for persistence.
+/// - **Standalone** (`songSlide == null`): Holds independent local state.
+///   Computes initial value based on preferences and connectivity.
 @Riverpod(keepAlive: true)
 class ViewTypeFor extends _$ViewTypeFor {
   @override
   Future<SongViewType> build(Song song, SongSlide? songSlide) async {
-    final songViewOrder = (ref.watch(
-      songViewOrderPreferencesProvider,
-    )).songViewOrder;
+    // CASE 1: In cue context - derive from session
+    if (songSlide != null) {
+      final session = ref.watch(activeCueSessionProvider).value;
+      if (session != null) {
+        // Find the current version of this slide in the session
+        final currentSlide = session.slides
+            .whereType<SongSlide>()
+            .where((s) => s.uuid == songSlide.uuid)
+            .firstOrNull;
+
+        if (currentSlide != null) {
+          return currentSlide.viewType;
+        }
+      }
+      // Fallback to slide's stored value if session not ready
+      return songSlide.viewType;
+    }
+
+    // CASE 2: Standalone song view - compute default based on preferences
+    final songViewOrder = ref
+        .watch(songViewOrderPreferencesProvider)
+        .songViewOrder;
 
     if (ref.read(connectionProvider) == ConnectionType.offline) {
       List<String> downloadedAssets = await downloadedAssetsForSong(song);
@@ -48,10 +75,27 @@ class ViewTypeFor extends _$ViewTypeFor {
     }
   }
 
+  /// Set view type - routes through session if in cue context
   void setTo(SongViewType newValue) {
-    state = AsyncValue.data(newValue);
     if (songSlide != null) {
-      songSlide!.viewType = newValue;
+      // Route through session for cue context
+      final notifier = ref.read(activeCueSessionProvider.notifier);
+      final session = ref.read(activeCueSessionProvider).value;
+
+      if (session != null) {
+        // Find current slide state and create updated copy
+        final currentSlide = session.slides
+            .whereType<SongSlide>()
+            .where((s) => s.uuid == songSlide!.uuid)
+            .firstOrNull;
+
+        if (currentSlide != null) {
+          notifier.updateSlide(currentSlide.copyWith(viewType: newValue));
+          return; // Session update will trigger rebuild via ref.watch
+        }
+      }
     }
+    // Standalone: direct state update
+    state = AsyncValue.data(newValue);
   }
 }

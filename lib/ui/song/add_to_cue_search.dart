@@ -53,7 +53,7 @@ class _AddToCueSearchState extends ConsumerState<AddToCueSearch> {
         viewType: widget.viewType,
         transpose: widget.transpose,
       );
-      await addSlideToCue(songSlide, cue);
+      await addSlideToCue(songSlide, cue, ref: ref);
 
       globals.scaffoldKey.currentState?.showSnackBar(
         SnackBar(
