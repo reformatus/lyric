@@ -18,5 +18,6 @@ Stream<Cue> watchCueWithUuid(Ref ref, String uuid) async* {
 }
 
 Stream<Cue?> dbWatchCueWithUuid(String uuid) async* {
-  yield* (db.cues.select()..where((c) => c.uuid.equals(uuid))).watchSingleOrNull();
+  yield* (db.cues.select()..where((c) => c.uuid.equals(uuid)))
+      .watchSingleOrNull();
 }

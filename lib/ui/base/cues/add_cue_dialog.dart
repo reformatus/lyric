@@ -79,10 +79,9 @@ class EditCueDialogState extends State<EditCueDialog> {
           onPressed: onSubmit,
           child: AnimatedSize(
             duration: Durations.medium1,
-            child:
-                isSaving
-                    ? SizedBox(width: 50, child: LinearProgressIndicator())
-                    : Text('Létrehozás'),
+            child: isSaving
+                ? SizedBox(width: 50, child: LinearProgressIndicator())
+                : Text('Létrehozás'),
           ),
         ),
       ],

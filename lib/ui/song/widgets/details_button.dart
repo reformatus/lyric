@@ -19,24 +19,20 @@ class DetailsButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       style: TextButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         textStyle: Theme.of(context).primaryTextTheme.labelMedium,
         foregroundColor: Theme.of(context).colorScheme.secondary,
       ),
-      onPressed:
-          () => onShowDetailsSheet(
-            context,
-            detailsSheetScrollController,
-            detailsContent,
-          ),
+      onPressed: () => onShowDetailsSheet(
+        context,
+        detailsSheetScrollController,
+        detailsContent,
+      ),
       child: Wrap(
         spacing: 10,
-        children:
-            summaryContent.isNotEmpty
-                ? summaryContent
-                : [const Text('Részletek')],
+        children: summaryContent.isNotEmpty
+            ? summaryContent
+            : [const Text('Részletek')],
       ),
     );
   }

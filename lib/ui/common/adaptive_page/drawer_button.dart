@@ -55,8 +55,9 @@ class AdaptivePageDrawerButton extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 2, horizontal: 5),
               child: Row(
-                children:
-                    endDrawer ? rowChildren.reversed.toList() : rowChildren,
+                children: endDrawer
+                    ? rowChildren.reversed.toList()
+                    : rowChildren,
               ),
             ),
           ),

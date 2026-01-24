@@ -33,20 +33,20 @@ class SearchFieldSelectorColumn extends ConsumerWidget {
             value: searchFieldsState.contains(e),
             onChanged:
                 (searchFieldsState.length < 2 && searchFieldsState.contains(e))
-                    // Make sure at least one column stays selected
-                    ? null
-                    : (value) {
-                      if (value == null) return;
-                      if (value) {
-                        ref
-                            .read(searchFieldsStateProvider.notifier)
-                            .addSearchField(e);
-                      } else {
-                        ref
-                            .read(searchFieldsStateProvider.notifier)
-                            .removeSearchField(e);
-                      }
-                    },
+                // Make sure at least one column stays selected
+                ? null
+                : (value) {
+                    if (value == null) return;
+                    if (value) {
+                      ref
+                          .read(searchFieldsStateProvider.notifier)
+                          .addSearchField(e);
+                    } else {
+                      ref
+                          .read(searchFieldsStateProvider.notifier)
+                          .removeSearchField(e);
+                    }
+                  },
           );
         }),
       ],

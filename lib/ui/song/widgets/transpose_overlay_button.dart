@@ -30,9 +30,9 @@ class _TransposeOverlayButtonState extends State<TransposeOverlayButton> {
       label: Text(
         widget.song.keyField != null
             ? getTransposedKey(
-              widget.song.keyField!,
-              widget.transpose.semitones,
-            ).toString()
+                widget.song.keyField!,
+                widget.transpose.semitones,
+              ).toString()
             : 'Transzponálás',
       ),
       icon: Icon(widget.overlayVisible.value ? Icons.close : Icons.unfold_more),

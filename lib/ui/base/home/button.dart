@@ -29,7 +29,6 @@ class HomePageButton extends StatelessWidget {
           ),
           onPressed: onPressed, // Accept null to disable button
           child: ListTile(
-            
             visualDensity: VisualDensity.comfortable,
             leading: icon,
             title: Text(title, softWrap: false, overflow: TextOverflow.fade),

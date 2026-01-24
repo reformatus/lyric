@@ -6,8 +6,12 @@ import '../../ui/base/songs/widgets/filter/types/key/state.dart';
 
 part 'filter.g.dart';
 
-typedef KeyFilterSelectable =
-    ({String label, Function(bool) onSelected, bool selected, bool addingKey});
+typedef KeyFilterSelectable = ({
+  String label,
+  Function(bool) onSelected,
+  bool selected,
+  bool addingKey,
+});
 
 @Riverpod(keepAlive: true)
 Stream<List<KeyFilterSelectable>> selectablePitches(Ref ref) {
@@ -20,8 +24,8 @@ Stream<List<KeyFilterSelectable>> selectablePitches(Ref ref) {
         if (state.keys.contains(key)) continue;
         selectables.add((
           label: key.toString(),
-          onSelected:
-              (v) => ref.read(keyFilterStateProvider.notifier).setKeyTo(key, v),
+          onSelected: (v) =>
+              ref.read(keyFilterStateProvider.notifier).setKeyTo(key, v),
           selected: state.keys.contains(key),
           addingKey: true,
         ));
@@ -34,10 +38,8 @@ Stream<List<KeyFilterSelectable>> selectablePitches(Ref ref) {
           .map(
             (e) => (
               label: e,
-              onSelected:
-                  (v) => ref
-                      .read(keyFilterStateProvider.notifier)
-                      .setPitchTo(e, v),
+              onSelected: (v) =>
+                  ref.read(keyFilterStateProvider.notifier).setPitchTo(e, v),
               selected: state.pitches.contains(e),
               addingKey: false,
             ),
@@ -58,8 +60,8 @@ Stream<List<KeyFilterSelectable>> selectableModes(Ref ref) {
         if (state.keys.contains(key)) continue;
         selectables.add((
           label: key.toString(),
-          onSelected:
-              (v) => ref.read(keyFilterStateProvider.notifier).setKeyTo(key, v),
+          onSelected: (v) =>
+              ref.read(keyFilterStateProvider.notifier).setKeyTo(key, v),
           selected: state.keys.contains(key),
           addingKey: true,
         ));
@@ -72,9 +74,8 @@ Stream<List<KeyFilterSelectable>> selectableModes(Ref ref) {
           .map(
             (e) => (
               label: e,
-              onSelected:
-                  (v) =>
-                      ref.read(keyFilterStateProvider.notifier).setModeTo(e, v),
+              onSelected: (v) =>
+                  ref.read(keyFilterStateProvider.notifier).setModeTo(e, v),
               selected: state.modes.contains(e),
               addingKey: false,
             ),

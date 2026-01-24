@@ -4,8 +4,11 @@ import '../../../../../../../data/song/song.dart';
 
 part 'state.g.dart';
 
-typedef KeyFilters =
-    ({Set<String> pitches, Set<String> modes, Set<KeyField> keys});
+typedef KeyFilters = ({
+  Set<String> pitches,
+  Set<String> modes,
+  Set<KeyField> keys,
+});
 
 extension KeyFiltersExtension on KeyFilters {
   bool get isEmpty {
