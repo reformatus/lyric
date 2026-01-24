@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../../../main.dart';
 import '../preferences_parent.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../data/log/logger.dart';
+import '../../ui/messenger_service.dart';
 
 part 'lyrics_view_style.g.dart';
 
@@ -56,7 +56,7 @@ class LyricsViewStylePreferences extends _$LyricsViewStylePreferences {
   void reset() {
     double defaultFontSize =
         Theme.of(
-          globals.scaffoldKey.currentContext!,
+          messengerService.context!,
         ).textTheme.bodyMedium?.fontSize ??
         17;
     state.chordsSize = defaultFontSize;

@@ -1,14 +1,14 @@
 part of 'main.dart';
 
-final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
+final GlobalKey<NavigatorState> appNavigatorKey = GlobalKey<NavigatorState>(
   debugLabel: 'root',
 );
-final GlobalKey<NavigatorState> _baseNavigatorKey = GlobalKey<NavigatorState>(
+final GlobalKey<NavigatorState> baseNavigatorKey = GlobalKey<NavigatorState>(
   debugLabel: 'base',
 );
 
-final _router = GoRouter(
-  navigatorKey: _rootNavigatorKey,
+final appRouter = GoRouter(
+  navigatorKey: appNavigatorKey,
   initialLocation: '/loading',
   routes: [
     GoRoute(path: '/', redirect: (context, state) => '/loading'),
@@ -17,7 +17,7 @@ final _router = GoRouter(
       pageBuilder: (context, state) => const MaterialPage(child: LoadingPage()),
     ),
     ShellRoute(
-      navigatorKey: _baseNavigatorKey,
+      navigatorKey: baseNavigatorKey,
       builder: (BuildContext context, GoRouterState state, Widget child) {
         return BaseScaffold(child: child);
       },

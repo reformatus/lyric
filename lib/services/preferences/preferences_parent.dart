@@ -2,9 +2,9 @@ import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../main.dart';
 import '../../ui/song/state.dart';
 import '../../data/log/logger.dart';
+import '../ui/messenger_service.dart';
 
 import '../../data/database.dart';
 import 'providers/general.dart';

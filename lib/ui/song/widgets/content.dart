@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../data/song/song.dart';
-import '../../../main.dart';
+import '../../../config/config.dart';
 import 'app_bar.dart';
 import 'body.dart';
 import 'song_details_helpers.dart';
@@ -30,7 +30,7 @@ class SongPageContent extends ConsumerWidget {
       builder: (context, constraints) {
         final isDesktop =
             (constraints.maxHeight < constraints.maxWidth) &&
-            constraints.maxWidth > constants.desktopFromWidth;
+          constraints.maxWidth > appConfig.breakpoints.desktopFromWidth;
         final isMobile = constraints.maxWidth < 400;
 
         final summaryContent = getDetailsSummaryContent(song, context);

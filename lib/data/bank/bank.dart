@@ -1,13 +1,10 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
-import 'package:intl/intl.dart';
 
 //import 'package:path_provider/path_provider.dart';
 
-import '../../main.dart';
 import '../database.dart';
-import '../song/song.dart';
 
 /*
   far future todo: support bank discovery based on url
@@ -84,63 +81,6 @@ class Bank extends Insertable<Bank> {
     this.isOfflineMode,
     this.lastUpdated,
   );
-
-  Future<List<ProtoSong>> getProtoSongs({DateTime? since}) async {
-    String url = '$baseUrl/songs';
-    if (since != null) {
-      String formattedDate = DateFormat('yyyy-MM-dd+HH:mm').format(since);
-      url += '?c=$formattedDate';
-    }
-    final resp = await globals.dio.get<String>(url);
-    final jsonList = jsonDecode(resp.data ?? "[]") as List;
-
-    return jsonList
-        .map((e) => ProtoSong.fromJson(e as Map<String, dynamic>))
-        .toList();
-  }
-
-  Future<List<Song>> getDetailsForSongs(List<String> uuids) async {
-    Uri source = Uri.parse('$baseUrl/song/${uuids.join(',')}');
-
-    final resp = await globals.dio.getUri<String>(source);
-    try {
-      var songsJson = jsonDecode(resp.data!);
-      if (songsJson is List) {
-        List<Song> songs = [];
-        for (Map songJson in songsJson) {
-          songs.add(
-            Song.fromBankApiJson(
-              songJson as Map<String, dynamic>,
-              sourceBank: this,
-            ),
-          );
-        }
-        return songs;
-      } else {
-        var song = Song.fromBankApiJson(
-          songsJson as Map<String, dynamic>,
-          sourceBank: this,
-        );
-        return [song];
-      }
-    } catch (e) {
-      throw Exception('Error while updating songs with uuids $uuids\n$e');
-    }
-  }
-
-  Future<DateTime?> getRemoteLastUpdated() async {
-    try {
-      final resp = await globals.dio.get<String>('$baseUrl/about');
-      final jsonData = jsonDecode(resp.data ?? "{}") as Map<String, dynamic>;
-
-      if (jsonData.containsKey('lastUpdated')) {
-        return DateTime.parse(jsonData['lastUpdated'] as String);
-      }
-      return null;
-    } catch (e) {
-      return null;
-    }
-  }
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {

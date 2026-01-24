@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import '../../../main.dart';
+import '../../../config/config.dart';
 import 'drawer_button.dart';
 
 class AdaptivePage extends StatefulWidget {
@@ -80,9 +80,10 @@ class _AdaptivePageState extends State<AdaptivePage>
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        bool tabletOrBigger = constraints.maxWidth > constants.tabletFromWidth;
+        bool tabletOrBigger =
+          constraints.maxWidth > appConfig.breakpoints.tabletFromWidth;
         bool desktopOrBigger =
-            constraints.maxWidth > constants.desktopFromWidth;
+          constraints.maxWidth > appConfig.breakpoints.desktopFromWidth;
 
         if (!tabletOrBigger && previousAnimation != 1) {
           leftDrawerController.reverse(from: previousAnimation != 0 ? null : 1);

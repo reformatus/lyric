@@ -18,10 +18,10 @@ class LyricsViewStylePreferencesClass
   LyricsViewStylePreferencesClass fromJson(Map<String, dynamic>? json) {
     double defaultFontSize = 16;
 
-    if (globals.scaffoldKey.currentContext != null) {
+    if (messengerService.context != null) {
       defaultFontSize =
           Theme.of(
-            globals.scaffoldKey.currentContext!,
+            messengerService.context!,
           ).textTheme.bodyMedium?.fontSize ??
           20;
     }

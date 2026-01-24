@@ -1,7 +1,3 @@
-import 'dart:io';
-
-import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,8 +7,10 @@ import 'services/preferences/providers/general.dart';
 import 'ui/cue/cue_page_type.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'config/config.dart';
 import 'data/database.dart';
 import 'data/log/logger.dart';
+import 'services/ui/messenger_service.dart';
 import 'ui/base/cues/page.dart';
 import 'ui/base/home/page.dart';
 import 'ui/base/scaffold.dart';
@@ -30,50 +28,6 @@ void main() async {
   db = LyricDatabase();
 
   runApp(const ProviderScope(child: LyricApp()));
-}
-
-final globals = (
-  isDesktop: Platform.isMacOS || Platform.isWindows || Platform.isLinux,
-  isMobile: Platform.isIOS || Platform.isAndroid,
-  isWeb: kIsWeb,
-  scaffoldKey: GlobalKey<ScaffoldMessengerState>(),
-  router: _router,
-  dio: Dio(
-    BaseOptions(
-      connectTimeout: Duration(seconds: 5),
-      receiveTimeout: Duration(seconds: 10),
-    ),
-  ),
-);
-
-const constants = (
-  appName: 'Sófár Hangoló',
-  organisationName: 'Sófár',
-  gitHubApiRoot: 'https://api.github.com/repos/reformatus/lyric',
-  domain: 'app.sofarkotta.hu',
-  appFeedbackEmail: 'sofarhangolo@fodor.pro',
-  homepageRoot: 'https://app.sofarkotta.hu',
-  apiRoot: 'https://app.sofarkotta.hu/api',
-  webappRoot: 'https://app.sofarkotta.hu/web',
-  gitHubRepo: 'https://github.com/reformatus/lyric/',
-  newsRss: 'https://sofarhangolo.hu/category/app/aktualis/feed',
-  buttonsRss: 'https://sofarhangolo.hu/category/app/linkek/feed',
-  urlScheme: 'lyric',
-  tabletFromWidth: 700.0,
-  desktopFromWidth: 1000.0,
-  seedColor: Color(0xff025462),
-  primaryColor: Color(0xffc3a140),
-);
-
-String? get storeLinkForCurrentPlatform {
-  if (Platform.isAndroid) {
-    return 'https://play.google.com/store/apps/details?id=org.lyricapp.sofar';
-  }
-  if (Platform.isIOS) {
-    return 'https://apps.apple.com/us/app/s%C3%B3f%C3%A1r-hangol%C3%B3/id6738664835';
-  }
-
-  return null;
 }
 
 class LyricApp extends ConsumerStatefulWidget {
@@ -98,22 +52,22 @@ class _LyricAppState extends ConsumerState<LyricApp> {
       themeMode: generalPrefs.appBrightness,
       darkTheme: ThemeData.from(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: constants.seedColor,
-          primary: constants.primaryColor,
+          seedColor: appConfig.colors.seedColor,
+          primary: appConfig.colors.primaryColor,
           surface: generalPrefs.oledBlackBackground ? Colors.black : null,
           brightness: Brightness.dark,
         ),
       ),
       theme: ThemeData.from(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: constants.seedColor,
-          primary: constants.primaryColor,
+          seedColor: appConfig.colors.seedColor,
+          primary: appConfig.colors.primaryColor,
           brightness: Brightness.light,
         ),
         useMaterial3: true,
       ),
-      scaffoldMessengerKey: globals.scaffoldKey,
-      routerConfig: _router,
+      scaffoldMessengerKey: messengerService.scaffoldMessengerKey,
+      routerConfig: appRouter,
       supportedLocales: const [Locale('hu')],
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,

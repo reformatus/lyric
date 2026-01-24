@@ -1,5 +1,6 @@
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
+import '../../config/config.dart';
 import '../../main.dart';
 import '../cue/import_from_link.dart';
 import '../../ui/common/error/card.dart';
@@ -7,6 +8,7 @@ import '../../ui/common/error/dialog.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/log/logger.dart';
+import '../ui/messenger_service.dart';
 
 part 'app_links.g.dart';
 
@@ -19,8 +21,8 @@ Stream<String> shouldNavigate(Ref ref) async* {
       'Bejövő link kezelése: "${uri.toString().substring(0, uri.toString().length.clamp(0, 100))}"',
     );
     try {
-      if (uri.scheme != constants.urlScheme &&
-          uri.authority != constants.domain) {
+      if (uri.scheme != appConfig.urlScheme &&
+          uri.authority != appConfig.domain) {
         continue;
       }
       if (uri.pathSegments.isEmpty) continue;
@@ -80,10 +82,10 @@ Stream<String> shouldNavigate(Ref ref) async* {
           continue;
       }
     } catch (e, s) {
-      if (globals.scaffoldKey.currentState == null) {
+      if (messengerService.state == null) {
         rethrow;
       }
-      globals.scaffoldKey.currentState!.showSnackBar(
+      messengerService.showSnackBar(
         SnackBar(
           content: Text('Hiba egy link megnyitása közben'),
           showCloseIcon: true,
@@ -92,8 +94,7 @@ Stream<String> shouldNavigate(Ref ref) async* {
           action: SnackBarAction(
             label: 'Részletek',
             onPressed: () {
-              final NavigatorState? navigator =
-                  globals.router.routerDelegate.navigatorKey.currentState;
+              final NavigatorState? navigator = appNavigatorKey.currentState;
               if (navigator != null) {
                 showDialog(
                   context: navigator.context,

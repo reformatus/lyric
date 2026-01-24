@@ -6,9 +6,9 @@ import '../../data/cue/cue.dart';
 import '../../data/cue/slide.dart';
 import '../../data/song/song.dart';
 import '../../data/song/transpose.dart';
-import '../../main.dart';
 import '../../services/cue/cues.dart';
 import '../../services/cue/write_cue.dart';
+import '../../services/ui/messenger_service.dart';
 import '../base/cues/dialogs.dart';
 import '../common/error/card.dart';
 import 'state.dart';
@@ -55,7 +55,7 @@ class _AddToCueSearchState extends ConsumerState<AddToCueSearch> {
       );
       await addSlideToCue(songSlide, cue, ref: ref);
 
-      globals.scaffoldKey.currentState?.showSnackBar(
+      messengerService.showSnackBar(
         SnackBar(
           showCloseIcon: true,
           content: Text(

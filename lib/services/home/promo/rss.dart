@@ -3,7 +3,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:xml/xml.dart';
 
 import '../../../data/log/logger.dart';
-import '../../../main.dart';
+import '../../../config/config.dart';
+import '../../http/dio_provider.dart';
 
 part 'rss.g.dart';
 
@@ -93,7 +94,8 @@ class HomepageButtonItem {
 Future<List<HomepageNewsItem>> getNews(Ref ref) async {
   Response<String> response;
   try {
-    response = await globals.dio.get<String>(constants.newsRss);
+    final dio = ref.read(dioProvider);
+    response = await dio.get<String>(appConfig.newsRss);
   } catch (e, s) {
     log.warning("Couldn't get news: Network error!", e, s);
     return [];
@@ -127,7 +129,8 @@ Future<List<HomepageNewsItem>> getNews(Ref ref) async {
 Future<List<HomepageButtonItem>> getButtons(Ref ref) async {
   Response<String> response;
   try {
-    response = await globals.dio.get<String>(constants.buttonsRss);
+    final dio = ref.read(dioProvider);
+    response = await dio.get<String>(appConfig.buttonsRss);
   } catch (e, s) {
     log.warning("Couldn't get buttons: Network error!", e, s);
     return [];

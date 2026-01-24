@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:logging/logging.dart';
 
 import '../../../data/log/provider.dart';
-import '../../../main.dart';
+import '../../../config/config.dart';
 import '../centered_hint.dart';
 
 class LogViewDialog extends ConsumerStatefulWidget {
@@ -34,7 +34,9 @@ class _LogViewDialogState extends ConsumerState<LogViewDialog> {
       clipBehavior: Clip.antiAlias,
       insetPadding: EdgeInsets.all(10),
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: constants.tabletFromWidth),
+        constraints: BoxConstraints(
+          maxWidth: appConfig.breakpoints.tabletFromWidth,
+        ),
         child: Scaffold(
           appBar: AppBar(
             title: Text('Napló'),

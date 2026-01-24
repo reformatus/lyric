@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../data/bank/bank.dart';
-import '../../../../../main.dart';
+import '../../../../../config/config.dart';
 
 class BankDetailsDialog extends ConsumerStatefulWidget {
   const BankDetailsDialog(this.bank, {super.key});
@@ -24,7 +24,9 @@ class _BankDetailsDialogState extends ConsumerState<BankDetailsDialog> {
       clipBehavior: Clip.antiAlias,
       insetPadding: EdgeInsets.all(10),
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: constants.tabletFromWidth),
+        constraints: BoxConstraints(
+          maxWidth: appConfig.breakpoints.tabletFromWidth,
+        ),
         child: Material(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,

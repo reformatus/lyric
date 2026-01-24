@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/bank/bank.dart';
-import '../../main.dart';
 import '../../services/connectivity/provider.dart';
 import '../../services/songs/update.dart';
+import '../../services/ui/messenger_service.dart';
 import '../common/error/card.dart';
 
 void showOnlineBanksUpdatingBanner() {
-  globals.scaffoldKey.currentState?.clearMaterialBanners();
-  globals.scaffoldKey.currentState?.showMaterialBanner(
+  messengerService.clearBanners();
+  messengerService.showBanner(
     MaterialBanner(
       content: UpdatingBanner(),
       padding: EdgeInsets.zero,
       actions: [
         IconButton(
           onPressed: () =>
-              globals.scaffoldKey.currentState?.hideCurrentMaterialBanner(),
+              messengerService.hideCurrentBanner(),
           icon: Icon(Icons.keyboard_arrow_up),
         ),
       ],
@@ -35,7 +35,7 @@ class UpdatingBanner extends ConsumerWidget {
 
     if (connection == ConnectionType.offline) {
       Future.delayed(Duration(seconds: 8)).then(
-        (_) => globals.scaffoldKey.currentState?.hideCurrentMaterialBanner(),
+        (_) => messengerService.hideCurrentBanner(),
       );
       return LErrorCard(
         type: LErrorType.warning,
@@ -63,7 +63,7 @@ class UpdatingBanner extends ConsumerWidget {
 
     if (bankStates.hasValue && getOverallProgress() == 1) {
       Future.delayed(Duration(seconds: 3)).then(
-        (_) => globals.scaffoldKey.currentState?.hideCurrentMaterialBanner(),
+        (_) => messengerService.hideCurrentBanner(),
       );
     }
 

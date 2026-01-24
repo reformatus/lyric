@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../../main.dart';
 import '../../../../../services/home/promo/rss.dart';
+import '../../../../../services/platform/platform_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class NewsCarousel extends ConsumerWidget {
@@ -11,6 +11,7 @@ class NewsCarousel extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final news = ref.watch(getNewsProvider);
+    final platform = ref.watch(platformInfoProvider);
 
     return AnimatedSwitcher(
       duration: Durations.long1,
@@ -25,12 +26,14 @@ class NewsCarousel extends ConsumerWidget {
             context,
             key: const ValueKey('news'),
             newsItems: newsItems,
+            isDesktop: platform.isDesktop,
           );
         },
         loading: () => _buildCarousel(
           context,
           key: const ValueKey('loading'),
           newsItems: null,
+          isDesktop: platform.isDesktop,
         ),
         error: (_, _) => const SizedBox.shrink(key: ValueKey('error')),
       ),
@@ -41,6 +44,7 @@ class NewsCarousel extends ConsumerWidget {
     BuildContext context, {
     Key? key,
     required List<HomepageNewsItem>? newsItems,
+    required bool isDesktop,
   }) {
     final List<Widget> children;
     if (newsItems == null) {
@@ -67,7 +71,7 @@ class NewsCarousel extends ConsumerWidget {
           height: 120,
           child: CarouselView(
             itemExtent: 160,
-            itemSnapping: globals.isDesktop ? false : true,
+            itemSnapping: isDesktop ? false : true,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),

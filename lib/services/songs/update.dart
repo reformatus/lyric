@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:dio/dio.dart';
 import 'package:drift/drift.dart';
 import 'delete_for_song.dart';
 import '../../data/log/logger.dart';
@@ -9,8 +10,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../data/bank/bank.dart';
 import '../../data/database.dart';
 import '../../data/song/song.dart';
+import '../bank/bank_api.dart';
 import '../bank/bank_updated.dart';
 import '../bank/update.dart';
+import '../http/dio_provider.dart';
 
 part 'update.g.dart';
 
@@ -30,7 +33,8 @@ double? getProgress(({int toUpdateCount, int updatedCount})? record) {
 Stream<Map<Bank, ({int toUpdateCount, int updatedCount})?>> updateAllBanksSongs(
   Ref ref,
 ) async* {
-  await updateBanks();
+  final dio = ref.read(dioProvider);
+  await updateBanks(dio);
 
   Map<Bank, ({int toUpdateCount, int updatedCount})?> bankStates =
       Map.fromEntries(
@@ -44,7 +48,7 @@ Stream<Map<Bank, ({int toUpdateCount, int updatedCount})?>> updateAllBanksSongs(
 
   for (var bankState in bankStates.entries) {
     try {
-      await for (var newState in updateBankSongs(bankState.key)) {
+      await for (var newState in updateBankSongs(bankState.key, dio)) {
         bankStates[bankState.key] = newState;
         yield {...bankStates};
       }
@@ -57,22 +61,24 @@ Stream<Map<Bank, ({int toUpdateCount, int updatedCount})?>> updateAllBanksSongs(
 /// Update all songs in a bank
 Stream<({int toUpdateCount, int updatedCount})> updateBankSongs(
   Bank bank,
+  Dio dio,
 ) async* {
+  final bankApi = BankApi(dio);
   // stay in indefinite loading state until we know protosong count
   // return protosong count for display
   List<ProtoSong> toUpdate;
   if (bank.noCms) {
     // when the bank static without cms, update all songs if there have been changes.
-    final remoteLastUpdated = await bank.getRemoteLastUpdated();
+    final remoteLastUpdated = await bankApi.getRemoteLastUpdated(bank);
     if (remoteLastUpdated != null &&
         bank.lastUpdated != null &&
         bank.lastUpdated!.isAfter(remoteLastUpdated)) {
       toUpdate = [];
     } else {
-      toUpdate = await bank.getProtoSongs();
+      toUpdate = await bankApi.getProtoSongs(bank);
     }
   } else {
-    toUpdate = await bank.getProtoSongs(since: bank.lastUpdated);
+    toUpdate = await bankApi.getProtoSongs(bank, since: bank.lastUpdated);
   }
 
   int updatedCount = 0;
@@ -100,7 +106,8 @@ Stream<({int toUpdateCount, int updatedCount})> updateBankSongs(
           int retries = 0;
           do {
             try {
-              songs = await bank.getDetailsForSongs(
+              songs = await bankApi.getDetailsForSongs(
+                bank,
                 protoSongs.map((e) => e.uuid).toList(),
               );
             } catch (e) {

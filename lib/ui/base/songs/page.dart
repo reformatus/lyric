@@ -6,7 +6,7 @@ import 'widgets/filter/types/bank/state.dart';
 import '../../../data/bank/bank.dart';
 import '../../common/centered_hint.dart';
 
-import '../../../main.dart';
+import '../../../config/config.dart';
 import '../../../services/songs/filter.dart';
 import '../../common/error/card.dart';
 import 'widgets/filter/types/key/state.dart';
@@ -180,7 +180,8 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                       body: Column(
                         children: [
                           // Filters expansion tile on small screens
-                          if (constraints.maxWidth < constants.tabletFromWidth)
+                            if (constraints.maxWidth <
+                              appConfig.breakpoints.tabletFromWidth)
                             Card(
                               clipBehavior: Clip.antiAlias,
                               child: ConstrainedBox(
@@ -312,7 +313,8 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                     ),
                   ),
                   // Filters column in wide view
-                  if (constraints.maxWidth >= constants.tabletFromWidth)
+                    if (constraints.maxWidth >=
+                      appConfig.breakpoints.tabletFromWidth)
                     SizedBox(
                       width: (constraints.maxWidth / 3).clamp(
                         380,

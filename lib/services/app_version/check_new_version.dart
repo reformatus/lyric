@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../config/config.dart';
 import '../../data/log/logger.dart';
-import '../../main.dart';
+import '../http/dio_provider.dart';
+import '../ui/messenger_service.dart';
 
 part 'check_new_version.g.dart';
 
@@ -16,8 +18,9 @@ typedef VersionInfo = ({
 @Riverpod(keepAlive: true)
 Future<VersionInfo?> checkNewVersion(Ref ref) async {
   try {
-    final latestRelease = (await globals.dio.get<Map<String, dynamic>>(
-      '${constants.gitHubApiRoot}/releases/latest',
+    final dio = ref.read(dioProvider);
+    final latestRelease = (await dio.get<Map<String, dynamic>>(
+      '${appConfig.gitHubApiRoot}/releases/latest',
     )).data!;
 
     final latestVersion = (latestRelease['tag_name'] as String);
@@ -35,7 +38,7 @@ Future<VersionInfo?> checkNewVersion(Ref ref) async {
 
     if (!latest.isNeverVersionThan(current)) return null;
 
-    globals.scaffoldKey.currentState?.showSnackBar(
+    messengerService.showSnackBar(
       SnackBar(
         content: Text('Új verzió elérhető!'),
         backgroundColor: Colors.blue[700],

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../main.dart';
+import '../../config/config.dart';
 import '../../services/bank/bank_updated.dart';
 import '../../services/preferences/preferences_parent.dart';
 import '../../services/songs/update.dart';
@@ -71,7 +71,7 @@ class _LoadingPageState extends ConsumerState<LoadingPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(constants.appName),
+        title: Text(appConfig.appName),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(4),
           child: LinearProgressIndicator(),

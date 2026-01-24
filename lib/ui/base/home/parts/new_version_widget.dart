@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../main.dart';
+import '../../../../config/config.dart';
 import '../../../../services/app_version/check_new_version.dart';
 
 class NewVersionWidget extends ConsumerWidget {

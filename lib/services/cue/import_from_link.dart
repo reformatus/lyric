@@ -73,8 +73,7 @@ Future<Cue> _importCueJson(Map json) async {
     return await insertCueFromJson(json: json);
   } else {
     // Existing cue - ask user if they want to overwrite
-    final NavigatorState? navigator =
-        globals.router.routerDelegate.navigatorKey.currentState;
+    final NavigatorState? navigator = appNavigatorKey.currentState;
 
     Cue cue = existingCue;
 

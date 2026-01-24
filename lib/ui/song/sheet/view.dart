@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pdfrx/pdfrx.dart';
 
 import '../../../data/song/song.dart';
-import '../../../main.dart';
+import '../../../config/config.dart';
 import '../../../services/assets/get_song_asset.dart';
 import '../../../services/preferences/providers/general.dart';
 import '../../common/error/card.dart';
@@ -55,8 +55,8 @@ class SheetView extends ConsumerWidget {
               return Theme(
                 data: ThemeData.from(
                   colorScheme: ColorScheme.fromSeed(
-                    seedColor: constants.seedColor,
-                    primary: constants.primaryColor,
+                    seedColor: appConfig.colors.seedColor,
+                    primary: appConfig.colors.primaryColor,
                     brightness: sheetBrightness,
                     surface: sheetBrightness == Brightness.dark
                         ? Colors.black

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:drift/drift.dart';
@@ -6,8 +7,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/database.dart';
 import '../../data/song/song.dart';
-import '../../main.dart';
 import '../bank/bank_of_song.dart';
+import '../http/dio_provider.dart';
 
 part 'get_song_asset.g.dart';
 
@@ -38,7 +39,8 @@ Stream<AssetResult> getSongAsset(
     } else {
       // Download the asset with progress updates
       try {
-        final response = await globals.dio.get<List<int>>(
+        final dio = ref.read(dioProvider);
+        final response = await dio.get<List<int>>(
           sourceUrl,
           options: Options(
             responseType: ResponseType.bytes,

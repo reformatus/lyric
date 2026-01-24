@@ -1,16 +1,18 @@
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import 'package:drift/drift.dart';
+import '../../config/config.dart';
 import '../../data/database.dart';
-import '../../main.dart';
 import 'from_uuid.dart';
 
 import '../../data/bank/bank.dart';
 
-Future updateBanks() async {
+Future updateBanks(Dio dio) async {
   late List protoBanks;
   try {
-    protoBanks = (await globals.dio.get<List>(
-      '${constants.apiRoot}/banks',
+    protoBanks = (await dio.get<List>(
+      '${appConfig.apiRoot}/banks',
     )).data!;
   } catch (e) {
     throw Exception('Nem sikerült lekérni az elérhető daltárakat: $e');
@@ -20,7 +22,7 @@ Future updateBanks() async {
     late Map details;
 
     try {
-      details = (await globals.dio.get<Map>('${protoBank['api']}/about')).data!;
+      details = (await dio.get<Map>('${protoBank['api']}/about')).data!;
     } catch (e) {
       throw Exception(
         'Nem sikerült lekérni a(z) ${protoBank['name']} tár adatait: $e',
@@ -33,7 +35,7 @@ Future updateBanks() async {
     if (details['logo'] != null &&
         (existingBank == null || existingBank.logo == null)) {
       try {
-        logo = (await globals.dio.get<Uint8List>(
+        logo = (await dio.get<Uint8List>(
           details['logo'],
           options: Options(responseType: ResponseType.bytes),
         )).data;
@@ -45,7 +47,7 @@ Future updateBanks() async {
     if (details['tinyLogo'] != null &&
         (existingBank == null || existingBank.tinyLogo == null)) {
       try {
-        tinyLogo = (await globals.dio.get<Uint8List>(
+        tinyLogo = (await dio.get<Uint8List>(
           details['tinyLogo'],
           options: Options(responseType: ResponseType.bytes),
         )).data;

@@ -8,7 +8,7 @@ import '../about.dart';
 import '../../../../song/state.dart';
 import '../../../../../services/preferences/preferences_parent.dart';
 
-import '../../../../../main.dart';
+import '../../../../../config/config.dart';
 import '../../../../../services/preferences/providers/general.dart';
 
 class PreferencesDialog extends ConsumerStatefulWidget {
@@ -40,7 +40,9 @@ class _SettingsDialogState extends ConsumerState<PreferencesDialog> {
       clipBehavior: Clip.antiAlias,
       insetPadding: EdgeInsets.all(10),
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: constants.tabletFromWidth),
+        constraints: BoxConstraints(
+          maxWidth: appConfig.breakpoints.tabletFromWidth,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [

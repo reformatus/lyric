@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../data/log/provider.dart';
-import '../../main.dart';
+import '../../config/config.dart';
 import '../../services/app_links/app_links.dart';
 import '../../services/app_version/check_new_version.dart';
 import '../../services/connectivity/provider.dart';
@@ -62,11 +62,12 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
   @override
   void initState() {
     super.initState();
-    //extendedNavRail = MediaQuery.of(context).size.width > globals.desktopFromWidth;
+    //extendedNavRail = MediaQuery.of(context).size.width > appConfig.breakpoints.desktopFromWidth;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
         extendedNavRail =
-            MediaQuery.of(context).size.width > constants.desktopFromWidth;
+          MediaQuery.of(context).size.width >
+          appConfig.breakpoints.desktopFromWidth;
       });
 
       shouldNavigateListener = ref.listenManual(

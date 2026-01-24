@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../main.dart';
+import '../../../../config/config.dart';
 import 'feedback/send_mail.dart';
 
 void showLyricAboutDialog(BuildContext context) async {
@@ -10,7 +10,7 @@ void showLyricAboutDialog(BuildContext context) async {
   showAboutDialog(
     // ignore: use_build_context_synchronously // this would only cause a problem if packageInto takes a long time to resolve
     context: context,
-    applicationName: 'Sófár Hangoló',
+    applicationName: appConfig.appName,
     applicationVersion: '${packageInfo.version}+${packageInfo.buildNumber}',
     applicationIcon: Icon(Icons.music_note), // todo replace with app icon
     children: [
@@ -22,11 +22,11 @@ void showLyricAboutDialog(BuildContext context) async {
       ),
       TextButton(
         child: Text('Weboldal'),
-        onPressed: () => launchUrl(Uri.parse(constants.homepageRoot)),
+        onPressed: () => launchUrl(Uri.parse(appConfig.homepageRoot)),
       ),
       TextButton(
         child: Text('Powered by Lyric'),
-        onPressed: () => launchUrl(Uri.parse(constants.gitHubRepo)),
+        onPressed: () => launchUrl(Uri.parse(appConfig.gitHubRepo)),
       ),
       Divider(),
     ],

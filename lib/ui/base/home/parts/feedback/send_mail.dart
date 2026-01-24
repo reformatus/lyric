@@ -5,7 +5,7 @@ import 'package:mailto/mailto.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../../main.dart';
+import '../../../../../config/config.dart';
 
 Future sendFeedbackEmail({String? errorMessage, String? stackTrace}) async {
   JsonEncoder encoder = JsonEncoder.withIndent('  ', (o) {
@@ -49,7 +49,7 @@ ${stackTrace?.split('\n').take(6).join('\n')}
       : 'Hibajelentés: $errorMessage';
 
   Mailto mail = Mailto(
-    to: [constants.appFeedbackEmail],
+    to: [appConfig.appFeedbackEmail],
     subject:
         '$subject - Lyric ${packageInfo.version}+${packageInfo.buildNumber}',
     body:
