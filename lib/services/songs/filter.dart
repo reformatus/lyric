@@ -15,13 +15,7 @@ import '../assets/downloaded.dart';
 part 'filter.g.dart';
 
 // far future todo: implement dynamic fts table generation based on bank data and dynamic selectable fts columns
-const List<String> fullTextSearchFields = [
-  'title',
-  'opensong',
-  'composer',
-  'lyricist',
-  'translator',
-];
+const List<String> fullTextSearchFields = ['title', 'lyrics'];
 
 // todo write test
 @Riverpod(keepAlive: true)

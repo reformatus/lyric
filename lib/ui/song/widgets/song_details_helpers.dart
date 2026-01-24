@@ -43,7 +43,9 @@ List<Widget> getDetailsSummaryContent(Song song, BuildContext context) {
 List<Widget> getDetailsContent(Song song, BuildContext context) {
   const Set<String> fieldsToOmitFromDetails = {
     'tite',
-    'opensong',
+    'lyrics',
+    'opensong', // legacy
+    'lyricsFormat',
     'first_line',
   };
 

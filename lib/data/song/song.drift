@@ -1,13 +1,11 @@
 import 'song.dart';
 
 -- Full Text Search (FTS) table for songs
+-- Simplified to only index title and lyrics content
 
 CREATE VIRTUAL TABLE songs_fts USING fts5(
   title
-  ,opensong
-  ,composer
-  ,lyricist
-  ,translator
+  ,lyrics
   ,content='songs' -- only use the fts table for indexing, get the actual data from the main table (avoid duplication)
   ,content_rowid='id'
   ,tokenize='trigram remove_diacritics 1' -- search by min. 3 letters, ignore diacritics
@@ -18,18 +16,18 @@ CREATE VIRTUAL TABLE songs_fts USING fts5(
 -- see https://kimsereylam.com/sqlite/2020/03/06/full-text-search-with-sqlite.html
 
 CREATE TRIGGER songs_ai AFTER INSERT ON songs BEGIN
-  INSERT INTO songs_fts(rowid, title, opensong, composer, lyricist, translator)
-  VALUES (new.id, new.title, new.opensong, new.composer, new.lyricist, new.translator);
+  INSERT INTO songs_fts(rowid, title, lyrics)
+  VALUES (new.id, new.title, new.lyrics);
 END;
 
 CREATE TRIGGER songs_ad AFTER DELETE ON songs BEGIN
-  INSERT INTO songs_fts(songs_fts, rowid, title, opensong, composer, lyricist, translator)
-  VALUES ('delete', rowid, old.title, old.opensong, old.composer, old.lyricist, old.translator);
+  INSERT INTO songs_fts(songs_fts, rowid, title, lyrics)
+  VALUES ('delete', rowid, old.title, old.lyrics);
 END;
 
 CREATE TRIGGER songs_au AFTER UPDATE ON songs BEGIN
-  INSERT INTO songs_fts(songs_fts, rowid, title, opensong, composer, lyricist, translator)
-  VALUES ('delete', rowid, old.title, old.opensong, old.composer, old.lyricist, old.translator);
-  INSERT INTO songs_fts(rowid, title, opensong, composer, lyricist, translator)
-  VALUES (new.id, new.title, new.opensong, new.composer, new.lyricist, new.translator);
+  INSERT INTO songs_fts(songs_fts, rowid, title, lyrics)
+  VALUES ('delete', rowid, old.title, old.lyrics);
+  INSERT INTO songs_fts(rowid, title, lyrics)
+  VALUES (new.id, new.title, new.lyrics);
 END;

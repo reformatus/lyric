@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../data/cue/slide.dart';
+import '../../../data/song/lyrics/parser.dart';
 import '../../../data/song/song.dart';
 import '../../../data/song/transpose.dart';
 import '../../../services/key/get_transposed.dart';
@@ -42,9 +43,8 @@ class LyricsView extends ConsumerWidget {
           // When scrolling sideways, make sure a bit of the next column is visible
           if (crossAxisCount > 1) cardWidth -= (30 / (crossAxisCount));
 
-          //! Parse OpenSong
-          var openSongContent = song.contentMap['opensong'];
-          if (openSongContent == null) {
+          //! Parse lyrics using format-specific parser
+          if (song.lyrics.isEmpty) {
             return Center(
               child: LErrorCard(
                 type: LErrorType.warning,
@@ -54,9 +54,8 @@ class LyricsView extends ConsumerWidget {
             );
           }
 
-          final verses = os.getVersesFromString(openSongContent);
-
-          // far future todo Parse ChordPro
+          final parser = LyricsParser.forFormat(song.lyricsFormat);
+          final verses = parser.parse(song.lyrics);
 
           return SingleChildScrollView(
             scrollDirection: crossAxisCount > 1
@@ -78,7 +77,11 @@ class LyricsView extends ConsumerWidget {
                   ...verses.map(
                     (e) => SizedBox(
                       width: cardWidth,
-                      child: VerseCard(song, e, transpose: transpose),
+                      child: VerseCard(
+                        song,
+                        e as OpenSongVerse,
+                        transpose: transpose,
+                      ),
                     ),
                   ),
                 ],
@@ -94,7 +97,7 @@ class LyricsView extends ConsumerWidget {
 class VerseCard extends ConsumerStatefulWidget {
   const VerseCard(this.song, this.verse, {required this.transpose, super.key});
 
-  final os.Verse verse;
+  final OpenSongVerse verse;
   final Song song;
   final SongTranspose transpose;
 
@@ -157,7 +160,7 @@ class _VerseCardState extends ConsumerState<VerseCard> {
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: widget.verse.parts
+                    children: widget.verse.raw.parts
                         .map(
                           (e) => switch (e) {
                             os.VerseLine(:final segments) => Wrap(

@@ -6,12 +6,9 @@ songFulltextSearch(:match_string AS TEXT):
   SELECT
       songs.** AS song
       ,$assets
-      ,bm25(songs_fts, 10.0, 0.5, 5.0, 5.0, 2.0) AS rank
+      ,bm25(songs_fts, 10.0, 0.5) AS rank
       ,snippet(songs_fts, 0, '<?', '?>', '...', 30) AS match_title
-      ,snippet(songs_fts, 1, '<?', '?>', '...', 40) AS match_opensong
-      ,snippet(songs_fts, 2, '<?', '?>', '...', 15) AS match_composer
-      ,snippet(songs_fts, 3, '<?', '?>', '...', 15) AS match_lyricist
-      ,snippet(songs_fts, 4, '<?', '?>', '...', 15) AS match_translator
+      ,snippet(songs_fts, 1, '<?', '?>', '...', 40) AS match_lyrics
     FROM songs_fts
     INNER JOIN songs ON songs_fts.rowid = songs.id
     WHERE songs_fts MATCH :match_string

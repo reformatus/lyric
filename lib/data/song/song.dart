@@ -4,38 +4,56 @@ import 'package:drift/drift.dart';
 
 import '../bank/bank.dart';
 import '../database.dart';
+import 'lyrics/format.dart';
+import 'lyrics/parser.dart';
 
 class Song extends Insertable<Song> {
   final String uuid;
   final String? sourceBank;
   final String title;
-  final String opensong;
+  final String lyrics;
+  final LyricsFormat lyricsFormat;
   final KeyField? keyField;
-  final String? composer;
-  final String? lyricist;
-  final String? translator;
 
   Map<String, String> contentMap;
   String? userNote;
 
   factory Song.fromBankApiJson(Map<String, dynamic> json, {Bank? sourceBank}) {
     try {
+      // Check for new 'lyrics' field first, fall back to legacy 'opensong'
+      final String? lyricsContent = json['lyrics'] ?? json['opensong'];
+      if (lyricsContent == null) {
+        throw Exception(
+          'Missing lyrics content (neither "lyrics" nor "opensong" field found)',
+        );
+      }
+
+      // Infer format: if 'lyrics' field exists, check 'lyricsFormat'; otherwise assume opensong
+      final LyricsFormat format = json.containsKey('lyrics')
+          ? LyricsFormat.fromString(json['lyricsFormat'])
+          : LyricsFormat.opensong;
+
       if (!mandatoryFields.every((field) => json.containsKey(field))) {
         throw Exception(
           'Missing mandatory fields in: ${json['title']} (${json['uuid']})',
         );
       }
 
+      // Build contentMap excluding fields that have dedicated columns
+      final contentMap = Map<String, String>.fromEntries(
+        json.entries
+            .where((e) => !_excludedFromContentMap.contains(e.key))
+            .map((e) => MapEntry(e.key, e.value.toString())),
+      );
+
       return Song(
         uuid: json['uuid'],
         title: json['title'],
-        opensong: json['opensong'],
+        lyrics: lyricsContent,
+        lyricsFormat: format,
         keyField: KeyField.fromString(json['key']),
-        contentMap: json.map((key, value) => MapEntry(key, value.toString())),
+        contentMap: contentMap,
         sourceBank: sourceBank?.uuid,
-        composer: json['composer'],
-        lyricist: json['lyricist'],
-        translator: json['translator'],
       );
     } catch (e) {
       throw Exception(
@@ -47,26 +65,16 @@ class Song extends Insertable<Song> {
   Song({
     required this.uuid,
     required this.title,
-    required this.opensong,
+    required this.lyrics,
+    this.lyricsFormat = LyricsFormat.opensong,
     required this.keyField,
     required this.contentMap,
     this.sourceBank,
-    this.composer,
-    this.lyricist,
-    this.translator,
     this.userNote,
   });
 
   String get firstLine {
-    try {
-      final lines = opensong.substring(0, 100).split('\n');
-      return lines
-          .firstWhere((e) => !e.startsWith('[') && !e.startsWith('.'))
-          .trim()
-          .replaceAll('_', '');
-    } catch (_) {
-      return '';
-    }
+    return LyricsParser.forFormat(lyricsFormat).getFirstLine(lyrics);
   }
 
   int get contentHash => Object.hash(jsonEncode(contentMap), sourceBank);
@@ -87,17 +95,26 @@ class Song extends Insertable<Song> {
       sourceBank: Value(sourceBank),
       contentMap: Value(contentMap),
       title: Value(title),
-      opensong: Value(opensong),
-      composer: Value(composer),
-      lyricist: Value(lyricist),
-      translator: Value(translator),
+      lyrics: Value(lyrics),
+      lyricsFormat: Value(lyricsFormat),
       keyField: Value(keyField),
       userNote: Value(userNote),
     ).toColumns(nullToAbsent);
   }
 }
 
-const List<String> mandatoryFields = ['uuid', 'title', 'opensong'];
+/// Fields that are stored in dedicated columns and should not be duplicated in contentMap.
+const Set<String> _excludedFromContentMap = {
+  'uuid',
+  'title',
+  'lyrics',
+  'opensong', // legacy field name
+  'lyricsFormat',
+  'key',
+};
+
+/// Mandatory fields that must be present in API JSON (lyrics checked separately).
+const List<String> mandatoryFields = ['uuid', 'title'];
 
 @TableIndex(name: 'songs_uuid', columns: {#uuid}, unique: true)
 @UseRowClass(Song)
@@ -107,10 +124,8 @@ class Songs extends Table {
   TextColumn get sourceBank => text().nullable().references(Banks, #uuid)();
   TextColumn get contentMap => text().map(const SongContentConverter())();
   TextColumn get title => text()();
-  TextColumn get opensong => text()();
-  TextColumn get composer => text().nullable()();
-  TextColumn get lyricist => text().nullable()();
-  TextColumn get translator => text().nullable()();
+  TextColumn get lyrics => text()();
+  TextColumn get lyricsFormat => text().map(const LyricsFormatConverter())();
   TextColumn get keyField => text().map(const KeyFieldConverter())();
   TextColumn get userNote => text().nullable()();
 }

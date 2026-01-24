@@ -58,25 +58,11 @@ class LSongResultTile extends ConsumerWidget {
           : Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                if (hasMatch(result.matchOpensong))
+                if (hasMatch(result.matchLyrics))
                   contentResultRow(
                     context,
                     Icons.text_snippet,
-                    result.matchOpensong,
-                  ),
-                if (hasMatch(result.matchComposer))
-                  contentResultRow(
-                    context,
-                    Icons.music_note,
-                    result.matchComposer,
-                  ),
-                if (hasMatch(result.matchLyricist))
-                  contentResultRow(context, Icons.edit, result.matchLyricist),
-                if (hasMatch(result.matchTranslator))
-                  contentResultRow(
-                    context,
-                    Icons.translate,
-                    result.matchTranslator,
+                    result.matchLyrics,
                   ),
               ],
             ),
