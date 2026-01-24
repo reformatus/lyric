@@ -81,9 +81,9 @@ class _AdaptivePageState extends State<AdaptivePage>
     return LayoutBuilder(
       builder: (context, constraints) {
         bool tabletOrBigger =
-          constraints.maxWidth > appConfig.breakpoints.tabletFromWidth;
+            constraints.maxWidth > appConfig.breakpoints.tabletFromWidth;
         bool desktopOrBigger =
-          constraints.maxWidth > appConfig.breakpoints.desktopFromWidth;
+            constraints.maxWidth > appConfig.breakpoints.desktopFromWidth;
 
         if (!tabletOrBigger && previousAnimation != 1) {
           leftDrawerController.reverse(from: previousAnimation != 0 ? null : 1);

@@ -20,9 +20,7 @@ class LyricsViewStylePreferencesClass
 
     if (messengerService.context != null) {
       defaultFontSize =
-          Theme.of(
-            messengerService.context!,
-          ).textTheme.bodyMedium?.fontSize ??
+          Theme.of(messengerService.context!).textTheme.bodyMedium?.fontSize ??
           20;
     }
 

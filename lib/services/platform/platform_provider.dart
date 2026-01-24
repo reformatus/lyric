@@ -27,9 +27,5 @@ PlatformInfo platformInfo(Ref ref) {
   final isMobile = mobileTargets.contains(defaultTargetPlatform);
   final isDesktop = desktopTargets.contains(defaultTargetPlatform);
 
-  return PlatformInfo(
-    isWeb: kIsWeb,
-    isMobile: isMobile,
-    isDesktop: isDesktop,
-  );
+  return PlatformInfo(isWeb: kIsWeb, isMobile: isMobile, isDesktop: isDesktop);
 }

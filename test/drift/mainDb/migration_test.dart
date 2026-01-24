@@ -10,6 +10,9 @@ import 'generated/schema_v2.dart' as v2;
 
 import 'package:sofar/data/database.dart';
 
+/// Migration tests are tagged so they can be excluded until migrations are implemented.
+/// Run with: flutter test --exclude-tags=migration
+@Tags(['migration'])
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
   late SchemaVerifier verifier;

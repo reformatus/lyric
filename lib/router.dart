@@ -42,9 +42,8 @@ final appRouter = GoRouter(
         ),
         GoRoute(
           path: '/song/:uuid',
-          pageBuilder:
-              (context, state) =>
-                  MaterialPage(child: SongPage(state.pathParameters['uuid']!)),
+          pageBuilder: (context, state) =>
+              MaterialPage(child: SongPage(state.pathParameters['uuid']!)),
           /*routes: [ // far future todo direct links to pages
             ShellRoute(
               pageBuilder:
@@ -93,9 +92,8 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/cue/:uuid/present',
       //redirect: (context, state) => '/cues',
-      builder:
-          (context, state) =>
-              Scaffold(body: Center(child: Text('Nincs megadva nézet'))),
+      builder: (context, state) =>
+          Scaffold(body: Center(child: Text('Nincs megadva nézet'))),
       routes: [
         GoRoute(
           path: 'musician',

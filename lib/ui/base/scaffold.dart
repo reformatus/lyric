@@ -66,8 +66,8 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
         extendedNavRail =
-          MediaQuery.of(context).size.width >
-          appConfig.breakpoints.desktopFromWidth;
+            MediaQuery.of(context).size.width >
+            appConfig.breakpoints.desktopFromWidth;
       });
 
       shouldNavigateListener = ref.listenManual(
@@ -106,8 +106,7 @@ class _BaseScaffoldState extends ConsumerState<BaseScaffold> {
     final List<GeneralNavigationDestination> destinations = [
       (
         icon: Badge(
-          isLabelVisible:
-              (newVersion.value != null || unreadLogCount != 0),
+          isLabelVisible: (newVersion.value != null || unreadLogCount != 0),
           child: Icon(Icons.home_outlined),
         ),
         selectedIcon: Icon(Icons.home),

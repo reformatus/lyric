@@ -55,9 +55,7 @@ class LyricsViewStylePreferences extends _$LyricsViewStylePreferences {
 
   void reset() {
     double defaultFontSize =
-        Theme.of(
-          messengerService.context!,
-        ).textTheme.bodyMedium?.fontSize ??
+        Theme.of(messengerService.context!).textTheme.bodyMedium?.fontSize ??
         17;
     state.chordsSize = defaultFontSize;
     state.lyricsSize = defaultFontSize;

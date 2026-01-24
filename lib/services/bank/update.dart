@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:drift/drift.dart';
@@ -11,9 +10,7 @@ import '../../data/bank/bank.dart';
 Future updateBanks(Dio dio) async {
   late List protoBanks;
   try {
-    protoBanks = (await dio.get<List>(
-      '${appConfig.apiRoot}/banks',
-    )).data!;
+    protoBanks = (await dio.get<List>('${appConfig.apiRoot}/banks')).data!;
   } catch (e) {
     throw Exception('Nem sikerült lekérni az elérhető daltárakat: $e');
   }

@@ -180,7 +180,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                       body: Column(
                         children: [
                           // Filters expansion tile on small screens
-                            if (constraints.maxWidth <
+                          if (constraints.maxWidth <
                               appConfig.breakpoints.tabletFromWidth)
                             Card(
                               clipBehavior: Clip.antiAlias,
@@ -313,7 +313,7 @@ class _SongsPageState extends ConsumerState<SongsPage> {
                     ),
                   ),
                   // Filters column in wide view
-                    if (constraints.maxWidth >=
+                  if (constraints.maxWidth >=
                       appConfig.breakpoints.tabletFromWidth)
                     SizedBox(
                       width: (constraints.maxWidth / 3).clamp(

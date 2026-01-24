@@ -15,8 +15,7 @@ void showOnlineBanksUpdatingBanner() {
       padding: EdgeInsets.zero,
       actions: [
         IconButton(
-          onPressed: () =>
-              messengerService.hideCurrentBanner(),
+          onPressed: () => messengerService.hideCurrentBanner(),
           icon: Icon(Icons.keyboard_arrow_up),
         ),
       ],
@@ -34,9 +33,9 @@ class UpdatingBanner extends ConsumerWidget {
     final connection = ref.watch(connectionProvider);
 
     if (connection == ConnectionType.offline) {
-      Future.delayed(Duration(seconds: 8)).then(
-        (_) => messengerService.hideCurrentBanner(),
-      );
+      Future.delayed(
+        Duration(seconds: 8),
+      ).then((_) => messengerService.hideCurrentBanner());
       return LErrorCard(
         type: LErrorType.warning,
         title: 'Offline vagy.',
@@ -62,9 +61,9 @@ class UpdatingBanner extends ConsumerWidget {
     }
 
     if (bankStates.hasValue && getOverallProgress() == 1) {
-      Future.delayed(Duration(seconds: 3)).then(
-        (_) => messengerService.hideCurrentBanner(),
-      );
+      Future.delayed(
+        Duration(seconds: 3),
+      ).then((_) => messengerService.hideCurrentBanner());
     }
 
     return AnimatedSwitcher(

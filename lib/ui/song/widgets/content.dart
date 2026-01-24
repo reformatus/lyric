@@ -30,7 +30,7 @@ class SongPageContent extends ConsumerWidget {
       builder: (context, constraints) {
         final isDesktop =
             (constraints.maxHeight < constraints.maxWidth) &&
-          constraints.maxWidth > appConfig.breakpoints.desktopFromWidth;
+            constraints.maxWidth > appConfig.breakpoints.desktopFromWidth;
         final isMobile = constraints.maxWidth < 400;
 
         final summaryContent = getDetailsSummaryContent(song, context);

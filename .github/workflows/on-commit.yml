@@ -10,3 +10,7 @@ jobs:
   analyze:
     name: Analyze
     uses: ./.github/workflows/part_analyze.yml
+
+  test:
+    name: Test
+    uses: ./.github/workflows/part_test.yml
