@@ -17,13 +17,13 @@ void main() {
     test('FakeMessengerService records shown snackbars', () {
       // This test demonstrates how to verify UI feedback without widgets
       // In real tests, you'd trigger an action that calls messengerService.showSnackBar
-      
+
       // Simulating what a service would do:
       // harness.messenger.showSnackBar(SnackBar(content: Text('Test')));
-      
+
       // Then assert:
       // expect(harness.messenger.shownSnackBars, hasLength(1));
-      
+
       expect(harness.messenger.shownSnackBars, isEmpty);
     });
 

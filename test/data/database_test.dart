@@ -17,19 +17,21 @@ void main() {
 
     test('can insert and query banks', () async {
       // Insert a test bank
-      await testDb.into(testDb.banks).insert(
-        BanksCompanion.insert(
-          uuid: 'test-bank-uuid',
-          name: 'Test Bank',
-          baseUrl: Uri.parse('https://example.com/api'),
-          parallelUpdateJobs: 2,
-          amountOfSongsInRequest: 10,
-          noCms: false,
-          songFields: {},
-          isEnabled: true,
-          isOfflineMode: false,
-        ),
-      );
+      await testDb
+          .into(testDb.banks)
+          .insert(
+            BanksCompanion.insert(
+              uuid: 'test-bank-uuid',
+              name: 'Test Bank',
+              baseUrl: Uri.parse('https://example.com/api'),
+              parallelUpdateJobs: 2,
+              amountOfSongsInRequest: 10,
+              noCms: false,
+              songFields: {},
+              isEnabled: true,
+              isOfflineMode: false,
+            ),
+          );
 
       // Query it back
       final banks = await testDb.select(testDb.banks).get();
@@ -39,19 +41,21 @@ void main() {
 
     test('clearAllTables removes all data', () async {
       // Insert some data
-      await testDb.into(testDb.banks).insert(
-        BanksCompanion.insert(
-          uuid: 'test-bank',
-          name: 'Test',
-          baseUrl: Uri.parse('https://example.com'),
-          parallelUpdateJobs: 1,
-          amountOfSongsInRequest: 5,
-          noCms: false,
-          songFields: {},
-          isEnabled: true,
-          isOfflineMode: false,
-        ),
-      );
+      await testDb
+          .into(testDb.banks)
+          .insert(
+            BanksCompanion.insert(
+              uuid: 'test-bank',
+              name: 'Test',
+              baseUrl: Uri.parse('https://example.com'),
+              parallelUpdateJobs: 1,
+              amountOfSongsInRequest: 5,
+              noCms: false,
+              songFields: {},
+              isEnabled: true,
+              isOfflineMode: false,
+            ),
+          );
 
       // Clear and verify
       await testDb.clearAllTables();
