@@ -3,7 +3,6 @@ FROM mcr.microsoft.com/devcontainers/base:debian
 
 # Set environment variables
 ENV FLUTTER_HOME=/home/vscode/flutter \
-    FLUTTER_VERSION=3.27.3 \
     PATH="${PATH}:/home/vscode/flutter/bin:/home/vscode/flutter/bin/cache/dart-sdk/bin"
 
 # Install dependencies
