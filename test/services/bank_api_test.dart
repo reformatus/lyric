@@ -10,9 +10,29 @@ void main() {
   group('BankApi', () {
     late TestHarness harness;
     late RecordingHttpAdapter recorder;
+    late Bank bank;
 
     setUp(() {
       harness = TestHarness();
+      bank = Bank(
+        1,
+        'bank-1',
+        null,
+        null,
+        'Test Bank',
+        null,
+        null,
+        null,
+        null,
+        Uri.parse('https://example.com/api'),
+        1,
+        1,
+        false,
+        const {},
+        true,
+        false,
+        null,
+      );
       recorder = RecordingHttpAdapter(
         responseBuilder: (options) {
           // Return different responses based on the request path
@@ -60,25 +80,7 @@ void main() {
     test('unescapes html entities in song payloads', () async {
       final bankApi = BankApi(harness.mockDio);
       final songs = await bankApi.getDetailsForSongs(
-        Bank(
-          1,
-          'bank-1',
-          null,
-          null,
-          'Test Bank',
-          null,
-          null,
-          null,
-          null,
-          Uri.parse('https://example.com/api'),
-          1,
-          1,
-          false,
-          const {},
-          true,
-          false,
-          null,
-        ),
+        bank,
         ['song-1'],
       );
 

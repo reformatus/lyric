@@ -74,9 +74,6 @@ class BankApi {
   }
 
   ProtoSong _unescapeProtoSongJson(Map<String, dynamic> json) {
-    return ProtoSong(
-      json['uuid'] as String,
-      unescapeHtmlString(json['title'].toString()),
-    );
+    return ProtoSong.fromJson(unescapeHtmlMap(json));
   }
 }
