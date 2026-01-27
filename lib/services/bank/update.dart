@@ -6,20 +6,34 @@ import '../../data/database.dart';
 import 'from_uuid.dart';
 
 import '../../data/bank/bank.dart';
+import '../http/html_unescape.dart';
 
 Future updateBanks(Dio dio) async {
-  late List protoBanks;
+  late List<Map<String, dynamic>> protoBanks;
   try {
-    protoBanks = (await dio.get<List>('${appConfig.apiRoot}/banks')).data!;
+    final bankData = (await dio.get<List>('${appConfig.apiRoot}/banks')).data!;
+    protoBanks = bankData
+        .map(
+          (bank) => unescapeHtmlMap(
+            Map<String, dynamic>.from(
+              bank as Map<dynamic, dynamic>,
+            ),
+          ),
+        )
+        .toList();
   } catch (e) {
     throw Exception('Nem sikerült lekérni az elérhető daltárakat: $e');
   }
 
   for (final protoBank in protoBanks) {
-    late Map details;
+    late Map<String, dynamic> details;
 
     try {
-      details = (await dio.get<Map>('${protoBank['api']}/about')).data!;
+      final detailsData =
+          (await dio.get<Map>('${protoBank['api']}/about')).data!;
+      details = unescapeHtmlMap(
+        Map<String, dynamic>.from(detailsData as Map<dynamic, dynamic>),
+      );
     } catch (e) {
       throw Exception(
         'Nem sikerült lekérni a(z) ${protoBank['name']} tár adatait: $e',

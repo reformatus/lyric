@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sofar/data/bank/bank.dart';
+import 'package:sofar/services/bank/bank_api.dart';
 import 'package:sofar/services/http/dio_provider.dart';
 
 import '../harness/test_harness.dart';
@@ -17,6 +19,12 @@ void main() {
           if (options.path.contains('/songs')) {
             return ResponseBody.fromString(
               '[{"uuid":"song-1","title":"Test Song"}]',
+              200,
+            );
+          }
+          if (options.path.contains('/song/')) {
+            return ResponseBody.fromString(
+              '[{"uuid":"song-1","title":"&quot;Test&quot;","opensong":"&amp;verse","key":"C-major","composer":"&apos;Composer&apos;"}]',
               200,
             );
           }
@@ -49,6 +57,37 @@ void main() {
       expect(recorder.requests.first.path, contains('/songs'));
     });
 
-    // Add more BankApi tests here...
+    test('unescapes html entities in song payloads', () async {
+      final bankApi = BankApi(harness.mockDio);
+      final songs = await bankApi.getDetailsForSongs(
+        Bank(
+          1,
+          'bank-1',
+          null,
+          null,
+          'Test Bank',
+          null,
+          null,
+          null,
+          null,
+          Uri.parse('https://example.com/api'),
+          1,
+          1,
+          false,
+          const {},
+          true,
+          false,
+          null,
+        ),
+        ['song-1'],
+      );
+
+      expect(songs, hasLength(1));
+      expect(songs.first.title, '"Test"');
+      expect(songs.first.opensong, '&verse');
+      expect(songs.first.composer, "'Composer'");
+      expect(songs.first.contentMap['title'], '"Test"');
+      expect(songs.first.contentMap['opensong'], '&verse');
+    });
   });
 }

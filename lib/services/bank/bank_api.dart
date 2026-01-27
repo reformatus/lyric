@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../data/bank/bank.dart';
 import '../../data/song/song.dart';
+import '../http/html_unescape.dart';
 
 class BankApi {
   final Dio dio;
@@ -21,7 +22,7 @@ class BankApi {
     final jsonList = jsonDecode(resp.data ?? "[]") as List;
 
     return jsonList
-        .map((e) => ProtoSong.fromJson(e as Map<String, dynamic>))
+        .map((e) => _unescapeProtoSongJson(e as Map<String, dynamic>))
         .toList();
   }
 
@@ -36,7 +37,7 @@ class BankApi {
         for (Map songJson in songsJson) {
           songs.add(
             Song.fromBankApiJson(
-              songJson as Map<String, dynamic>,
+              _unescapeSongJson(songJson as Map<String, dynamic>),
               sourceBank: bank,
             ),
           );
@@ -44,7 +45,7 @@ class BankApi {
         return songs;
       } else {
         var song = Song.fromBankApiJson(
-          songsJson as Map<String, dynamic>,
+          _unescapeSongJson(songsJson as Map<String, dynamic>),
           sourceBank: bank,
         );
         return [song];
@@ -66,5 +67,16 @@ class BankApi {
     } catch (e) {
       return null;
     }
+  }
+
+  Map<String, dynamic> _unescapeSongJson(Map<String, dynamic> json) {
+    return unescapeHtmlMap(json);
+  }
+
+  ProtoSong _unescapeProtoSongJson(Map<String, dynamic> json) {
+    return ProtoSong(
+      json['uuid'] as String,
+      unescapeHtmlString(json['title'].toString()),
+    );
   }
 }
