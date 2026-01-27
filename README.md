@@ -21,7 +21,7 @@ The easiest way to get started is using GitHub Codespaces:
 
 #### Contributing
 
-As the project and the architecture is still in the early stages, please contact us before starting any contrubutions.
+As the project and the architecture is still in the early stages, please contact us before starting any contributions.
 We'd like to make sure you're going in the right direction before you invest time in a PR.
 
 ---

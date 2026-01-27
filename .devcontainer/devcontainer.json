@@ -12,9 +12,6 @@
           "editor.formatOnSave": true,
           "editor.rulers": [110],
           "editor.defaultFormatter": "Dart-Code.dart-code"
-        },
-        "chat.tools.terminal.autoApprove": {
-          "flutter": true
         }
       },
       "extensions": [
