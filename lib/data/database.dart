@@ -2,9 +2,8 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
-//import 'database.steps.dart';
-import 'preferences/storage.dart';
 
+import 'asset/asset.dart';
 /*
 // Used for debugging
 import 'package:drift/native.dart';
@@ -16,8 +15,10 @@ import 'package:path/path.dart' as p;
 
 import 'bank/bank.dart';
 import 'cue/cue.dart';
+import 'database.steps.dart';
+import 'preferences/storage.dart';
+import 'song/lyrics/format.dart';
 import 'song/song.dart';
-import 'asset/asset.dart';
 
 part 'database.g.dart';
 
@@ -38,7 +39,7 @@ class LyricDatabase extends _$LyricDatabase {
     : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration {
@@ -46,17 +47,28 @@ class LyricDatabase extends _$LyricDatabase {
       onCreate: (Migrator m) async {
         await m.createAll();
       },
-      /*// Examples for migrations at: https://github.com/simolus3/drift/blob/develop/examples/migrations_example/lib/database.dart#L58
+      // Examples for migrations at: https://github.com/simolus3/drift/blob/develop/examples/migrations_example/lib/database.dart#L58
       onUpgrade: stepByStep(
         from1To2: (m, schema) async {
-          await m.alterTable(
-            TableMigration(
-              schema.banks,
-              newColumns: [schema.banks.aboutLink, schema.banks.contactEmail],
-            ),
-          );
+          await m.drop(schema.songsFts);
+          await m.drop(schema.songsAd);
+          await m.drop(schema.songsAi);
+          await m.drop(schema.songsAu);
+
+          await m.dropColumn(schema.songs, 'composer');
+          await m.dropColumn(schema.songs, 'lyricist');
+          await m.dropColumn(schema.songs, 'translator');
+          await m.dropColumn(schema.songs, 'user_note');
+
+          await m.renameColumn(schema.songs, 'opensong', schema.songs.lyrics);
+          await m.addColumn(schema.songs, schema.songs.lyricsFormat);
+
+          await m.createTable(schema.songsFts);
+          await m.createTrigger(schema.songsAd);
+          await m.createTrigger(schema.songsAi);
+          await m.createTrigger(schema.songsAu);
         },
-      ),*/
+      ),
     );
   }
 

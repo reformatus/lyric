@@ -16,7 +16,6 @@ class Song extends Insertable<Song> {
   final KeyField? keyField;
 
   Map<String, String> contentMap;
-  String? userNote;
 
   factory Song.fromBankApiJson(Map<String, dynamic> json, {Bank? sourceBank}) {
     try {
@@ -70,7 +69,6 @@ class Song extends Insertable<Song> {
     required this.keyField,
     required this.contentMap,
     this.sourceBank,
-    this.userNote,
   });
 
   String get firstLine {
@@ -98,7 +96,6 @@ class Song extends Insertable<Song> {
       lyrics: Value(lyrics),
       lyricsFormat: Value(lyricsFormat),
       keyField: Value(keyField),
-      userNote: Value(userNote),
     ).toColumns(nullToAbsent);
   }
 }
@@ -125,7 +122,9 @@ class Songs extends Table {
   TextColumn get contentMap => text().map(const SongContentConverter())();
   TextColumn get title => text()();
   TextColumn get lyrics => text()();
-  TextColumn get lyricsFormat => text().map(const LyricsFormatConverter())();
+  TextColumn get lyricsFormat => text()
+      .withDefault(const Constant('opensong'))
+      .map(const LyricsFormatConverter())();
   TextColumn get keyField => text().map(const KeyFieldConverter())();
   TextColumn get userNote => text().nullable()();
 }
