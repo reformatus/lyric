@@ -1,5 +1,5 @@
-// ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
 import 'package:drift/drift.dart';
+// ignore: experimental_member_use
 import 'package:drift/extensions/json1.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sofar/ui/base/songs/widgets/filter/types/key/state.dart';
