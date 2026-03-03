@@ -135,7 +135,6 @@ class Songs extends Table {
       .withDefault(const Constant('opensong'))
       .map(const LyricsFormatConverter())();
   TextColumn get keyField => text().map(const KeyFieldConverter())();
-  TextColumn get userNote => text().nullable()();
 }
 
 class SongContentConverter extends TypeConverter<Map<String, String>, String> {

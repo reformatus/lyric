@@ -67,7 +67,6 @@ final class Schema2 extends i0.VersionedSchema {
         _column_20,
         _column_21,
         _column_22,
-        _column_23,
       ],
       attachedDatabase: database,
     ),
@@ -83,7 +82,7 @@ final class Schema2 extends i0.VersionedSchema {
       withoutRowId: false,
       isStrict: false,
       tableConstraints: ['PRIMARY KEY("key")'],
-      columns: [_column_24, _column_25],
+      columns: [_column_23, _column_24],
       attachedDatabase: database,
     ),
     alias: null,
@@ -98,9 +97,9 @@ final class Schema2 extends i0.VersionedSchema {
         _column_0,
         _column_1,
         _column_19,
+        _column_25,
         _column_26,
         _column_27,
-        _column_28,
       ],
       attachedDatabase: database,
     ),
@@ -116,7 +115,7 @@ final class Schema2 extends i0.VersionedSchema {
       withoutRowId: false,
       isStrict: false,
       tableConstraints: [],
-      columns: [_column_0, _column_29, _column_30, _column_31, _column_32],
+      columns: [_column_0, _column_28, _column_29, _column_30, _column_31],
       attachedDatabase: database,
     ),
     alias: null,
@@ -130,7 +129,7 @@ final class Schema2 extends i0.VersionedSchema {
       entityName: 'songs_fts',
       moduleAndArgs:
           'fts5(title, lyrics, content=\'songs\', content_rowid=\'id\', tokenize=\'trigram remove_diacritics 1\')',
-      columns: [_column_33, _column_34],
+      columns: [_column_32, _column_33],
       attachedDatabase: database,
     ),
     alias: null,
@@ -343,8 +342,6 @@ class Shape1 extends i0.VersionedTable {
       columnsByName['lyrics_format']! as i1.GeneratedColumn<String>;
   i1.GeneratedColumn<String> get keyField =>
       columnsByName['key_field']! as i1.GeneratedColumn<String>;
-  i1.GeneratedColumn<String> get userNote =>
-      columnsByName['user_note']! as i1.GeneratedColumn<String>;
 }
 
 i1.GeneratedColumn<String> _column_17(String aliasedName) =>
@@ -396,14 +393,6 @@ i1.GeneratedColumn<String> _column_22(String aliasedName) =>
       type: i1.DriftSqlType.string,
       $customConstraints: 'NOT NULL',
     );
-i1.GeneratedColumn<String> _column_23(String aliasedName) =>
-    i1.GeneratedColumn<String>(
-      'user_note',
-      aliasedName,
-      true,
-      type: i1.DriftSqlType.string,
-      $customConstraints: 'NULL',
-    );
 
 class Shape2 extends i0.VersionedTable {
   Shape2({required super.source, required super.alias}) : super.aliased();
@@ -413,7 +402,7 @@ class Shape2 extends i0.VersionedTable {
       columnsByName['value']! as i1.GeneratedColumn<String>;
 }
 
-i1.GeneratedColumn<String> _column_24(String aliasedName) =>
+i1.GeneratedColumn<String> _column_23(String aliasedName) =>
     i1.GeneratedColumn<String>(
       'key',
       aliasedName,
@@ -421,7 +410,7 @@ i1.GeneratedColumn<String> _column_24(String aliasedName) =>
       type: i1.DriftSqlType.string,
       $customConstraints: 'NOT NULL',
     );
-i1.GeneratedColumn<String> _column_25(String aliasedName) =>
+i1.GeneratedColumn<String> _column_24(String aliasedName) =>
     i1.GeneratedColumn<String>(
       'value',
       aliasedName,
@@ -446,7 +435,7 @@ class Shape3 extends i0.VersionedTable {
       columnsByName['content']! as i1.GeneratedColumn<String>;
 }
 
-i1.GeneratedColumn<String> _column_26(String aliasedName) =>
+i1.GeneratedColumn<String> _column_25(String aliasedName) =>
     i1.GeneratedColumn<String>(
       'description',
       aliasedName,
@@ -454,7 +443,7 @@ i1.GeneratedColumn<String> _column_26(String aliasedName) =>
       type: i1.DriftSqlType.string,
       $customConstraints: 'NOT NULL',
     );
-i1.GeneratedColumn<int> _column_27(String aliasedName) =>
+i1.GeneratedColumn<int> _column_26(String aliasedName) =>
     i1.GeneratedColumn<int>(
       'cue_version',
       aliasedName,
@@ -462,7 +451,7 @@ i1.GeneratedColumn<int> _column_27(String aliasedName) =>
       type: i1.DriftSqlType.int,
       $customConstraints: 'NOT NULL',
     );
-i1.GeneratedColumn<String> _column_28(String aliasedName) =>
+i1.GeneratedColumn<String> _column_27(String aliasedName) =>
     i1.GeneratedColumn<String>(
       'content',
       aliasedName,
@@ -485,7 +474,7 @@ class Shape4 extends i0.VersionedTable {
       columnsByName['content']! as i1.GeneratedColumn<i2.Uint8List>;
 }
 
-i1.GeneratedColumn<String> _column_29(String aliasedName) =>
+i1.GeneratedColumn<String> _column_28(String aliasedName) =>
     i1.GeneratedColumn<String>(
       'song_uuid',
       aliasedName,
@@ -493,7 +482,7 @@ i1.GeneratedColumn<String> _column_29(String aliasedName) =>
       type: i1.DriftSqlType.string,
       $customConstraints: 'NOT NULL',
     );
-i1.GeneratedColumn<String> _column_30(String aliasedName) =>
+i1.GeneratedColumn<String> _column_29(String aliasedName) =>
     i1.GeneratedColumn<String>(
       'source_url',
       aliasedName,
@@ -501,7 +490,7 @@ i1.GeneratedColumn<String> _column_30(String aliasedName) =>
       type: i1.DriftSqlType.string,
       $customConstraints: 'NOT NULL',
     );
-i1.GeneratedColumn<String> _column_31(String aliasedName) =>
+i1.GeneratedColumn<String> _column_30(String aliasedName) =>
     i1.GeneratedColumn<String>(
       'field_name',
       aliasedName,
@@ -509,7 +498,7 @@ i1.GeneratedColumn<String> _column_31(String aliasedName) =>
       type: i1.DriftSqlType.string,
       $customConstraints: 'NOT NULL',
     );
-i1.GeneratedColumn<i2.Uint8List> _column_32(String aliasedName) =>
+i1.GeneratedColumn<i2.Uint8List> _column_31(String aliasedName) =>
     i1.GeneratedColumn<i2.Uint8List>(
       'content',
       aliasedName,
@@ -526,7 +515,7 @@ class Shape5 extends i0.VersionedVirtualTable {
       columnsByName['lyrics']! as i1.GeneratedColumn<String>;
 }
 
-i1.GeneratedColumn<String> _column_33(String aliasedName) =>
+i1.GeneratedColumn<String> _column_32(String aliasedName) =>
     i1.GeneratedColumn<String>(
       'title',
       aliasedName,
@@ -534,7 +523,7 @@ i1.GeneratedColumn<String> _column_33(String aliasedName) =>
       type: i1.DriftSqlType.string,
       $customConstraints: '',
     );
-i1.GeneratedColumn<String> _column_34(String aliasedName) =>
+i1.GeneratedColumn<String> _column_33(String aliasedName) =>
     i1.GeneratedColumn<String>(
       'lyrics',
       aliasedName,

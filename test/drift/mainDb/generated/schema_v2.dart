@@ -861,14 +861,6 @@ class Songs extends Table with TableInfo<Songs, SongsData> {
     requiredDuringInsert: true,
     $customConstraints: 'NOT NULL',
   );
-  late final GeneratedColumn<String> userNote = GeneratedColumn<String>(
-    'user_note',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    $customConstraints: 'NULL',
-  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -879,7 +871,6 @@ class Songs extends Table with TableInfo<Songs, SongsData> {
     lyrics,
     lyricsFormat,
     keyField,
-    userNote,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -924,10 +915,6 @@ class Songs extends Table with TableInfo<Songs, SongsData> {
         DriftSqlType.string,
         data['${effectivePrefix}key_field'],
       )!,
-      userNote: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}user_note'],
-      ),
     );
   }
 
@@ -949,7 +936,6 @@ class SongsData extends DataClass implements Insertable<SongsData> {
   final String lyrics;
   final String lyricsFormat;
   final String keyField;
-  final String? userNote;
   const SongsData({
     required this.id,
     required this.uuid,
@@ -959,7 +945,6 @@ class SongsData extends DataClass implements Insertable<SongsData> {
     required this.lyrics,
     required this.lyricsFormat,
     required this.keyField,
-    this.userNote,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -974,9 +959,6 @@ class SongsData extends DataClass implements Insertable<SongsData> {
     map['lyrics'] = Variable<String>(lyrics);
     map['lyrics_format'] = Variable<String>(lyricsFormat);
     map['key_field'] = Variable<String>(keyField);
-    if (!nullToAbsent || userNote != null) {
-      map['user_note'] = Variable<String>(userNote);
-    }
     return map;
   }
 
@@ -992,9 +974,6 @@ class SongsData extends DataClass implements Insertable<SongsData> {
       lyrics: Value(lyrics),
       lyricsFormat: Value(lyricsFormat),
       keyField: Value(keyField),
-      userNote: userNote == null && nullToAbsent
-          ? const Value.absent()
-          : Value(userNote),
     );
   }
 
@@ -1012,7 +991,6 @@ class SongsData extends DataClass implements Insertable<SongsData> {
       lyrics: serializer.fromJson<String>(json['lyrics']),
       lyricsFormat: serializer.fromJson<String>(json['lyricsFormat']),
       keyField: serializer.fromJson<String>(json['keyField']),
-      userNote: serializer.fromJson<String?>(json['userNote']),
     );
   }
   @override
@@ -1027,7 +1005,6 @@ class SongsData extends DataClass implements Insertable<SongsData> {
       'lyrics': serializer.toJson<String>(lyrics),
       'lyricsFormat': serializer.toJson<String>(lyricsFormat),
       'keyField': serializer.toJson<String>(keyField),
-      'userNote': serializer.toJson<String?>(userNote),
     };
   }
 
@@ -1040,7 +1017,6 @@ class SongsData extends DataClass implements Insertable<SongsData> {
     String? lyrics,
     String? lyricsFormat,
     String? keyField,
-    Value<String?> userNote = const Value.absent(),
   }) => SongsData(
     id: id ?? this.id,
     uuid: uuid ?? this.uuid,
@@ -1050,7 +1026,6 @@ class SongsData extends DataClass implements Insertable<SongsData> {
     lyrics: lyrics ?? this.lyrics,
     lyricsFormat: lyricsFormat ?? this.lyricsFormat,
     keyField: keyField ?? this.keyField,
-    userNote: userNote.present ? userNote.value : this.userNote,
   );
   SongsData copyWithCompanion(SongsCompanion data) {
     return SongsData(
@@ -1068,7 +1043,6 @@ class SongsData extends DataClass implements Insertable<SongsData> {
           ? data.lyricsFormat.value
           : this.lyricsFormat,
       keyField: data.keyField.present ? data.keyField.value : this.keyField,
-      userNote: data.userNote.present ? data.userNote.value : this.userNote,
     );
   }
 
@@ -1082,8 +1056,7 @@ class SongsData extends DataClass implements Insertable<SongsData> {
           ..write('title: $title, ')
           ..write('lyrics: $lyrics, ')
           ..write('lyricsFormat: $lyricsFormat, ')
-          ..write('keyField: $keyField, ')
-          ..write('userNote: $userNote')
+          ..write('keyField: $keyField')
           ..write(')'))
         .toString();
   }
@@ -1098,7 +1071,6 @@ class SongsData extends DataClass implements Insertable<SongsData> {
     lyrics,
     lyricsFormat,
     keyField,
-    userNote,
   );
   @override
   bool operator ==(Object other) =>
@@ -1111,8 +1083,7 @@ class SongsData extends DataClass implements Insertable<SongsData> {
           other.title == this.title &&
           other.lyrics == this.lyrics &&
           other.lyricsFormat == this.lyricsFormat &&
-          other.keyField == this.keyField &&
-          other.userNote == this.userNote);
+          other.keyField == this.keyField);
 }
 
 class SongsCompanion extends UpdateCompanion<SongsData> {
@@ -1124,7 +1095,6 @@ class SongsCompanion extends UpdateCompanion<SongsData> {
   final Value<String> lyrics;
   final Value<String> lyricsFormat;
   final Value<String> keyField;
-  final Value<String?> userNote;
   const SongsCompanion({
     this.id = const Value.absent(),
     this.uuid = const Value.absent(),
@@ -1134,7 +1104,6 @@ class SongsCompanion extends UpdateCompanion<SongsData> {
     this.lyrics = const Value.absent(),
     this.lyricsFormat = const Value.absent(),
     this.keyField = const Value.absent(),
-    this.userNote = const Value.absent(),
   });
   SongsCompanion.insert({
     this.id = const Value.absent(),
@@ -1145,7 +1114,6 @@ class SongsCompanion extends UpdateCompanion<SongsData> {
     required String lyrics,
     this.lyricsFormat = const Value.absent(),
     required String keyField,
-    this.userNote = const Value.absent(),
   }) : uuid = Value(uuid),
        contentMap = Value(contentMap),
        title = Value(title),
@@ -1160,7 +1128,6 @@ class SongsCompanion extends UpdateCompanion<SongsData> {
     Expression<String>? lyrics,
     Expression<String>? lyricsFormat,
     Expression<String>? keyField,
-    Expression<String>? userNote,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1171,7 +1138,6 @@ class SongsCompanion extends UpdateCompanion<SongsData> {
       if (lyrics != null) 'lyrics': lyrics,
       if (lyricsFormat != null) 'lyrics_format': lyricsFormat,
       if (keyField != null) 'key_field': keyField,
-      if (userNote != null) 'user_note': userNote,
     });
   }
 
@@ -1184,7 +1150,6 @@ class SongsCompanion extends UpdateCompanion<SongsData> {
     Value<String>? lyrics,
     Value<String>? lyricsFormat,
     Value<String>? keyField,
-    Value<String?>? userNote,
   }) {
     return SongsCompanion(
       id: id ?? this.id,
@@ -1195,7 +1160,6 @@ class SongsCompanion extends UpdateCompanion<SongsData> {
       lyrics: lyrics ?? this.lyrics,
       lyricsFormat: lyricsFormat ?? this.lyricsFormat,
       keyField: keyField ?? this.keyField,
-      userNote: userNote ?? this.userNote,
     );
   }
 
@@ -1226,9 +1190,6 @@ class SongsCompanion extends UpdateCompanion<SongsData> {
     if (keyField.present) {
       map['key_field'] = Variable<String>(keyField.value);
     }
-    if (userNote.present) {
-      map['user_note'] = Variable<String>(userNote.value);
-    }
     return map;
   }
 
@@ -1242,8 +1203,7 @@ class SongsCompanion extends UpdateCompanion<SongsData> {
           ..write('title: $title, ')
           ..write('lyrics: $lyrics, ')
           ..write('lyricsFormat: $lyricsFormat, ')
-          ..write('keyField: $keyField, ')
-          ..write('userNote: $userNote')
+          ..write('keyField: $keyField')
           ..write(')'))
         .toString();
   }

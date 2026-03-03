@@ -79,7 +79,6 @@ void main() {
         lyrics: '[V1]\n Első sor',
         lyricsFormat: 'opensong',
         keyField: '',
-        userNote: null,
       ),
     ];
 

@@ -340,16 +340,6 @@
               "dart_expr": "const KeyFieldConverter()",
               "dart_type_name": "KeyField?"
             }
-          },
-          {
-            "name": "user_note",
-            "getter_name": "userNote",
-            "moor_type": "string",
-            "nullable": true,
-            "customConstraints": null,
-            "default_dart": null,
-            "default_client_dart": null,
-            "dsl_features": []
           }
         ],
         "is_virtual": false,
@@ -713,7 +703,7 @@
       "sql": [
         {
           "dialect": "sqlite",
-          "sql": "CREATE TABLE IF NOT EXISTS \"songs\" (\"id\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \"uuid\" TEXT NOT NULL, \"source_bank\" TEXT NULL REFERENCES banks (uuid), \"content_map\" TEXT NOT NULL, \"title\" TEXT NOT NULL, \"lyrics\" TEXT NOT NULL, \"lyrics_format\" TEXT NOT NULL DEFAULT 'opensong', \"key_field\" TEXT NOT NULL, \"user_note\" TEXT NULL);"
+          "sql": "CREATE TABLE IF NOT EXISTS \"songs\" (\"id\" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \"uuid\" TEXT NOT NULL, \"source_bank\" TEXT NULL REFERENCES banks (uuid), \"content_map\" TEXT NOT NULL, \"title\" TEXT NOT NULL, \"lyrics\" TEXT NOT NULL, \"lyrics_format\" TEXT NOT NULL DEFAULT 'opensong', \"key_field\" TEXT NOT NULL);"
         }
       ]
     },
