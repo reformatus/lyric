@@ -17,18 +17,27 @@ class Song extends Insertable<Song> {
 
   Map<String, String> contentMap;
 
+  static String? _nonBlankString(dynamic value) {
+    if (value is! String) return null;
+    return value.trim().isEmpty ? null : value;
+  }
+
   factory Song.fromBankApiJson(Map<String, dynamic> json, {Bank? sourceBank}) {
     try {
-      // Check for new 'lyrics' field first, fall back to legacy 'opensong'
-      final String? lyricsContent = json['lyrics'] ?? json['opensong'];
+      // Check for new 'lyrics' field first, but fall back to legacy 'opensong'
+      // when lyrics is missing or blank.
+      final String? lyricsFromLyricsField = _nonBlankString(json['lyrics']);
+      final String? lyricsFromOpenSongField = _nonBlankString(json['opensong']);
+      final String? lyricsContent =
+          lyricsFromLyricsField ?? lyricsFromOpenSongField;
       if (lyricsContent == null) {
         throw Exception(
           'Missing lyrics content (neither "lyrics" nor "opensong" field found)',
         );
       }
 
-      // Infer format: if 'lyrics' field exists, check 'lyricsFormat'; otherwise assume opensong
-      final LyricsFormat format = json.containsKey('lyrics')
+      // Infer format from lyrics when available, otherwise default to opensong.
+      final LyricsFormat format = lyricsFromLyricsField != null
           ? LyricsFormat.fromString(json['lyricsFormat'])
           : LyricsFormat.opensong;
 

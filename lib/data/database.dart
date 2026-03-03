@@ -62,11 +62,15 @@ class LyricDatabase extends _$LyricDatabase {
 
           await m.renameColumn(schema.songs, 'opensong', schema.songs.lyrics);
           await m.addColumn(schema.songs, schema.songs.lyricsFormat);
+          await m.addColumn(schema.songs, schema.songs.userNote);
 
           await m.createTable(schema.songsFts);
           await m.createTrigger(schema.songsAd);
           await m.createTrigger(schema.songsAi);
           await m.createTrigger(schema.songsAu);
+          await customStatement(
+            "INSERT INTO songs_fts(songs_fts) VALUES('rebuild')",
+          );
         },
       ),
     );

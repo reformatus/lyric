@@ -65,16 +65,21 @@ class OpenSongParser extends LyricsParser {
 
   @override
   String getFirstLine(String lyrics) {
-    // TODO: Use proper parsing instead of string manipulation
-    // Current implementation is a quick approximation
     try {
-      final lines = lyrics
-          .substring(0, lyrics.length.clamp(0, 100))
-          .split('\n');
-      return lines
-          .firstWhere((e) => !e.startsWith('[') && !e.startsWith('.'))
-          .trim()
-          .replaceAll('_', '');
+      final verses = os.getVersesFromString(lyrics);
+      if (verses.isEmpty) return '';
+
+      final firstVerse = verses.first;
+      for (final part in firstVerse.parts) {
+        if (part case os.VerseLine(:final segments)) {
+          return segments
+              .map((segment) => segment.lyrics)
+              .join()
+              .trim();
+        }
+      }
+
+      return '';
     } catch (_) {
       return '';
     }

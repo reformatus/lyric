@@ -51,12 +51,37 @@ void main() {
   test('migration from v1 to v2 does not corrupt data', () async {
     // Add data to insert into the old database, and the expected rows after the
     // migration.
-    // TODO: Fill these lists
     final oldBanksData = <v1.BanksData>[];
     final expectedNewBanksData = <v2.BanksData>[];
 
-    final oldSongsData = <v1.SongsData>[];
-    final expectedNewSongsData = <v2.SongsData>[];
+    final oldSongsData = <v1.SongsData>[
+      const v1.SongsData(
+        id: 1,
+        uuid: 'song-1',
+        sourceBank: null,
+        contentMap: '{}',
+        title: 'Migration Song',
+        opensong: '[V1]\n Első sor',
+        composer: null,
+        lyricist: null,
+        translator: null,
+        keyField: '',
+        userNote: null,
+      ),
+    ];
+    final expectedNewSongsData = <v2.SongsData>[
+      const v2.SongsData(
+        id: 1,
+        uuid: 'song-1',
+        sourceBank: null,
+        contentMap: '{}',
+        title: 'Migration Song',
+        lyrics: '[V1]\n Első sor',
+        lyricsFormat: 'opensong',
+        keyField: '',
+        userNote: null,
+      ),
+    ];
 
     final oldAssetsData = <v1.AssetsData>[];
     final expectedNewAssetsData = <v2.AssetsData>[];
@@ -68,7 +93,9 @@ void main() {
     final expectedNewPreferenceStorageData = <v2.PreferenceStorageData>[];
 
     final oldSongsFtsData = <v1.SongsFtsData>[];
-    final expectedNewSongsFtsData = <v2.SongsFtsData>[];
+    final expectedNewSongsFtsData = <v2.SongsFtsData>[
+      const v2.SongsFtsData(title: 'Migration Song', lyrics: '[V1]\n Első sor'),
+    ];
 
     await verifier.testWithDataIntegrity(
       oldVersion: 1,
