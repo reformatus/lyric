@@ -59,6 +59,7 @@ class LyricDatabase extends _$LyricDatabase {
           await m.dropColumn(schema.songs, 'composer');
           await m.dropColumn(schema.songs, 'lyricist');
           await m.dropColumn(schema.songs, 'translator');
+          await m.dropColumn(schema.songs, 'user_note');
 
           await m.renameColumn(schema.songs, 'opensong', schema.songs.lyrics);
           await m.addColumn(schema.songs, schema.songs.lyricsFormat);
