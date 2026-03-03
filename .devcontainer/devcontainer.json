@@ -1,0 +1,33 @@
+{
+  "name": "Flutter Development",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "dotnet.defaultSolution": "disable",
+        "[dart]": {
+          "editor.formatOnSave": true,
+          "editor.rulers": [110],
+          "editor.defaultFormatter": "Dart-Code.dart-code"
+        }
+      },
+      "extensions": [
+        "Dart-Code.dart-code",
+        "Dart-Code.flutter",
+        "GitHub.copilot",
+        "GitHub.copilot-chat"
+      ]
+    }
+  },
+
+  "postCreateCommand": "flutter pub get && dart run build_runner build",
+
+  "remoteUser": "vscode",
+  
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {}
+  }
+}
