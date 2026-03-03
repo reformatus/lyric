@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:drift/drift.dart';
@@ -98,6 +99,9 @@ LazyDatabase _openConnection() {
   });
 }
 */
+
+// General db type converters
+
 class UriConverter extends TypeConverter<Uri, String> {
   const UriConverter();
 
@@ -109,6 +113,20 @@ class UriConverter extends TypeConverter<Uri, String> {
   @override
   String toSql(Uri value) {
     return value.toString();
+  }
+}
+
+class MapConverter extends TypeConverter<Map<String, dynamic>, String> {
+  const MapConverter();
+
+  @override
+  Map<String, dynamic> fromSql(String fromDb) {
+    return jsonDecode(fromDb) as Map<String, dynamic>;
+  }
+
+  @override
+  String toSql(Map<String, dynamic> value) {
+    return jsonEncode(value);
   }
 }
 

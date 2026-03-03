@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:drift/drift.dart';
 
@@ -123,20 +122,6 @@ class Banks extends Table {
   BoolColumn get isEnabled => boolean()();
   BoolColumn get isOfflineMode => boolean()();
   DateTimeColumn get lastUpdated => dateTime().nullable()();
-}
-
-class MapConverter extends TypeConverter<Map<String, dynamic>, String> {
-  const MapConverter();
-
-  @override
-  Map<String, dynamic> fromSql(String fromDb) {
-    return jsonDecode(fromDb) as Map<String, dynamic>;
-  }
-
-  @override
-  String toSql(Map<String, dynamic> value) {
-    return jsonEncode(value);
-  }
 }
 
 class ProtoSong {

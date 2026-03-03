@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sofar/services/http/dio_provider.dart';
 import 'package:sofar/services/platform/platform_provider.dart';
@@ -86,7 +87,7 @@ class TestHarness {
   late final FakeMessengerService messenger;
   late final PlatformInfo platform;
   late final ProviderContainer container;
-  late final mockDio;
+  late final Dio mockDio;
 
   /// Reset all fakes to initial state (call between test cases if reusing harness).
   void reset() {

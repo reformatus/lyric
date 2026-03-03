@@ -23,7 +23,7 @@ Future<void> showShareDialog(
   required String sharedTitle,
   String? sharedDescription,
   IconData? sharedIcon,
-  required String sharedLink,
+  required Uri sharedLink,
 }) async {
   return showDialog<void>(
     context: context,
@@ -55,7 +55,7 @@ class ShareDialog extends StatefulWidget {
   final String sharedTitle;
   final String? sharedDescription;
   final IconData? sharedIcon;
-  final String sharedLink;
+  final Uri sharedLink;
 
   @override
   State<ShareDialog> createState() => _ShareDialogState();
@@ -157,7 +157,7 @@ class _ShareDialogState extends State<ShareDialog> {
                   ),
 
                   const SizedBox(height: 24),
-                  if (widget.sharedLink.length < 2000)
+                  if (widget.sharedLink.toString().length < 2000)
                     Hero(
                       tag: 'ShareDialogQr',
                       child: Container(
@@ -191,7 +191,7 @@ class _ShareDialogState extends State<ShareDialog> {
                                 child: SizedBox.square(
                                   dimension: 200,
                                   child: QrImageView(
-                                    data: widget.sharedLink,
+                                    data: widget.sharedLink.toString(),
                                     version: QrVersions.auto,
                                     gapless: true,
                                     errorCorrectionLevel: QrErrorCorrectLevel.L,
@@ -243,7 +243,7 @@ class _ShareDialogState extends State<ShareDialog> {
                                 vertical: 12,
                               ),
                               child: SelectableText(
-                                widget.sharedLink,
+                                widget.sharedLink.toString(),
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   color: colorScheme.onSurface,
                                   height: 1.3,
@@ -323,7 +323,7 @@ class _ShareDialogState extends State<ShareDialog> {
   }
 
   Future<void> _copyToClipboard(BuildContext context) async {
-    await Clipboard.setData(ClipboardData(text: widget.sharedLink));
+    await Clipboard.setData(ClipboardData(text: widget.sharedLink.toString()));
     if (mounted) {
       setState(() {
         _copySuccess = true;
@@ -342,13 +342,16 @@ class _ShareDialogState extends State<ShareDialog> {
   Future<void> _showFullscreenQr(BuildContext context) async {
     showHeroDialog(
       context: context,
-      builder: (context) => FullscreenQrDialog(data: widget.sharedLink),
+      builder: (context) =>
+          FullscreenQrDialog(data: widget.sharedLink.toString()),
     );
   }
 
   Future<void> _shareLink(BuildContext context) async {
     try {
-      await Share.share(widget.sharedLink, subject: widget.sharedTitle);
+      await SharePlus.instance.share(
+        ShareParams(uri: widget.sharedLink, subject: widget.sharedTitle),
+      );
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

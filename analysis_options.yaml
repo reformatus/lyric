@@ -3,6 +3,7 @@ include: package:flutter_lints/flutter.yaml
 # Freezed + JsonSerializable
 analyzer:
   errors:
+    todo: ignore
     invalid_annotation_target: ignore
     invalid_use_of_internal_member: ignore
     provide_deprecation_message: ignore
